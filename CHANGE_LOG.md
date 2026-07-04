@@ -601,3 +601,18 @@ issues, pull requests, and closeout comments.
   so ignored target-project artifact trees remain self-contained.
 - Updated the CLI workflow playbook and added
   `planning/phase26_cross_project_eval_notes.md`.
+
+## 2026-07-04 - Added Phase 27 supervisor decision packets
+
+- Created the Phase 27 supervisor-decision-packet lane on
+  `feature/p27-supervisor-decision-packets`, with parent issue #198 and child
+  task issues #199 through #202.
+- Added `agent-workbench pilot pack-scaffold` for multi-ticket proposal packs
+  with isolated eval output and Copilot SDK scratch directories per task.
+- Updated single-ticket pilot scaffolds so generated manifests no longer share
+  one eval output directory by default.
+- Added `agent-workbench evidence synthesize` to validate multiple evidence
+  summaries and render one sanitized supervisor decision packet.
+- Added `planning/p27_p30_forward_plan.md`,
+  `planning/phase27_supervisor_decision_packets.md`, and updated the CLI
+  workflow playbook.

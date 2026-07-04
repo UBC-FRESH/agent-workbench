@@ -32,6 +32,31 @@ class PilotScaffoldResult:
     evidence_path: Path
 
 
+@dataclass(frozen=True)
+class PilotPackTask:
+    task_id: str
+    title: str
+
+
+@dataclass(frozen=True)
+class PilotPackScaffoldConfig:
+    project_root: Path
+    tasks: tuple[PilotPackTask, ...]
+    mode: str
+    model: str
+    output_dir: Path
+    repeats: int
+    timeout_seconds: int
+    base_url_file: str
+    provider_headers_file: str
+    force: bool
+
+
+@dataclass(frozen=True)
+class PilotPackScaffoldResult:
+    results: tuple[PilotScaffoldResult, ...]
+
+
 def scaffold_pilot(config: PilotScaffoldConfig) -> PilotScaffoldResult:
     project_root = config.project_root.resolve()
     output_dir = resolve_output_dir(project_root, config.output_dir)
@@ -61,6 +86,33 @@ def scaffold_pilot(config: PilotScaffoldConfig) -> PilotScaffoldResult:
         manifest_path=manifest_path,
         evidence_path=evidence_path,
     )
+
+
+def scaffold_pilot_pack(config: PilotPackScaffoldConfig) -> PilotPackScaffoldResult:
+    if not config.tasks:
+        raise ValueError("pack scaffold requires at least one task")
+    results: list[PilotScaffoldResult] = []
+    for task in config.tasks:
+        marker = f"{task.task_id.upper().replace('-', '_')} done"
+        results.append(
+            scaffold_pilot(
+                PilotScaffoldConfig(
+                    project_root=config.project_root,
+                    task_id=task.task_id,
+                    title=task.title,
+                    mode=config.mode,
+                    model=config.model,
+                    output_dir=config.output_dir,
+                    marker=marker,
+                    repeats=config.repeats,
+                    timeout_seconds=config.timeout_seconds,
+                    base_url_file=config.base_url_file,
+                    provider_headers_file=config.provider_headers_file,
+                    force=config.force,
+                )
+            )
+        )
+    return PilotPackScaffoldResult(results=tuple(results))
 
 
 def resolve_output_dir(project_root: Path, output_dir: Path) -> Path:
@@ -147,6 +199,7 @@ def render_manifest(
     output_dir: Path,
     ticket_path: Path,
 ) -> dict[str, object]:
+    stem = safe_slug(config.task_id)
     return {
         "evaluation_id": safe_slug(config.task_id),
         "ticket": relpath(ticket_path, project_root),
@@ -160,14 +213,14 @@ def render_manifest(
         "models": [config.model],
         "repeats": config.repeats,
         "timeout_seconds": config.timeout_seconds,
-        "output_dir": relpath(output_dir / "eval", project_root),
+        "output_dir": relpath(output_dir / "eval" / stem, project_root),
         "probe_script": "scripts/copilot_sdk_ollama_probe.py",
         "python_executable": ".venv/Scripts/python.exe",
         "base_url_file": config.base_url_file,
         "provider_headers_file": config.provider_headers_file,
         "wire_api": "completions",
         "mode": "empty",
-        "base_directory": relpath(output_dir / "copilot_sdk_home", project_root),
+        "base_directory": relpath(output_dir / stem / "copilot_sdk_home", project_root),
     }
 
 
@@ -186,7 +239,10 @@ def render_evidence(
         "generated_utc": generated,
         "source_runtime_paths": [
             relpath(manifest_path, project_root),
-            relpath(output_dir / "eval" / "summary.json", project_root),
+            relpath(
+                output_dir / "eval" / safe_slug(config.task_id) / "summary.json",
+                project_root,
+            ),
         ],
         "ticket_family": f"{config.mode} pilot",
         "models_or_agent_host": [config.model],
