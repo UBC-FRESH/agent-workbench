@@ -17,7 +17,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Complete |
 | P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Complete |
 | P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | Complete |
-| P9 SDK structured documentation-output trial | TBD | TBD | Planned |
+| P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | PR-ready |
 | P10 Patch proposal protocol trial | TBD | TBD | Planned |
 | P11 Supervisor-applied patch harness | TBD | TBD | Planned |
 | P12 Restricted tool-enabled worker trial | TBD | TBD | Planned |
@@ -473,23 +473,45 @@ GitHub workflow participation, and then broader model/packaging decisions.
 
 ## Phase 9: SDK Structured Documentation-Output Trial
 
-Parent issue: TBD
+Parent issue: #65
 
-Branch: TBD
+Branch: `feature/p9-structured-doc-output-trial`
 
-Status: planned
+Status: PR-ready
 
 Goal: use the P8 harness on a tiny documentation-style ticket where the worker
 returns a structured Markdown result in the assistant response, with no tools
 and no file mutation.
 
-Planned tasks:
-
-- P9.1 Structured documentation-ticket template.
-- P9.2 Assistant-result section parser.
-- P9.3 Repeated same-ticket qwen A/B trial.
-- P9.4 Rubric mapping for structured-output behavior.
-- P9.5 Closeout and next decision.
+- [x] P9.1 Structured documentation-ticket template (#66)
+  - [x] Add a tracked template under `templates/`.
+  - [x] Require exact section headings.
+  - [x] State that tools, commands, and file edits are forbidden.
+  - [x] Include failure and stop-condition requirements.
+- [x] P9.2 Assistant-result section parser (#67)
+  - [x] Add manifest fields for required sections and forbidden phrases.
+  - [x] Classify missing sections.
+  - [x] Classify extra prose or unexpected sections.
+  - [x] Classify refusal and loop-like repetition.
+- [x] P9.3 Repeated same-ticket qwen A/B trial (#68)
+  - [x] Create an ignored local structured-output ticket.
+  - [x] Create an ignored P9 manifest with required sections.
+  - [x] Run repeated trials for `qwen3-coder:latest`.
+  - [x] Run repeated trials for `qwen3-coder-next:latest`.
+  - [x] Inspect ignored result summary.
+- [x] P9.4 Rubric mapping for structured-output behavior (#69)
+  - [x] Document how structured-output classifications map to rubric
+        categories.
+  - [x] Identify which classifications force retry, blocked, or reject
+        decisions.
+  - [x] Keep the mapping generic across future ticket families.
+- [ ] P9.5 Closeout and next decision (#70)
+  - [x] Update `ROADMAP.md`.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Finalize P9 planning notes.
+  - [x] Run verification.
+  - [x] Comment on and close child issues.
+  - [ ] Open, merge, and verify PR closeout.
 
 Phase 9 acceptance criteria:
 

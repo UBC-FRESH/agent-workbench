@@ -2,6 +2,15 @@
   "evaluation_id": "p8_example_same_ticket_eval",
   "ticket": "runtime/agent_jobs/p8_example.ticket.md",
   "expected_marker": "P8_EXAMPLE_MARKER done",
+  "required_sections": [],
+  "forbidden_phrases": [
+    "I cannot",
+    "I can't",
+    "would do",
+    "would have"
+  ],
+  "allow_unexpected_sections": true,
+  "allow_preamble": true,
   "models": [
     "qwen3-coder:latest",
     "qwen3-coder-next:latest"

@@ -27,6 +27,10 @@ class EvalConfig:
     evaluation_id: str
     ticket: Path
     expected_marker: str
+    required_sections: list[str]
+    forbidden_phrases: list[str]
+    allow_unexpected_sections: bool
+    allow_preamble: bool
     models: list[str]
     repeats: int
     timeout_seconds: int
@@ -97,7 +101,11 @@ def load_manifest(path: Path) -> EvalConfig:
     return EvalConfig(
         evaluation_id=str(data.get("evaluation_id", "sdk_same_ticket_eval")),
         ticket=ticket,
-        expected_marker=str(data["expected_marker"]),
+        expected_marker=str(data.get("expected_marker", "")),
+        required_sections=[str(section) for section in data.get("required_sections", [])],
+        forbidden_phrases=[str(phrase) for phrase in data.get("forbidden_phrases", [])],
+        allow_unexpected_sections=bool(data.get("allow_unexpected_sections", True)),
+        allow_preamble=bool(data.get("allow_preamble", True)),
         models=models,
         repeats=repeats,
         timeout_seconds=int(data.get("timeout_seconds", 120)),
@@ -219,6 +227,7 @@ def summarize(config: EvalConfig, runs: list[PlannedRun]) -> dict[str, Any]:
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "ticket": str(config.ticket),
         "expected_marker": config.expected_marker,
+        "required_sections": config.required_sections,
         "models": config.models,
         "repeats": config.repeats,
         "rows": rows,
@@ -249,7 +258,12 @@ def summarize_run(config: EvalConfig, run: PlannedRun) -> dict[str, Any]:
         error=error,
         assistant_message=assistant_message,
         expected_marker=config.expected_marker,
+        required_sections=config.required_sections,
+        forbidden_phrases=config.forbidden_phrases,
+        allow_unexpected_sections=config.allow_unexpected_sections,
+        allow_preamble=config.allow_preamble,
     )
+    section_report = structured_section_report(assistant_message, config.required_sections)
     return {
         "model": run.model,
         "repeat_index": run.repeat_index,
@@ -259,6 +273,9 @@ def summarize_run(config: EvalConfig, run: PlannedRun) -> dict[str, Any]:
         "error": error,
         "assistant_message": assistant_message,
         "classification": classification,
+        "missing_sections": section_report["missing_sections"],
+        "unexpected_sections": section_report["unexpected_sections"],
+        "has_preamble": section_report["has_preamble"],
     }
 
 
@@ -287,6 +304,10 @@ def classify_result(
     error: str,
     assistant_message: str,
     expected_marker: str,
+    required_sections: list[str],
+    forbidden_phrases: list[str],
+    allow_unexpected_sections: bool,
+    allow_preamble: bool,
 ) -> str:
     if status != "completed":
         if blocker == "session-idle-timeout":
@@ -298,6 +319,20 @@ def classify_result(
         if blocker:
             return blocker
         return "blocked"
+    lower_message = assistant_message.lower()
+    if any(phrase.lower() in lower_message for phrase in forbidden_phrases):
+        return "refusal-or-forbidden-phrase"
+    if looks_loop_like(assistant_message):
+        return "loop-like-repetition"
+    if required_sections:
+        section_report = structured_section_report(assistant_message, required_sections)
+        if section_report["missing_sections"]:
+            return "missing-section"
+        if section_report["unexpected_sections"] and not allow_unexpected_sections:
+            return "extra-prose"
+        if section_report["has_preamble"] and not allow_preamble:
+            return "extra-prose"
+        return "structured-output"
     if assistant_message == expected_marker:
         return "exact-marker"
     marker_count = assistant_message.count(expected_marker)
@@ -305,9 +340,45 @@ def classify_result(
         return "duplicate-marker"
     if marker_count == 1:
         return "extra-output"
-    if looks_loop_like(assistant_message):
-        return "loop-like-repetition"
     return "missing-marker"
+
+
+def structured_section_report(
+    assistant_message: str,
+    required_sections: list[str],
+) -> dict[str, Any]:
+    headings = markdown_headings(assistant_message)
+    required = [normalize_heading(section) for section in required_sections]
+    observed = [normalize_heading(heading) for heading in headings]
+    missing_sections = [
+        required_sections[index]
+        for index, normalized in enumerate(required)
+        if normalized not in observed
+    ]
+    unexpected_sections = [
+        headings[index]
+        for index, normalized in enumerate(observed)
+        if normalized not in required
+    ]
+    first_heading = re.search(r"^#{1,6}\s+\S.*$", assistant_message, re.MULTILINE)
+    preamble = assistant_message[: first_heading.start()].strip() if first_heading else assistant_message
+    return {
+        "headings": headings,
+        "missing_sections": missing_sections,
+        "unexpected_sections": unexpected_sections,
+        "has_preamble": bool(preamble.strip()),
+    }
+
+
+def markdown_headings(text: str) -> list[str]:
+    headings: list[str] = []
+    for match in re.finditer(r"^(#{1,6}\s+.+?)\s*$", text, re.MULTILINE):
+        headings.append(match.group(1).strip())
+    return headings
+
+
+def normalize_heading(heading: str) -> str:
+    return re.sub(r"\s+", " ", heading.strip()).casefold()
 
 
 def looks_loop_like(text: str) -> bool:
@@ -339,6 +410,7 @@ def summary_markdown(summary: dict[str, Any]) -> str:
         f"- generated_utc: `{summary['generated_utc']}`",
         f"- ticket: `{summary['ticket']}`",
         f"- expected_marker: `{summary['expected_marker']}`",
+        f"- required_sections: `{len(summary['required_sections'])}`",
         f"- repeats: `{summary['repeats']}`",
         "",
         "## Classification Counts",
@@ -354,11 +426,12 @@ def summary_markdown(summary: dict[str, Any]) -> str:
             "",
             "## Runs",
             "",
-            "| Model | Repeat | Status | Blocker | Classification | Result File |",
-            "| --- | ---: | --- | --- | --- | --- |",
+            "| Model | Repeat | Status | Blocker | Classification | Missing Sections | Result File |",
+            "| --- | ---: | --- | --- | --- | --- | --- |",
         ]
     )
     for row in summary["rows"]:
+        missing = ", ".join(row.get("missing_sections", []))
         lines.append(
             "| "
             f"`{row['model']}` | "
@@ -366,6 +439,7 @@ def summary_markdown(summary: dict[str, Any]) -> str:
             f"`{row['status']}` | "
             f"`{row['blocker']}` | "
             f"`{row['classification']}` | "
+            f"`{missing}` | "
             f"`{row['result_file']}` |"
         )
     lines.extend(
