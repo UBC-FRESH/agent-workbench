@@ -12,7 +12,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P1 Worker protocol templates | #7 | `feature/p1-worker-protocol-templates` | Complete |
 | P2 VS Code Chat bridge playbook | #13 | `feature/p2-vscode-chat-bridge-playbook` | Complete |
 | P3 Copilot Chat Bridge V0 Prototype | #21 | `feature/p3-copilot-chat-bridge-v0` | Complete |
-| P4 Worker model evaluation rubric | TBD | TBD | Planned |
+| P4 Worker model evaluation rubric | #28 | `feature/p4-worker-model-evaluation-rubric` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -201,16 +201,52 @@ Phase 3 acceptance criteria:
 
 ## Phase 4: Worker Model Evaluation Rubric
 
-Parent issue: TBD
+Parent issue: #28
 
-Branch: TBD
+Branch: `feature/p4-worker-model-evaluation-rubric`
 
-Status: planned
+Status: complete
 
-Goal: create a lightweight Markdown rubric for comparing local or hosted worker
-models on bounded repo tasks.
+Goal: create a lightweight Markdown rubric for comparing local Ollama-backed
+worker models on bounded repo tasks, using P3 bridge evidence rather than
+subjective impressions.
 
-- [ ] P4.1 Define candidate model metadata fields.
-- [ ] P4.2 Define task-following and evidence-quality scoring categories.
-- [ ] P4.3 Define failure-mode taxonomy for worker-agent behavior.
-- [ ] P4.4 Run one documented scoring dry run and close the phase.
+- [x] P4.1 Model inventory and run metadata (#29)
+  - [x] Track the current installed Ollama model panel.
+  - [x] Promote the install shortlist into tracked planning.
+  - [x] Define per-run metadata fields.
+  - [x] Require `ollama list` verification before assigning models.
+- [x] P4.2 Evaluation rubric (#30)
+  - [x] Add `rubrics/worker_model_evaluation.md`.
+  - [x] Define scoring scale and categories.
+  - [x] Define supervisor decision rules.
+  - [x] Tie scoring to observed evidence, not worker prose.
+- [x] P4.3 Failure-mode taxonomy (#31)
+  - [x] Document looping, fake completion, duplicate commands, refusal, and
+        over-broad workflow behavior.
+  - [x] Include Phase 3 duplicate-command behavior.
+  - [x] Map failure modes to scoring and decision consequences.
+- [x] P4.4 Evaluation result template (#32)
+  - [x] Add `templates/model_eval_result.md`.
+  - [x] Include model, ticket, bridge-evidence, score, failure-mode, and
+        decision fields.
+- [x] P4.5 A/B dry scoring run and closeout (#33)
+  - [x] Prepare one fixed evaluation ticket.
+  - [x] Attempt or complete qwen3-coder baseline scoring.
+  - [x] Attempt or complete qwen3-coder-next scoring.
+  - [x] Record comparison findings and caveats.
+  - [x] Close P4 through PR.
+
+Phase 4 acceptance criteria:
+
+- The installed-model shortlist and current `ollama list` inventory are
+  captured in public-safe planning language.
+- The rubric can score observed worker behavior from a P3 supervisor report
+  without trusting worker prose alone.
+- The failure taxonomy includes observed looping, fake-completion,
+  duplicate-command, refusal, and over-broad workflow modes.
+- The result template can hold one model run's metadata, evidence, scores,
+  decision, and caveats.
+- A bounded P4 dry run compares `qwen3-coder:latest` and
+  `qwen3-coder-next:latest` on the same ticket, or explicitly records why that
+  comparison could not be completed in this phase.

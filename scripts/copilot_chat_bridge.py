@@ -78,6 +78,7 @@ def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
         command,
         input=ticket_text,
         text=True,
+        encoding="utf-8",
         cwd=args.workspace_root,
         check=False,
     )
@@ -333,7 +334,7 @@ def main() -> int:
         print(f"Ticket not found: {ticket_path}", file=sys.stderr)
         return 2
     report_path = Path(args.report).resolve() if args.report else ticket_path.with_suffix(".supervisor.md")
-    ticket_text = ticket_path.read_text(encoding="utf-8")
+    ticket_text = ticket_path.read_text(encoding="utf-8-sig")
     if not args.no_launch:
         launch_code_chat(args, ticket_text)
     session_path, transcript_path = find_session_files(

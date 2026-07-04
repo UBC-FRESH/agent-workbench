@@ -20,8 +20,9 @@ that case study as a public-safe example.
 
 ## Current Repo State
 
-This repository is in Phase 0 bootstrap. It contains governance and planning
-documents only:
+This repository is an active workflow sandbox. It currently contains governance
+documents, planning notes, worker templates, a local VS Code Chat bridge helper,
+and Markdown evaluation rubrics:
 
 - `README.md`: concise public overview.
 - `AGENTS.md`: agent operating contract.
@@ -29,11 +30,16 @@ documents only:
 - `ROADMAP.md`: phase/task roadmap and issue tracker map.
 - `CHANGE_LOG.md`: append-only project narrative.
 - `planning/`: sanitized planning notes.
+- `playbooks/`: public-safe workflow playbooks.
+- `templates/`: reusable worker ticket, result, failure, acceptance, and
+  evaluation templates.
+- `rubrics/`: Markdown scoring rubrics.
+- `scripts/`: local repo helper scripts.
 - `tmp/`, `runtime/`, `local/`, and `outputs/`: ignored local working areas.
 
 Do not claim that this repository contains a package, test framework, CI system,
-benchmark harness, VS Code extension, MCP server, or model evaluation suite until
-a later roadmap phase records that evidence.
+benchmark harness, VS Code extension, MCP server, or automated model evaluation
+suite until a later roadmap phase records that evidence.
 
 ## Working Principles
 

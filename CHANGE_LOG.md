@@ -120,3 +120,48 @@ issues, pull requests, and closeout comments.
 - Used child issue #26 for final PR closeout so Phase 3 lands through the same
   GitHub issue, PR, merge, parent-closure, and local branch-cleanup discipline
   that Agent Workbench is designed to study.
+
+## 2026-07-04 - Launched Phase 4 worker model evaluation rubric
+
+- Created the Phase 4 evaluation-rubric lane on
+  `feature/p4-worker-model-evaluation-rubric`, with parent issue #28 and child
+  task issues #29 through #33.
+- Scoped Phase 4 to Markdown-first evaluation artifacts: model inventory notes,
+  a worker-model rubric, a failure-mode taxonomy, a result template, and one
+  bounded qwen3-coder versus qwen3-coder-next A/B scoring dry run.
+- Kept benchmark harnesses, schemas, CI, VS Code extensions, Foundry
+  integration, and broad multi-model leaderboards deferred.
+
+## 2026-07-04 - Scored Phase 4 bridge dry run
+
+- Ran a bounded bridge ticket with observed model `qwen3-coder:latest`; the
+  worker created the expected ignored result file but ran the required terminal
+  command twice, so the rubric classified the result as `retry` with the
+  `duplicate-command` failure mode.
+- Attempted the matching `qwen3-coder-next:latest` ticket after changing the
+  local VS Code panel model state, but persisted session evidence still
+  resolved to `qwen3-coder:latest`, so the candidate comparison is recorded as
+  blocked by `missing-model-evidence`.
+- Added `planning/phase4_ab_scoring_results.md` with sanitized scoring results
+  and left raw tickets, reports, and transcripts ignored under runtime paths.
+
+## 2026-07-04 - Synchronized Phase 4 evaluation artifacts
+
+- Updated `AGENTS.md` so the current repository state reflects the bridge
+  helper, templates, playbooks, and Markdown rubrics now present in Agent
+  Workbench.
+- Checked off completed Phase 4 roadmap tasks for model inventory, run
+  metadata, rubric, failure taxonomy, evaluation template, and dry-run scoring
+  evidence.
+
+## 2026-07-04 - Closed Phase 4 worker model evaluation rubric
+
+- Verified the Phase 4 artifacts with Python compilation of the bridge helper,
+  `git diff --check`, Markdown inspection, and public-safety searches for
+  private paths, credentials, raw transcript leakage, and unrelated project
+  assumptions.
+- Closed child issues #29 through #32 after rubric, taxonomy, inventory, and
+  template work landed; used issue #33 for final A/B dry-run and PR closeout.
+- Recorded the qwen3-coder-next comparison as blocked by observed model
+  mismatch, which confirms the rubric's rule that model-comparison claims need
+  persisted `resolvedModel` evidence.
