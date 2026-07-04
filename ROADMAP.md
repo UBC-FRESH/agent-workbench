@@ -14,6 +14,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P3 Copilot Chat Bridge V0 Prototype | #21 | `feature/p3-copilot-chat-bridge-v0` | Complete |
 | P4 Worker model evaluation rubric | #28 | `feature/p4-worker-model-evaluation-rubric` | Complete |
 | P5 Custom agent model switching spike | #35 | `feature/p5-custom-agent-model-switching` | Complete |
+| P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -297,3 +298,50 @@ Phase 5 acceptance criteria:
   exact blocker.
 - `ROADMAP.md`, `CHANGE_LOG.md`, planning notes, issue comments, and PR body
   agree.
+
+## Phase 6: Copilot SDK Ollama Feasibility Spike
+
+Parent issue: #41
+
+Branch: `feature/p6-copilot-sdk-ollama-spike`
+
+Status: active
+
+Goal: determine whether the GitHub Copilot SDK can provide a more reliable
+programmatic worker bridge for configured Ollama models than the VS Code Chat
+launch path tested in Phases 3 through 5.
+
+- [x] P6.1 Copilot SDK support audit (#42)
+  - [x] Inspect SDK documentation and examples.
+  - [x] Record public-safe support summary in tracked planning notes.
+  - [x] Avoid copying private endpoint details or raw local transcripts.
+- [x] P6.2 Local SDK probe scaffold (#43)
+  - [x] Add a local-only SDK probe scaffold.
+  - [x] Document required inputs and safe defaults.
+  - [x] Ensure outputs go under ignored runtime paths.
+  - [x] Avoid adding package or CI scaffolding.
+- [x] P6.3 Same-ticket Ollama model trial protocol (#44)
+  - [x] Add trial protocol guidance.
+  - [x] Define same-ticket run commands using explicit model arguments.
+  - [x] Attempt local dry-run checks if dependencies and endpoint are available.
+  - [x] Record blockers exactly if the SDK or endpoint is unavailable.
+- [ ] P6.4 Feasibility notes, closeout, and PR (#45)
+  - [x] Synchronize roadmap and changelog.
+  - [x] Run `git diff --check`.
+  - [x] Inspect changed Markdown and script files.
+  - [x] Search for credentials, private paths, raw transcript leakage, endpoint
+        details, and unrelated project contamination.
+  - [x] Comment on and close implementation child issues.
+  - [ ] Open PR and complete parent closeout after merge.
+
+Phase 6 acceptance criteria:
+
+- Tracked notes identify the SDK features relevant to Ollama BYOK, explicit
+  model selection, provider configuration, tool restriction, and event capture.
+- The repo contains a public-safe local-only probe scaffold or runbook for
+  testing SDK sessions against configured Ollama models.
+- The trial protocol can run the same bounded ticket against
+  `qwen3-coder:latest` and `qwen3-coder-next:latest` without depending on VS
+  Code model-picker state.
+- Findings state whether the SDK path should replace, complement, or be
+  deferred behind the VS Code Chat bridge.

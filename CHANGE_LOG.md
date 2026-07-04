@@ -178,3 +178,26 @@ issues, pull requests, and closeout comments.
 - Recorded the next tranche decision: use custom agents for instructions/tool
   restriction only, and move repeatable model comparisons toward a direct
   Ollama API worker harness.
+
+## 2026-07-04 - Launched Phase 6 Copilot SDK Ollama feasibility spike
+
+- Created the Phase 6 SDK/Ollama feasibility lane on
+  `feature/p6-copilot-sdk-ollama-spike`, with parent issue #41 and child task
+  issues #42 through #45.
+- Scoped Phase 6 to a local-only Copilot SDK probe scaffold, public-safe support
+  audit notes, and a same-ticket qwen3-coder versus qwen3-coder-next trial
+  protocol.
+- Kept package scaffolding, CI, VS Code extension work, MCP servers, benchmark
+  harnesses, and production bridge claims deferred.
+
+## 2026-07-04 - Added Copilot SDK Ollama probe scaffold
+
+- Added `scripts/copilot_sdk_ollama_probe.py`, a local-only helper that creates
+  Copilot SDK sessions with explicit Ollama model and OpenAI-compatible provider
+  configuration, then writes observable event evidence to ignored runtime paths.
+- Added `planning/phase6_copilot_sdk_ollama_spike_notes.md` with the SDK support
+  audit, safe run protocol, same-ticket model comparison commands, and next-step
+  decision criteria.
+- Recorded the feasibility boundary: the SDK path is promising because it avoids
+  VS Code model-picker state, but it must still prove local connection, idle,
+  event-capture, and no-loop behavior before becoming the preferred bridge.
