@@ -1,0 +1,48 @@
+{
+  "workflow_id": "software-task-review",
+  "step_id": "review-cli-change",
+  "title": "Review a bounded CLI ergonomics proposal",
+  "purpose": "Convert issue and roadmap evidence into supervisor implementation guidance.",
+  "input_artifacts": [
+    {
+      "artifact_id": "roadmap-task",
+      "kind": "source",
+      "path_or_reference": "ROADMAP.md phase task",
+      "provenance": "Tracked project roadmap.",
+      "public_safety": "Repo-local public planning artifact.",
+      "verifier": "Supervisor"
+    }
+  ],
+  "transformation": "Summarize friction and propose a small CLI improvement.",
+  "implementation": {
+    "type": "local-worker",
+    "name": "qwen3-coder-next:latest",
+    "authority_level": "L1"
+  },
+  "output_artifacts": [
+    {
+      "artifact_id": "cli-proposal",
+      "kind": "generated",
+      "path_or_reference": "runtime/agent_workbench/software/cli_proposal.md",
+      "provenance": "Worker proposal from supplied roadmap text.",
+      "public_safety": "Ignored runtime artifact.",
+      "verifier": "Supervisor"
+    }
+  ],
+  "verification": {
+    "manual_checks": [
+      "Supervisor verifies current CLI surface before accepting suggestions."
+    ]
+  },
+  "token_accounting": {
+    "supervisor_input_tokens": 30000,
+    "supervisor_output_tokens": 6000,
+    "worker_input_tokens": 90000,
+    "worker_output_tokens": 18000,
+    "estimated_net_savings_usd": 0.08
+  },
+  "supervisor_decision": {
+    "decision": "use-as-proposal",
+    "rationale": "Proposal informs supervisor-owned implementation."
+  }
+}
