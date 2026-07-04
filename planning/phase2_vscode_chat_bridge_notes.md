@@ -55,5 +55,5 @@ Dry-run checks:
   filesystem and GitHub state independently.
 - The bridge should start with self-contained documentation tasks before
   attempting repo mutations in external projects.
-- P3 can now define a worker model evaluation rubric using this launch pattern
-  and the P1 acceptance checklist.
+- P3 can now prototype local bridge evidence capture, with model evaluation
+  rubric work deferred until that evidence surface is available.

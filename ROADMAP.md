@@ -156,28 +156,28 @@ Goal: implement a local-only bridge harness that launches bounded VS Code
 Copilot Chat worker tickets via stdin, extracts persisted session evidence, and
 writes supervisor verification reports.
 
-- [ ] P3.1 Bridge launch harness (#22)
-  - [ ] Add a script-level local helper for stdin ticket dispatch.
-  - [ ] Accept ticket path, marker, timeout, and workspace root inputs.
-  - [ ] Launch `code chat --reuse-window --maximize --mode agent` without
+- [x] P3.1 Bridge launch harness (#22)
+  - [x] Add a script-level local helper for stdin ticket dispatch.
+  - [x] Accept ticket path, marker, timeout, and workspace root inputs.
+  - [x] Launch `code chat --reuse-window --maximize --mode agent` without
         embedding multiline ticket text in the command-line prompt.
-  - [ ] Keep raw tickets, reports, and transcripts in ignored runtime paths.
-- [ ] P3.2 Session artifact parser (#23)
-  - [ ] Locate matching `chatSessions/*.jsonl` artifacts by unique marker.
-  - [ ] Extract `resolvedModel`, `permissionLevel`, final response, terminal
+  - [x] Keep raw tickets, reports, and transcripts in ignored runtime paths.
+- [x] P3.2 Session artifact parser (#23)
+  - [x] Locate matching `chatSessions/*.jsonl` artifacts by unique marker.
+  - [x] Extract `resolvedModel`, `permissionLevel`, final response, terminal
         tool calls, file tool calls, and tool results.
-  - [ ] Report missing, incomplete, and timed-out sessions as blocked evidence.
-- [ ] P3.3 Supervisor verification report (#24)
-  - [ ] Extract expected commands and allowed output files from the ticket.
-  - [ ] Compare observed terminal commands and file mutations against the ticket.
-  - [ ] Flag extra commands, missing commands, missing files, and wrong
+  - [x] Report missing, incomplete, and timed-out sessions as blocked evidence.
+- [x] P3.3 Supervisor verification report (#24)
+  - [x] Extract expected commands and allowed output files from the ticket.
+  - [x] Compare observed terminal commands and file mutations against the ticket.
+  - [x] Flag extra commands, missing commands, missing files, and wrong
         model/permission state.
-  - [ ] Write an ignored Markdown supervisor report.
-- [ ] P3.4 Dogfood bridge on one bounded task (#25)
-  - [ ] Run one local `agent-workbench` worker ticket through the harness.
-  - [ ] Inspect the generated supervisor report.
-  - [ ] Record sanitized findings in `planning/phase3_copilot_chat_bridge_v0_notes.md`.
-  - [ ] Update `playbooks/vscode_chat_bridge.md` with v0 lessons.
+  - [x] Write an ignored Markdown supervisor report.
+- [x] P3.4 Dogfood bridge on one bounded task (#25)
+  - [x] Run one local `agent-workbench` worker ticket through the harness.
+  - [x] Inspect the generated supervisor report.
+  - [x] Record sanitized findings in `planning/phase3_copilot_chat_bridge_v0_notes.md`.
+  - [x] Update `playbooks/vscode_chat_bridge.md` with v0 lessons.
 - [ ] P3.5 Phase closeout, verification, and PR (#26)
   - [ ] Run `git diff --check`.
   - [ ] Inspect changed Markdown files.

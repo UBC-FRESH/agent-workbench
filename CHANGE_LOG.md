@@ -92,3 +92,18 @@ issues, pull requests, and closeout comments.
   Code chat session evidence, and write supervisor verification reports.
 - Moved the worker model evaluation rubric to Phase 4 so scoring work can build
   on automated bridge evidence rather than manual transcript inspection.
+
+## 2026-07-04 - Added Copilot Chat bridge v0 harness
+
+- Added `scripts/copilot_chat_bridge.py`, a local-only helper that launches
+  bounded VS Code Chat worker tickets through stdin and writes ignored
+  supervisor reports.
+- Implemented session artifact discovery by unique marker plus extraction of
+  observed model values, permission-level values, terminal commands, file-tool
+  calls, tool names, and blocked or timed-out session state.
+- Added `planning/phase3_copilot_chat_bridge_v0_notes.md` and updated the
+  bridge playbook with dogfood findings from a visible Ollama-backed worker
+  session.
+- Confirmed the verifier flags policy deviations from observed evidence, such
+  as a worker running an allowed terminal command more times than the ticket
+  permitted.

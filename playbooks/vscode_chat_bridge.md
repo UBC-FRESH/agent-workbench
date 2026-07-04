@@ -110,14 +110,36 @@ Allowed supervisor decisions:
 - `blocked`: maintainer input or external state is required.
 - `reject`: output is unsafe, incorrect, or outside scope.
 
-## Response Capture Boundary
+## V0 Harness
 
-This phase does not automate response parsing from VS Code Chat.
+Phase 3 adds a local-only prototype helper:
 
-The bridge can launch a chat session with a bounded prompt. The supervisor still
-must inspect worker-reported evidence, local files, and GitHub state directly.
-If reliable response capture becomes necessary, it should be planned in a later
-phase after real bridge trials show what evidence is missing.
+```powershell
+python scripts\copilot_chat_bridge.py `
+  --ticket runtime\agent_jobs\<task>.ticket.md `
+  --marker <unique-marker> `
+  --workspace-root . `
+  --report runtime\agent_jobs\<task>.supervisor.md
+```
+
+The helper launches a visible VS Code Chat worker session with stdin, searches
+local persisted chat artifacts for the marker, and writes an ignored supervisor
+report. The report compares observed terminal commands and file-tool activity
+against the ticket.
+
+V0 evidence is local and supervisor-facing. It is not a stable VS Code API
+contract, and it does not replace human review.
+
+Current v0 limitations:
+
+- Permission-level values are reported as observed session evidence and may
+  contain more than one stored value.
+- The verifier treats duplicate terminal commands as deviations when the ticket
+  allowed the command only once.
+- Worker prose remains non-authoritative; observed tools, files, and GitHub
+  state are the evidence surfaces.
+- Raw tickets, reports, and transcripts remain ignored unless sanitized and
+  intentionally promoted into `planning/`.
 
 ## Minimal Dry-Run Command
 
