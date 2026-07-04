@@ -121,26 +121,44 @@ def validate_manifest_template(root: Path) -> list[str]:
 
 
 def run_cli_help_check(root: Path) -> list[str]:
-    command = [sys.executable, "-m", "agent_workbench.cli", "decide", "task", "--help"]
-    completed = subprocess.run(
-        command,
-        cwd=root,
-        check=False,
-        capture_output=True,
-        text=True,
+    checks = (
+        (
+            [sys.executable, "-m", "agent_workbench.cli", "decide", "task", "--help"],
+            ("--input", "--output", "--json-output"),
+            "agent-workbench decide task --help",
+        ),
+        (
+            [
+                sys.executable,
+                "-m",
+                "agent_workbench.cli",
+                "accounting",
+                "synthesize",
+                "--help",
+            ],
+            ("--input", "--input-dir", "--output"),
+            "agent-workbench accounting synthesize --help",
+        ),
     )
-    output = completed.stdout + completed.stderr
-    required_terms = ("--input", "--output", "--json-output")
-    missing = [term for term in required_terms if term not in output]
-    if completed.returncode != 0 or missing:
-        raise RuntimeError(
-            "agent-workbench decide task help check failed; "
-            f"exit={completed.returncode}; missing={missing}"
+    for command, required_terms, label in checks:
+        completed = subprocess.run(
+            command,
+            cwd=root,
+            check=False,
+            capture_output=True,
+            text=True,
         )
+        output = completed.stdout + completed.stderr
+        missing = [term for term in required_terms if term not in output]
+        if completed.returncode != 0 or missing:
+            raise RuntimeError(
+                f"{label} check failed; exit={completed.returncode}; missing={missing}"
+            )
     return [
         "## CLI Help Surface Checks",
         "",
         "- `agent-workbench decide task --help`: ok",
+        "- `agent-workbench accounting synthesize --help`: ok",
         "",
     ]
 

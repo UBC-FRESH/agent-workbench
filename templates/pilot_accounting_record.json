@@ -1,0 +1,65 @@
+{
+  "pilot_id": "example-real-project-pilot",
+  "project": "example-project",
+  "task_id": "p-example-1",
+  "title": "Summarize issue evidence and propose a bounded implementation slice",
+  "task_type": "evidence intake",
+  "roadmap_level": "task",
+  "model": "qwen3-coder-next:latest",
+  "protocol": "proposal-assist/no-tool",
+  "authority_level": "L1",
+  "task_selection": {
+    "source": "roadmap issue or phase task",
+    "task_size": "small",
+    "critical_path_position": "edge task",
+    "selection_rationale": "Representative task with low mutation risk.",
+    "stop_conditions": [
+      "Worker output loops or repeats unsupported completion claims.",
+      "Worker output requires private context not present in the ticket.",
+      "Supervisor verification cost exceeds the direct-work estimate."
+    ]
+  },
+  "token_accounting": {
+    "direct_supervisor_input_tokens": 120000,
+    "direct_supervisor_output_tokens": 25000,
+    "delegated_supervisor_input_tokens": 45000,
+    "delegated_supervisor_output_tokens": 9000,
+    "worker_input_tokens": 150000,
+    "worker_output_tokens": 35000,
+    "verification_supervisor_input_tokens": 30000,
+    "verification_supervisor_output_tokens": 6000,
+    "cleanup_supervisor_input_tokens": 10000,
+    "cleanup_supervisor_output_tokens": 2000,
+    "retry_supervisor_input_tokens": 0,
+    "retry_supervisor_output_tokens": 0,
+    "supervisor_input_price_per_1m_usd": 1.75,
+    "supervisor_output_price_per_1m_usd": 14.0,
+    "worker_input_price_per_1m_usd": 0.0,
+    "worker_output_price_per_1m_usd": 0.0
+  },
+  "claim_review": {
+    "accepted_claims": 4,
+    "rejected_claims": 1,
+    "needs_evidence_claims": 2,
+    "worker_changed_supervisor_decision": true
+  },
+  "verification": {
+    "commands_run": [
+      "agent-workbench evidence validate --input <summary.evidence.json>"
+    ],
+    "manual_checks": [
+      "Supervisor checked each accepted claim against cited source files."
+    ],
+    "blockers": []
+  },
+  "outcome": {
+    "classification": "promising",
+    "rationale": "Worker evidence reduced supervisor synthesis cost despite imperfect claims."
+  },
+  "supervisor_assessment": {
+    "final_decision": "use-output",
+    "direct_work_counterfactual": "Supervisor likely would have spent more tokens reading and summarizing the same sources directly.",
+    "delegation_value": "Useful imperfect proposal",
+    "policy_implication": "Keep evidence-intake tasks eligible for no-tool proposal delegation."
+  }
+}

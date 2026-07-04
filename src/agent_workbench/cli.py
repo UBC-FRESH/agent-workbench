@@ -9,6 +9,12 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .accounting import (
+    load_accounting_record,
+    render_accounting_markdown,
+    synthesize_accounting_markdown,
+    validate_accounting_record,
+)
 from .comparison import render_eval_comparison
 from .decision import (
     DecisionInputError,
@@ -114,6 +120,44 @@ def build_parser() -> argparse.ArgumentParser:
     )
     eval_compare_parser.add_argument("--output", type=Path, required=True)
     eval_compare_parser.set_defaults(func=run_compare_eval)
+
+    accounting_parser = subparsers.add_parser(
+        "accounting",
+        help="Validate, render, or synthesize pilot accounting records.",
+    )
+    accounting_subparsers = accounting_parser.add_subparsers(
+        dest="accounting_command",
+        required=True,
+    )
+
+    accounting_validate_parser = accounting_subparsers.add_parser(
+        "validate",
+        help="Validate a sanitized pilot accounting JSON record.",
+    )
+    accounting_validate_parser.add_argument("--input", type=Path, required=True)
+    accounting_validate_parser.set_defaults(func=run_accounting_validate)
+
+    accounting_render_parser = accounting_subparsers.add_parser(
+        "render",
+        help="Render a pilot accounting JSON record to Markdown.",
+    )
+    accounting_render_parser.add_argument("--input", type=Path, required=True)
+    accounting_render_parser.add_argument("--output", type=Path, required=True)
+    accounting_render_parser.set_defaults(func=run_accounting_render)
+
+    accounting_synthesize_parser = accounting_subparsers.add_parser(
+        "synthesize",
+        help="Synthesize multiple pilot accounting records into one report.",
+    )
+    accounting_synthesize_parser.add_argument("--input", type=Path, action="append", default=[])
+    accounting_synthesize_parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=None,
+        help="Directory containing *.accounting.json files.",
+    )
+    accounting_synthesize_parser.add_argument("--output", type=Path, required=True)
+    accounting_synthesize_parser.set_defaults(func=run_accounting_synthesize)
 
     decide_parser = subparsers.add_parser(
         "decide",
@@ -291,6 +335,56 @@ def run_compare_eval(args: argparse.Namespace) -> int:
     try:
         report = render_eval_comparison(paths)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(report, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_accounting_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_accounting_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_accounting_record(data)
+    if result.ok:
+        print(f"valid pilot accounting record: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_accounting_render(args: argparse.Namespace) -> int:
+    try:
+        data = load_accounting_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_accounting_record(data)
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(render_accounting_markdown(data), encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_accounting_synthesize(args: argparse.Namespace) -> int:
+    paths = list(args.input)
+    if args.input_dir is not None:
+        paths.extend(sorted(args.input_dir.glob("*.accounting.json")))
+    if not paths:
+        print("error: provide --input or --input-dir", file=sys.stderr)
+        return 1
+    try:
+        report = synthesize_accounting_markdown(paths)
+    except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     args.output.parent.mkdir(parents=True, exist_ok=True)
