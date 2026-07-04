@@ -616,3 +616,15 @@ issues, pull requests, and closeout comments.
 - Added `planning/p27_p30_forward_plan.md`,
   `planning/phase27_supervisor_decision_packets.md`, and updated the CLI
   workflow playbook.
+
+## 2026-07-04 - Added Phase 28 claim review aids
+
+- Created the Phase 28 claim-review lane on `feature/p28-claim-review-aids`,
+  with parent issue #204 and child task issues #205 through #208.
+- Added optional `accepted_claims`, `rejected_claims`, and
+  `needs_evidence_claims` fields to sanitized evidence summaries.
+- Extended evidence validation, rendering, and supervisor decision packets to
+  surface claim dispositions when present.
+- Added `templates/claim_review_checklist.md` and
+  `planning/phase28_claim_review_aids.md` to make unsupported worker-claim
+  review explicit before supervisor promotion.

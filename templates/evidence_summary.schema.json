@@ -33,7 +33,10 @@
     "outcomes": "Array of sanitized classification/count/note records.",
     "verification": "Supervisor commands, inspections, checks, and blockers.",
     "promotion_boundary": "Raw evidence retention path and private-value exclusions.",
-    "supervisor_decision": "accept, retry, reject, blocked, or defer with rationale."
+    "supervisor_decision": "accept, retry, reject, blocked, or defer with rationale.",
+    "accepted_claims": "Optional list of claims the supervisor accepts as evidence-supported.",
+    "rejected_claims": "Optional list of unsupported or contradicted worker claims.",
+    "needs_evidence_claims": "Optional list of claims that may be useful but need more evidence before promotion."
   },
   "privacy_rules": [
     "Do not include provider URLs, access headers, tokens, raw transcripts, or personal workstation paths.",

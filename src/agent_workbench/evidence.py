@@ -27,6 +27,12 @@ REQUIRED_FIELDS = (
     "supervisor_decision",
 )
 
+CLAIM_FIELDS = (
+    "accepted_claims",
+    "rejected_claims",
+    "needs_evidence_claims",
+)
+
 SUSPICIOUS_PATTERNS = (
     re.compile(r"[A-Za-z]:\\Users\\", re.IGNORECASE),
     re.compile(r"/home/[^/\s]+"),
@@ -70,10 +76,29 @@ def validate_summary(data: dict[str, Any]) -> ValidationResult:
     if outcomes is not None and not isinstance(outcomes, list):
         errors.append("outcomes must be a list")
 
+    for field in CLAIM_FIELDS:
+        claims = data.get(field)
+        if claims is not None and not is_claim_list(claims):
+            errors.append(
+                f"{field} must be a list of strings or claim objects with a text field"
+            )
+
     for finding in find_private_values(data):
         errors.append(f"private-looking value detected: {finding}")
 
     return ValidationResult(ok=not errors, errors=errors)
+
+
+def is_claim_list(value: Any) -> bool:
+    if not isinstance(value, list):
+        return False
+    for item in value:
+        if isinstance(item, str):
+            continue
+        if isinstance(item, dict) and isinstance(item.get("text"), str):
+            continue
+        return False
+    return True
 
 
 def find_private_values(value: Any, path: str = "$") -> list[str]:
@@ -132,10 +157,11 @@ def render_markdown(data: dict[str, Any]) -> str:
                         subject=outcome.get("subject", ""),
                         classification=outcome.get("classification", ""),
                         count=outcome.get("count", ""),
-                        notes=outcome.get("notes", ""),
+                        notes=outcome.get("notes", outcome.get("note", "")),
                     )
                 )
 
+    lines.extend(render_claim_review(data))
     lines.extend(["", "## Verification", ""])
     if isinstance(verification, dict):
         for key, item in verification.items():
@@ -156,6 +182,39 @@ def render_markdown(data: dict[str, Any]) -> str:
 
     lines.append("")
     return "\n".join(lines)
+
+
+def render_claim_review(data: dict[str, Any]) -> list[str]:
+    if not any(data.get(field) for field in CLAIM_FIELDS):
+        return []
+    lines = ["", "## Claim Review", ""]
+    labels = {
+        "accepted_claims": "Accepted Claims",
+        "rejected_claims": "Rejected Claims",
+        "needs_evidence_claims": "Needs Evidence Claims",
+    }
+    for field, label in labels.items():
+        lines.extend([f"### {label}", ""])
+        claims = data.get(field, [])
+        if isinstance(claims, list) and claims:
+            for claim in claims:
+                lines.append(f"- {format_claim(claim)}")
+        else:
+            lines.append("- None recorded.")
+        lines.append("")
+    return lines
+
+
+def format_claim(claim: Any) -> str:
+    if isinstance(claim, str):
+        return claim
+    if isinstance(claim, dict):
+        text = str(claim.get("text", ""))
+        evidence = claim.get("evidence")
+        if evidence:
+            return f"{text} Evidence: `{evidence}`"
+        return text
+    return str(claim)
 
 
 def synthesize_markdown(paths: list[Path]) -> str:
@@ -192,6 +251,7 @@ def synthesize_markdown(paths: list[Path]) -> str:
 
     decision_counts: dict[str, int] = {}
     classification_counts: dict[str, int] = {}
+    claim_counts = {field: 0 for field in CLAIM_FIELDS}
     lines.extend(["", "## Decision Summary", ""])
     for _path, data in summaries:
         decision = data.get("supervisor_decision", {})
@@ -211,6 +271,10 @@ def synthesize_markdown(paths: list[Path]) -> str:
                         classification_counts[classification] = (
                             classification_counts.get(classification, 0) + count
                         )
+        for field in CLAIM_FIELDS:
+            claims = data.get(field, [])
+            if isinstance(claims, list):
+                claim_counts[field] += len(claims)
 
     lines.append("### Supervisor Decisions")
     lines.append("")
@@ -220,6 +284,10 @@ def synthesize_markdown(paths: list[Path]) -> str:
     lines.extend(["", "### Outcome Classifications", ""])
     for classification, count in sorted(classification_counts.items()):
         lines.append(f"- `{classification}`: {count}")
+
+    lines.extend(["", "### Claim Dispositions", ""])
+    for field, count in claim_counts.items():
+        lines.append(f"- `{field}`: {count}")
 
     lines.extend(
         [
@@ -263,6 +331,22 @@ def synthesize_markdown(paths: list[Path]) -> str:
                         )
                     )
         lines.append("")
+
+    lines.extend(["## Claim Review", ""])
+    for _path, data in summaries:
+        if not any(data.get(field) for field in CLAIM_FIELDS):
+            continue
+        lines.append(f"### {data.get('evidence_id', '')}")
+        lines.append("")
+        for field in CLAIM_FIELDS:
+            lines.append(f"#### {field}")
+            claims = data.get(field, [])
+            if isinstance(claims, list) and claims:
+                for claim in claims:
+                    lines.append(f"- {format_claim(claim)}")
+            else:
+                lines.append("- None recorded.")
+            lines.append("")
 
     lines.extend(["## Promotion Boundary", ""])
     for _path, data in summaries:
