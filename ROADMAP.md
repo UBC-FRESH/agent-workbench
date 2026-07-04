@@ -57,6 +57,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P46 FreshForge dependency decision | #316 | `feature/p46-freshforge-dependency-decision` | Complete |
 | P47 FreshForge deployment test batch | #322 | `feature/p47-freshforge-deployment-test-batch` | Complete |
 | P48 Phase-scale A/B token economics benchmark | #328 | `feature/p48-phase-scale-ab-token-economics` | Complete |
+| P49 Benchmark worktree preparation | #334 | `feature/p49-benchmark-worktree-prep` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2131,3 +2132,40 @@ Phase 48 acceptance criteria:
   direct lane, delegated lane, rollback/worktree isolation, token fields,
   validation commands, and win/loss decision rules.
 - P48 queues execution without mutating FreshForge.
+
+## Phase 49: Benchmark Worktree Preparation
+
+Parent issue: #334
+
+Branch: `feature/p49-benchmark-worktree-prep`
+
+Status: complete
+
+Goal: turn the P48 phase-scale benchmark packet into an executable setup step
+by preparing isolated FreshForge benchmark worktrees for the direct-supervisor
+and delegated-graph lanes from the same recorded start commit.
+
+Planned tasks:
+
+- [x] P49.1 Worktree preparation contract (#335)
+  - [x] Define the worktree setup boundary and safety rules.
+  - [x] Document the FreshForge P16 setup protocol.
+- [x] P49.2 Benchmark prepare command (#336)
+  - [x] Add `agent-workbench benchmark prepare-worktrees`.
+  - [x] Support dry-run and optional Markdown report output.
+- [x] P49.3 FreshForge P16 setup dry run (#337)
+  - [x] Dry-run the FreshForge lane setup.
+  - [x] Create or verify lane worktrees from the same start commit.
+- [x] P49.4 Verification and closeout (#338)
+  - [x] Run command-surface smoke, benchmark validation, lint, and diff checks.
+  - [x] Confirm FreshForge `main` remains clean.
+
+Phase 49 acceptance criteria:
+
+- Agent Workbench has a command that can prepare lane worktrees from the tracked
+  P48 benchmark record.
+- The command keeps script/package lookup anchored in Agent Workbench while
+  operating on the target FreshForge repo.
+- The FreshForge P16 direct and delegated lane branches/worktrees can be created
+  from the same recorded start commit or a precise blocker is reported.
+- Roadmap, changelog, planning note, issues, and PR agree.

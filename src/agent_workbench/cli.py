@@ -17,6 +17,7 @@ from .accounting import (
 )
 from .benchmark import (
     load_benchmark_record,
+    prepare_benchmark_worktrees,
     render_benchmark_markdown,
     validate_benchmark_record,
 )
@@ -336,6 +337,30 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark_render_parser.add_argument("--input", type=Path, required=True)
     benchmark_render_parser.add_argument("--output", type=Path, required=True)
     benchmark_render_parser.set_defaults(func=run_benchmark_render)
+
+    benchmark_prepare_parser = benchmark_subparsers.add_parser(
+        "prepare-worktrees",
+        help="Prepare benchmark lane worktrees in a target project checkout.",
+    )
+    benchmark_prepare_parser.add_argument("--input", type=Path, required=True)
+    benchmark_prepare_parser.add_argument(
+        "--project-root",
+        type=Path,
+        required=True,
+        help="Target project checkout where benchmark lanes will be prepared.",
+    )
+    benchmark_prepare_parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Optional Markdown report path.",
+    )
+    benchmark_prepare_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print the worktree commands without running them.",
+    )
+    benchmark_prepare_parser.set_defaults(func=run_benchmark_prepare_worktrees)
 
     graph_parser = subparsers.add_parser(
         "graph",
@@ -797,6 +822,35 @@ def run_benchmark_render(args: argparse.Namespace) -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(render_benchmark_markdown(data), encoding="utf-8")
     print(f"wrote {args.output}")
+    return 0
+
+
+def run_benchmark_prepare_worktrees(args: argparse.Namespace) -> int:
+    try:
+        data = load_benchmark_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    validation = validate_benchmark_record(data)
+    if not validation.ok:
+        for error in validation.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    result = prepare_benchmark_worktrees(
+        data,
+        args.project_root,
+        dry_run=args.dry_run,
+    )
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(result.report, encoding="utf-8")
+        print(f"wrote {args.output}")
+    else:
+        print(result.report)
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
     return 0
 
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -52,6 +53,13 @@ FORBIDDEN_FIELDS = {
 @dataclass(frozen=True)
 class BenchmarkValidation:
     ok: bool
+    errors: list[str]
+
+
+@dataclass(frozen=True)
+class WorktreePreparation:
+    ok: bool
+    report: str
     errors: list[str]
 
 
@@ -231,6 +239,190 @@ def render_benchmark_markdown(data: dict[str, Any]) -> str:
         lines.append(f"- {rule}")
     lines.append("")
     return "\n".join(lines)
+
+
+def prepare_benchmark_worktrees(
+    data: dict[str, Any],
+    project_root: Path,
+    *,
+    dry_run: bool = False,
+) -> WorktreePreparation:
+    """Prepare benchmark lane worktrees in a target project checkout."""
+    errors: list[str] = []
+    project_root = project_root.resolve()
+    start_state = data.get("start_state", {})
+    if not isinstance(start_state, dict):
+        start_state = {}
+    start_commit = str(start_state.get("start_commit", "")).strip()
+    lanes = data.get("lanes", [])
+    if not isinstance(lanes, list):
+        lanes = []
+
+    lines = [
+        "# Benchmark Worktree Preparation",
+        "",
+        f"- benchmark_id: `{data.get('benchmark_id', '')}`",
+        f"- project_root: `{project_root}`",
+        f"- start_commit: `{start_commit}`",
+        f"- dry_run: `{str(dry_run).lower()}`",
+        "",
+    ]
+
+    if not project_root.exists():
+        errors.append(f"project root does not exist: {project_root}")
+    elif not is_git_checkout(project_root):
+        errors.append(f"project root is not a git checkout: {project_root}")
+    elif start_commit and not git_commit_exists(project_root, start_commit):
+        errors.append(f"start commit is not present in target repo: {start_commit}")
+    elif not start_commit:
+        errors.append("start_state.start_commit is required")
+
+    if errors:
+        lines.extend(["## Errors", ""])
+        lines.extend(f"- {error}" for error in errors)
+        lines.append("")
+        return WorktreePreparation(ok=False, report="\n".join(lines), errors=errors)
+
+    lines.extend(["## Lane Actions", ""])
+    for lane in lanes:
+        if not isinstance(lane, dict):
+            continue
+        lane_id = str(lane.get("lane_id", "")).strip()
+        branch = str(lane.get("branch", "")).strip()
+        worktree_value = str(lane.get("worktree", "")).strip()
+        worktree = resolve_lane_worktree(project_root, worktree_value)
+        action_lines, action_errors = prepare_lane_worktree(
+            project_root,
+            lane_id=lane_id,
+            branch=branch,
+            worktree=worktree,
+            start_commit=start_commit,
+            dry_run=dry_run,
+        )
+        lines.extend(action_lines)
+        errors.extend(action_errors)
+
+    return WorktreePreparation(ok=not errors, report="\n".join(lines), errors=errors)
+
+
+def prepare_lane_worktree(
+    project_root: Path,
+    *,
+    lane_id: str,
+    branch: str,
+    worktree: Path,
+    start_commit: str,
+    dry_run: bool,
+) -> tuple[list[str], list[str]]:
+    errors: list[str] = []
+    lines = [
+        f"### `{lane_id}`",
+        "",
+        f"- branch: `{branch}`",
+        f"- worktree: `{worktree}`",
+    ]
+    if not lane_id:
+        errors.append("lane_id is required")
+    if not branch:
+        errors.append(f"{lane_id or '<unknown>'}: branch is required")
+    if not str(worktree).strip():
+        errors.append(f"{lane_id or '<unknown>'}: worktree is required")
+    if errors:
+        lines.extend(f"- error: {error}" for error in errors)
+        lines.append("")
+        return lines, errors
+
+    if worktree.exists():
+        lines.extend(["- action: existing worktree left unchanged", ""])
+        return lines, []
+
+    branch_exists = git_branch_exists(project_root, branch)
+    if branch_exists:
+        branch_head = git_output(project_root, "rev-parse", branch)
+        if branch_head != start_commit:
+            error = (
+                f"{lane_id}: branch `{branch}` exists at {branch_head}, "
+                f"not start commit {start_commit}"
+            )
+            lines.extend([f"- error: {error}", ""])
+            return lines, [error]
+        command = ["git", "-C", str(project_root), "worktree", "add", str(worktree), branch]
+    else:
+        command = [
+            "git",
+            "-C",
+            str(project_root),
+            "worktree",
+            "add",
+            "-b",
+            branch,
+            str(worktree),
+            start_commit,
+        ]
+
+    lines.append(f"- command: `{format_command(command)}`")
+    if dry_run:
+        lines.extend(["- action: dry-run only", ""])
+        return lines, []
+
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        error = result.stderr.strip() or result.stdout.strip()
+        lines.extend([f"- error: {error}", ""])
+        return lines, [f"{lane_id}: {error}"]
+    lines.extend(["- action: created", ""])
+    return lines, []
+
+
+def resolve_lane_worktree(project_root: Path, worktree: str) -> Path:
+    path = Path(worktree)
+    if path.is_absolute():
+        return path.resolve()
+    return (project_root / path).resolve()
+
+
+def is_git_checkout(project_root: Path) -> bool:
+    result = subprocess.run(
+        ["git", "-C", str(project_root), "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.returncode == 0
+
+
+def git_commit_exists(project_root: Path, commit: str) -> bool:
+    result = subprocess.run(
+        ["git", "-C", str(project_root), "cat-file", "-e", f"{commit}^{{commit}}"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.returncode == 0
+
+
+def git_branch_exists(project_root: Path, branch: str) -> bool:
+    result = subprocess.run(
+        ["git", "-C", str(project_root), "rev-parse", "--verify", f"refs/heads/{branch}"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.returncode == 0
+
+
+def git_output(project_root: Path, *args: str) -> str:
+    result = subprocess.run(
+        ["git", "-C", str(project_root), *args],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.stdout.strip()
+
+
+def format_command(command: list[str]) -> str:
+    return " ".join(command)
 
 
 def lane_by_id(data: dict[str, Any], lane_id: str) -> dict[str, Any] | None:
