@@ -62,6 +62,7 @@ agent-workbench workflow validate --input templates/workflow_step_record.json
 agent-workbench roles validate --input templates/role_capability_implementation.json
 agent-workbench tokens validate --input templates/token_cost_record.json
 agent-workbench graph validate --input templates/workbench_templates/agentic_workflow_graph.json --agent-metadata
+agent-workbench graph render --input templates/workbench_templates/freshforge_proposal_assist_graph.json --output runtime/graph_render/freshforge_proposal_assist.md --agent-metadata
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in
