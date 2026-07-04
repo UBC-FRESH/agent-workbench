@@ -35,6 +35,7 @@ from .evidence import (
     synthesize_markdown,
     validate_summary,
 )
+from .eval_batch import BatchEvalConfig, run_eval_batch
 from .experiments import (
     load_experiment_record,
     render_experiment_markdown,
@@ -156,6 +157,33 @@ def build_parser() -> argparse.ArgumentParser:
         help="Summarize existing result files without running probes.",
     )
     eval_parser.set_defaults(func=run_eval)
+
+    eval_batch_parser = subparsers.add_parser(
+        "eval-batch",
+        help="Quietly run or summarize a directory of SDK eval manifests.",
+    )
+    eval_batch_parser.add_argument("--manifest-dir", type=Path, required=True)
+    eval_batch_parser.add_argument("--pattern", default="**/*.manifest.json")
+    eval_batch_parser.add_argument(
+        "--project-root",
+        type=Path,
+        default=None,
+        help="Optional target project root used for cross-project manifests.",
+    )
+    eval_batch_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        required=True,
+        help="Ignored directory for compact batch logs and summaries.",
+    )
+    eval_batch_parser.add_argument("--dry-run", action="store_true")
+    eval_batch_parser.add_argument("--summary-only", action="store_true")
+    eval_batch_parser.add_argument(
+        "--continue-on-failure",
+        action="store_true",
+        help="Continue running remaining manifests after a nonzero eval exit.",
+    )
+    eval_batch_parser.set_defaults(func=run_eval_batch_command)
 
     compare_parser = subparsers.add_parser(
         "compare",
@@ -728,6 +756,39 @@ def run_eval(args: argparse.Namespace) -> int:
     if args.summary_only:
         command.append("--summary-only")
     return run_command(command, cwd)
+
+
+def run_eval_batch_command(args: argparse.Namespace) -> int:
+    project_root = args.project_root.resolve() if args.project_root else None
+    manifest_dir = (
+        args.manifest_dir
+        if args.manifest_dir.is_absolute()
+        else (project_root / args.manifest_dir if project_root else args.manifest_dir)
+    )
+    output_dir = (
+        args.output_dir
+        if args.output_dir.is_absolute()
+        else (project_root / args.output_dir if project_root else args.output_dir)
+    )
+    try:
+        report = run_eval_batch(
+            BatchEvalConfig(
+                repo_root=args.repo_root.resolve(),
+                manifest_dir=manifest_dir.resolve(),
+                project_root=project_root,
+                pattern=args.pattern,
+                dry_run=args.dry_run,
+                summary_only=args.summary_only,
+                continue_on_failure=args.continue_on_failure,
+                output_dir=output_dir.resolve(),
+            )
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"wrote {output_dir / 'batch_summary.json'}")
+    print(f"wrote {output_dir / 'batch_summary.md'}")
+    return 1 if report["failed_manifests"] and not args.continue_on_failure else 0
 
 
 def run_compare_eval(args: argparse.Namespace) -> int:

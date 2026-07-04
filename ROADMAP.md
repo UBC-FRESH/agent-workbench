@@ -2206,6 +2206,13 @@ Active tasks:
     supervisor-token start/end checkpoints for each supervisor-owned subtask.
   - [x] Add persistent delegation experiment observation records for scale
     tests and future policy tuning.
+  - [x] Plan supervisor-overhead delegation so reporting and orchestration burn
+    can be separated from source-level supervision.
+  - [x] Add quiet batch orchestration and reporting-worker templates.
+  - [x] Dogfood a local `gpt-oss:20b` reporting-worker draft over sanitized
+    MP11 fixed-x8 benchmark summaries.
+  - [x] Record the follow-up direction for excluding GitHub hygiene from task
+    economics and representing recurring orchestration as workflow graphs.
   - [ ] Update benchmark records with actual token economics.
 - [ ] P50.5 Maintainer-reviewed phase closeout (#345)
   - [ ] Close only after the maintainer explicitly says P50 is done.

@@ -1090,3 +1090,24 @@ issues, pull requests, and closeout comments.
 - Proposed representing recurring orchestration rituals as FreshForge-shaped
   workflow graphs so the paid supervisor does not repeatedly reinvent the same
   process structure.
+
+## 2026-07-04 - Added overhead-reduction scaffolds
+
+- Added `agent-workbench eval-batch` for quiet directory-level eval manifest
+  orchestration with compact JSON and Markdown summaries.
+- Added `templates/reporting_worker_ticket.md` as the reusable local-worker
+  reporting mission template.
+- Added `templates/workbench_templates/mp11_fixed_x8_reporting_graph.json` as
+  a FreshForge-shaped graph for script-owned collection, local `gpt-oss`
+  reporting draft, paid supervisor review, and source-level audit.
+
+## 2026-07-04 - Dogfooded local reporting-worker delegation
+
+- Added `planning/reporting_orchestration_overhead_followup.md` to separate
+  task economics from governance hygiene and record the next orchestration
+  strategy.
+- Ran a local `gpt-oss:20b` reporting-worker draft over sanitized MP11 fixed-x8
+  benchmark summaries, with raw prompts and outputs kept under ignored runtime
+  paths.
+- Fixed structured-section validation so manifest-required bare section names
+  match Markdown headings such as `## Factual Summary`.
