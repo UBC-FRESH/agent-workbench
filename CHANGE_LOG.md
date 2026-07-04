@@ -32,3 +32,22 @@ issues, pull requests, and closeout comments.
 - Closed child issues #2 through #5 with matching completion comments and opened
   the Phase 0 PR back to `main`.
 - Merged the Phase 0 PR and verified parent issue #1 closed after the PR landed.
+
+## 2026-07-04 - Launched Phase 1 worker protocol templates
+
+- Created the Phase 1 protocol-template lane on
+  `feature/p1-worker-protocol-templates`, with parent issue #7 and child task
+  issues #8 through #11.
+- Added planned roadmap placeholders for Phase 2 VS Code Chat bridge playbook
+  work and Phase 3 worker model evaluation rubric work.
+- Kept Phase 1 scoped to Markdown templates and planning notes, with no package,
+  CLI, schema, CI, benchmark harness, or VS Code extension.
+
+## 2026-07-04 - Added worker protocol templates
+
+- Added supervisor ticket, worker result, acceptance checklist, and failure
+  report templates under `templates/`.
+- Added `planning/phase1_worker_protocol_notes.md` with the manual dogfood dry
+  run and sanitized findings.
+- Updated `ROADMAP.md` and `CHANGE_LOG.md` so Phase 1 can close through the
+  normal issue, PR, and verification ritual.

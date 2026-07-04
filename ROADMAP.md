@@ -9,6 +9,9 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
 | P0 Governance and workflow scaffold | #1 | `feature/p0-governance-scaffold` | Complete |
+| P1 Worker protocol templates | #7 | `feature/p1-worker-protocol-templates` | Complete |
+| P2 VS Code Chat bridge playbook | TBD | TBD | Planned |
+| P3 Worker model evaluation rubric | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -51,3 +54,79 @@ Phase 0 acceptance criteria:
 - All Phase 0 child issues are closed or explicitly deferred before parent
   closure.
 - Final local checkout is clean on `main`.
+
+## Phase 1: Worker Protocol Templates
+
+Parent issue: #7
+
+Branch: `feature/p1-worker-protocol-templates`
+
+Status: complete
+
+Goal: create reusable Markdown templates for supervisor tickets, worker results,
+acceptance checks, and failure reports so worker-agent tasks become bounded,
+evidence-driven, and independently verifiable.
+
+- [x] P1.1 Supervisor ticket template (#8)
+  - [x] Add `templates/supervisor_ticket.md`.
+  - [x] Include current-state and task-boundary sections.
+  - [x] Include allowed/forbidden action sections.
+  - [x] Include success, failure, and final-response requirements.
+- [x] P1.2 Worker result template (#9)
+  - [x] Add `templates/worker_result.md`.
+  - [x] Include command/file/check/GitHub evidence sections.
+  - [x] Include exact blocker/error text section.
+  - [x] Include constrained final status values.
+- [x] P1.3 Acceptance and verification checklist (#10)
+  - [x] Add `templates/acceptance_checklist.md`.
+  - [x] Add `templates/failure_report.md`.
+  - [x] Include independent verification requirements.
+  - [x] Include blocked/retry decision guidance.
+- [x] P1.4 Dogfood trial and closeout (#11)
+  - [x] Add `planning/phase1_worker_protocol_notes.md`.
+  - [x] Perform a manual dry run with a documented equivalent.
+  - [x] Record sanitized dogfood findings.
+  - [x] Run governance checks and close P1 through PR.
+
+Phase 1 acceptance criteria:
+
+- Worker tickets define current state, task boundary, allowed files and
+  commands, stop conditions, success criteria, and required evidence.
+- Worker results define commands run, files changed, checks run, GitHub URLs
+  touched, blockers/errors, and final status.
+- Acceptance requires independent supervisor verification before success is
+  claimed.
+- Failure reports capture exact command/error text and reject "would have" or
+  "ready" as substitutes for completed actions.
+
+## Phase 2: VS Code Chat Bridge Playbook
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: document the file-based workflow for launching bounded worker jobs through
+VS Code chat using `code chat --mode agent`, without automating response parsing.
+
+- [ ] P2.1 Record `code chat` invocation patterns.
+- [ ] P2.2 Define worker ticket and result-file directory conventions.
+- [ ] P2.3 Document supervisor verification after a chat-run candidate.
+- [ ] P2.4 Run one public-safe bridge dry run and close the phase.
+
+## Phase 3: Worker Model Evaluation Rubric
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: create a lightweight Markdown rubric for comparing local or hosted worker
+models on bounded repo tasks.
+
+- [ ] P3.1 Define candidate model metadata fields.
+- [ ] P3.2 Define task-following and evidence-quality scoring categories.
+- [ ] P3.3 Define failure-mode taxonomy for worker-agent behavior.
+- [ ] P3.4 Run one documented scoring dry run and close the phase.
