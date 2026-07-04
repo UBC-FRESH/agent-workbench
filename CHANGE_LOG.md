@@ -268,3 +268,12 @@ issues, pull requests, and closeout comments.
 - Verified that all four runs classified as `exact-marker` in the ignored P8
   summary, showing the harness is ready for a slightly richer bounded
   documentation-ticket trial.
+
+## 2026-07-04 - Closed Phase 8 SDK same-ticket evaluation harness
+
+- Merged PR #61 for the Phase 8 repeated SDK/Ollama evaluation harness and
+  verified merge commit `24c06edb9fd73f7c87e93bb935420bf00084e4ba`.
+- Closed P8 implementation child issues after updating issue bodies and posting
+  closeout comments.
+- Recorded the next direction as using the harness on a tiny documentation-only
+  worker ticket before attempting tool-enabled repo-editing trials.
