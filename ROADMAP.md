@@ -2204,6 +2204,8 @@ Active tasks:
     document-metadata indexing is the stronger next delegation target.
   - [x] Establish that future benchmark economics claims require named
     supervisor-token start/end checkpoints for each supervisor-owned subtask.
+  - [x] Add persistent delegation experiment observation records for scale
+    tests and future policy tuning.
   - [ ] Update benchmark records with actual token economics.
 - [ ] P50.5 Maintainer-reviewed phase closeout (#345)
   - [ ] Close only after the maintainer explicitly says P50 is done.
@@ -2224,6 +2226,9 @@ Phase 50 acceptance criteria:
   worker orchestration, worker-output summarization, supervisor audit, tracked
   updates, GitHub hygiene, and any direct-supervisor baseline spans have
   start/end supervisor-token checkpoints.
+- Scale-series benchmark output is recorded as sanitized experiment
+  observations so later policy tuning can mine task size, model, protocol,
+  outcome, and economics tuples.
 - The phase records whether the benchmark task class itself appears profitable
   before further paid supervisor tokens are spent on that class.
 - P50 remains open until the maintainer explicitly says the phase is done.

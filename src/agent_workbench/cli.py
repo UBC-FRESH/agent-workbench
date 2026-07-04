@@ -35,6 +35,12 @@ from .evidence import (
     synthesize_markdown,
     validate_summary,
 )
+from .experiments import (
+    load_experiment_record,
+    render_experiment_markdown,
+    synthesize_experiment_markdown,
+    validate_experiment_record,
+)
 from .graph import (
     FreshForgeGraphUnavailable,
     load_graph_document,
@@ -416,6 +422,46 @@ def build_parser() -> argparse.ArgumentParser:
     supervisor_tokens_synthesize_parser.set_defaults(
         func=run_supervisor_tokens_synthesize
     )
+
+    experiments_parser = subparsers.add_parser(
+        "experiments",
+        help="Validate, render, or synthesize delegation experiment records.",
+    )
+    experiments_subparsers = experiments_parser.add_subparsers(
+        dest="experiments_command",
+        required=True,
+    )
+
+    experiments_validate_parser = experiments_subparsers.add_parser(
+        "validate",
+        help="Validate a sanitized delegation experiment JSON record.",
+    )
+    experiments_validate_parser.add_argument("--input", type=Path, required=True)
+    experiments_validate_parser.set_defaults(func=run_experiments_validate)
+
+    experiments_render_parser = experiments_subparsers.add_parser(
+        "render",
+        help="Render a delegation experiment JSON record to Markdown.",
+    )
+    experiments_render_parser.add_argument("--input", type=Path, required=True)
+    experiments_render_parser.add_argument("--output", type=Path, required=True)
+    experiments_render_parser.set_defaults(func=run_experiments_render)
+
+    experiments_synthesize_parser = experiments_subparsers.add_parser(
+        "synthesize",
+        help="Synthesize multiple delegation experiment records.",
+    )
+    experiments_synthesize_parser.add_argument(
+        "--input", type=Path, action="append", default=[]
+    )
+    experiments_synthesize_parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=None,
+        help="Directory containing *.experiment.json files.",
+    )
+    experiments_synthesize_parser.add_argument("--output", type=Path, required=True)
+    experiments_synthesize_parser.set_defaults(func=run_experiments_synthesize)
 
     benchmark_parser = subparsers.add_parser(
         "benchmark",
@@ -981,6 +1027,56 @@ def run_supervisor_tokens_synthesize(args: argparse.Namespace) -> int:
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_experiments_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_experiment_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_experiment_record(data)
+    if result.ok:
+        print(f"valid delegation experiment record: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_experiments_render(args: argparse.Namespace) -> int:
+    try:
+        data = load_experiment_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_experiment_record(data)
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(render_experiment_markdown(data), encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_experiments_synthesize(args: argparse.Namespace) -> int:
+    paths = list(args.input)
+    if args.input_dir is not None:
+        paths.extend(sorted(args.input_dir.glob("*.experiment.json")))
+    if not paths:
+        print("error: provide --input or --input-dir", file=sys.stderr)
+        return 1
+    try:
+        report = synthesize_experiment_markdown(paths)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(report, encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
 

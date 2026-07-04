@@ -1064,3 +1064,16 @@ issues, pull requests, and closeout comments.
   fail-closed negative deltas, and supervisor cost calculation.
 - Recorded the new benchmark rule: future economics claims require start/end
   supervisor-token checkpoints for every supervisor-owned subtask.
+
+## 2026-07-04 - Added delegation experiment observation records
+
+- Added `src/agent_workbench/experiments.py` and the `agent-workbench
+  experiments validate|render|synthesize` command group.
+- Added `templates/delegation_experiment_record.json` as the reusable
+  observation fixture for task-scale, model, protocol, outcome, token, and
+  economics data.
+- Added `planning/phase50_experiment_observation_records.md` to define how
+  MP11 scale-series records should be collected for later policy tuning and
+  guardrail calibration.
+- Kept experiment records sanitized by excluding raw inputs, raw outputs, raw
+  traces, provider URLs, headers, and personal paths.
