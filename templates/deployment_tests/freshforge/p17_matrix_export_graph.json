@@ -1,0 +1,56 @@
+{
+  "workflow": {
+    "id": "freshforge_p17_matrix_export_test",
+    "name": "FreshForge P17 Matrix Export Test",
+    "description": "Agent Workbench deployment-test graph for FreshForge P17 matrix aggregation and comparison exports."
+  },
+  "nodes": [
+    {
+      "id": "select_p17_scope",
+      "provider": "agent_workbench_supervisor.task_selection",
+      "name": "Select P17 scope",
+      "description": "Supervisor scopes the matrix export test around planned FreshForge P17 surfaces.",
+      "inputs": {"freshforge_phase": "P17 matrix aggregation and comparison exports"},
+      "outputs": {"task_bundle": "bounded P17 export-shape review"},
+      "parameters": {"agent_workbench": {"node_kind": "supervisor_decision", "execution_boundary": "supervisor selects the bounded export test scope", "evidence_reference": "FreshForge ROADMAP.md P17", "supervisor_decision": "accept, split, or defer P17 deployment test"}},
+      "artifacts": [{"artifact_id": "freshforge_p17_roadmap_context", "kind": "source", "path_or_reference": "FreshForge ROADMAP.md P17 section"}],
+      "provenance": {"role": "supervisor", "capability": "pilot_selection", "authority_level": "supervisor-owned", "implementation": "human or paid supervisor"}
+    },
+    {
+      "id": "worker_export_shape_comparison",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Worker export shape comparison",
+      "description": "Worker compares JSONL and CSV export shapes for matrix evidence consumption.",
+      "needs": ["select_p17_scope"],
+      "inputs": {"task_bundle": "${nodes.select_p17_scope.outputs.task_bundle}"},
+      "outputs": {"proposal": "matrix export shape comparison"},
+      "parameters": {"agent_workbench": {"node_kind": "worker_proposal", "execution_boundary": "proposal-only export-shape comparison", "allowed_authority": "L1", "evidence_reference": "runtime/agent_workbench/freshforge_p17/export_shape_comparison.evidence.json", "claim_review": "supervisor verifies against FreshForge matrix manifest fields", "token_accounting": "runtime/agent_workbench/freshforge_p17/export_shape_comparison.tokens.json"}},
+      "artifacts": [{"artifact_id": "export_shape_comparison", "kind": "generated", "path_or_reference": "ignored runtime worker output"}],
+      "provenance": {"role": "analyst", "capability": "evidence_intake", "authority_level": "L1", "implementation": "configured Ollama worker model", "model_profile": "model_profiles/qwen3-coder-next.md"}
+    },
+    {
+      "id": "worker_downstream_packet_review",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Worker downstream packet review",
+      "description": "Worker proposes what matrix export fields are useful for notebooks, CI, and supervisor packets.",
+      "needs": ["worker_export_shape_comparison"],
+      "inputs": {"comparison": "${nodes.worker_export_shape_comparison.outputs.proposal}"},
+      "outputs": {"proposal": "downstream matrix consumption proposal"},
+      "parameters": {"agent_workbench": {"node_kind": "worker_proposal", "execution_boundary": "proposal-only downstream review", "allowed_authority": "L1", "evidence_reference": "runtime/agent_workbench/freshforge_p17/downstream_packet_review.evidence.json", "claim_review": "supervisor rejects speculative domain semantics", "token_accounting": "runtime/agent_workbench/freshforge_p17/downstream_packet_review.tokens.json"}},
+      "artifacts": [{"artifact_id": "downstream_packet_review", "kind": "generated", "path_or_reference": "ignored runtime proposal output"}],
+      "provenance": {"role": "analyst", "capability": "test_design_proposal", "authority_level": "L1", "implementation": "configured Ollama worker model", "model_profile": "model_profiles/qwen3-coder-next.md"}
+    },
+    {
+      "id": "project_native_p17_verification",
+      "provider": "project_native.verify",
+      "name": "Project-native P17 verification",
+      "description": "Supervisor later verifies accepted P17 implementation with FreshForge tests and docs builds.",
+      "needs": ["worker_downstream_packet_review"],
+      "inputs": {"proposal": "${nodes.worker_downstream_packet_review.outputs.proposal}"},
+      "outputs": {"verification_evidence": "FreshForge test/docs/build evidence"},
+      "parameters": {"agent_workbench": {"node_kind": "verification", "execution_boundary": "supervisor-owned project-native verification", "evidence_reference": "runtime/agent_workbench/freshforge_p17/verification.evidence.json", "claim_review": "verification commands are inspected by supervisor"}},
+      "artifacts": [{"artifact_id": "p17_verification_report", "kind": "generated", "path_or_reference": "ignored runtime verification report"}],
+      "provenance": {"role": "supervisor", "capability": "project_native_verification", "authority_level": "supervisor-owned", "implementation": "FreshForge tests, docs build, and package checks"}
+    }
+  ]
+}
