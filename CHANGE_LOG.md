@@ -375,3 +375,23 @@ issues, pull requests, and closeout comments.
 - Closed P11 implementation child issues after posting closeout comments.
 - Confirmed the next phase can test a restricted tool-enabled worker path only
   against ignored sandbox targets.
+
+## 2026-07-04 - Launched Phase 12 restricted tool-enabled worker trial
+
+- Created the Phase 12 restricted tool-enabled lane on
+  `feature/p12-restricted-tool-worker-trial`, with parent issue #89 and child
+  task issues #90 through #94.
+- Added `templates/restricted_tool_ticket.md` and
+  `planning/phase12_restricted_tool_trial_notes.md`.
+- Recorded the bridge decision: the SDK path remains no-tool, while the VS Code
+  Chat bridge is the available tool-observable path for one ignored-file trial.
+
+## 2026-07-04 - Ran Phase 12 restricted tool-enabled worker trial
+
+- Launched one VS Code Chat bridge worker ticket that allowed exactly one
+  ignored runtime file mutation and forbade terminal commands.
+- Verified from the supervisor report that the worker used the `create_file`
+  tool, wrote only the allowed runtime file, ran no terminal commands, and
+  produced the final marker.
+- Confirmed the target file contained exactly the requested marker line, while
+  raw session and transcript paths remained ignored local evidence.
