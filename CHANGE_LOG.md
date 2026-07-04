@@ -418,3 +418,14 @@ issues, pull requests, and closeout comments.
 - Merged PR #103 for the Phase 13 GitHub workflow microtrial and verified merge commit `0b70ce738df381a5b56aa610b8c11696c33d4841`.
 - Closed P13 implementation child issues after posting closeout comments.
 - Confirmed that workers may prepare GitHub text, but supervisor retains mutation, issue closure, and PR merge authority.
+
+## 2026-07-04 - Launched Phase 14 model matrix and packaging decision
+
+- Created the Phase 14 model matrix and packaging lane on
+  `feature/p14-model-matrix-packaging-decision`, with parent issue #105 and
+  child task issues #106 through #110.
+- Refreshed the configured Ollama-compatible model inventory through ignored
+  local provider inputs and recorded only sanitized model IDs.
+- Added `planning/phase14_model_matrix_packaging_decision.md` and
+  `planning/adr_0001_workbench_surface.md`, deciding to keep Agent Workbench as
+  Markdown protocols plus local scripts for the next tranche.

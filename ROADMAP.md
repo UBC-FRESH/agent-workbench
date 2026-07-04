@@ -22,7 +22,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Complete |
 | P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Complete |
 | P13 GitHub workflow microtrial | #97 | `feature/p13-github-workflow-microtrial` | Complete |
-| P14 Model matrix and packaging decision | TBD | TBD | Planned |
+| P14 Model matrix and packaging decision | #105 | `feature/p14-model-matrix-packaging-decision` | PR-ready |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -703,23 +703,40 @@ Phase 13 acceptance criteria:
 
 ## Phase 14: Model Matrix And Packaging Decision
 
-Parent issue: TBD
+Parent issue: #105
 
-Branch: TBD
+Branch: `feature/p14-model-matrix-packaging-decision`
 
-Status: planned
+Status: PR-ready
 
 Goal: compare configured Ollama worker models across the stable P9-P13 ticket
 families, then decide whether Agent Workbench should remain scripts/Markdown or
 become a package, CLI, VS Code extension, hosted agent, or other tool surface.
 
-Planned tasks:
-
-- P14.1 Configured Ollama model inventory refresh.
-- P14.2 Ticket-family scoring matrix.
-- P14.3 Cross-model consistency and failure-mode summary.
-- P14.4 Packaging/interface options analysis.
-- P14.5 Architecture decision record and closeout.
+- [x] P14.1 Configured Ollama model inventory refresh (#106)
+  - [x] Query configured provider inventory.
+  - [x] Record sanitized model IDs.
+  - [x] Keep endpoint and headers ignored.
+- [x] P14.2 Ticket-family scoring matrix (#107)
+  - [x] Summarize P8-P13 ticket-family outcomes.
+  - [x] Separate SDK trials from VS Code Chat bridge trials.
+  - [x] Record evidence limits.
+- [x] P14.3 Cross-model consistency and failure-mode summary (#108)
+  - [x] Summarize qwen3-coder and qwen3-coder-next contrasts.
+  - [x] Record looping, missing-section, and successful bounded mutation
+        evidence.
+  - [x] Avoid broad model superiority claims.
+- [x] P14.4 Packaging/interface options analysis (#109)
+  - [x] Compare scripts/Markdown, package/CLI, VS Code extension, MCP, hosted
+        agent.
+  - [x] Cite observed workflow friction.
+  - [x] Recommend next architecture step.
+- [ ] P14.5 Architecture decision record and closeout (#110)
+  - [x] Add architecture decision note.
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [ ] Open and merge PR.
 
 Phase 14 acceptance criteria:
 
