@@ -120,3 +120,14 @@ issues, pull requests, and closeout comments.
 - Used child issue #26 for final PR closeout so Phase 3 lands through the same
   GitHub issue, PR, merge, parent-closure, and local branch-cleanup discipline
   that Agent Workbench is designed to study.
+
+## 2026-07-04 - Launched Phase 4 worker model evaluation rubric
+
+- Created the Phase 4 evaluation-rubric lane on
+  `feature/p4-worker-model-evaluation-rubric`, with parent issue #28 and child
+  task issues #29 through #33.
+- Scoped Phase 4 to Markdown-first evaluation artifacts: model inventory notes,
+  a worker-model rubric, a failure-mode taxonomy, a result template, and one
+  bounded qwen3-coder versus qwen3-coder-next A/B scoring dry run.
+- Kept benchmark harnesses, schemas, CI, VS Code extensions, Foundry
+  integration, and broad multi-model leaderboards deferred.
