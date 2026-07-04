@@ -176,6 +176,15 @@
     "reason_not_final": "Supervisor totals are cumulative goal tokens without input/output split or lane-local segmentation.",
     "current_conclusion": "Delegated workers produced useful design signal at negligible cash cost, but P50 has not yet proven paid-supervisor token savings."
   },
+  "agent_workbench_review_surface": {
+    "draft_pr": "https://github.com/UBC-FRESH/agent-workbench/pull/346",
+    "draft_pr_number": 346,
+    "draft_pr_state": "open",
+    "draft_pr_is_draft": true,
+    "merge_state": "clean",
+    "checks": "no checks reported",
+    "purpose": "Review Agent Workbench P50 benchmark evidence while keeping P50 open."
+  },
   "decision_rules": [
     "The delegated lane wins only if it reaches equivalent or better FreshForge verification with lower paid supervisor token cost.",
     "The delegated lane loses if supervisor cleanup or verification effort erases paid-token savings.",

@@ -405,3 +405,32 @@ Next instrumentation requirement:
   exposes it.
 - Until that exists, P50 should report goal-token checkpoints and deltas as
   approximate process evidence, not as precise cost accounting.
+
+## Iteration 6 Agent Workbench Draft PR Review Surface
+
+Agent Workbench draft PR:
+
+- PR: UBC-FRESH/agent-workbench#346
+- URL: `https://github.com/UBC-FRESH/agent-workbench/pull/346`
+- title: `P50: FreshForge P16 A/B benchmark evidence`
+- head: `feature/p50-freshforge-p16-ab-benchmark-run`
+- base: `main`
+- draft: yes
+- linked issue wording: `Refs #340`, not auto-close wording
+- check state: no checks reported for this branch
+
+Purpose:
+
+- Turn the accumulated P50 benchmark evidence into a real Agent Workbench review
+  surface without closing P50.
+- Keep the FreshForge candidate PR and the Agent Workbench evidence PR separate:
+  FreshForge PR #118 reviews the package change, while Agent Workbench PR #346
+  reviews the benchmark evidence and delegation process.
+
+Current P50 position after Agent Workbench PR creation:
+
+- FreshForge PR #118 is open, draft, clean, and CI-passing.
+- Agent Workbench PR #346 is open, draft, and clean, with no checks configured.
+- P50 remains open because the maintainer has not said the phase is done,
+  child issues remain open, and the economics ledger is still checkpoint-level
+  rather than final lane-local accounting.

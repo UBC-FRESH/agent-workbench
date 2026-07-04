@@ -1026,3 +1026,13 @@ issues, pull requests, and closeout comments.
   because they lack input/output split and lane-local segmentation.
 - Preserved the honest current conclusion: workers produced useful design signal
   cheaply, but P50 has not yet proven paid-supervisor token savings.
+
+## 2026-07-04 - Opened Agent Workbench P50 draft PR
+
+- Opened UBC-FRESH/agent-workbench#346 as a draft PR from
+  `feature/p50-freshforge-p16-ab-benchmark-run` to `main`.
+- Used `Refs #340` rather than auto-close wording so the PR is a review surface
+  while P50 remains open.
+- Recorded that the PR is open, draft, clean, and has no configured checks.
+- Preserved the separation between FreshForge PR #118 for the package candidate
+  and Agent Workbench PR #346 for benchmark evidence.
