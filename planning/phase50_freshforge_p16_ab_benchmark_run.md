@@ -324,3 +324,35 @@ Current P50 position:
   mapping approach.
 - P50 still needs an explicit maintainer decision before FreshForge PR/merge
   closeout.
+
+## Iteration 4 Draft PR Review Surface
+
+FreshForge draft PR:
+
+- PR: UBC-FRESH/freshforge#118
+- URL: `https://github.com/UBC-FRESH/freshforge/pull/118`
+- title: `P16: Provider evidence mapping conventions`
+- head: `benchmark/p16-agent-workbench-delegated`
+- base: `main`
+- draft: yes
+- linked issue wording: `Refs #113`, not auto-close wording
+
+Purpose:
+
+- Turn the delegated mapping candidate into a real maintainer-review surface
+  without closing FreshForge P16 or Agent Workbench P50.
+- Preserve the explicit boundary that release, tag, publish, issue closure, PR
+  readiness, and merge remain supervisor/maintainer-owned.
+
+PR verification:
+
+- GitHub Actions `Python 3.11`: passed
+- GitHub Actions `Python 3.12`: passed
+
+Current P50 position after PR creation:
+
+- The delegated mapping branch is no longer just a local benchmark artifact; it
+  is now a draft PR candidate with passing CI.
+- P50 remains open because the user has not said the phase is done, the PR is
+  still draft, child issues remain open, and token-economics attribution is not
+  fully resolved.

@@ -132,6 +132,12 @@
     "lane_id": "delegated_graph",
     "branch": "benchmark/p16-agent-workbench-delegated",
     "commit": "a4975a8",
+    "draft_pr": "https://github.com/UBC-FRESH/freshforge/pull/118",
+    "draft_pr_number": 118,
+    "draft_pr_checks": {
+      "Python 3.11": "passed",
+      "Python 3.12": "passed"
+    },
     "design": "Opaque provider-owned JSON-compatible evidence mapping with recommended documentation fields.",
     "verification": "Targeted tests, full pytest, Ruff, Sphinx -W, build, twine check, git diff --check, and public-safety scan passed.",
     "remaining_decision": "Maintainer review should decide whether to promote this delegated branch into the actual FreshForge P16 PR or request another P50 iteration."

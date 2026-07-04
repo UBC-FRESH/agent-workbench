@@ -1005,3 +1005,13 @@ issues, pull requests, and closeout comments.
 - Verified the delegated candidate with targeted tests, full pytest, Ruff,
   warning-clean Sphinx docs, package build, `twine check`, `git diff --check`,
   and a public-safety scan.
+
+## 2026-07-04 - Opened FreshForge P16 delegated draft PR
+
+- Opened UBC-FRESH/freshforge#118 as a draft PR from
+  `benchmark/p16-agent-workbench-delegated` to `main`.
+- Used `Refs #113` rather than auto-close wording so the PR is a review surface
+  while Agent Workbench P50 remains open.
+- Verified PR checks passed on Python 3.11 and Python 3.12.
+- Recorded the draft PR as the active P50 promotion candidate for maintainer
+  review, not as phase closeout.
