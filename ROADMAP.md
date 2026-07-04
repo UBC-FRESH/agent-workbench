@@ -14,7 +14,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P3 Copilot Chat Bridge V0 Prototype | #21 | `feature/p3-copilot-chat-bridge-v0` | Complete |
 | P4 Worker model evaluation rubric | #28 | `feature/p4-worker-model-evaluation-rubric` | Complete |
 | P5 Custom agent model switching spike | #35 | `feature/p5-custom-agent-model-switching` | Complete |
-| P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Active |
+| P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -305,7 +305,7 @@ Parent issue: #41
 
 Branch: `feature/p6-copilot-sdk-ollama-spike`
 
-Status: active
+Status: complete
 
 Goal: determine whether the GitHub Copilot SDK can provide a more reliable
 programmatic worker bridge for configured Ollama models than the VS Code Chat
@@ -325,14 +325,14 @@ launch path tested in Phases 3 through 5.
   - [x] Define same-ticket run commands using explicit model arguments.
   - [x] Attempt local dry-run checks if dependencies and endpoint are available.
   - [x] Record blockers exactly if the SDK or endpoint is unavailable.
-- [ ] P6.4 Feasibility notes, closeout, and PR (#45)
+- [x] P6.4 Feasibility notes, closeout, and PR (#45)
   - [x] Synchronize roadmap and changelog.
   - [x] Run `git diff --check`.
   - [x] Inspect changed Markdown and script files.
   - [x] Search for credentials, private paths, raw transcript leakage, endpoint
         details, and unrelated project contamination.
   - [x] Comment on and close implementation child issues.
-  - [ ] Open PR and complete parent closeout after merge.
+  - [x] Open PR and complete parent closeout after merge.
 
 Phase 6 acceptance criteria:
 

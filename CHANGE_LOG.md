@@ -201,3 +201,15 @@ issues, pull requests, and closeout comments.
 - Recorded the feasibility boundary: the SDK path is promising because it avoids
   VS Code model-picker state, but it must still prove local connection, idle,
   event-capture, and no-loop behavior before becoming the preferred bridge.
+
+## 2026-07-04 - Closed Phase 6 Copilot SDK Ollama feasibility spike
+
+- Verified the P6 probe scaffold with Python compilation, the script help
+  surface, `git diff --check`, and a public-safety search over tracked planning,
+  script, template, playbook, and rubric surfaces.
+- Ran a blocked local dry-run through the probe scaffold; the result correctly
+  recorded the local dependency blocker as `No module named 'copilot'` rather
+  than claiming a live SDK/Ollama trial had succeeded.
+- Merged PR #46 and recorded the next decision point: install or expose the
+  Copilot SDK in the probe environment for a real same-ticket Ollama run, or
+  move to a raw Ollama API harness if the SDK path remains blocked.
