@@ -46,7 +46,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P35 Real-project pilot accounting | #250 | `feature/p35-real-project-pilot-accounting` | Complete |
 | P36 Policy tuning loop | #256 | `feature/p36-policy-tuning-loop` | Complete |
 | P37 Artifact and workflow contract model | #262 | `feature/p37-artifact-workflow-contracts` | Complete |
-| P38 Role, capability, and implementation model | TBD | TBD | Planned |
+| P38 Role, capability, and implementation model | #268 | `feature/p38-role-capability-implementation` | Complete |
 | P39 Reusable scientific workbench templates | TBD | TBD | Planned |
 | P40 Observability and token-cost ingestion | TBD | TBD | Planned |
 
@@ -1739,11 +1739,11 @@ Phase 37 acceptance criteria:
 
 ## Phase 38: Role, Capability, And Implementation Model
 
-Parent issue: TBD
+Parent issue: #268
 
-Branch: TBD
+Branch: `feature/p38-role-capability-implementation`
 
-Status: planned
+Status: complete
 
 Goal: separate persistent project roles from capabilities and implementation
 choices so workflows can swap local models, paid models, humans, scripts, or
@@ -1751,21 +1751,21 @@ external tools without rewriting the workflow.
 
 Planned tasks:
 
-- [ ] P38.1 Role model
-  - [ ] Define role identity, scope, allowed artifacts, and responsibility.
-  - [ ] Include examples such as reviewer, programmer, analyst, and editor.
-- [ ] P38.2 Capability model
-  - [ ] Define bounded capabilities such as evidence intake, claim review,
+- [x] P38.1 Role model (#269)
+  - [x] Define role identity, scope, allowed artifacts, and responsibility.
+  - [x] Include examples such as reviewer, programmer, analyst, and editor.
+- [x] P38.2 Capability model (#270)
+  - [x] Define bounded capabilities such as evidence intake, claim review,
     patch proposal, test-design proposal, and token accounting.
-  - [ ] Link capabilities to task taxonomy and delegation policy.
-- [ ] P38.3 Implementation mapping
-  - [ ] Map capabilities to implementations such as local qwen, `gpt-oss:*`,
+  - [x] Link capabilities to task taxonomy and delegation policy.
+- [x] P38.3 Implementation mapping (#271)
+  - [x] Map capabilities to implementations such as local qwen, `gpt-oss:*`,
     paid supervisor model, human, script, or external workflow tool.
-  - [ ] Use model profiles and decision-engine outputs as inputs.
-- [ ] P38.4 Documentation and closeout
-  - [ ] Add planning notes.
-  - [ ] Update roadmap and changelog.
-  - [ ] Run verification.
+  - [x] Use model profiles and decision-engine outputs as inputs.
+- [x] P38.4 Documentation and closeout (#272)
+  - [x] Add planning notes.
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
 
 Phase 38 acceptance criteria:
 

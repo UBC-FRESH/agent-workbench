@@ -1,0 +1,58 @@
+{
+  "role": {
+    "id": "documentation-editor",
+    "type": "editor",
+    "scope": "Improve public-safe documentation drafts.",
+    "responsibility": "Propose structure, wording, and acceptance checks.",
+    "allowed_artifacts": [
+      "documentation proposal",
+      "acceptance checklist",
+      "tracked docs after supervisor edit"
+    ]
+  },
+  "capability": {
+    "id": "documentation-proposal",
+    "description": "Draft a public-safe documentation proposal from accepted planning sources.",
+    "task_types": [
+      "documentation proposal"
+    ],
+    "inputs": [
+      "planning note",
+      "roadmap phase",
+      "audience notes"
+    ],
+    "outputs": [
+      "outline",
+      "draft text",
+      "acceptance checklist"
+    ],
+    "maximum_authority_level": "L1"
+  },
+  "implementations": [
+    {
+      "id": "local-worker-editor",
+      "type": "local-worker",
+      "name": "qwen3-coder-next:latest",
+      "authority_level": "L1",
+      "model_profile_path": "model_profiles/qwen3-coder-next.md",
+      "fit_notes": "Useful for first-pass structure; supervisor owns final text."
+    },
+    {
+      "id": "human-editor",
+      "type": "human",
+      "name": "maintainer",
+      "authority_level": "supervisor-owned",
+      "model_profile_path": "",
+      "fit_notes": "Required for final tracked documentation changes."
+    }
+  ],
+  "selection_policy": {
+    "model_swap_rule": "Change editor implementation only when source artifacts and documentation capability remain unchanged.",
+    "decision_inputs": [
+      "documentation task type",
+      "audience",
+      "verification cost"
+    ],
+    "default_bailout": "Supervisor writes directly when generated prose needs heavy cleanup."
+  }
+}

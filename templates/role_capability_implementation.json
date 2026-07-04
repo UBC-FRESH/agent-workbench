@@ -1,0 +1,69 @@
+{
+  "role": {
+    "id": "evidence-reviewer",
+    "type": "reviewer",
+    "scope": "Review supplied public-safe evidence for a bounded task.",
+    "responsibility": "Classify worker claims as accepted, rejected, or needs evidence.",
+    "allowed_artifacts": [
+      "source evidence summaries",
+      "generated worker proposals",
+      "claim review packets"
+    ]
+  },
+  "capability": {
+    "id": "claim-review",
+    "description": "Review generated claims against supplied source artifacts.",
+    "task_types": [
+      "evidence intake",
+      "documentation proposal",
+      "test-design proposal"
+    ],
+    "inputs": [
+      "source artifacts",
+      "generated proposal",
+      "verification criteria"
+    ],
+    "outputs": [
+      "accepted claims",
+      "rejected claims",
+      "needs-evidence claims"
+    ],
+    "maximum_authority_level": "L1"
+  },
+  "implementations": [
+    {
+      "id": "local-qwen-reviewer",
+      "type": "local-worker",
+      "name": "qwen3-coder-next:latest",
+      "authority_level": "L1",
+      "model_profile_path": "model_profiles/qwen3-coder-next.md",
+      "fit_notes": "Useful for proposal review when source evidence is explicit."
+    },
+    {
+      "id": "paid-supervisor-reviewer",
+      "type": "paid-agent",
+      "name": "paid supervisor model",
+      "authority_level": "supervisor-owned",
+      "model_profile_path": "",
+      "fit_notes": "Use when verification risk or private context makes local delegation poor."
+    },
+    {
+      "id": "human-reviewer",
+      "type": "human",
+      "name": "maintainer",
+      "authority_level": "supervisor-owned",
+      "model_profile_path": "",
+      "fit_notes": "Required for final promotion decisions."
+    }
+  ],
+  "selection_policy": {
+    "model_swap_rule": "A workflow may swap implementations only when the role and capability stay unchanged and the implementation authority ceiling satisfies the capability.",
+    "decision_inputs": [
+      "model profile status",
+      "delegation decision report",
+      "pilot accounting record",
+      "policy tuning report"
+    ],
+    "default_bailout": "Use supervisor-owned implementation when records are poor or evidence is private."
+  }
+}

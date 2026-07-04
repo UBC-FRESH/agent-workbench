@@ -15,7 +15,9 @@ recommendations from inspectable JSON inputs. A pilot `accounting` command
 validates, renders, and synthesizes token/cash records from real-project
 delegation experiments. A `policy tune` command turns those records into
 transparent rules-based tuning guidance. A `workflow` command validates and
-renders artifact-first workflow step records.
+renders artifact-first workflow step records. A `roles` command validates and
+renders role/capability/implementation records so model swaps do not rewrite
+the workflow contract.
 
 ## Local CLI
 
@@ -40,6 +42,7 @@ agent-workbench accounting validate --input runtime/agent_jobs/example.accountin
 agent-workbench accounting synthesize --input-dir runtime/agent_jobs --output runtime/agent_jobs/accounting_synthesis.md
 agent-workbench policy tune --input-dir runtime/agent_jobs --output runtime/agent_jobs/policy_tuning.md
 agent-workbench workflow validate --input templates/workflow_step_record.json
+agent-workbench roles validate --input templates/role_capability_implementation.json
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in

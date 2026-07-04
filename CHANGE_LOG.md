@@ -788,3 +788,15 @@ issues, pull requests, and closeout comments.
   benchmark proposal.
 - Added `planning/phase37_artifact_workflow_contracts.md` and updated README,
   roadmap, changelog, and command-surface smoke coverage.
+
+## 2026-07-04 - Added P38 role capability implementation model
+
+- Opened P38 GitHub issue #268 with child issues #269 through #272 for role
+  model, capability model, implementation mapping, and closeout.
+- Added `src/agent_workbench/roles.py` and the `agent-workbench roles
+  validate|render` command surface.
+- Added `templates/role_capability_implementation.json` and public-safe role
+  examples for programmer patch proposals, analyst token accounting, and editor
+  documentation proposals.
+- Added `planning/phase38_role_capability_implementation.md` and updated
+  README, roadmap, changelog, and command-surface smoke coverage.

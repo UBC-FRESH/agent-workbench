@@ -37,6 +37,11 @@ from .pilot import (
     scaffold_pilot_pack,
 )
 from .policy import tune_policy
+from .roles import (
+    load_role_record,
+    render_role_markdown,
+    validate_role_record,
+)
 from .workflow import (
     load_workflow_step,
     render_workflow_markdown,
@@ -211,6 +216,30 @@ def build_parser() -> argparse.ArgumentParser:
     workflow_render_parser.add_argument("--input", type=Path, required=True)
     workflow_render_parser.add_argument("--output", type=Path, required=True)
     workflow_render_parser.set_defaults(func=run_workflow_render)
+
+    roles_parser = subparsers.add_parser(
+        "roles",
+        help="Validate or render role/capability/implementation records.",
+    )
+    roles_subparsers = roles_parser.add_subparsers(
+        dest="roles_command",
+        required=True,
+    )
+
+    roles_validate_parser = roles_subparsers.add_parser(
+        "validate",
+        help="Validate a role/capability/implementation JSON record.",
+    )
+    roles_validate_parser.add_argument("--input", type=Path, required=True)
+    roles_validate_parser.set_defaults(func=run_roles_validate)
+
+    roles_render_parser = roles_subparsers.add_parser(
+        "render",
+        help="Render a role/capability/implementation JSON record to Markdown.",
+    )
+    roles_render_parser.add_argument("--input", type=Path, required=True)
+    roles_render_parser.add_argument("--output", type=Path, required=True)
+    roles_render_parser.set_defaults(func=run_roles_render)
 
     decide_parser = subparsers.add_parser(
         "decide",
@@ -492,6 +521,38 @@ def run_workflow_render(args: argparse.Namespace) -> int:
         return 1
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(render_workflow_markdown(data), encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_roles_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_role_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_role_record(data)
+    if result.ok:
+        print(f"valid role/capability/implementation record: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_roles_render(args: argparse.Namespace) -> int:
+    try:
+        data = load_role_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_role_record(data)
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(render_role_markdown(data), encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
 
