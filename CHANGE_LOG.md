@@ -1015,3 +1015,14 @@ issues, pull requests, and closeout comments.
 - Verified PR checks passed on Python 3.11 and Python 3.12.
 - Recorded the draft PR as the active P50 promotion candidate for maintainer
   review, not as phase closeout.
+
+## 2026-07-04 - Added P50 token-economics checkpoint ledger
+
+- Recorded the measured local-worker usage for P50 so far: 10029 input tokens
+  and 1174 output tokens at zero cash cost.
+- Recorded cumulative Codex goal-token checkpoints at 129063, 278526, and
+  584722 total tokens.
+- Marked the supervisor-token checkpoints as low-confidence attribution evidence
+  because they lack input/output split and lane-local segmentation.
+- Preserved the honest current conclusion: workers produced useful design signal
+  cheaply, but P50 has not yet proven paid-supervisor token savings.

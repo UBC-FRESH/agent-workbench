@@ -356,3 +356,52 @@ Current P50 position after PR creation:
 - P50 remains open because the user has not said the phase is done, the PR is
   still draft, child issues remain open, and token-economics attribution is not
   fully resolved.
+
+## Iteration 5 Token-Economics Checkpoint Ledger
+
+The P50 token-economics evidence now has two different confidence levels:
+
+- high-confidence local worker usage from Copilot SDK/Ollama event metadata; and
+- lower-confidence paid supervisor usage from the cumulative Codex goal token
+  counter.
+
+Worker-token ledger:
+
+| Iteration | Worker Input Tokens | Worker Output Tokens | Cash Cost |
+| --- | ---: | ---: | ---: |
+| Initial delegated proposal tickets | 4465 | 632 | 0 |
+| Diff-review worker tickets | 5564 | 542 | 0 |
+| Total measured worker usage | 10029 | 1174 | 0 |
+
+Supervisor goal-token checkpoints:
+
+| Checkpoint | Cumulative Goal Tokens | Delta Since Previous | Attribution Confidence |
+| --- | ---: | ---: | --- |
+| After direct lane implementation | 129063 | 129063 | low: includes P50 setup plus direct lane |
+| After delegated lane implementation | 278526 | 149463 | low: includes delegated orchestration, implementation, and reporting |
+| Before token-ledger update | 584722 | 306196 | low: includes comparison, worker review, candidate refinement, draft PR, GitHub comments, and reporting |
+
+Interpretation:
+
+- Worker usage is now measured cleanly enough for P50: 10029 input tokens and
+  1174 output tokens, all in the zero-cash local Ollama lane.
+- Paid supervisor usage is still not attributable cleanly by lane. The goal
+  counter proves this P50 experiment has consumed substantial paid-supervisor
+  context, but it does not provide input/output split or per-iteration
+  segmentation.
+- The observed supervisor-token deltas are therefore not suitable for a final
+  cash win/loss claim. They are suitable for identifying the immediate process
+  problem: the supervisor is still carrying too much orchestration, verification,
+  GitHub hygiene, and reporting overhead.
+- The practical lesson is not "delegation won" yet. The stronger conclusion is:
+  delegated workers produced useful design signal at negligible cash cost, but
+  the current supervisor workflow has not yet driven paid-token cost toward
+  near-zero.
+
+Next instrumentation requirement:
+
+- Future phase-scale benchmarks need explicit supervisor checkpoint calls before
+  and after each lane, and they need input/output split when the agent surface
+  exposes it.
+- Until that exists, P50 should report goal-token checkpoints and deltas as
+  approximate process evidence, not as precise cost accounting.

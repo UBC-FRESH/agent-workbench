@@ -142,6 +142,40 @@
     "verification": "Targeted tests, full pytest, Ruff, Sphinx -W, build, twine check, git diff --check, and public-safety scan passed.",
     "remaining_decision": "Maintainer review should decide whether to promote this delegated branch into the actual FreshForge P16 PR or request another P50 iteration."
   },
+  "token_economics_checkpoint_ledger": {
+    "worker_usage": {
+      "measured_worker_input_tokens": 10029,
+      "measured_worker_output_tokens": 1174,
+      "worker_cash_cost_usd": 0.0,
+      "measurement_confidence": "high"
+    },
+    "supervisor_goal_checkpoints": [
+      {
+        "checkpoint": "after_direct_lane_implementation",
+        "cumulative_goal_tokens": 129063,
+        "delta_since_previous": 129063,
+        "attribution_confidence": "low",
+        "note": "Includes P50 setup plus direct lane implementation."
+      },
+      {
+        "checkpoint": "after_delegated_lane_implementation",
+        "cumulative_goal_tokens": 278526,
+        "delta_since_previous": 149463,
+        "attribution_confidence": "low",
+        "note": "Includes delegated worker orchestration, implementation, and reporting."
+      },
+      {
+        "checkpoint": "before_token_ledger_update",
+        "cumulative_goal_tokens": 584722,
+        "delta_since_previous": 306196,
+        "attribution_confidence": "low",
+        "note": "Includes comparison, worker review, candidate refinement, draft PR, GitHub comments, and reporting."
+      }
+    ],
+    "cash_cost_status": "not_final",
+    "reason_not_final": "Supervisor totals are cumulative goal tokens without input/output split or lane-local segmentation.",
+    "current_conclusion": "Delegated workers produced useful design signal at negligible cash cost, but P50 has not yet proven paid-supervisor token savings."
+  },
   "decision_rules": [
     "The delegated lane wins only if it reaches equivalent or better FreshForge verification with lower paid supervisor token cost.",
     "The delegated lane loses if supervisor cleanup or verification effort erases paid-token savings.",
