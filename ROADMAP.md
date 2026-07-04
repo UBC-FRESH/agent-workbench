@@ -11,7 +11,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P0 Governance and workflow scaffold | #1 | `feature/p0-governance-scaffold` | Complete |
 | P1 Worker protocol templates | #7 | `feature/p1-worker-protocol-templates` | Complete |
 | P2 VS Code Chat bridge playbook | #13 | `feature/p2-vscode-chat-bridge-playbook` | Complete |
-| P3 Worker model evaluation rubric | TBD | TBD | Planned |
+| P3 Copilot Chat Bridge V0 Prototype | #21 | `feature/p3-copilot-chat-bridge-v0` | Complete |
+| P4 Worker model evaluation rubric | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -143,7 +144,62 @@ Phase 2 acceptance criteria:
 - The dry run proves the command surface and file protocol are usable without
   introducing raw private transcripts or project-specific content.
 
-## Phase 3: Worker Model Evaluation Rubric
+## Phase 3: Copilot Chat Bridge V0 Prototype
+
+Parent issue: #21
+
+Branch: `feature/p3-copilot-chat-bridge-v0`
+
+Status: complete
+
+Goal: implement a local-only bridge harness that launches bounded VS Code
+Copilot Chat worker tickets via stdin, extracts persisted session evidence, and
+writes supervisor verification reports.
+
+- [x] P3.1 Bridge launch harness (#22)
+  - [x] Add a script-level local helper for stdin ticket dispatch.
+  - [x] Accept ticket path, marker, timeout, and workspace root inputs.
+  - [x] Launch `code chat --reuse-window --maximize --mode agent` without
+        embedding multiline ticket text in the command-line prompt.
+  - [x] Keep raw tickets, reports, and transcripts in ignored runtime paths.
+- [x] P3.2 Session artifact parser (#23)
+  - [x] Locate matching `chatSessions/*.jsonl` artifacts by unique marker.
+  - [x] Extract `resolvedModel`, `permissionLevel`, final response, terminal
+        tool calls, file tool calls, and tool results.
+  - [x] Report missing, incomplete, and timed-out sessions as blocked evidence.
+- [x] P3.3 Supervisor verification report (#24)
+  - [x] Extract expected commands and allowed output files from the ticket.
+  - [x] Compare observed terminal commands and file mutations against the ticket.
+  - [x] Flag extra commands, missing commands, missing files, and wrong
+        model/permission state.
+  - [x] Write an ignored Markdown supervisor report.
+- [x] P3.4 Dogfood bridge on one bounded task (#25)
+  - [x] Run one local `agent-workbench` worker ticket through the harness.
+  - [x] Inspect the generated supervisor report.
+  - [x] Record sanitized findings in `planning/phase3_copilot_chat_bridge_v0_notes.md`.
+  - [x] Update `playbooks/vscode_chat_bridge.md` with v0 lessons.
+- [x] P3.5 Phase closeout, verification, and PR (#26)
+  - [x] Run `git diff --check`.
+  - [x] Inspect changed Markdown files.
+  - [x] Search for credentials, private paths, raw transcript leakage, and
+        unrelated project contamination.
+  - [x] Comment on and close child issues.
+  - [x] Open, merge, and verify PR closeout.
+
+Phase 3 acceptance criteria:
+
+- The bridge can launch a visible Copilot Chat worker session from a stdin
+  ticket.
+- The bridge can find the matching persisted session artifact by marker.
+- The bridge extracts model, permission level, final response, terminal
+  commands, file tools, and tool results.
+- The verifier distinguishes worker claims from observed tool evidence.
+- The verifier flags policy deviations such as extra terminal commands or
+  unexpected file mutations.
+- Raw tickets, reports, and transcripts remain ignored unless sanitized and
+  deliberately promoted into planning notes.
+
+## Phase 4: Worker Model Evaluation Rubric
 
 Parent issue: TBD
 
@@ -154,7 +210,7 @@ Status: planned
 Goal: create a lightweight Markdown rubric for comparing local or hosted worker
 models on bounded repo tasks.
 
-- [ ] P3.1 Define candidate model metadata fields.
-- [ ] P3.2 Define task-following and evidence-quality scoring categories.
-- [ ] P3.3 Define failure-mode taxonomy for worker-agent behavior.
-- [ ] P3.4 Run one documented scoring dry run and close the phase.
+- [ ] P4.1 Define candidate model metadata fields.
+- [ ] P4.2 Define task-following and evidence-quality scoring categories.
+- [ ] P4.3 Define failure-mode taxonomy for worker-agent behavior.
+- [ ] P4.4 Run one documented scoring dry run and close the phase.

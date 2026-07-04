@@ -81,3 +81,42 @@ issues, pull requests, and closeout comments.
   requiring explicit post-install verification.
 - Kept public wording generic around the configured Ollama/GPU worker host rather
   than publishing personal server details.
+
+## 2026-07-04 - Launched Phase 3 Copilot Chat bridge v0 prototype
+
+- Created the Phase 3 bridge-prototype lane on
+  `feature/p3-copilot-chat-bridge-v0`, with parent issue #21 and child task
+  issues #22 through #26.
+- Promoted the Copilot Chat bridge from playbook-only guidance to a local-only
+  script-level harness that can launch stdin worker tickets, parse persisted VS
+  Code chat session evidence, and write supervisor verification reports.
+- Moved the worker model evaluation rubric to Phase 4 so scoring work can build
+  on automated bridge evidence rather than manual transcript inspection.
+
+## 2026-07-04 - Added Copilot Chat bridge v0 harness
+
+- Added `scripts/copilot_chat_bridge.py`, a local-only helper that launches
+  bounded VS Code Chat worker tickets through stdin and writes ignored
+  supervisor reports.
+- Implemented session artifact discovery by unique marker plus extraction of
+  observed model values, permission-level values, terminal commands, file-tool
+  calls, tool names, and blocked or timed-out session state.
+- Added `planning/phase3_copilot_chat_bridge_v0_notes.md` and updated the
+  bridge playbook with dogfood findings from a visible Ollama-backed worker
+  session.
+- Confirmed the verifier flags policy deviations from observed evidence, such
+  as a worker running an allowed terminal command more times than the ticket
+  permitted.
+
+## 2026-07-04 - Closed Phase 3 Copilot Chat bridge v0 prototype
+
+- Verified the Phase 3 script and documentation with Python compilation,
+  `git diff --check`, Markdown inspection, and public-safety searches for
+  private paths, credentials, raw transcript leakage, and unrelated project
+  assumptions.
+- Updated and closed child issues #22 through #25 after implementation,
+  parser, verifier, and dogfood evidence were synchronized with `ROADMAP.md`,
+  `CHANGE_LOG.md`, `planning/`, and `playbooks/`.
+- Used child issue #26 for final PR closeout so Phase 3 lands through the same
+  GitHub issue, PR, merge, parent-closure, and local branch-cleanup discipline
+  that Agent Workbench is designed to study.
