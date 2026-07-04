@@ -48,6 +48,12 @@ model provider.
 For a real development project, generate a bounded ticket, manifest, and
 evidence-summary stub under that project's ignored runtime directory:
 
+Before scaffolding, classify the candidate task with
+`planning/task_delegation_taxonomy.md`. Prefer high-suitability task or subtask
+bundles such as evidence intake, compatibility review, test-design proposal, or
+documentation proposal. Keep implementation, GitHub closeout, and release work
+supervisor-owned.
+
 ```powershell
 agent-workbench pilot scaffold `
   --project-root <target-project> `

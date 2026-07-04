@@ -8,10 +8,16 @@ keeping worker agents in a proposal-assist role.
 Start only when there is a real project issue, roadmap phase, or maintainer
 request that can benefit from worker proposal assistance.
 
+Classify the candidate task bundle with
+`planning/task_delegation_taxonomy.md` before scaffolding tickets. Prefer task
+or subtask bundles with high or medium suitability. Split whole-phase requests
+before delegation.
+
 Supervisor checks:
 
 - target project is clean on the intended base branch;
 - governing issue or roadmap phase is identified;
+- task type, planning level, and default worker authority are identified;
 - target project has an ignored local work area such as `tmp/`;
 - provider credentials and endpoints are already configured outside tracked
   files; and
