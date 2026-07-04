@@ -211,30 +211,30 @@ Goal: create a lightweight Markdown rubric for comparing local Ollama-backed
 worker models on bounded repo tasks, using P3 bridge evidence rather than
 subjective impressions.
 
-- [ ] P4.1 Model inventory and run metadata (#29)
-  - [ ] Track the current installed Ollama model panel.
-  - [ ] Promote the install shortlist into tracked planning.
-  - [ ] Define per-run metadata fields.
-  - [ ] Require `ollama list` verification before assigning models.
-- [ ] P4.2 Evaluation rubric (#30)
-  - [ ] Add `rubrics/worker_model_evaluation.md`.
-  - [ ] Define scoring scale and categories.
-  - [ ] Define supervisor decision rules.
-  - [ ] Tie scoring to observed evidence, not worker prose.
-- [ ] P4.3 Failure-mode taxonomy (#31)
-  - [ ] Document looping, fake completion, duplicate commands, refusal, and
+- [x] P4.1 Model inventory and run metadata (#29)
+  - [x] Track the current installed Ollama model panel.
+  - [x] Promote the install shortlist into tracked planning.
+  - [x] Define per-run metadata fields.
+  - [x] Require `ollama list` verification before assigning models.
+- [x] P4.2 Evaluation rubric (#30)
+  - [x] Add `rubrics/worker_model_evaluation.md`.
+  - [x] Define scoring scale and categories.
+  - [x] Define supervisor decision rules.
+  - [x] Tie scoring to observed evidence, not worker prose.
+- [x] P4.3 Failure-mode taxonomy (#31)
+  - [x] Document looping, fake completion, duplicate commands, refusal, and
         over-broad workflow behavior.
-  - [ ] Include Phase 3 duplicate-command behavior.
-  - [ ] Map failure modes to scoring and decision consequences.
-- [ ] P4.4 Evaluation result template (#32)
-  - [ ] Add `templates/model_eval_result.md`.
-  - [ ] Include model, ticket, bridge-evidence, score, failure-mode, and
+  - [x] Include Phase 3 duplicate-command behavior.
+  - [x] Map failure modes to scoring and decision consequences.
+- [x] P4.4 Evaluation result template (#32)
+  - [x] Add `templates/model_eval_result.md`.
+  - [x] Include model, ticket, bridge-evidence, score, failure-mode, and
         decision fields.
 - [ ] P4.5 A/B dry scoring run and closeout (#33)
-  - [ ] Prepare one fixed evaluation ticket.
-  - [ ] Attempt or complete qwen3-coder baseline scoring.
-  - [ ] Attempt or complete qwen3-coder-next scoring.
-  - [ ] Record comparison findings and caveats.
+  - [x] Prepare one fixed evaluation ticket.
+  - [x] Attempt or complete qwen3-coder baseline scoring.
+  - [x] Attempt or complete qwen3-coder-next scoring.
+  - [x] Record comparison findings and caveats.
   - [ ] Close P4 through PR.
 
 Phase 4 acceptance criteria:

@@ -144,3 +144,12 @@ issues, pull requests, and closeout comments.
   blocked by `missing-model-evidence`.
 - Added `planning/phase4_ab_scoring_results.md` with sanitized scoring results
   and left raw tickets, reports, and transcripts ignored under runtime paths.
+
+## 2026-07-04 - Synchronized Phase 4 evaluation artifacts
+
+- Updated `AGENTS.md` so the current repository state reflects the bridge
+  helper, templates, playbooks, and Markdown rubrics now present in Agent
+  Workbench.
+- Checked off completed Phase 4 roadmap tasks for model inventory, run
+  metadata, rubric, failure taxonomy, evaluation template, and dry-run scoring
+  evidence.
