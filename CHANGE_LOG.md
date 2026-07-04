@@ -953,3 +953,19 @@ issues, pull requests, and closeout comments.
 - Added `planning/phase50_freshforge_p16_ab_benchmark_run.md`.
 - Kept P50 explicitly open for iterative benchmark work rather than a
   setup-only closeout.
+
+## 2026-07-04 - Recorded P50 FreshForge P16 delegated iteration
+
+- Ran the delegated Agent Workbench FreshForge P16 lane from the same FreshForge
+  start commit used by the direct baseline.
+- Executed two proposal-only `qwen3-coder-next:latest` worker tickets with 4465
+  input tokens and 632 output tokens in the zero-cash local Ollama lane.
+- Implemented the delegated FreshForge P16 branch at commit `c781775` with
+  optional provider-owned evidence mappings threaded through provider run
+  results, node results, compact summaries, evidence manifests, tests, and docs.
+- Verified the delegated branch with targeted tests, full pytest, Ruff,
+  warning-clean Sphinx docs, package build, `twine check`, `git diff --check`,
+  and a public-safety scan.
+- Recorded the main P50 gap: goal-level supervisor token totals are visible, but
+  supervisor-token attribution is not yet segmented cleanly by direct lane,
+  delegated orchestration, implementation cleanup, and reporting.

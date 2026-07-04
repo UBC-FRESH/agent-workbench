@@ -14,16 +14,19 @@
   "lanes": [
     {
       "lane_id": "direct_supervisor",
-      "status": "planned",
+      "status": "complete",
       "branch": "benchmark/p16-direct-supervisor",
       "worktree": "../freshforge-benchmark-p16-direct",
+      "commit": "0ebf8a2",
       "method": "Paid supervisor implements the full FreshForge P16 phase directly, including issue planning, implementation, verification, PR, and closeout.",
       "rollback_plan": "Delete the disposable worktree and branch after recording token/cost and verification evidence.",
       "usage": {
         "supervisor_input_tokens": 0,
         "supervisor_output_tokens": 0,
         "worker_input_tokens": 0,
-        "worker_output_tokens": 0
+        "worker_output_tokens": 0,
+        "goal_total_tokens_observed_after_lane": 129063,
+        "attribution_note": "Goal total includes P50 setup plus the first direct implementation pass; input/output split was not available."
       },
       "evidence_to_capture": [
         "Codex goal token report for the full direct lane",
@@ -34,17 +37,20 @@
     },
     {
       "lane_id": "delegated_graph",
-      "status": "planned",
+      "status": "complete",
       "branch": "benchmark/p16-agent-workbench-delegated",
       "worktree": "../freshforge-benchmark-p16-delegated",
+      "commit": "c781775",
       "method": "Supervisor uses Agent Workbench P47 P16 graph packet to delegate proposal-only worker nodes, then performs all FreshForge mutations, verification, PR, and closeout directly.",
       "rollback_plan": "Delete the disposable worktree and branch after recording token/cost and verification evidence.",
       "graph_packet": "templates/deployment_tests/freshforge/p16_provider_evidence_conventions_graph.json",
       "usage": {
         "supervisor_input_tokens": 0,
         "supervisor_output_tokens": 0,
-        "worker_input_tokens": 0,
-        "worker_output_tokens": 0
+        "worker_input_tokens": 4465,
+        "worker_output_tokens": 632,
+        "goal_total_tokens_observed_after_lane": 278526,
+        "attribution_note": "Goal total includes P50 setup, direct lane, delegated worker orchestration, delegated implementation, and evidence reporting; lane-local supervisor attribution remains unresolved."
       },
       "evidence_to_capture": [
         "Codex goal token report for delegated supervisor lane",

@@ -2186,15 +2186,15 @@ and iterating until the maintainer explicitly says the phase is done.
 Active tasks:
 
 - [ ] P50.1 Direct-supervisor FreshForge P16 baseline iteration (#341)
-  - [ ] Perform substantive FreshForge P16 work in
+  - [x] Perform substantive FreshForge P16 work in
     `../freshforge-benchmark-p16-direct`.
-  - [ ] Report first-iteration output to the maintainer.
+  - [x] Report first-iteration output to the maintainer.
 - [ ] P50.2 Direct-lane evidence and token accounting capture (#342)
-  - [ ] Record direct-lane command, file, and status evidence.
-  - [ ] Record paid supervisor token usage when available.
+  - [x] Record direct-lane command, file, and status evidence.
+  - [x] Record paid supervisor token usage when available.
 - [ ] P50.3 Delegated-graph FreshForge P16 iteration (#343)
-  - [ ] Run delegated-lane work from the same start commit.
-  - [ ] Preserve worker and supervisor token evidence.
+  - [x] Run delegated-lane work from the same start commit.
+  - [x] Preserve worker and supervisor token evidence.
 - [ ] P50.4 A/B comparison and benchmark record update (#344)
   - [ ] Compare direct and delegated lanes after both have evidence.
   - [ ] Update benchmark records with actual token economics.
