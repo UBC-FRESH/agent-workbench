@@ -429,3 +429,9 @@ issues, pull requests, and closeout comments.
 - Added `planning/phase14_model_matrix_packaging_decision.md` and
   `planning/adr_0001_workbench_surface.md`, deciding to keep Agent Workbench as
   Markdown protocols plus local scripts for the next tranche.
+
+## 2026-07-04 - Closed Phase 14 model matrix and packaging decision
+
+- Merged PR #111 for the Phase 14 model matrix and architecture decision and verified merge commit `36f3fb9095f27cc19770121e00d55dd8eadeb2ed`.
+- Closed P14 implementation child issues after posting closeout comments.
+- Accepted ADR 0001: keep Agent Workbench as Markdown protocols plus local scripts for the next tranche.
