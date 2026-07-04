@@ -1,0 +1,59 @@
+{
+  "role": {
+    "id": "bounded-programmer",
+    "type": "programmer",
+    "scope": "Propose small code changes without tracked mutation.",
+    "responsibility": "Draft implementation options and verification ideas.",
+    "allowed_artifacts": [
+      "patch proposal",
+      "test proposal",
+      "supervisor decision packet"
+    ]
+  },
+  "capability": {
+    "id": "patch-proposal",
+    "description": "Propose a bounded patch for supervisor review.",
+    "task_types": [
+      "patch proposal",
+      "test-design proposal"
+    ],
+    "inputs": [
+      "issue body",
+      "relevant source snippets",
+      "acceptance criteria"
+    ],
+    "outputs": [
+      "patch rationale",
+      "candidate diff",
+      "verification plan"
+    ],
+    "maximum_authority_level": "L1"
+  },
+  "implementations": [
+    {
+      "id": "local-qwen-programmer",
+      "type": "local-worker",
+      "name": "qwen3-coder-next:latest",
+      "authority_level": "L1",
+      "model_profile_path": "model_profiles/qwen3-coder-next.md",
+      "fit_notes": "Use for proposal-only patch drafting."
+    },
+    {
+      "id": "supervisor-programmer",
+      "type": "human",
+      "name": "maintainer",
+      "authority_level": "supervisor-owned",
+      "model_profile_path": "",
+      "fit_notes": "Owns tracked-file mutation and verification."
+    }
+  ],
+  "selection_policy": {
+    "model_swap_rule": "Swap implementation without changing patch-proposal capability.",
+    "decision_inputs": [
+      "task risk",
+      "model profile",
+      "expected verification cost"
+    ],
+    "default_bailout": "Supervisor implements directly if proposal quality is low."
+  }
+}

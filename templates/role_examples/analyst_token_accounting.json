@@ -1,0 +1,63 @@
+{
+  "role": {
+    "id": "delegation-analyst",
+    "type": "analyst",
+    "scope": "Analyze sanitized pilot accounting records.",
+    "responsibility": "Summarize token/cash outcomes and policy implications.",
+    "allowed_artifacts": [
+      "pilot accounting records",
+      "policy tuning reports"
+    ]
+  },
+  "capability": {
+    "id": "token-accounting",
+    "description": "Compute and summarize delegation economics from sanitized records.",
+    "task_types": [
+      "pilot accounting",
+      "policy tuning"
+    ],
+    "inputs": [
+      "pilot accounting records"
+    ],
+    "outputs": [
+      "cost summary",
+      "promising classes",
+      "poor classes"
+    ],
+    "maximum_authority_level": "L1"
+  },
+  "implementations": [
+    {
+      "id": "accounting-script",
+      "type": "script",
+      "name": "agent-workbench accounting synthesize",
+      "authority_level": "supervisor-owned",
+      "model_profile_path": "",
+      "fit_notes": "Preferred deterministic implementation for cost summaries."
+    },
+    {
+      "id": "freshforge-report-command",
+      "type": "workflow-tool",
+      "name": "FreshForge or project-native reporting command",
+      "authority_level": "supervisor-owned",
+      "model_profile_path": "",
+      "fit_notes": "Use project-native reports as authoritative evidence when available."
+    },
+    {
+      "id": "local-worker-analyst",
+      "type": "local-worker",
+      "name": "qwen3-coder-next:latest",
+      "authority_level": "L1",
+      "model_profile_path": "model_profiles/qwen3-coder-next.md",
+      "fit_notes": "May interpret sanitized reports after script output exists."
+    }
+  ],
+  "selection_policy": {
+    "model_swap_rule": "Use scripts for deterministic calculations; use models only for interpretation.",
+    "decision_inputs": [
+      "accounting synthesis",
+      "policy tuning report"
+    ],
+    "default_bailout": "Use deterministic script output as the source of truth."
+  }
+}

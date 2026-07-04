@@ -42,6 +42,21 @@ The implementation can be a human, local worker, paid agent, script, CI job, or
 external workflow tool. Agent Workbench records the implementation; it does not
 require replacing the implementation.
 
+## Non-Orchestration Boundary
+
+P37 records workflow evidence; it does not execute or orchestrate project
+workflows.
+
+Where a project already has native workflow capabilities, those stay in charge.
+Examples include FreshForge package commands, project-specific CLIs, Snakemake
+pipelines, notebooks, CI jobs, and release tooling. Agent Workbench should wrap
+their outputs in artifact records only when that helps supervision,
+verification, or token/cash accounting.
+
+This boundary is intentional. Agent Workbench should not become a parallel
+workflow engine unless a future phase proves that existing project-native tools
+cannot provide the required execution surface.
+
 ## CLI Surface
 
 Validate one workflow step:
@@ -69,7 +84,7 @@ Public-safe examples live under `templates/workflow_examples/`:
 
 These examples show how Agent Workbench can represent software, research, and
 benchmark work without becoming a replacement for Git, CI, notebooks,
-Snakemake, project CLIs, or human review.
+Snakemake, FreshForge, project CLIs, or human review.
 
 ## Closeout Evidence
 
