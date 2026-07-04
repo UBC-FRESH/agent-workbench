@@ -17,7 +17,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Complete |
 | P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Complete |
 | P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | Complete |
-| P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | Active |
+| P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | PR-ready |
 | P10 Patch proposal protocol trial | TBD | TBD | Planned |
 | P11 Supervisor-applied patch harness | TBD | TBD | Planned |
 | P12 Restricted tool-enabled worker trial | TBD | TBD | Planned |
@@ -477,7 +477,7 @@ Parent issue: #65
 
 Branch: `feature/p9-structured-doc-output-trial`
 
-Status: active
+Status: PR-ready
 
 Goal: use the P8 harness on a tiny documentation-style ticket where the worker
 returns a structured Markdown result in the assistant response, with no tools
@@ -509,8 +509,8 @@ and no file mutation.
   - [x] Update `ROADMAP.md`.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Finalize P9 planning notes.
-  - [ ] Run verification.
-  - [ ] Comment on and close child issues.
+  - [x] Run verification.
+  - [x] Comment on and close child issues.
   - [ ] Open, merge, and verify PR closeout.
 
 Phase 9 acceptance criteria:
