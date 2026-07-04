@@ -39,6 +39,12 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P28 Claim review aids | #204 | `feature/p28-claim-review-aids` | Complete |
 | P29 Repeat-run and model comparison | #210 | `feature/p29-repeat-run-model-comparison` | Complete |
 | P30 Real-project deployment playbook | #216 | `feature/p30-real-project-deployment-playbook` | Complete |
+| P31 Delegation economics model | #222 | `feature/p31-delegation-economics-model` | Complete |
+| P32 Task taxonomy and delegation suitability | TBD | TBD | Planned |
+| P33 Worker model capability profiles | TBD | TBD | Planned |
+| P34 Delegation decision engine v0 | TBD | TBD | Planned |
+| P35 Real-project pilot accounting | TBD | TBD | Planned |
+| P36 Policy tuning loop | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1447,3 +1453,234 @@ Phase 30 acceptance criteria:
 - The playbook references P27 packets, P28 claim review, and P29 comparison
   reports.
 - The playbook includes cleanup rules and stop conditions.
+
+## Phase 31: Delegation Economics Model
+
+Parent issue: #222
+
+Branch: `feature/p31-delegation-economics-model`
+
+Status: complete
+
+Goal: define the cost/benefit model that determines whether self-hosted worker
+delegation produces positive net value compared with direct paid-supervisor
+work.
+
+Planned tasks:
+
+- [x] P31.1 Cost vocabulary and accounting boundary (#223)
+  - [x] Define avoided paid-supervisor effort.
+  - [x] Define delegation setup effort.
+  - [x] Define supervisor verification effort.
+  - [x] Define retry, delay, and context-switching effort.
+- [x] P31.2 Failure-risk and cleanup model (#224)
+  - [x] Define worker failure probability.
+  - [x] Define expected cleanup cost.
+  - [x] Define rollback, patch-forward, and direct-redo cases.
+- [x] P31.3 Net-benefit formula and examples (#225)
+  - [x] Document a simple expected-value equation.
+  - [x] Include qualitative examples for small, useful middle-zone, and
+    oversized tasks.
+  - [x] Explain why worker success alone is not the success metric.
+- [x] P31.4 Planning note, roadmap tranche, and closeout (#226)
+  - [x] Preserve the raw developer framing as a dated note.
+  - [x] Promote the delegation economics strategy into public-safe notes.
+  - [x] Update roadmap and changelog.
+  - [x] Run governance verification.
+
+Phase 31 acceptance criteria:
+
+- Agent Workbench has a public-safe economics model for delegation decisions.
+- The model accounts for overhead, verification, retry, cleanup, and direct-work
+  counterfactuals.
+- The model identifies why too-small and too-large task bundles can both be
+  net-negative.
+
+## Phase 32: Task Taxonomy And Delegation Suitability
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: classify UBC-FRESH development work types by delegation suitability,
+expected worker value, and risk.
+
+Planned tasks:
+
+- [ ] P32.1 Task-type taxonomy
+  - [ ] Classify evidence intake, roadmap review, docs proposal, issue triage,
+    test design, patch proposal, mechanical edits, GitHub hygiene, and release
+    closeout.
+  - [ ] Map each task type to the phase/task/subtask planning hierarchy.
+- [ ] P32.2 Suitability criteria
+  - [ ] Define good delegation candidates.
+  - [ ] Define poor delegation candidates.
+  - [ ] Define split-or-supervise-more cases.
+- [ ] P32.3 Authority-level mapping
+  - [ ] Map task types to default worker authority levels.
+  - [ ] Identify nondelegable supervisor actions.
+  - [ ] Identify candidate restricted-tool experiments.
+- [ ] P32.4 Documentation and closeout
+  - [ ] Add task taxonomy planning notes.
+  - [ ] Link taxonomy from relevant playbooks.
+  - [ ] Run governance verification.
+
+Phase 32 acceptance criteria:
+
+- Agent Workbench has a reusable taxonomy of task types relevant to UBC-FRESH
+  project development.
+- Each task type has a default delegation suitability assessment.
+- The taxonomy explains which task classes should usually be done directly.
+
+## Phase 33: Worker Model Capability Profiles
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: record per-model capability profiles for installed Ollama workers so
+delegation choices reflect observed model behavior rather than generic model
+rankings.
+
+Planned tasks:
+
+- [ ] P33.1 Capability-card template
+  - [ ] Define fields for model name, host inventory evidence, task strengths,
+    failure modes, loop risk, ticket-shape sensitivity, and recommended
+    authority limits.
+- [ ] P33.2 Initial qwen-family profiles
+  - [ ] Summarize observed `qwen3-coder:latest` behavior.
+  - [ ] Summarize observed `qwen3-coder-next:latest` behavior.
+  - [ ] Keep claims scoped to observed Agent Workbench tickets.
+- [ ] P33.3 Model comparison evidence links
+  - [ ] Link capability cards to comparison summaries and worker evidence.
+  - [ ] Distinguish task-local observations from broad model rankings.
+- [ ] P33.4 Documentation and closeout
+  - [ ] Add model capability notes.
+  - [ ] Update roadmap and changelog.
+  - [ ] Run governance verification.
+
+Phase 33 acceptance criteria:
+
+- Agent Workbench has a model capability-card format.
+- Initial installed-worker profiles are evidence-scoped and public-safe.
+- Capability cards are usable inputs for later delegation decisions.
+
+## Phase 34: Delegation Decision Engine V0
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: implement a transparent rules-based recommender that helps the supervisor
+decide whether to delegate, split, retry, or do a task directly.
+
+Planned tasks:
+
+- [ ] P34.1 Decision input contract
+  - [ ] Define task bundle, task type, roadmap level, risk, model, authority,
+    and expected verification fields.
+  - [ ] Keep the first input format simple and inspectable.
+- [ ] P34.2 Rules-based recommendation logic
+  - [ ] Recommend `delegate`, `do-directly`, `split-smaller`,
+    `needs-human-decision`, or `defer`.
+  - [ ] Include reason strings for every recommendation.
+  - [ ] Avoid hidden scoring that the supervisor cannot audit.
+- [ ] P34.3 CLI/report surface
+  - [ ] Add a command or report helper for evaluating candidate task bundles.
+  - [ ] Render the economics terms that drove the recommendation.
+  - [ ] Keep outputs public-safe and easy to paste into planning notes.
+- [ ] P34.4 Dogfood and closeout
+  - [ ] Evaluate candidate tasks from a real project roadmap.
+  - [ ] Compare recommendations with supervisor judgment.
+  - [ ] Run package verification.
+
+Phase 34 acceptance criteria:
+
+- Agent Workbench can produce a transparent delegation recommendation for a
+  candidate task bundle.
+- Recommendations expose the economics and risk assumptions behind them.
+- The first decision engine is rules-based rather than ML-based.
+
+## Phase 35: Real-Project Pilot Accounting
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: run multiple real-project delegation pilots with explicit accounting so
+Agent Workbench can estimate whether delegation is producing net benefit.
+
+Planned tasks:
+
+- [ ] P35.1 Pilot selection protocol
+  - [ ] Choose candidate tasks from a live project roadmap.
+  - [ ] Include varied task sizes and task types.
+  - [ ] Avoid project-critical-path tasks for early experiments.
+- [ ] P35.2 Delegation accounting record
+  - [ ] Record setup, worker, verification, retry, cleanup, and direct-work
+    counterfactual estimates.
+  - [ ] Record accepted, rejected, and needs-evidence claims.
+  - [ ] Record whether the worker changed the supervisor decision.
+- [ ] P35.3 Pilot execution and synthesis
+  - [ ] Run several proposal-assist pilots.
+  - [ ] Synthesize net-benefit estimates.
+  - [ ] Identify task/model/protocol pairs that appear promising.
+- [ ] P35.4 Documentation and closeout
+  - [ ] Add sanitized pilot accounting notes.
+  - [ ] Update roadmap and changelog.
+  - [ ] Run verification.
+
+Phase 35 acceptance criteria:
+
+- Agent Workbench has real-project delegation records with cost/benefit fields.
+- The pilot accounting distinguishes useful imperfect proposals from costly
+  failures.
+- The synthesis identifies at least one promising and one poor delegation class,
+  or explains why evidence is still insufficient.
+
+## Phase 36: Policy Tuning Loop
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: turn pilot accounting into a repeatable policy-tuning loop for task
+sizing, model selection, ticket shape, and retry limits.
+
+Planned tasks:
+
+- [ ] P36.1 Outcome schema
+  - [ ] Define outcome fields needed to tune delegation policy over time.
+  - [ ] Preserve enough detail for later empirical analysis without tracking
+    raw private transcripts.
+- [ ] P36.2 Tuning rules
+  - [ ] Define how positive and negative outcomes update task suitability.
+  - [ ] Define how repeated failures lower model/task trust.
+  - [ ] Define retry and bailout threshold updates.
+- [ ] P36.3 Reporting surface
+  - [ ] Summarize policy changes after pilot batches.
+  - [ ] Show before/after recommendations for representative task bundles.
+  - [ ] Keep all policy changes auditable by the supervisor.
+- [ ] P36.4 Future ML boundary
+  - [ ] Define what data volume and quality would be required before an ML
+    policy optimizer is worth attempting.
+  - [ ] Keep ML optimization explicitly out of the first tuning loop unless a
+    later phase activates it.
+
+Phase 36 acceptance criteria:
+
+- Agent Workbench can update delegation policy from observed pilot outcomes.
+- The tuning loop remains transparent and supervisor-auditable.
+- The roadmap has a clear boundary between rules-based tuning and any future ML
+  inference engine.
