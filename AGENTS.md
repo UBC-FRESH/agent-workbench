@@ -85,6 +85,25 @@ Worker prompts should avoid open-ended requests such as "finish the workflow" or
 "do the proper closeout" unless the prompt also includes the exact state machine,
 commands, stop conditions, and evidence requirements.
 
+## Delegation Trust Levels
+
+Worker authority is governed by `planning/delegation_policy.md`.
+
+Current default boundary:
+
+- L0 no-tool responses and L1 proposal-only work are allowed when the ticket is
+  bounded and supervisor verification is possible.
+- L2 supervisor-applied mutation is allowed only when supervisor-owned tooling
+  applies a worker proposal to an explicitly allowed ignored sandbox target.
+- L3 restricted worker tool use is allowed only for narrow trials against
+  explicitly listed ignored runtime paths with observed tool evidence.
+- L4 tracked-file mutation, L5 GitHub mutation, and L6 release or phase-closeout
+  authority are not delegated to workers by default.
+
+Nondelegable supervisor actions include tracked-file commits, branch pushes, PR
+creation, PR merge, issue closure, release publication, model/provider
+configuration changes, and final claims that a roadmap phase is complete.
+
 Current worker-model boundary:
 
 - Treat the configured Ollama host's `ollama list` output as the source of truth

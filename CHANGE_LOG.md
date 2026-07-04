@@ -500,3 +500,15 @@ issues, pull requests, and closeout comments.
   created the allowed ignored output file without terminal commands.
 - Added `planning/phase18_richer_restricted_tool_trial_notes.md` with
   sanitized supervisor evidence and kept tracked-file mutation forbidden.
+
+## 2026-07-04 - Added Phase 19 delegation policy
+
+- Created the Phase 19 delegation-policy lane on
+  `feature/p19-delegation-policy-trust-levels`, with parent issue #143 and child
+  task issues #144 through #148.
+- Added `planning/delegation_policy.md` with trust levels L0 through L6 and
+  ticket-family authority mapping.
+- Added `planning/phase19_delegation_policy_notes.md` and updated `AGENTS.md`
+  so worker authority boundaries are part of the live agent contract.
+- Kept tracked-file mutation, GitHub mutation, issue closure, PR merge, release,
+  and final phase closeout supervisor-only.
