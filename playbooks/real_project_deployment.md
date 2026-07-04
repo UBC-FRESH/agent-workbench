@@ -169,7 +169,25 @@ Use this synthesis to distinguish useful imperfect proposals from costly
 failures. Do not treat net savings as stable until the pilot set includes varied
 task/model/protocol records.
 
-## 8. Supervisor Promotion
+## 8. Policy Tuning
+
+After a pilot batch contains sanitized accounting records, render a policy
+tuning report:
+
+```powershell
+agent-workbench policy tune `
+  --input-dir tmp/agent_workbench/<phase> `
+  --output tmp/agent_workbench/<phase>/policy_tuning.md
+```
+
+Use the report to decide whether to maintain, promote, hold, or lower trust for
+a task/model/protocol group. Treat every recommendation as supervisor guidance,
+not an automatic policy mutation.
+
+Keep policy tuning rules-based until the record set is large and varied enough
+to justify a later ML optimizer.
+
+## 9. Supervisor Promotion
 
 Only the supervisor may mutate tracked project files, GitHub issues, branches,
 pull requests, releases, or closeout state.
@@ -183,7 +201,7 @@ Promotion gate:
 - target project verification commands are known; and
 - raw worker outputs remain ignored.
 
-## 9. Cleanup
+## 10. Cleanup
 
 Keep raw tickets, manifests, model outputs, and provider scratch state under the
 target project's ignored local work area. Do not commit them.
@@ -205,7 +223,7 @@ git diff --check
 Search tracked files for private paths, credentials, raw transcript fragments,
 and unrelated project contamination.
 
-## 10. Stop Conditions
+## 11. Stop Conditions
 
 Stop worker use and keep work in the supervisor lane when:
 

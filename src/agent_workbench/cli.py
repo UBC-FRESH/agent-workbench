@@ -36,6 +36,7 @@ from .pilot import (
     scaffold_pilot,
     scaffold_pilot_pack,
 )
+from .policy import tune_policy
 
 
 def default_repo_root() -> Path:
@@ -158,6 +159,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
     accounting_synthesize_parser.add_argument("--output", type=Path, required=True)
     accounting_synthesize_parser.set_defaults(func=run_accounting_synthesize)
+
+    policy_parser = subparsers.add_parser(
+        "policy",
+        help="Tune delegation policy from pilot accounting records.",
+    )
+    policy_subparsers = policy_parser.add_subparsers(
+        dest="policy_command",
+        required=True,
+    )
+
+    policy_tune_parser = policy_subparsers.add_parser(
+        "tune",
+        help="Render transparent policy tuning guidance from accounting records.",
+    )
+    policy_tune_parser.add_argument("--input", type=Path, action="append", default=[])
+    policy_tune_parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=None,
+        help="Directory containing *.accounting.json files.",
+    )
+    policy_tune_parser.add_argument("--output", type=Path, required=True)
+    policy_tune_parser.set_defaults(func=run_policy_tune)
 
     decide_parser = subparsers.add_parser(
         "decide",
@@ -384,6 +408,24 @@ def run_accounting_synthesize(args: argparse.Namespace) -> int:
         return 1
     try:
         report = synthesize_accounting_markdown(paths)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(report, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_policy_tune(args: argparse.Namespace) -> int:
+    paths = list(args.input)
+    if args.input_dir is not None:
+        paths.extend(sorted(args.input_dir.glob("*.accounting.json")))
+    if not paths:
+        print("error: provide --input or --input-dir", file=sys.stderr)
+        return 1
+    try:
+        report = tune_policy(paths)
     except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1

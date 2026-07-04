@@ -764,3 +764,15 @@ issues, pull requests, and closeout comments.
   workflow examples.
 - Updated the command-surface smoke check to include the accounting synthesis
   help surface.
+
+## 2026-07-04 - Added P36 policy tuning loop
+
+- Opened P36 GitHub issue #256 with child issues #257 through #260 for outcome
+  schema, tuning rules, reporting, and future ML boundaries.
+- Added `src/agent_workbench/policy.py` and the `agent-workbench policy tune`
+  command for rules-based delegation policy tuning from P35 accounting records.
+- Added `planning/phase36_policy_tuning_loop.md` and updated
+  `planning/delegation_policy.md` with transparent tuning rules, retry limits,
+  bailout guidance, and ML optimizer thresholds.
+- Updated README, the real-project deployment playbook, roadmap, changelog, and
+  command-surface smoke coverage.

@@ -13,7 +13,8 @@ can choose worker models from observed task-family evidence rather than broad
 model rankings. A rules-based `decide` command renders transparent delegation
 recommendations from inspectable JSON inputs. A pilot `accounting` command
 validates, renders, and synthesizes token/cash records from real-project
-delegation experiments.
+delegation experiments. A `policy tune` command turns those records into
+transparent rules-based tuning guidance.
 
 ## Local CLI
 
@@ -36,6 +37,7 @@ agent-workbench evidence synthesize --input-dir runtime/agent_jobs --output runt
 agent-workbench decide task --input runtime/agent_jobs/example_decision.json --output runtime/agent_jobs/example_decision.md
 agent-workbench accounting validate --input runtime/agent_jobs/example.accounting.json
 agent-workbench accounting synthesize --input-dir runtime/agent_jobs --output runtime/agent_jobs/accounting_synthesis.md
+agent-workbench policy tune --input-dir runtime/agent_jobs --output runtime/agent_jobs/policy_tuning.md
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in
