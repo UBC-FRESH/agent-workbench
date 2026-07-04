@@ -439,8 +439,8 @@ stability signals without trusting worker prose.
   - [x] Update `ROADMAP.md`.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Finalize P8 planning notes.
-  - [ ] Run verification.
-  - [ ] Comment on and close child issues.
+  - [x] Run verification.
+  - [x] Comment on and close child issues.
   - [ ] Open, merge, and verify PR closeout.
 
 Phase 8 acceptance criteria:
