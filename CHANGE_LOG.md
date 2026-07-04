@@ -832,3 +832,17 @@ issues, pull requests, and closeout comments.
 - Kept observability as optional measurement input and excluded raw prompts,
   traces, provider URLs, headers, credentials, and personal paths from tracked
   token/cost records.
+
+## 2026-07-04 - Started P41 FreshForge graph integration
+
+- Opened P41 GitHub issue #286 with child issues #287 through #290 for optional
+  FreshForge dependency wiring, graph template conversion, diagnostics, and
+  closeout.
+- Added `planning/freshforge_graph_dependency_opinion.md` to record the
+  architectural position that Agent Workbench should reuse FreshForge graph
+  records and validation rather than invent a parallel graph engine.
+- Added `planning/phase41_freshforge_graph_integration.md` and extended the
+  roadmap through P46 for the graph-backed delegation direction.
+- Added an optional `graph` dependency extra, a FreshForge-backed
+  `agent-workbench graph validate` command, and a FreshForge-compatible agentic
+  workflow graph template.

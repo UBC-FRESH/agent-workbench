@@ -29,6 +29,12 @@ from .evidence import (
     synthesize_markdown,
     validate_summary,
 )
+from .graph import (
+    FreshForgeGraphUnavailable,
+    load_graph_document,
+    render_graph_validation,
+    validate_graph_document,
+)
 from .pilot import (
     PilotPackScaffoldConfig,
     PilotPackTask,
@@ -284,6 +290,22 @@ def build_parser() -> argparse.ArgumentParser:
     )
     tokens_synthesize_parser.add_argument("--output", type=Path, required=True)
     tokens_synthesize_parser.set_defaults(func=run_tokens_synthesize)
+
+    graph_parser = subparsers.add_parser(
+        "graph",
+        help="Validate FreshForge-compatible agentic workflow graphs.",
+    )
+    graph_subparsers = graph_parser.add_subparsers(
+        dest="graph_command",
+        required=True,
+    )
+
+    graph_validate_parser = graph_subparsers.add_parser(
+        "validate",
+        help="Validate graph structure without executing workflow nodes.",
+    )
+    graph_validate_parser.add_argument("--input", type=Path, required=True)
+    graph_validate_parser.set_defaults(func=run_graph_validate)
 
     decide_parser = subparsers.add_parser(
         "decide",
@@ -649,6 +671,25 @@ def run_tokens_synthesize(args: argparse.Namespace) -> int:
     args.output.write_text(report, encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
+
+
+def run_graph_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_graph_document(args.input)
+        result = validate_graph_document(data, source_path=args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    except FreshForgeGraphUnavailable as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+
+    report = render_graph_validation(result)
+    if result.ok:
+        print(report)
+        return 0
+    print(report, file=sys.stderr)
+    return 1
 
 
 def run_decide_task(args: argparse.Namespace) -> int:

@@ -1,0 +1,139 @@
+{
+  "workflow": {
+    "id": "example_agentic_workbench_graph",
+    "name": "Example Agentic Workbench Graph",
+    "description": "FreshForge-compatible graph for supervised agent-assisted work. FreshForge validates graph structure; Agent Workbench interprets delegation metadata; project-native tools execute project work."
+  },
+  "nodes": [
+    {
+      "id": "select_task",
+      "provider": "agent_workbench_supervisor.task_selection",
+      "name": "Select bounded task",
+      "description": "Supervisor selects a bounded task bundle suitable for proposal-only delegation.",
+      "inputs": {
+        "roadmap_or_issue": "project roadmap or issue reference"
+      },
+      "outputs": {
+        "task_bundle": "bounded task selected for delegation"
+      },
+      "parameters": {
+        "execution_boundary": "supervisor decision only"
+      },
+      "artifacts": [
+        {
+          "artifact_id": "task_context",
+          "kind": "source",
+          "path_or_reference": "ignored runtime ticket context"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "task_selection",
+        "authority_level": "supervisor-owned",
+        "implementation": "human or paid supervisor"
+      }
+    },
+    {
+      "id": "worker_proposal",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Draft worker proposal",
+      "description": "Local worker model produces a proposal or evidence summary without tracked-file mutation.",
+      "needs": [
+        "select_task"
+      ],
+      "inputs": {
+        "task_bundle": "${nodes.select_task.outputs.task_bundle}"
+      },
+      "outputs": {
+        "proposal": "worker generated proposal"
+      },
+      "parameters": {
+        "allowed_authority": "proposal-only",
+        "claim_policy": "unsupported claims require supervisor rejection"
+      },
+      "artifacts": [
+        {
+          "artifact_id": "worker_output",
+          "kind": "generated",
+          "path_or_reference": "ignored runtime worker output"
+        }
+      ],
+      "provenance": {
+        "role": "analyst",
+        "capability": "evidence_intake",
+        "authority_level": "L1",
+        "implementation": "configured Ollama worker model",
+        "token_accounting": "ignored runtime token/cost record"
+      }
+    },
+    {
+      "id": "project_native_verification",
+      "provider": "project_native.verify",
+      "name": "Run project-native verification",
+      "description": "Supervisor-owned verification through FreshForge, project CLI, notebook, CI, or script.",
+      "needs": [
+        "worker_proposal"
+      ],
+      "inputs": {
+        "proposal": "${nodes.worker_proposal.outputs.proposal}"
+      },
+      "outputs": {
+        "verification_evidence": "project-native command or report output"
+      },
+      "parameters": {
+        "execution_boundary": "project-native tools execute project work"
+      },
+      "artifacts": [
+        {
+          "artifact_id": "verification_report",
+          "kind": "generated",
+          "path_or_reference": "ignored runtime verification report"
+        }
+      ],
+      "provenance": {
+        "role": "programmer",
+        "capability": "project_native_verification",
+        "authority_level": "supervisor-owned",
+        "implementation": "FreshForge, project CLI, notebook, CI, or script"
+      }
+    },
+    {
+      "id": "supervisor_promotion",
+      "provider": "agent_workbench_supervisor.promotion",
+      "name": "Decide promotion",
+      "description": "Supervisor accepts, revises, rejects, or defers worker output after verification.",
+      "needs": [
+        "worker_proposal",
+        "project_native_verification"
+      ],
+      "inputs": {
+        "proposal": "${nodes.worker_proposal.outputs.proposal}",
+        "verification_evidence": "${nodes.project_native_verification.outputs.verification_evidence}"
+      },
+      "outputs": {
+        "promotion_decision": "promote, revise, reject, or defer"
+      },
+      "parameters": {
+        "nondelegable_actions": [
+          "tracked-file mutation",
+          "GitHub mutation",
+          "PR merge",
+          "phase closeout"
+        ]
+      },
+      "artifacts": [
+        {
+          "artifact_id": "decision_packet",
+          "kind": "promoted",
+          "path_or_reference": "tracked sanitized note or issue comment"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "promotion_decision",
+        "authority_level": "supervisor-owned",
+        "implementation": "human or paid supervisor"
+      }
+    }
+  ]
+}
