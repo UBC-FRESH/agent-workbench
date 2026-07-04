@@ -872,3 +872,16 @@ issues, pull requests, and closeout comments.
   links, and artifacts.
 - Added `planning/phase43_graph_backed_pilot_workflow.md` and updated README,
   roadmap, changelog, and smoke coverage.
+
+## 2026-07-04 - Added P44 graph-aware delegation decisions
+
+- Opened P44 GitHub issue #304 with child issues #305 through #308 for
+  graph-node decision inputs, recommendation logic, report surface, and
+  closeout.
+- Added `agent-workbench graph decide` to render node-level delegation
+  recommendations from FreshForge-compatible graphs with Agent Workbench
+  metadata.
+- Reused the existing rules-based `decide_task` engine rather than creating a
+  separate graph decision policy.
+- Added `planning/phase44_graph_aware_decision_engine.md` and updated README,
+  roadmap, changelog, and smoke coverage.
