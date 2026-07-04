@@ -167,7 +167,7 @@ def render_manifest(
         "provider_headers_file": config.provider_headers_file,
         "wire_api": "completions",
         "mode": "empty",
-        "base_directory": "runtime/copilot_sdk_home",
+        "base_directory": relpath(output_dir / "copilot_sdk_home", project_root),
     }
 
 

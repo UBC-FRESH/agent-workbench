@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -51,6 +52,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="Run or plan an SDK same-ticket evaluation manifest.",
     )
     eval_parser.add_argument("--manifest", type=Path, required=True)
+    eval_parser.add_argument(
+        "--project-root",
+        type=Path,
+        default=None,
+        help=(
+            "Optional target project root used to resolve manifest-relative "
+            "ticket, output, provider, and evidence paths."
+        ),
+    )
     eval_parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -142,12 +152,40 @@ def run_smoke(args: argparse.Namespace) -> int:
 
 def run_eval(args: argparse.Namespace) -> int:
     script = script_path(args.repo_root, "sdk_same_ticket_eval.py")
-    command = [sys.executable, str(script), "--manifest", str(args.manifest)]
+    cwd = args.project_root.resolve() if args.project_root is not None else args.repo_root
+    manifest = materialize_cross_project_manifest(args) if args.project_root else args.manifest
+    command = [sys.executable, str(script), "--manifest", str(manifest)]
     if args.dry_run:
         command.append("--dry-run")
     if args.summary_only:
         command.append("--summary-only")
-    return run_command(command, args.repo_root)
+    return run_command(command, cwd)
+
+
+def materialize_cross_project_manifest(args: argparse.Namespace) -> Path:
+    project_root = args.project_root.resolve()
+    manifest_path = resolve_manifest_path(args.manifest, project_root)
+    data = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
+
+    probe_script = Path(str(data.get("probe_script", "")))
+    if not probe_script.is_absolute():
+        data["probe_script"] = str(script_path(args.repo_root, probe_script.name))
+
+    python_executable = Path(str(data.get("python_executable", "")))
+    if not str(python_executable) or not python_executable.is_absolute():
+        data["python_executable"] = sys.executable
+
+    materialized_dir = manifest_path.parent / "materialized_manifests"
+    materialized_dir.mkdir(parents=True, exist_ok=True)
+    materialized = materialized_dir / f"{manifest_path.stem}.agent-workbench.json"
+    materialized.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    return materialized
+
+
+def resolve_manifest_path(manifest: Path, project_root: Path) -> Path:
+    if manifest.is_absolute():
+        return manifest
+    return project_root / manifest
 
 
 def run_evidence_validate(args: argparse.Namespace) -> int:

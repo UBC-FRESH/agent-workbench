@@ -53,17 +53,25 @@ agent-workbench pilot scaffold `
   --project-root <target-project> `
   --task-id example-proposal `
   --title "Draft a bounded proposal for supervisor review" `
-  --mode proposal
+  --mode proposal `
+  --output-dir tmp/agent_workbench/pilots
 ```
 
 Then dry-run the generated manifest:
 
 ```powershell
-agent-workbench eval --manifest <target-project>/runtime/agent_workbench/pilots/example-proposal.manifest.json --dry-run
+agent-workbench eval `
+  --project-root <target-project> `
+  --manifest tmp/agent_workbench/pilots/example-proposal.manifest.json `
+  --dry-run
 ```
 
 Use `--mode marker` for a stop-behavior check and `--mode proposal` for a
 bounded planning/proposal worker task.
+
+When `--project-root` is supplied, manifest-relative ticket, output, provider,
+and evidence paths resolve from the target project root. Agent Workbench still
+uses its own checkout for the evaluation harness scripts.
 
 ## Run A Same-Ticket Evaluation
 
