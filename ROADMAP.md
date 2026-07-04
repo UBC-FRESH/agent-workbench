@@ -33,6 +33,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P22 CLI wrappers for existing commands | #164 | `feature/p22-cli-wrappers-existing-commands` | Complete |
 | P23 Evidence summary validation and rendering | #171 | `feature/p23-evidence-summary-validation-rendering` | Complete |
 | P24 CLI dogfood workflow | #178 | `feature/p24-cli-dogfood-workflow` | Complete |
+| P25 Real-project pilot scaffold | #185 | `feature/p25-real-project-pilot-scaffold` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1199,4 +1200,48 @@ Phase 24 acceptance criteria:
 - `agent-workbench evidence validate` and `agent-workbench evidence render`
   succeed on the dogfood summary.
 - README and playbook explain the minimal package workflow for real dev-project
+  trials.
+
+## Phase 25: Real-Project Pilot Scaffold
+
+Parent issue: #185
+
+Branch: `feature/p25-real-project-pilot-scaffold`
+
+Status: complete
+
+Goal: add a real-project pilot scaffold command so supervisors can create
+bounded worker tickets, evaluation manifests, and sanitized evidence-summary
+stubs for adjacent development projects.
+
+Completed tasks:
+
+- [x] P25.1 Pilot scaffold command design (#186)
+  - [x] Add `agent-workbench pilot scaffold`.
+  - [x] Support marker and proposal modes.
+  - [x] Keep worker authority no-tool by default.
+- [x] P25.2 Ticket and manifest generation (#187)
+  - [x] Generate ignored ticket files.
+  - [x] Generate SDK evaluation manifests.
+  - [x] Preserve configurable model/provider file references.
+- [x] P25.3 Evidence summary stub generation (#188)
+  - [x] Generate evidence-summary JSON stubs.
+  - [x] Use repo-relative runtime paths.
+  - [x] Validate stubs with package evidence command.
+- [x] P25.4 Local dogfood scaffold and dry-run (#189)
+  - [x] Scaffold a local dogfood pilot.
+  - [x] Run generated eval manifest with `--dry-run`.
+  - [x] Run command-surface smoke check.
+- [x] P25.5 Closeout and real-project trial decision (#190)
+  - [x] Update playbook, roadmap, changelog, and planning notes.
+  - [x] Run verification.
+  - [x] Open and merge PR.
+
+Phase 25 acceptance criteria:
+
+- `agent-workbench pilot scaffold` creates ticket, manifest, and evidence JSON
+  paths under an ignored runtime directory.
+- Generated manifests can be used with `agent-workbench eval --dry-run`.
+- Generated evidence stubs validate with `agent-workbench evidence validate`.
+- The CLI workflow playbook explains how to use the scaffold for real project
   trials.

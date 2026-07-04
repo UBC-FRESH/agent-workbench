@@ -575,3 +575,16 @@ issues, pull requests, and closeout comments.
 - Added `playbooks/cli_workflow.md`,
   `planning/phase24_cli_dogfood_workflow_notes.md`, and README quickstart
   guidance for small real-project trials.
+
+## 2026-07-04 - Added Phase 25 real-project pilot scaffold
+
+- Created the Phase 25 real-project pilot lane on
+  `feature/p25-real-project-pilot-scaffold`, with parent issue #185 and child
+  task issues #186 through #190.
+- Added `agent-workbench pilot scaffold` to create bounded worker tickets, SDK
+  evaluation manifests, and evidence-summary stubs for target project roots.
+- Added marker and proposal modes while keeping worker authority no-tool and
+  supervisor-owned.
+- Updated `playbooks/cli_workflow.md` and added
+  `planning/phase25_real_project_pilot_scaffold_notes.md` so the package can be
+  used for small real-project trials without hand-writing every runtime file.
