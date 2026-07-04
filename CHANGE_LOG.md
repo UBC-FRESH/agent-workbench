@@ -525,3 +525,15 @@ issues, pull requests, and closeout comments.
   tranche.
 - Deferred VS Code extension, MCP server, hosted agent, dashboard, and broad
   benchmark-harness work until the local CLI path proves useful.
+
+## 2026-07-04 - Added Phase 21 package and CLI skeleton
+
+- Created the Phase 21 package-skeleton lane on
+  `feature/p21-minimal-local-package-cli`, with parent issue #157 and child
+  task issues #158 through #162.
+- Added `pyproject.toml`, `src/agent_workbench/__init__.py`,
+  `src/agent_workbench/__main__.py`, and `src/agent_workbench/cli.py`.
+- Added the `agent-workbench` console script with minimal help and version
+  surfaces while preserving direct script usage.
+- Added `planning/phase21_minimal_package_cli_notes.md` and kept worker trust
+  levels unchanged.
