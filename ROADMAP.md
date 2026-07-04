@@ -21,7 +21,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | Complete |
 | P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Complete |
 | P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Complete |
-| P13 GitHub workflow microtrial | TBD | TBD | Planned |
+| P13 GitHub workflow microtrial | #97 | `feature/p13-github-workflow-microtrial` | PR-ready |
 | P14 Model matrix and packaging decision | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -662,22 +662,37 @@ Phase 12 acceptance criteria:
 
 ## Phase 13: GitHub Workflow Microtrial
 
-Parent issue: TBD
+Parent issue: #97
 
-Branch: TBD
+Branch: `feature/p13-github-workflow-microtrial`
 
-Status: planned
+Status: PR-ready
 
 Goal: test small, bounded GitHub workflow participation without delegating broad
 phase closeout.
 
-Planned tasks:
-
-- P13.1 GitHub-task ticket safety contract.
-- P13.2 Read-only issue inspection trial.
-- P13.3 File-backed comment or PR-body preparation trial.
-- P13.4 Supervisor-applied GitHub mutation protocol.
-- P13.5 Closeout and GitHub delegation boundary decision.
+- [x] P13.1 GitHub-task ticket safety contract (#98)
+  - [x] Add GitHub microtask ticket template.
+  - [x] Separate worker preparation from supervisor mutation.
+  - [x] Forbid issue closure and PR merge delegation.
+- [x] P13.2 Read-only issue inspection trial (#99)
+  - [x] Run read-only `gh issue view`.
+  - [x] Record exact issue state.
+  - [x] Avoid mutation during read-only audit.
+- [x] P13.3 File-backed comment preparation trial (#100)
+  - [x] Prepare ignored worker ticket.
+  - [x] Generate a bounded comment body candidate.
+  - [x] Keep raw worker output ignored.
+- [x] P13.4 Supervisor-applied GitHub mutation protocol (#101)
+  - [x] Supervisor reviews candidate body.
+  - [x] Supervisor posts one file-backed comment.
+  - [x] Verify the mutation with read-only `gh issue view`.
+- [ ] P13.5 Closeout and GitHub delegation boundary decision (#102)
+  - [x] Update roadmap, changelog, and planning notes.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [ ] Open and merge PR.
+  - [ ] Close parent issue after merge.
 
 Phase 13 acceptance criteria:
 
