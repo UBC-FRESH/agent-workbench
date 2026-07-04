@@ -57,6 +57,9 @@ Supervisor agents are responsible for:
 
 - decomposing work into bounded worker tickets;
 - stating exact allowed commands, files, and success criteria;
+- selecting worker models only from the configured Ollama host's live
+  `ollama list` inventory unless a ticket explicitly includes model
+  installation/setup as part of the task;
 - verifying worker outputs independently;
 - deciding whether a result is accepted, rejected, or needs another ticket; and
 - keeping roadmap, changelog, issue, and PR state synchronized.
@@ -73,6 +76,18 @@ Worker agents are responsible for:
 Worker prompts should avoid open-ended requests such as "finish the workflow" or
 "do the proper closeout" unless the prompt also includes the exact state machine,
 commands, stop conditions, and evidence requirements.
+
+Current worker-model boundary:
+
+- Treat the configured Ollama host's `ollama list` output as the source of truth
+  for available worker models.
+- Do not assign non-Ollama models or Ollama models that are not installed in the
+  active host inventory by default.
+- Installing a new or larger model is a separate setup task that must include
+  the model name, host/session used for installation, and post-install
+  verification with `ollama list`.
+- Keep public documentation generic: describe the model host as the configured
+  Ollama/GPU worker host rather than publishing personal server details.
 
 ## File-Based Agent Handoff Protocol
 

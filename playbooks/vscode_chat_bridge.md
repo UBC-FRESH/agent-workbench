@@ -47,6 +47,30 @@ Get-Content runtime\agent_jobs\<task>_ticket.md -Raw |
   code chat --mode agent --new-window -
 ```
 
+## Worker Model Boundary
+
+For now, VS Code Chat worker jobs should use only models available from the
+configured Ollama worker host.
+
+Before assigning a worker model, verify the active inventory in the host/session
+that will serve the model:
+
+```powershell
+ollama list
+```
+
+Rules:
+
+- Use the live `ollama list` output as the source of truth.
+- Do not assume that a model exists because it is listed in a public Ollama
+  library or appears in a prior experiment.
+- Do not assign a non-Ollama model for this bridge unless a later phase expands
+  the model boundary.
+- Treat installing a larger model as a separate setup task with explicit
+  post-install verification.
+- Keep tickets generic about infrastructure; avoid publishing personal hostnames,
+  private endpoints, credentials, or workstation-specific paths.
+
 ## File Protocol
 
 Raw worker materials stay ignored by default:
