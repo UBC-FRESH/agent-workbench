@@ -30,7 +30,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P19 Delegation policy and trust levels | #143 | `feature/p19-delegation-policy-trust-levels` | Complete |
 | P20 Packaging revisit and interface decision | #150 | `feature/p20-packaging-interface-decision` | Complete |
 | P21 Minimal local package and CLI skeleton | #157 | `feature/p21-minimal-local-package-cli` | Complete |
-| P22 CLI wrappers for existing commands | TBD | TBD | Planned |
+| P22 CLI wrappers for existing commands | #164 | `feature/p22-cli-wrappers-existing-commands` | Complete |
 | P23 Evidence summary validation and rendering | TBD | TBD | Planned |
 | P24 CLI dogfood workflow | TBD | TBD | Planned |
 
@@ -1072,14 +1072,45 @@ Phase 21 acceptance criteria:
 
 ## Phase 22: CLI Wrappers For Existing Commands
 
-Parent issue: TBD
+Parent issue: #164
 
-Branch: TBD
+Branch: `feature/p22-cli-wrappers-existing-commands`
 
-Status: planned
+Status: complete
 
 Goal: wrap command-surface smoke checks and SDK same-ticket evaluation through
 the new CLI while preserving direct script compatibility.
+
+Completed tasks:
+
+- [x] P22.1 CLI smoke-check wrapper (#165)
+  - [x] Add `agent-workbench smoke`.
+  - [x] Delegate to `scripts/check_command_surfaces.py`.
+  - [x] Support optional report path.
+- [x] P22.2 CLI same-ticket eval wrapper (#166)
+  - [x] Add `agent-workbench eval`.
+  - [x] Require manifest path.
+  - [x] Delegate to `scripts/sdk_same_ticket_eval.py`.
+- [x] P22.3 Redacted dry-run compatibility (#167)
+  - [x] Support `--dry-run`.
+  - [x] Support `--summary-only`.
+  - [x] Preserve script-level redaction behavior.
+- [x] P22.4 Direct script compatibility verification (#168)
+  - [x] Keep direct scripts in place.
+  - [x] Run direct command-surface smoke check.
+  - [x] Verify package wrapper smoke check.
+- [x] P22.5 Closeout and wrapper decision (#169)
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [x] Open and merge PR.
+
+Phase 22 acceptance criteria:
+
+- `agent-workbench smoke` runs the P16 command-surface smoke check.
+- `agent-workbench eval --manifest <path> --dry-run` plans SDK evaluation
+  without provider contact.
+- Existing direct scripts remain usable.
 
 ## Phase 23: Evidence Summary Validation And Rendering
 

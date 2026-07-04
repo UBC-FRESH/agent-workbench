@@ -537,3 +537,15 @@ issues, pull requests, and closeout comments.
   surfaces while preserving direct script usage.
 - Added `planning/phase21_minimal_package_cli_notes.md` and kept worker trust
   levels unchanged.
+
+## 2026-07-04 - Added Phase 22 CLI wrappers
+
+- Created the Phase 22 CLI-wrapper lane on
+  `feature/p22-cli-wrappers-existing-commands`, with parent issue #164 and
+  child task issues #165 through #169.
+- Added `agent-workbench smoke` as a package entrypoint for command-surface
+  smoke checks.
+- Added `agent-workbench eval --manifest <path>` with `--dry-run` and
+  `--summary-only` support for the SDK same-ticket evaluation harness.
+- Added `planning/phase22_cli_wrappers_notes.md` and preserved direct script
+  compatibility.
