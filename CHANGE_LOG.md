@@ -288,3 +288,24 @@ issues, pull requests, and closeout comments.
   safety, GitHub permissions, and interface decisions in one experiment.
 - Left future P9-P14 issue numbers and branches as `TBD` so issue trees are
   created only when each phase actually starts.
+
+## 2026-07-04 - Launched Phase 9 structured documentation-output trial
+
+- Created the Phase 9 structured-output lane on
+  `feature/p9-structured-doc-output-trial`, with parent issue #65 and child
+  task issues #66 through #70.
+- Added `templates/structured_doc_ticket.md` and extended the SDK same-ticket
+  summarizer with required-section, extra-prose, forbidden-phrase, and
+  loop-like repetition classifications.
+- Scoped Phase 9 to no-tool structured assistant output only; patch proposals,
+  file mutation, tool-enabled work, and GitHub workflow delegation remain
+  deferred to later phases.
+
+## 2026-07-04 - Ran Phase 9 structured-output trial
+
+- Ran two structured-output repeats each for `qwen3-coder:latest` and
+  `qwen3-coder-next:latest` through the SDK/Ollama harness.
+- Verified that all four runs classified as `structured-output`, with required
+  `## Summary`, `## Observations`, and `## Decision` sections present.
+- Recorded the next decision: proceed to P10 patch-proposal trials while still
+  keeping worker file mutation disabled.
