@@ -43,6 +43,28 @@ agent-workbench eval --manifest runtime/agent_jobs/example_manifest.json --dry-r
 The dry run should show redacted provider values and should not contact the
 model provider.
 
+## Scaffold A Real-Project Pilot
+
+For a real development project, generate a bounded ticket, manifest, and
+evidence-summary stub under that project's ignored runtime directory:
+
+```powershell
+agent-workbench pilot scaffold `
+  --project-root <target-project> `
+  --task-id example-proposal `
+  --title "Draft a bounded proposal for supervisor review" `
+  --mode proposal
+```
+
+Then dry-run the generated manifest:
+
+```powershell
+agent-workbench eval --manifest <target-project>/runtime/agent_workbench/pilots/example-proposal.manifest.json --dry-run
+```
+
+Use `--mode marker` for a stop-behavior check and `--mode proposal` for a
+bounded planning/proposal worker task.
+
 ## Run A Same-Ticket Evaluation
 
 When the configured provider inputs are present:

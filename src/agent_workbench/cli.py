@@ -9,6 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .evidence import load_summary, render_markdown, validate_summary
+from .pilot import PilotScaffoldConfig, scaffold_pilot
 
 
 def default_repo_root() -> Path:
@@ -83,6 +84,44 @@ def build_parser() -> argparse.ArgumentParser:
     render_parser.add_argument("--output", type=Path, required=True)
     render_parser.set_defaults(func=run_evidence_render)
 
+    pilot_parser = subparsers.add_parser(
+        "pilot",
+        help="Create real-project pilot scaffolds.",
+    )
+    pilot_subparsers = pilot_parser.add_subparsers(dest="pilot_command", required=True)
+
+    scaffold_parser = pilot_subparsers.add_parser(
+        "scaffold",
+        help="Create a bounded ticket, eval manifest, and evidence stub.",
+    )
+    scaffold_parser.add_argument("--project-root", type=Path, required=True)
+    scaffold_parser.add_argument("--task-id", required=True)
+    scaffold_parser.add_argument("--title", required=True)
+    scaffold_parser.add_argument(
+        "--mode",
+        choices=("marker", "proposal"),
+        default="marker",
+    )
+    scaffold_parser.add_argument("--model", default="qwen3-coder:latest")
+    scaffold_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("runtime/agent_workbench/pilots"),
+    )
+    scaffold_parser.add_argument("--marker", default="")
+    scaffold_parser.add_argument("--repeats", type=int, default=1)
+    scaffold_parser.add_argument("--timeout-seconds", type=int, default=120)
+    scaffold_parser.add_argument(
+        "--base-url-file",
+        default="runtime/ollama_openai_base_url.txt",
+    )
+    scaffold_parser.add_argument(
+        "--provider-headers-file",
+        default="runtime/local_provider_headers.json",
+    )
+    scaffold_parser.add_argument("--force", action="store_true")
+    scaffold_parser.set_defaults(func=run_pilot_scaffold)
+
     parser.set_defaults(func=run_overview)
     return parser
 
@@ -132,6 +171,29 @@ def run_evidence_render(args: argparse.Namespace) -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(render_markdown(data), encoding="utf-8")
     print(f"wrote {args.output}")
+    return 0
+
+
+def run_pilot_scaffold(args: argparse.Namespace) -> int:
+    marker = args.marker.strip() or f"{args.task_id.upper().replace('-', '_')} done"
+    config = PilotScaffoldConfig(
+        project_root=args.project_root,
+        task_id=args.task_id,
+        title=args.title,
+        mode=args.mode,
+        model=args.model,
+        output_dir=args.output_dir,
+        marker=marker,
+        repeats=args.repeats,
+        timeout_seconds=args.timeout_seconds,
+        base_url_file=args.base_url_file,
+        provider_headers_file=args.provider_headers_file,
+        force=args.force,
+    )
+    result = scaffold_pilot(config)
+    print(f"ticket: {result.ticket_path}")
+    print(f"manifest: {result.manifest_path}")
+    print(f"evidence: {result.evidence_path}")
     return 0
 
 
