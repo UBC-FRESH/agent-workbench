@@ -1,0 +1,35 @@
+{
+  "record_id": "example-token-cost-record",
+  "source_type": "manual-estimate",
+  "generated_utc": "2026-07-04T00:00:00Z",
+  "scope": {
+    "project": "example-project",
+    "phase": "example-phase",
+    "task_id": "example-task",
+    "model_or_worker": "qwen3-coder-next:latest",
+    "protocol": "proposal-assist/no-tool"
+  },
+  "usage": {
+    "supervisor_input_tokens": 45000,
+    "supervisor_output_tokens": 9000,
+    "worker_input_tokens": 150000,
+    "worker_output_tokens": 35000
+  },
+  "prices": {
+    "supervisor_input_price_per_1m_usd": 1.75,
+    "supervisor_output_price_per_1m_usd": 14.0,
+    "worker_input_price_per_1m_usd": 0.0,
+    "worker_output_price_per_1m_usd": 0.0
+  },
+  "public_safety": {
+    "raw_prompts_excluded": true,
+    "raw_traces_excluded": true,
+    "provider_urls_excluded": true,
+    "headers_excluded": true,
+    "personal_paths_excluded": true
+  },
+  "notes": [
+    "Use sanitized usage metadata only.",
+    "Keep raw observability exports under ignored runtime paths."
+  ]
+}

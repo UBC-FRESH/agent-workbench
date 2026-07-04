@@ -42,6 +42,12 @@ from .roles import (
     render_role_markdown,
     validate_role_record,
 )
+from .tokens import (
+    load_token_record,
+    render_token_markdown,
+    synthesize_token_markdown,
+    validate_token_record,
+)
 from .workflow import (
     load_workflow_step,
     render_workflow_markdown,
@@ -240,6 +246,44 @@ def build_parser() -> argparse.ArgumentParser:
     roles_render_parser.add_argument("--input", type=Path, required=True)
     roles_render_parser.add_argument("--output", type=Path, required=True)
     roles_render_parser.set_defaults(func=run_roles_render)
+
+    tokens_parser = subparsers.add_parser(
+        "tokens",
+        help="Validate, render, or synthesize sanitized token/cost records.",
+    )
+    tokens_subparsers = tokens_parser.add_subparsers(
+        dest="tokens_command",
+        required=True,
+    )
+
+    tokens_validate_parser = tokens_subparsers.add_parser(
+        "validate",
+        help="Validate a sanitized token/cost JSON record.",
+    )
+    tokens_validate_parser.add_argument("--input", type=Path, required=True)
+    tokens_validate_parser.set_defaults(func=run_tokens_validate)
+
+    tokens_render_parser = tokens_subparsers.add_parser(
+        "render",
+        help="Render a sanitized token/cost JSON record to Markdown.",
+    )
+    tokens_render_parser.add_argument("--input", type=Path, required=True)
+    tokens_render_parser.add_argument("--output", type=Path, required=True)
+    tokens_render_parser.set_defaults(func=run_tokens_render)
+
+    tokens_synthesize_parser = tokens_subparsers.add_parser(
+        "synthesize",
+        help="Synthesize sanitized token/cost records.",
+    )
+    tokens_synthesize_parser.add_argument("--input", type=Path, action="append", default=[])
+    tokens_synthesize_parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=None,
+        help="Directory containing *.tokens.json files.",
+    )
+    tokens_synthesize_parser.add_argument("--output", type=Path, required=True)
+    tokens_synthesize_parser.set_defaults(func=run_tokens_synthesize)
 
     decide_parser = subparsers.add_parser(
         "decide",
@@ -553,6 +597,56 @@ def run_roles_render(args: argparse.Namespace) -> int:
         return 1
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(render_role_markdown(data), encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_tokens_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_token_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_token_record(data)
+    if result.ok:
+        print(f"valid token/cost record: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_tokens_render(args: argparse.Namespace) -> int:
+    try:
+        data = load_token_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_token_record(data)
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(render_token_markdown(data), encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_tokens_synthesize(args: argparse.Namespace) -> int:
+    paths = list(args.input)
+    if args.input_dir is not None:
+        paths.extend(sorted(args.input_dir.glob("*.tokens.json")))
+    if not paths:
+        print("error: provide --input or --input-dir", file=sys.stderr)
+        return 1
+    try:
+        report = synthesize_token_markdown(paths)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(report, encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
 
