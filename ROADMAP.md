@@ -23,7 +23,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Complete |
 | P13 GitHub workflow microtrial | #97 | `feature/p13-github-workflow-microtrial` | Complete |
 | P14 Model matrix and packaging decision | #105 | `feature/p14-model-matrix-packaging-decision` | Complete |
-| P15 Model-family expansion trial | TBD | TBD | Planned |
+| P15 Model-family expansion trial | #115 | `feature/p15-model-family-expansion-trial` | Complete |
 | P16 Command surface stabilization | TBD | TBD | Planned |
 | P17 Evidence store and summary schema | TBD | TBD | Planned |
 | P18 Richer restricted tool trial | TBD | TBD | Planned |
@@ -763,23 +763,41 @@ packaging.
 
 ## Phase 15: Model-Family Expansion Trial
 
-Parent issue: TBD
+Parent issue: #115
 
-Branch: TBD
+Branch: `feature/p15-model-family-expansion-trial`
 
-Status: planned
+Status: complete
 
 Goal: run the stable P8-P10 ticket families across selected configured Ollama
 models beyond the initial qwen pair.
 
-Planned tasks:
+Completed tasks:
 
-- P15.1 Select model subset from configured inventory.
-- P15.2 Prepare repeated manifests for marker, structured-output, and
-  patch-proposal ticket families.
-- P15.3 Run small-repeat SDK trials.
-- P15.4 Produce sanitized cross-model summary.
-- P15.5 Closeout and model-shortlist decision.
+- [x] P15.1 Select model subset from configured inventory (#116)
+  - [x] Select at least three non-qwen configured coding models.
+  - [x] Record large-model deferral rationale.
+  - [x] Keep model-host details out of tracked files.
+- [x] P15.2 Prepare repeated manifests for marker, structured-output, and
+  patch-proposal ticket families (#117)
+  - [x] Prepare ignored marker-family manifest.
+  - [x] Prepare ignored structured-output-family manifest.
+  - [x] Prepare ignored patch-proposal-family manifest.
+  - [x] Keep raw outputs under ignored runtime paths.
+- [x] P15.3 Run small-repeat SDK trials (#118)
+  - [x] Run marker-family trial.
+  - [x] Run structured-output-family trial.
+  - [x] Run patch-proposal-family trial.
+  - [x] Inspect ignored summaries before promoting findings.
+- [x] P15.4 Produce sanitized cross-model summary (#119)
+  - [x] Add `planning/phase15_model_family_expansion_notes.md`.
+  - [x] Summarize classifications by model and ticket family.
+  - [x] Record caveats and evidence limits.
+- [x] P15.5 Closeout and model-shortlist decision (#120)
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [x] Open and merge PR.
 
 Phase 15 acceptance criteria:
 

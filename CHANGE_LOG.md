@@ -445,3 +445,18 @@ issues, pull requests, and closeout comments.
   P9-P14 evidence.
 - Kept future P15-P20 issue numbers and branches as `TBD` so issue trees are
   created only when each phase starts.
+
+## 2026-07-04 - Ran Phase 15 model-family expansion trial
+
+- Created the Phase 15 model-family expansion lane on
+  `feature/p15-model-family-expansion-trial`, with parent issue #115 and child
+  task issues #116 through #120.
+- Ran the stable marker, structured-output, and patch-proposal no-tool ticket
+  families against `codestral:latest`, `devstral-small-2:latest`, and
+  `deepseek-coder-v2:16b` through the SDK/Ollama harness.
+- Verified that all three models passed marker and structured-output
+  classifications, while `deepseek-coder-v2:16b` missed the required
+  `## Verification` section in the patch-proposal family.
+- Added `planning/phase15_model_family_expansion_notes.md` with sanitized
+  findings and deferred the largest configured models until command surfaces and
+  evidence schema are more stable.
