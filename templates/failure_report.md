@@ -38,7 +38,7 @@ Use this template when a worker-agent task cannot be completed as assigned.
 
 ## Safe Next Step
 
-- 
+-
 
 Do not convert this failure into a success summary. If the assigned command did
 not run successfully, the work is blocked or needs a new bounded ticket.

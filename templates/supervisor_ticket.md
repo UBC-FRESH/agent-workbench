@@ -31,7 +31,7 @@ Do not do:
 
 Allowed files:
 
-- 
+-
 
 Allowed commands:
 
@@ -41,13 +41,13 @@ Allowed commands:
 
 Commands that require stopping first:
 
-- 
+-
 
 ## Success Criteria
 
 The task is successful only when:
 
-- 
+-
 
 ## Stop Conditions
 

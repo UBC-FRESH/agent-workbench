@@ -34,4 +34,4 @@ Choose exactly one:
 
 ## Supervisor Notes
 
-- 
+-

@@ -19,15 +19,15 @@ Choose exactly one:
 
 ## Files Changed
 
-- 
+-
 
 ## Checks Run
 
-- 
+-
 
 ## GitHub URLs Touched
 
-- 
+-
 
 ## Evidence
 
@@ -52,7 +52,7 @@ Exact error text:
 
 ## Notes For Supervisor
 
-- 
+-
 
 Do not mark this result as accepted yourself. The supervisor must verify the
 underlying repository, filesystem, and GitHub state independently.
