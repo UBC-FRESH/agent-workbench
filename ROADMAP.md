@@ -24,7 +24,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P13 GitHub workflow microtrial | #97 | `feature/p13-github-workflow-microtrial` | Complete |
 | P14 Model matrix and packaging decision | #105 | `feature/p14-model-matrix-packaging-decision` | Complete |
 | P15 Model-family expansion trial | #115 | `feature/p15-model-family-expansion-trial` | Complete |
-| P16 Command surface stabilization | TBD | TBD | Planned |
+| P16 Command surface stabilization | #122 | `feature/p16-command-surface-stabilization` | Complete |
 | P17 Evidence store and summary schema | TBD | TBD | Planned |
 | P18 Richer restricted tool trial | TBD | TBD | Planned |
 | P19 Delegation policy and trust levels | TBD | TBD | Planned |
@@ -808,22 +808,39 @@ Phase 15 acceptance criteria:
 
 ## Phase 16: Command Surface Stabilization
 
-Parent issue: TBD
+Parent issue: #122
 
-Branch: TBD
+Branch: `feature/p16-command-surface-stabilization`
 
-Status: planned
+Status: complete
 
 Goal: stabilize the local script command surfaces that are now reused across
 multiple phases without converting the repo into a package.
 
-Planned tasks:
+Completed tasks:
 
-- P16.1 Inventory script options and manifest fields.
-- P16.2 Normalize redaction and report metadata.
-- P16.3 Add lightweight smoke fixtures or dry-run checks.
-- P16.4 Update playbooks and templates.
-- P16.5 Closeout and package-readiness checkpoint.
+- [x] P16.1 Inventory script options and manifest fields (#123)
+  - [x] Inventory reusable local scripts.
+  - [x] Document manifest field expectations.
+  - [x] Preserve the direct-script boundary.
+- [x] P16.2 Normalize redaction and report metadata (#124)
+  - [x] Record redaction policy for provider and transcript evidence.
+  - [x] Document report metadata expectations.
+  - [x] Keep private runtime inputs ignored.
+- [x] P16.3 Add lightweight smoke fixtures or dry-run checks (#125)
+  - [x] Add `scripts/check_command_surfaces.py`.
+  - [x] Check script help surfaces.
+  - [x] Check SDK manifest template fields.
+  - [x] Check SDK harness dry-run planning.
+- [x] P16.4 Update playbooks and templates (#126)
+  - [x] Add `planning/phase16_command_surface_stabilization_notes.md`.
+  - [x] Keep command-surface guidance public-safe.
+  - [x] Avoid package or CLI expansion.
+- [x] P16.5 Closeout and package-readiness checkpoint (#127)
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [x] Open and merge PR.
 
 Phase 16 acceptance criteria:
 

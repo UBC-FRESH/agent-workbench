@@ -460,3 +460,17 @@ issues, pull requests, and closeout comments.
 - Added `planning/phase15_model_family_expansion_notes.md` with sanitized
   findings and deferred the largest configured models until command surfaces and
   evidence schema are more stable.
+
+## 2026-07-04 - Stabilized Phase 16 command surfaces
+
+- Created the Phase 16 command-surface lane on
+  `feature/p16-command-surface-stabilization`, with parent issue #122 and child
+  task issues #123 through #127.
+- Added `scripts/check_command_surfaces.py`, a local smoke checker for reusable
+  script help surfaces, SDK manifest template fields, and SDK harness dry-run
+  planning.
+- Added `planning/phase16_command_surface_stabilization_notes.md` to record the
+  direct-script command contract, redaction boundary, report metadata
+  expectations, and package-readiness checkpoint.
+- Kept packaging deferred until the evidence layout and delegation policy are
+  more stable.
