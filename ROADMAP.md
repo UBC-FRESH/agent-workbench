@@ -15,6 +15,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P4 Worker model evaluation rubric | #28 | `feature/p4-worker-model-evaluation-rubric` | Complete |
 | P5 Custom agent model switching spike | #35 | `feature/p5-custom-agent-model-switching` | Complete |
 | P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Complete |
+| P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -345,3 +346,51 @@ Phase 6 acceptance criteria:
   Code model-picker state.
 - Findings state whether the SDK path should replace, complement, or be
   deferred behind the VS Code Chat bridge.
+
+## Phase 7: Copilot SDK Local Probe Environment
+
+Parent issue: #48
+
+Branch: `feature/p7-copilot-sdk-local-probe-env`
+
+Status: active
+
+Goal: turn the P6 Copilot SDK/Ollama feasibility scaffold into a locally
+runnable probe path by documenting and supporting a local SDK runtime
+environment, then attempt the same no-tool probe boundary with explicit model
+and provider configuration.
+
+- [x] P7.1 Local SDK source-path support (#49)
+  - [x] Add a CLI argument or environment-variable path for SDK source loading.
+  - [x] Insert the path before importing `copilot`.
+  - [x] Report exact import/dependency blockers in the probe result.
+  - [x] Keep generated evidence under ignored runtime paths.
+- [x] P7.2 Ignored probe environment setup notes (#50)
+  - [x] Add public-safe setup notes for an ignored `.venv`.
+  - [x] Document installing or exposing the SDK Python checkout.
+  - [x] Document required local environment variables using placeholders.
+  - [x] Preserve the boundary that raw outputs and endpoint details remain
+        ignored.
+- [x] P7.3 No-tool SDK/Ollama probe attempt (#51)
+  - [x] Prepare an ignored no-tool ticket under `runtime/agent_jobs/`.
+  - [x] Attempt the probe with explicit model and provider inputs if
+        prerequisites are available.
+  - [x] Record exact blocker text if prerequisites are missing.
+  - [x] Promote only sanitized findings into tracked planning notes.
+- [ ] P7.4 Feasibility decision, closeout, and PR (#52)
+  - [x] Update `ROADMAP.md`.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Finalize P7 planning notes.
+  - [ ] Run verification.
+  - [ ] Comment on and close child issues.
+  - [ ] Open, merge, and verify PR closeout.
+
+Phase 7 acceptance criteria:
+
+- The probe can load a local Copilot SDK Python checkout through a CLI argument
+  or environment variable without hard-coding a workstation path.
+- Tracked docs explain how to create an ignored local probe environment and
+  install/use the SDK source checkout or published SDK wheel.
+- The no-tool probe is attempted with explicit model and provider inputs, or a
+  concrete blocker is recorded with exact error text.
+- `ROADMAP.md`, `CHANGE_LOG.md`, planning notes, issues, and PR body agree.
