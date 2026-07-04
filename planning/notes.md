@@ -10,13 +10,13 @@ The core question is:
 
 ```text
 Can a supervisor using Agent Workbench plus self-hosted Ollama workers complete
-real project work with lower total paid-supervisor effort than the supervisor
-would have spent doing the same work directly?
+real project work with lower total paid-supervisor token/cash cost than the
+supervisor would have spent doing the same work directly?
 ```
 
 Worker success is not sufficient evidence. A worker result is valuable only if
-the accepted value exceeds delegation setup, review, retry, cleanup, and
-context-switching costs.
+the accepted value exceeds paid-supervisor setup tokens, review tokens, retry
+tokens, cleanup tokens, and any practical context-switching friction.
 
 ## Decision Frame
 
@@ -30,12 +30,15 @@ The expected value of that decision can be approximated as:
 
 ```text
 net benefit =
-  avoided paid-supervisor effort
-  - delegation setup effort
-  - supervisor verification effort
-  - retry and context-switching effort
-  - probability_of_failure * expected_cleanup_cost
+  direct paid-supervisor token cost
+  - delegated paid-supervisor token cost
+  - self-hosted worker token cost
+  - probability_of_failure * expected paid-supervisor cleanup token cost
 ```
+
+The primary unit is token-priced cash cost, not wall-clock minutes. Local worker
+latency matters only when it creates real workflow friction or blocks the
+developer; the supervisor agent does not burn much paid API cost while waiting.
 
 The task-bundle dimension follows the UBC-FRESH planning hierarchy:
 
@@ -74,14 +77,16 @@ Useful evidence includes:
 
 - task type and roadmap level;
 - selected worker model and protocol;
-- supervisor setup effort;
+- direct paid-supervisor input/output token estimate;
+- delegated paid-supervisor input/output tokens;
+- worker input/output tokens;
+- token price assumptions;
 - worker runtime and output classification;
-- supervisor verification effort;
 - accepted, rejected, and needs-evidence claims;
-- implementation effort after worker review;
-- defects or cleanup caused by worker output;
+- implementation and verification tokens after worker review;
+- defects or cleanup caused by worker output, including cleanup token cost;
 - whether delegation changed the final implementation decision; and
-- supervisor judgment of likely direct-work counterfactual.
+- supervisor judgment of likely direct-work token/cash counterfactual.
 
 The first target is not global optimality. The first target is a credible,
 repeatable argument that some non-trivial classes of UBC-FRESH development work
@@ -108,3 +113,26 @@ empirical delegation policy:
 
 Machine-learning policy optimization is premature until enough real delegation
 records exist. Rules and transparent scoring should come first.
+
+## Workbench Direction
+
+The longer-term opportunity is not a generic agent framework. Agent Workbench
+should become a reproducible workbench for supervised AI-assisted scientific and
+software development.
+
+That means the durable product is not a chat transcript or model wrapper. The
+durable product is an artifact trail:
+
+- task bundle;
+- role and capability requested;
+- implementation used, such as local worker, paid supervisor, human, script, or
+  external workflow tool;
+- evidence produced;
+- claims accepted and rejected;
+- verification performed;
+- token/cash economics; and
+- supervisor promotion decision.
+
+Keep P35/P36 focused on proving the token/cash economics loop. Treat broader
+role/capability/workflow abstractions as the P37+ tranche once real pilot data
+exists.

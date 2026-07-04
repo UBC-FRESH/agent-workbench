@@ -734,3 +734,18 @@ issues, pull requests, and closeout comments.
 - Recorded PostHog-style AI observability and current provider price matrices as
   useful sources for future token/cost accounting without wiring external
   observability into Agent Workbench yet.
+
+## 2026-07-04 - Added scientific workbench direction note
+
+- Added `planning/scientific_workbench_direction.md` to promote the strategic
+  direction that Agent Workbench should become a reproducible workbench for
+  supervised AI-assisted scientific and software development, not another
+  general agent framework.
+- Updated `planning/notes.md` to align the delegation economics strategy with
+  token/cash-first accounting and the longer-term artifact-first workbench
+  direction.
+- Extended `ROADMAP.md` with planned P37-P40 phases covering artifact/workflow
+  contracts, role/capability/implementation separation, reusable scientific
+  workbench templates, and observability/token-cost ingestion.
+- Kept P35/P36 as the immediate empirical tranche for real-project pilot
+  accounting and policy tuning before broadening the architecture.
