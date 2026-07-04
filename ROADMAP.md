@@ -16,7 +16,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P5 Custom agent model switching spike | #35 | `feature/p5-custom-agent-model-switching` | Complete |
 | P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Complete |
 | P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Complete |
-| P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | PR-ready |
+| P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -402,7 +402,7 @@ Parent issue: #55
 
 Branch: `feature/p8-sdk-same-ticket-evaluation-harness`
 
-Status: PR-ready
+Status: complete
 
 Goal: turn the successful P7 one-off Copilot SDK/Ollama probe into a
 repeatable, public-safe local evaluation harness that can run the same bounded
@@ -435,13 +435,13 @@ stability signals without trusting worker prose.
         available.
   - [x] Inspect ignored per-run results and generated summary.
   - [x] Promote only sanitized findings into tracked P8 planning notes.
-- [ ] P8.5 Closeout, verification, and PR (#60)
+- [x] P8.5 Closeout, verification, and PR (#60)
   - [x] Update `ROADMAP.md`.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Finalize P8 planning notes.
   - [x] Run verification.
   - [x] Comment on and close child issues.
-  - [ ] Open, merge, and verify PR closeout.
+  - [x] Open, merge, and verify PR closeout.
 
 Phase 8 acceptance criteria:
 
