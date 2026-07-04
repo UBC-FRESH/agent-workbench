@@ -20,7 +20,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | Complete |
 | P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | Complete |
 | P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Complete |
-| P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Active |
+| P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | PR-ready |
 | P13 GitHub workflow microtrial | TBD | TBD | Planned |
 | P14 Model matrix and packaging decision | TBD | TBD | Planned |
 
@@ -621,7 +621,7 @@ Parent issue: #89
 
 Branch: `feature/p12-restricted-tool-worker-trial`
 
-Status: active
+Status: PR-ready
 
 Goal: test the narrowest available tool-enabled worker path with explicit
 allowed paths, commands, and stop conditions, then verify observed tool evidence
@@ -647,8 +647,8 @@ against the ticket.
   - [x] Keep raw reports ignored.
 - [ ] P12.5 Closeout and delegation boundary decision (#94)
   - [x] Update roadmap, changelog, and planning notes.
-  - [ ] Run verification.
-  - [ ] Close child issues.
+  - [x] Run verification.
+  - [x] Close child issues.
   - [ ] Open and merge PR.
   - [ ] Close parent issue after merge.
 
