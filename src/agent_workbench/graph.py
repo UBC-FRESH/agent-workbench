@@ -28,6 +28,19 @@ class GraphValidation:
     diagnostics: list[GraphDiagnostic]
 
 
+REQUIRED_PROVENANCE_FIELDS = ("role", "capability", "authority_level", "implementation")
+REQUIRED_AGENT_PARAMETERS = ("node_kind", "execution_boundary")
+FORBIDDEN_NODE_FIELDS = {
+    "role",
+    "capability",
+    "authority_level",
+    "implementation",
+    "token_accounting",
+    "claim_review",
+    "supervisor_decision",
+}
+
+
 def load_graph_document(path: Path) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8-sig"))
     if not isinstance(data, dict):
@@ -35,7 +48,12 @@ def load_graph_document(path: Path) -> dict[str, Any]:
     return data
 
 
-def validate_graph_document(data: dict[str, Any], *, source_path: Path | None = None) -> GraphValidation:
+def validate_graph_document(
+    data: dict[str, Any],
+    *,
+    source_path: Path | None = None,
+    agent_metadata: bool = False,
+) -> GraphValidation:
     """Validate a FreshForge-compatible workflow graph without executing it."""
     try:
         from freshforge.records import DiagnosticSeverity
@@ -59,12 +77,93 @@ def validate_graph_document(data: dict[str, Any], *, source_path: Path | None = 
         )
         for diagnostic in diagnostics
     ]
+    if agent_metadata:
+        converted.extend(validate_agent_metadata(data))
     return GraphValidation(
-        ok=not has_error_diagnostics(diagnostics),
+        ok=not has_error_diagnostics(diagnostics)
+        and not any(diagnostic.severity == "error" for diagnostic in converted),
         workflow_id=spec.id if spec is not None else None,
         node_count=len(spec.nodes) if spec is not None else 0,
         diagnostics=converted,
     )
+
+
+def validate_agent_metadata(data: dict[str, Any]) -> list[GraphDiagnostic]:
+    """Validate Agent Workbench metadata placement inside FreshForge fields."""
+    diagnostics: list[GraphDiagnostic] = []
+    nodes = data.get("nodes", [])
+    if not isinstance(nodes, list):
+        return diagnostics
+
+    for index, node in enumerate(nodes):
+        if not isinstance(node, dict):
+            continue
+        location = f"nodes[{index}]"
+        node_id = str(node.get("id", index))
+
+        for field in sorted(FORBIDDEN_NODE_FIELDS):
+            if field in node:
+                diagnostics.append(
+                    GraphDiagnostic(
+                        severity="error",
+                        code="agent_metadata.top_level_field",
+                        message=(
+                            f"Node '{node_id}' must store Agent Workbench "
+                            f"metadata field '{field}' in parameters or provenance."
+                        ),
+                        location=f"{location}.{field}",
+                    )
+                )
+
+        provenance = node.get("provenance")
+        if not isinstance(provenance, dict):
+            diagnostics.append(
+                GraphDiagnostic(
+                    severity="error",
+                    code="agent_metadata.provenance.required",
+                    message=f"Node '{node_id}' requires provenance metadata.",
+                    location=f"{location}.provenance",
+                )
+            )
+            provenance = {}
+        for field in REQUIRED_PROVENANCE_FIELDS:
+            if not str(provenance.get(field, "")).strip():
+                diagnostics.append(
+                    GraphDiagnostic(
+                        severity="error",
+                        code="agent_metadata.provenance.field_required",
+                        message=f"Node '{node_id}' requires provenance.{field}.",
+                        location=f"{location}.provenance.{field}",
+                    )
+                )
+
+        parameters = node.get("parameters")
+        agent_parameters = parameters.get("agent_workbench") if isinstance(parameters, dict) else None
+        if not isinstance(agent_parameters, dict):
+            diagnostics.append(
+                GraphDiagnostic(
+                    severity="error",
+                    code="agent_metadata.parameters.required",
+                    message=(
+                        f"Node '{node_id}' requires parameters.agent_workbench "
+                        "metadata."
+                    ),
+                    location=f"{location}.parameters.agent_workbench",
+                )
+            )
+            agent_parameters = {}
+        for field in REQUIRED_AGENT_PARAMETERS:
+            if not str(agent_parameters.get(field, "")).strip():
+                diagnostics.append(
+                    GraphDiagnostic(
+                        severity="error",
+                        code="agent_metadata.parameters.field_required",
+                        message=f"Node '{node_id}' requires parameters.agent_workbench.{field}.",
+                        location=f"{location}.parameters.agent_workbench.{field}",
+                    )
+                )
+
+    return diagnostics
 
 
 def render_graph_validation(result: GraphValidation) -> str:

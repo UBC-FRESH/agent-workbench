@@ -49,8 +49,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P38 Role, capability, and implementation model | #268 | `feature/p38-role-capability-implementation` | Complete |
 | P39 Reusable scientific workbench templates | #274 | `feature/p39-reusable-workbench-templates` | Complete |
 | P40 Observability and token-cost ingestion | #280 | `feature/p40-token-cost-ingestion` | Complete |
-| P41 FreshForge graph integration spike | #286 | `feature/p41-freshforge-graph-integration` | Active |
-| P42 Agent metadata convention | TBD | `feature/p42-agent-metadata-convention` | Planned |
+| P41 FreshForge graph integration spike | #286 | `feature/p41-freshforge-graph-integration` | Complete |
+| P42 Agent metadata convention | #292 | `feature/p42-agent-metadata-convention` | Active |
 | P43 Graph-backed pilot workflow | TBD | `feature/p43-graph-backed-pilot-workflow` | Planned |
 | P44 Graph-aware delegation decision engine | TBD | `feature/p44-graph-aware-decision-engine` | Planned |
 | P45 Per-node token economics | TBD | `feature/p45-per-node-token-economics` | Planned |
@@ -1866,7 +1866,7 @@ Parent issue: #286
 
 Branch: `feature/p41-freshforge-graph-integration`
 
-Status: active
+Status: complete
 
 Goal: test FreshForge as the optional structural graph-validation layer for
 Agent Workbench agentic role workflows.
@@ -1905,30 +1905,30 @@ Phase 41 acceptance criteria:
 
 ## Phase 42: Agent Metadata Convention
 
-Parent issue: TBD
+Parent issue: #292
 
 Branch: `feature/p42-agent-metadata-convention`
 
-Status: planned
+Status: active
 
 Goal: define the stable Agent Workbench metadata convention inside
 FreshForge-compatible graph documents.
 
 Planned tasks:
 
-- [ ] P42.1 Metadata field placement
-  - [ ] Define which fields belong in `parameters`, `artifacts`, and
+- [x] P42.1 Metadata field placement (#293)
+  - [x] Define which fields belong in `parameters`, `artifacts`, and
     `provenance`.
-  - [ ] Avoid adding Agent Workbench-only top-level graph fields.
-- [ ] P42.2 Role and capability metadata
-  - [ ] Define role, capability, authority level, implementation, and model
+  - [x] Avoid adding Agent Workbench-only top-level graph fields.
+- [x] P42.2 Role and capability metadata (#294)
+  - [x] Define role, capability, authority level, implementation, and model
     profile references.
-- [ ] P42.3 Evidence and decision metadata
-  - [ ] Define evidence packet, claim review, supervisor decision, and
+- [x] P42.3 Evidence and decision metadata (#295)
+  - [x] Define evidence packet, claim review, supervisor decision, and
     promotion metadata.
-- [ ] P42.4 Documentation and closeout
-  - [ ] Add examples and update templates.
-  - [ ] Run validation and governance checks.
+- [x] P42.4 Documentation and closeout (#296)
+  - [x] Add examples and update templates.
+  - [x] Run validation and governance checks.
 
 Phase 42 acceptance criteria:
 
