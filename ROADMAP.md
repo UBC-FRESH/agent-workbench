@@ -45,6 +45,10 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P34 Delegation decision engine v0 | #240 | `feature/p34-delegation-decision-engine-v0` | Complete |
 | P35 Real-project pilot accounting | TBD | TBD | Planned |
 | P36 Policy tuning loop | TBD | TBD | Planned |
+| P37 Artifact and workflow contract model | TBD | TBD | Planned |
+| P38 Role, capability, and implementation model | TBD | TBD | Planned |
+| P39 Reusable scientific workbench templates | TBD | TBD | Planned |
+| P40 Observability and token-cost ingestion | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1692,3 +1696,153 @@ Phase 36 acceptance criteria:
 - The tuning loop remains transparent and supervisor-auditable.
 - The roadmap has a clear boundary between rules-based tuning and any future ML
   inference engine.
+
+## Phase 37: Artifact And Workflow Contract Model
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: define the durable artifact and workflow contract layer needed to move
+from ad hoc worker tickets toward reproducible AI-assisted scientific and
+software workbenches.
+
+Planned tasks:
+
+- [ ] P37.1 Artifact vocabulary
+  - [ ] Define source artifact, generated artifact, promoted artifact, and
+    rejected artifact.
+  - [ ] Record provenance, verifier, and supervisor decision fields.
+- [ ] P37.2 Workflow step contract
+  - [ ] Define input artifacts, transformation, implementation, output
+    artifacts, verification, and token/cash accounting.
+  - [ ] Keep the contract compatible with existing evidence summaries and
+    decision packets.
+- [ ] P37.3 Example workflow records
+  - [ ] Create examples for software task review, documentation proposal, paper
+    outline, and benchmark proposal.
+  - [ ] Keep examples public-safe and generic across UBC-FRESH projects.
+- [ ] P37.4 Documentation and closeout
+  - [ ] Add planning notes.
+  - [ ] Update roadmap and changelog.
+  - [ ] Run verification.
+
+Phase 37 acceptance criteria:
+
+- Agent Workbench has an artifact-first workflow vocabulary.
+- Workflow records can explain what was transformed, by whom or what, with what
+  evidence, and at what token/cash cost.
+- The contract does not require replacing existing tools such as Git, CI,
+  notebooks, Snakemake, or project-specific CLIs.
+
+## Phase 38: Role, Capability, And Implementation Model
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: separate persistent project roles from capabilities and implementation
+choices so workflows can swap local models, paid models, humans, scripts, or
+external tools without rewriting the workflow.
+
+Planned tasks:
+
+- [ ] P38.1 Role model
+  - [ ] Define role identity, scope, allowed artifacts, and responsibility.
+  - [ ] Include examples such as reviewer, programmer, analyst, and editor.
+- [ ] P38.2 Capability model
+  - [ ] Define bounded capabilities such as evidence intake, claim review,
+    patch proposal, test-design proposal, and token accounting.
+  - [ ] Link capabilities to task taxonomy and delegation policy.
+- [ ] P38.3 Implementation mapping
+  - [ ] Map capabilities to implementations such as local qwen, `gpt-oss:*`,
+    paid supervisor model, human, script, or external workflow tool.
+  - [ ] Use model profiles and decision-engine outputs as inputs.
+- [ ] P38.4 Documentation and closeout
+  - [ ] Add planning notes.
+  - [ ] Update roadmap and changelog.
+  - [ ] Run verification.
+
+Phase 38 acceptance criteria:
+
+- Agent Workbench can describe a role, capability, and implementation without
+  conflating them.
+- Model swaps do not change the abstract workflow contract.
+- The model remains compatible with conservative worker authority levels.
+
+## Phase 39: Reusable Scientific Workbench Templates
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: sketch reusable project workbench templates for common UBC-FRESH work
+without creating a heavyweight workflow engine.
+
+Planned tasks:
+
+- [ ] P39.1 Template scope
+  - [ ] Define first template families for software, paper, proposal, and
+    benchmark tasks.
+  - [ ] Keep templates as Markdown/JSON planning artifacts first.
+- [ ] P39.2 Artifact layout examples
+  - [ ] Show how tickets, evidence, decision packets, reports, and promoted
+    outputs relate.
+  - [ ] Avoid project-specific private assumptions.
+- [ ] P39.3 Integration boundaries
+  - [ ] Identify where existing tools such as GitHub Actions, Quarto,
+    notebooks, Snakemake, or project CLIs should be reused rather than
+    replaced.
+- [ ] P39.4 Documentation and closeout
+  - [ ] Add planning notes.
+  - [ ] Update roadmap and changelog.
+  - [ ] Run verification.
+
+Phase 39 acceptance criteria:
+
+- Agent Workbench has public-safe starter templates for reproducible
+  AI-assisted scientific/software workbench tasks.
+- Templates make agents boring: roles and artifacts are primary; model/runtime
+  implementation is secondary.
+
+## Phase 40: Observability And Token-Cost Ingestion
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: evaluate how to ingest token/cost observability records into Agent
+Workbench pilot accounting without committing raw traces or provider secrets.
+
+Planned tasks:
+
+- [ ] P40.1 Observability source audit
+  - [ ] Compare SDK result files, provider usage metadata, and PostHog-style AI
+    observability exports.
+  - [ ] Identify fields needed for P35/P36 token/cash accounting.
+- [ ] P40.2 Sanitized import contract
+  - [ ] Define a public-safe token/cost record shape.
+  - [ ] Exclude prompts, raw transcripts, provider URLs, headers, and personal
+    paths.
+- [ ] P40.3 Prototype import or render helper
+  - [ ] Add a small local helper only if it reduces manual accounting friction.
+  - [ ] Keep raw exports under ignored runtime paths.
+- [ ] P40.4 Documentation and closeout
+  - [ ] Add planning notes.
+  - [ ] Update roadmap and changelog.
+  - [ ] Run verification.
+
+Phase 40 acceptance criteria:
+
+- Agent Workbench has a clear path for importing or summarizing token/cost
+  usage without exposing raw traces.
+- Observability remains a measurement aid, not a dependency for basic pilot
+  workflows.
