@@ -11,6 +11,7 @@ import argparse
 import asyncio
 import json
 import os
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -19,6 +20,7 @@ from typing import Any
 
 DEFAULT_OUTPUT = Path("runtime/agent_jobs/copilot_sdk_ollama_probe_result.md")
 DEFAULT_TIMEOUT_SECONDS = 120
+DEFAULT_BASE_DIRECTORY = Path("runtime/copilot_sdk_home")
 
 
 @dataclass
@@ -31,6 +33,9 @@ class ProbeConfig:
     timeout_seconds: int
     wire_api: str
     mode: str
+    sdk_source: Path | None
+    base_directory: Path | None
+    provider_headers: dict[str, str]
 
 
 def parse_args() -> ProbeConfig:
@@ -88,6 +93,46 @@ def parse_args() -> ProbeConfig:
             "tools while probing model behavior."
         ),
     )
+    parser.add_argument(
+        "--base-directory",
+        type=Path,
+        default=DEFAULT_BASE_DIRECTORY,
+        help=(
+            "Copilot SDK base directory. The default is ignored runtime storage "
+            "so empty mode has explicit local state."
+        ),
+    )
+    parser.add_argument(
+        "--sdk-source",
+        type=Path,
+        default=(
+            Path(os.environ["AGENT_WORKBENCH_COPILOT_SDK_PYTHON"])
+            if os.environ.get("AGENT_WORKBENCH_COPILOT_SDK_PYTHON")
+            else None
+        ),
+        help=(
+            "Optional path to a local Copilot SDK Python source checkout. "
+            "Can also be set with AGENT_WORKBENCH_COPILOT_SDK_PYTHON."
+        ),
+    )
+    parser.add_argument(
+        "--provider-headers-json",
+        default=os.environ.get("AGENT_WORKBENCH_PROVIDER_HEADERS_JSON"),
+        help=(
+            "Optional JSON object of provider headers. Prefer environment "
+            "variables or ignored files for private access headers."
+        ),
+    )
+    parser.add_argument(
+        "--provider-headers-file",
+        type=Path,
+        default=(
+            Path(os.environ["AGENT_WORKBENCH_PROVIDER_HEADERS_FILE"])
+            if os.environ.get("AGENT_WORKBENCH_PROVIDER_HEADERS_FILE")
+            else None
+        ),
+        help="Optional ignored JSON file containing provider headers.",
+    )
     args = parser.parse_args()
 
     if not args.base_url:
@@ -106,6 +151,12 @@ def parse_args() -> ProbeConfig:
         timeout_seconds=args.timeout_seconds,
         wire_api=args.wire_api,
         mode=args.mode,
+        sdk_source=args.sdk_source,
+        base_directory=args.base_directory,
+        provider_headers=load_provider_headers(
+            args.provider_headers_json,
+            args.provider_headers_file,
+        ),
     )
 
 
@@ -123,6 +174,25 @@ def scrub_base_url(base_url: str) -> str:
     ):
         return base_url
     return "<configured-ollama-openai-base-url>"
+
+
+def load_provider_headers(
+    headers_json: str | None,
+    headers_file: Path | None,
+) -> dict[str, str]:
+    if headers_json and headers_file:
+        raise ValueError("use only one of --provider-headers-json or --provider-headers-file")
+    raw: str | None = None
+    if headers_file is not None:
+        raw = headers_file.read_text(encoding="utf-8-sig")
+    elif headers_json:
+        raw = headers_json
+    if not raw:
+        return {}
+    parsed = json.loads(raw)
+    if not isinstance(parsed, dict):
+        raise ValueError("provider headers must be a JSON object")
+    return {str(key): str(value) for key, value in parsed.items()}
 
 
 def event_to_record(event: Any) -> dict[str, Any]:
@@ -150,7 +220,24 @@ def safe_jsonable(value: Any) -> Any:
     return str(value)
 
 
+def observed_errors(events: list[dict[str, Any]]) -> list[str]:
+    errors: list[str] = []
+    for event in events:
+        if event["type"] not in {"model.call_failure", "session.error"}:
+            continue
+        data = event.get("data")
+        if not isinstance(data, dict):
+            continue
+        message = data.get("error_message") or data.get("message")
+        if message:
+            errors.append(str(message))
+    return errors
+
+
 async def run_probe(config: ProbeConfig) -> dict[str, Any]:
+    if config.sdk_source is not None:
+        sys.path.insert(0, str(config.sdk_source))
+
     try:
         from copilot import CopilotClient
         from copilot.session import PermissionHandler
@@ -178,33 +265,60 @@ async def run_probe(config: ProbeConfig) -> dict[str, Any]:
         if record["type"] == "session.idle":
             idle.set()
 
-    client = CopilotClient(mode=config.mode)
-    await client.start()
+    provider = {
+        "type": "openai",
+        "base_url": config.base_url,
+        "wire_api": config.wire_api,
+    }
+    if config.provider_headers:
+        provider["headers"] = config.provider_headers
+
+    client = None
     try:
+        client = CopilotClient(
+            mode=config.mode,
+            base_directory=str(config.base_directory) if config.base_directory else None,
+        )
+        await client.start()
         async with await client.create_session(
             on_permission_request=PermissionHandler.approve_all,
             model=config.model,
-            provider={
-                "type": "openai",
-                "base_url": config.base_url,
-                "wire_api": config.wire_api,
-            },
+            provider=provider,
+            available_tools=[],
         ) as session:
             session.on(on_event)
             await session.send(prompt)
             try:
                 await asyncio.wait_for(idle.wait(), timeout=config.timeout_seconds)
-                status = "completed"
-                blocker = ""
+                errors = observed_errors(events)
+                if errors:
+                    status = "blocked"
+                    blocker = "model-call-failure"
+                else:
+                    status = "completed"
+                    blocker = ""
             except TimeoutError:
                 status = "blocked"
                 blocker = "session-idle-timeout"
+    except Exception as exc:
+        status = "blocked"
+        blocker = "sdk-runtime-error"
+        return {
+            "status": status,
+            "blocker": blocker,
+            "error": f"{type(exc).__name__}: {exc}",
+            "events": events,
+            "assistant_messages": assistant_messages,
+        }
     finally:
-        await client.stop()
+        if client is not None:
+            await client.stop()
 
     return {
         "status": status,
         "blocker": blocker,
+        "error": "",
+        "observed_errors": observed_errors(events),
         "events": events,
         "assistant_messages": assistant_messages,
     }
@@ -216,6 +330,7 @@ def write_result(config: ProbeConfig, result: dict[str, Any]) -> None:
     ticket_label = str(config.ticket) if config.ticket else "<inline-prompt>"
     event_types = [event["type"] for event in result["events"]]
     assistant_text = "\n\n".join(result["assistant_messages"]).strip()
+    errors = result.get("observed_errors", [])
 
     body = [
         "# Copilot SDK Ollama Probe Result",
@@ -229,6 +344,9 @@ def write_result(config: ProbeConfig, result: dict[str, Any]) -> None:
         f"- provider_base_url: `{scrub_base_url(config.base_url)}`",
         f"- wire_api: `{config.wire_api}`",
         f"- client_mode: `{config.mode}`",
+        f"- base_directory: `{scrub_base_directory(config.base_directory)}`",
+        f"- sdk_source: `{scrub_path(config.sdk_source)}`",
+        f"- provider_headers: `{bool(config.provider_headers)}`",
         f"- ticket: `{ticket_label}`",
         f"- timeout_seconds: `{config.timeout_seconds}`",
         "",
@@ -236,6 +354,12 @@ def write_result(config: ProbeConfig, result: dict[str, Any]) -> None:
         "",
         "```json",
         json.dumps(event_types, indent=2),
+        "```",
+        "",
+        "## Observed Errors",
+        "",
+        "```json",
+        json.dumps(errors, indent=2),
         "```",
         "",
         "## Assistant Messages",
@@ -250,6 +374,18 @@ def write_result(config: ProbeConfig, result: dict[str, Any]) -> None:
         "",
     ]
     config.output.write_text("\n".join(body), encoding="utf-8")
+
+
+def scrub_path(path: Path | None) -> str:
+    if path is None:
+        return ""
+    return "<configured-copilot-sdk-python-source>"
+
+
+def scrub_base_directory(path: Path | None) -> str:
+    if path is None:
+        return ""
+    return "<ignored-runtime-base-directory>"
 
 
 async def async_main() -> int:

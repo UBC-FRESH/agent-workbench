@@ -213,3 +213,26 @@ issues, pull requests, and closeout comments.
 - Merged PR #46 and recorded the next decision point: install or expose the
   Copilot SDK in the probe environment for a real same-ticket Ollama run, or
   move to a raw Ollama API harness if the SDK path remains blocked.
+
+## 2026-07-04 - Launched Phase 7 Copilot SDK local probe environment
+
+- Created the Phase 7 SDK local-probe lane on
+  `feature/p7-copilot-sdk-local-probe-env`, with parent issue #48 and child
+  task issues #49 through #52.
+- Scoped Phase 7 to local SDK source-path support, ignored virtual-environment
+  setup notes, provider-header handling, and one no-tool SDK/Ollama probe
+  attempt.
+- Kept package scaffolding, CI, VS Code extension work, MCP servers, benchmark
+  harnesses, production bridge claims, and raw endpoint details deferred.
+
+## 2026-07-04 - Reached SDK provider-call boundary
+
+- Updated `scripts/copilot_sdk_ollama_probe.py` to support optional local SDK
+  source loading, ignored SDK base storage, explicit empty tool allowlists,
+  optional provider headers, and blocked classification for model-call failures.
+- Added `planning/phase7_copilot_sdk_local_probe_env_notes.md` with the local
+  setup path and sanitized no-tool probe findings.
+- Parsed the local VS Code Ollama provider configuration into ignored runtime
+  inputs, added a non-default user-agent for the access layer, and verified that
+  both `qwen3-coder:latest` and `qwen3-coder-next:latest` returned the no-tool
+  marker exactly once through the SDK bridge.
