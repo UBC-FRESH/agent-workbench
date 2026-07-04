@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .comparison import render_eval_comparison
 from .evidence import (
     load_summary,
     render_markdown,
@@ -83,6 +84,29 @@ def build_parser() -> argparse.ArgumentParser:
         help="Summarize existing result files without running probes.",
     )
     eval_parser.set_defaults(func=run_eval)
+
+    compare_parser = subparsers.add_parser(
+        "compare",
+        help="Compare existing worker evaluation summaries.",
+    )
+    compare_subparsers = compare_parser.add_subparsers(
+        dest="compare_command",
+        required=True,
+    )
+
+    eval_compare_parser = compare_subparsers.add_parser(
+        "eval",
+        help="Render a model/repeat comparison report for eval summary JSON.",
+    )
+    eval_compare_parser.add_argument("--input", type=Path, action="append", default=[])
+    eval_compare_parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=None,
+        help="Directory containing eval summary JSON files.",
+    )
+    eval_compare_parser.add_argument("--output", type=Path, required=True)
+    eval_compare_parser.set_defaults(func=run_compare_eval)
 
     evidence_parser = subparsers.add_parser(
         "evidence",
@@ -220,6 +244,24 @@ def run_eval(args: argparse.Namespace) -> int:
     if args.summary_only:
         command.append("--summary-only")
     return run_command(command, cwd)
+
+
+def run_compare_eval(args: argparse.Namespace) -> int:
+    paths = list(args.input)
+    if args.input_dir is not None:
+        paths.extend(sorted(args.input_dir.glob("summary.json")))
+    if not paths:
+        print("error: provide --input or --input-dir", file=sys.stderr)
+        return 1
+    try:
+        report = render_eval_comparison(paths)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(report, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
 
 
 def materialize_cross_project_manifest(args: argparse.Namespace) -> Path:

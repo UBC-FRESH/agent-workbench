@@ -146,12 +146,28 @@ tracked planning notes, issue comments, or PR descriptions.
 
 Promote only the sanitized findings into tracked planning notes.
 
+## Compare Existing Eval Summaries
+
+To compare repeat/model outcomes from existing same-ticket eval summaries:
+
+```powershell
+agent-workbench compare eval `
+  --input runtime/agent_jobs/p8_sdk_no_tool_eval/summary.json `
+  --input runtime/agent_jobs/p9_structured_doc_eval/summary.json `
+  --output runtime/model_comparison/eval_comparison.md
+```
+
+The comparison report summarizes classification counts, per-model consistency,
+and per-run outcomes. Treat the report as evidence about the supplied ticket
+families only, not as a broad model ranking.
+
 ## Current Boundary
 
 The CLI currently supports supervisor-side smoke checks, SDK same-ticket
 evaluation, pilot scaffolding, evidence validation/rendering, and supervisor
-decision-packet synthesis. It is ready for small real-project trials where the
-supervisor prepares bounded worker tickets and keeps raw evidence ignored.
+decision-packet synthesis, and local comparison of existing eval summaries. It
+is ready for small real-project trials where the supervisor prepares bounded
+worker tickets and keeps raw evidence ignored.
 
 It is not a VS Code extension, MCP server, hosted agent, dashboard, benchmark
 service, or autonomous closeout system.

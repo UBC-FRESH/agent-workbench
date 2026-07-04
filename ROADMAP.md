@@ -37,7 +37,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P26 Cross-project eval support | #192 | `feature/p26-cross-project-eval` | Complete |
 | P27 Supervisor decision packets | #198 | `feature/p27-supervisor-decision-packets` | Complete |
 | P28 Claim review aids | #204 | `feature/p28-claim-review-aids` | Complete |
-| P29 Repeat-run and model comparison | TBD | TBD | Planned |
+| P29 Repeat-run and model comparison | #210 | `feature/p29-repeat-run-model-comparison` | Complete |
 | P30 Real-project deployment playbook | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -1374,20 +1374,41 @@ Phase 28 acceptance criteria:
 
 ## Phase 29: Repeat-Run And Model Comparison
 
-Parent issue: TBD
+Parent issue: #210
 
-Branch: TBD
+Branch: `feature/p29-repeat-run-model-comparison`
 
-Status: planned
+Status: complete
 
 Goal: compare consistency across repeated runs and installed Ollama worker
 models for identical ticket families.
 
-Planned scope:
+Completed tasks:
 
-- Add repeat-run packet examples.
-- Summarize model/repeat variability from evidence summaries.
-- Recommend which ticket families are safe for each tested worker model.
+- [x] P29.1 Comparison contract and command (#211)
+  - [x] Add `agent-workbench compare eval`.
+  - [x] Accept one or more existing eval `summary.json` inputs.
+  - [x] Write a Markdown comparison report.
+- [x] P29.2 Model/repeat summary rendering (#212)
+  - [x] Render classification counts by evaluation and model.
+  - [x] Render per-model consistency across repeats.
+  - [x] Render per-run status, blocker, classification, and result file.
+- [x] P29.3 Documentation and planning sync (#213)
+  - [x] Add P29 planning notes.
+  - [x] Update CLI workflow playbook.
+  - [x] Update roadmap and changelog.
+- [x] P29.4 Dogfood and closeout (#214)
+  - [x] Dogfood against existing ignored eval summaries.
+  - [x] Run verification.
+  - [x] Open and merge PR.
+
+Phase 29 acceptance criteria:
+
+- `agent-workbench compare eval` renders a model/repeat comparison report for
+  existing same-ticket eval summaries.
+- The report includes classification counts, consistency, per-run outcomes, and
+  a scope boundary.
+- Dogfood succeeds against existing ignored summary artifacts.
 
 ## Phase 30: Real-Project Deployment Playbook
 

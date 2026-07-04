@@ -628,3 +628,15 @@ issues, pull requests, and closeout comments.
 - Added `templates/claim_review_checklist.md` and
   `planning/phase28_claim_review_aids.md` to make unsupported worker-claim
   review explicit before supervisor promotion.
+
+## 2026-07-04 - Added Phase 29 repeat-run and model comparison
+
+- Created the Phase 29 comparison lane on
+  `feature/p29-repeat-run-model-comparison`, with parent issue #210 and child
+  task issues #211 through #214.
+- Added `agent-workbench compare eval` to render Markdown comparison reports
+  from existing SDK same-ticket evaluation `summary.json` artifacts.
+- The comparison report includes classification counts, per-model consistency,
+  per-run outcomes, and a boundary warning against broad model rankings.
+- Added `planning/phase29_repeat_run_model_comparison.md` and updated the CLI
+  workflow playbook.
