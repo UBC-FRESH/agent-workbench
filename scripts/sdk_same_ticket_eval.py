@@ -1,0 +1,414 @@
+"""Run repeated Copilot SDK/Ollama probes from a local manifest.
+
+This helper is local-only. It reads an ignored JSON manifest, invokes the
+existing SDK probe helper for every model/repeat pair, and writes a compact
+sanitized summary for supervisor review.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import subprocess
+import sys
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+
+DEFAULT_SUMMARY_MD = "summary.md"
+DEFAULT_SUMMARY_JSON = "summary.json"
+
+
+@dataclass(frozen=True)
+class EvalConfig:
+    evaluation_id: str
+    ticket: Path
+    expected_marker: str
+    models: list[str]
+    repeats: int
+    timeout_seconds: int
+    output_dir: Path
+    probe_script: Path
+    python_executable: str
+    base_url: str
+    provider_headers_file: Path | None
+    wire_api: str
+    mode: str
+    base_directory: Path | None
+    sdk_source: Path | None
+
+
+@dataclass(frozen=True)
+class PlannedRun:
+    model: str
+    repeat_index: int
+    output_path: Path
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Run the same SDK/Ollama worker ticket repeatedly across configured "
+            "models and summarize the ignored result files."
+        )
+    )
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print planned probe commands without contacting the model provider.",
+    )
+    parser.add_argument(
+        "--summary-only",
+        action="store_true",
+        help="Skip probe execution and summarize existing result files.",
+    )
+    return parser.parse_args()
+
+
+def load_manifest(path: Path) -> EvalConfig:
+    data = json.loads(path.read_text(encoding="utf-8-sig"))
+    base_url = str(data.get("base_url", "")).strip()
+    base_url_file = str(data.get("base_url_file", "")).strip()
+    if not base_url and base_url_file:
+        base_url = Path(base_url_file).read_text(encoding="utf-8-sig").strip()
+
+    models = [str(model) for model in data.get("models", [])]
+    if not models:
+        raise ValueError("manifest models must contain at least one model")
+
+    repeats = int(data.get("repeats", 1))
+    if repeats < 1:
+        raise ValueError("manifest repeats must be at least 1")
+
+    ticket = Path(str(data["ticket"]))
+    if not ticket.exists():
+        raise FileNotFoundError(f"ticket not found: {ticket}")
+    if not base_url:
+        raise ValueError("manifest must provide base_url or base_url_file")
+
+    provider_headers_file = optional_path(data.get("provider_headers_file"))
+    if provider_headers_file is not None and not provider_headers_file.exists():
+        raise FileNotFoundError(f"provider headers file not found: {provider_headers_file}")
+
+    return EvalConfig(
+        evaluation_id=str(data.get("evaluation_id", "sdk_same_ticket_eval")),
+        ticket=ticket,
+        expected_marker=str(data["expected_marker"]),
+        models=models,
+        repeats=repeats,
+        timeout_seconds=int(data.get("timeout_seconds", 120)),
+        output_dir=Path(str(data.get("output_dir", "runtime/agent_jobs/sdk_eval"))),
+        probe_script=Path(str(data.get("probe_script", "scripts/copilot_sdk_ollama_probe.py"))),
+        python_executable=str(data.get("python_executable", "")).strip() or sys.executable,
+        base_url=base_url,
+        provider_headers_file=provider_headers_file,
+        wire_api=str(data.get("wire_api", "completions")),
+        mode=str(data.get("mode", "empty")),
+        base_directory=optional_path(data.get("base_directory")),
+        sdk_source=optional_path(data.get("sdk_source")),
+    )
+
+
+def optional_path(value: Any) -> Path | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    return Path(text)
+
+
+def planned_runs(config: EvalConfig) -> list[PlannedRun]:
+    runs: list[PlannedRun] = []
+    for model in config.models:
+        model_slug = slugify(model)
+        for repeat_index in range(1, config.repeats + 1):
+            output_path = config.output_dir / f"{model_slug}_run{repeat_index:02d}.md"
+            runs.append(
+                PlannedRun(
+                    model=model,
+                    repeat_index=repeat_index,
+                    output_path=output_path,
+                )
+            )
+    return runs
+
+
+def build_command(config: EvalConfig, run: PlannedRun) -> list[str]:
+    command = [
+        config.python_executable,
+        str(config.probe_script),
+        "--model",
+        run.model,
+        "--base-url",
+        config.base_url,
+        "--ticket",
+        str(config.ticket),
+        "--output",
+        str(run.output_path),
+        "--timeout-seconds",
+        str(config.timeout_seconds),
+        "--wire-api",
+        config.wire_api,
+        "--mode",
+        config.mode,
+    ]
+    if config.provider_headers_file is not None:
+        command.extend(["--provider-headers-file", str(config.provider_headers_file)])
+    if config.base_directory is not None:
+        command.extend(["--base-directory", str(config.base_directory)])
+    if config.sdk_source is not None:
+        command.extend(["--sdk-source", str(config.sdk_source)])
+    return command
+
+
+def run_probes(config: EvalConfig, runs: list[PlannedRun], dry_run: bool) -> int:
+    config.output_dir.mkdir(parents=True, exist_ok=True)
+    failure_count = 0
+    for run in runs:
+        command = build_command(config, run)
+        display = redact_command(command, config)
+        if dry_run:
+            print("DRY-RUN " + " ".join(display))
+            continue
+        print(f"RUN {run.model} repeat {run.repeat_index}")
+        completed = subprocess.run(command, check=False)
+        if completed.returncode != 0:
+            failure_count += 1
+            print(
+                f"FAILED {run.model} repeat {run.repeat_index}: exit {completed.returncode}",
+                file=sys.stderr,
+            )
+    return failure_count
+
+
+def redact_command(command: list[str], config: EvalConfig) -> list[str]:
+    redacted: list[str] = []
+    skip_next = False
+    private_value_flags = {"--base-url", "--provider-headers-file", "--sdk-source"}
+    for index, item in enumerate(command):
+        if skip_next:
+            skip_next = False
+            continue
+        redacted.append(item)
+        if item in private_value_flags and index + 1 < len(command):
+            replacement = {
+                "--base-url": "<configured-ollama-openai-base-url>",
+                "--provider-headers-file": "<ignored-provider-headers-file>",
+                "--sdk-source": "<configured-copilot-sdk-python-source>",
+            }[item]
+            redacted.append(replacement)
+            skip_next = True
+    return redacted
+
+
+def summarize(config: EvalConfig, runs: list[PlannedRun]) -> dict[str, Any]:
+    rows = [summarize_run(config, run) for run in runs]
+    by_model: dict[str, dict[str, int]] = {}
+    for row in rows:
+        model_counts = by_model.setdefault(row["model"], {})
+        classification = row["classification"]
+        model_counts[classification] = model_counts.get(classification, 0) + 1
+
+    return {
+        "evaluation_id": config.evaluation_id,
+        "generated_utc": datetime.now(timezone.utc).isoformat(),
+        "ticket": str(config.ticket),
+        "expected_marker": config.expected_marker,
+        "models": config.models,
+        "repeats": config.repeats,
+        "rows": rows,
+        "classification_counts": by_model,
+    }
+
+
+def summarize_run(config: EvalConfig, run: PlannedRun) -> dict[str, Any]:
+    if not run.output_path.exists():
+        return {
+            "model": run.model,
+            "repeat_index": run.repeat_index,
+            "result_file": str(run.output_path),
+            "status": "missing",
+            "blocker": "missing-result-file",
+            "assistant_message": "",
+            "classification": "missing-result-file",
+        }
+
+    text = run.output_path.read_text(encoding="utf-8-sig")
+    status = metadata_value(text, "status")
+    blocker = metadata_value(text, "blocker")
+    error = metadata_value(text, "error")
+    assistant_message = assistant_section(text)
+    classification = classify_result(
+        status=status,
+        blocker=blocker,
+        error=error,
+        assistant_message=assistant_message,
+        expected_marker=config.expected_marker,
+    )
+    return {
+        "model": run.model,
+        "repeat_index": run.repeat_index,
+        "result_file": str(run.output_path),
+        "status": status,
+        "blocker": blocker,
+        "error": error,
+        "assistant_message": assistant_message,
+        "classification": classification,
+    }
+
+
+def metadata_value(text: str, key: str) -> str:
+    pattern = re.compile(rf"^- {re.escape(key)}: `([^`]*)`$", re.MULTILINE)
+    match = pattern.search(text)
+    return match.group(1).strip() if match else ""
+
+
+def assistant_section(text: str) -> str:
+    marker = "## Assistant Messages"
+    next_marker = "\n## Raw Event Records"
+    start = text.find(marker)
+    if start == -1:
+        return ""
+    start += len(marker)
+    end = text.find(next_marker, start)
+    if end == -1:
+        end = len(text)
+    return text[start:end].strip()
+
+
+def classify_result(
+    status: str,
+    blocker: str,
+    error: str,
+    assistant_message: str,
+    expected_marker: str,
+) -> str:
+    if status != "completed":
+        if blocker == "session-idle-timeout":
+            return "timeout"
+        if blocker == "model-call-failure":
+            return "model-call-failure"
+        if blocker == "sdk-runtime-error":
+            return "sdk-runtime-error"
+        if blocker:
+            return blocker
+        return "blocked"
+    if assistant_message == expected_marker:
+        return "exact-marker"
+    marker_count = assistant_message.count(expected_marker)
+    if marker_count > 1:
+        return "duplicate-marker"
+    if marker_count == 1:
+        return "extra-output"
+    if looks_loop_like(assistant_message):
+        return "loop-like-repetition"
+    return "missing-marker"
+
+
+def looks_loop_like(text: str) -> bool:
+    normalized = [line.strip() for line in text.splitlines() if line.strip()]
+    if len(normalized) < 3:
+        words = re.findall(r"\b[\w'-]+\b", text.lower())
+        return len(words) >= 12 and len(set(words)) <= max(3, len(words) // 4)
+    counts: dict[str, int] = {}
+    for line in normalized:
+        counts[line] = counts.get(line, 0) + 1
+    return max(counts.values()) >= 3
+
+
+def write_summary(config: EvalConfig, summary: dict[str, Any]) -> None:
+    config.output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = config.output_dir / DEFAULT_SUMMARY_JSON
+    md_path = config.output_dir / DEFAULT_SUMMARY_MD
+    json_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    md_path.write_text(summary_markdown(summary), encoding="utf-8")
+    print(f"wrote {md_path}")
+    print(f"wrote {json_path}")
+
+
+def summary_markdown(summary: dict[str, Any]) -> str:
+    lines = [
+        "# SDK Same-Ticket Evaluation Summary",
+        "",
+        f"- evaluation_id: `{summary['evaluation_id']}`",
+        f"- generated_utc: `{summary['generated_utc']}`",
+        f"- ticket: `{summary['ticket']}`",
+        f"- expected_marker: `{summary['expected_marker']}`",
+        f"- repeats: `{summary['repeats']}`",
+        "",
+        "## Classification Counts",
+        "",
+        "| Model | Classification | Count |",
+        "| --- | --- | --- |",
+    ]
+    for model, counts in summary["classification_counts"].items():
+        for classification, count in sorted(counts.items()):
+            lines.append(f"| `{model}` | `{classification}` | {count} |")
+    lines.extend(
+        [
+            "",
+            "## Runs",
+            "",
+            "| Model | Repeat | Status | Blocker | Classification | Result File |",
+            "| --- | ---: | --- | --- | --- | --- |",
+        ]
+    )
+    for row in summary["rows"]:
+        lines.append(
+            "| "
+            f"`{row['model']}` | "
+            f"{row['repeat_index']} | "
+            f"`{row['status']}` | "
+            f"`{row['blocker']}` | "
+            f"`{row['classification']}` | "
+            f"`{row['result_file']}` |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Assistant Messages",
+            "",
+            "Assistant messages are summarized here for local supervisor inspection.",
+            "Do not promote this section into tracked files unless sanitized.",
+            "",
+        ]
+    )
+    for row in summary["rows"]:
+        message = row["assistant_message"] or "_No assistant message captured._"
+        lines.extend(
+            [
+                f"### {row['model']} run {row['repeat_index']}",
+                "",
+                "```text",
+                message,
+                "```",
+                "",
+            ]
+        )
+    return "\n".join(lines)
+
+
+def slugify(value: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9]+", "_", value).strip("_").lower()
+
+
+def main() -> int:
+    args = parse_args()
+    config = load_manifest(args.manifest)
+    runs = planned_runs(config)
+    failures = 0
+    if not args.summary_only:
+        failures = run_probes(config, runs, args.dry_run)
+    if not args.dry_run:
+        summary = summarize(config, runs)
+        write_summary(config, summary)
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

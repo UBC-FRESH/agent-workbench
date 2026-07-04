@@ -1,0 +1,21 @@
+{
+  "evaluation_id": "p8_example_same_ticket_eval",
+  "ticket": "runtime/agent_jobs/p8_example.ticket.md",
+  "expected_marker": "P8_EXAMPLE_MARKER done",
+  "models": [
+    "qwen3-coder:latest",
+    "qwen3-coder-next:latest"
+  ],
+  "repeats": 2,
+  "timeout_seconds": 90,
+  "output_dir": "runtime/agent_jobs/p8_example_eval",
+  "probe_script": "scripts/copilot_sdk_ollama_probe.py",
+  "python_executable": "",
+  "base_url": "",
+  "base_url_file": "runtime/ollama_openai_base_url.txt",
+  "provider_headers_file": "runtime/local_provider_headers.json",
+  "wire_api": "completions",
+  "mode": "empty",
+  "base_directory": "runtime/copilot_sdk_home",
+  "sdk_source": ""
+}
