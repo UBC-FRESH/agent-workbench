@@ -256,6 +256,8 @@ def render_token_markdown(data: dict[str, Any]) -> str:
 def synthesize_token_markdown(paths: list[Path]) -> str:
     records: list[tuple[Path, dict[str, Any], TokenCosts]] = []
     errors: list[str] = []
+    seen_record_ids: dict[str, Path] = {}
+    seen_checkpoint_intervals: dict[tuple[str, str, str], Path] = {}
     for path in paths:
         try:
             data = load_token_record(path)
@@ -266,6 +268,24 @@ def synthesize_token_markdown(paths: list[Path]) -> str:
         if not result.ok:
             errors.extend(f"{path}: {error}" for error in result.errors)
             continue
+        record_id = str(data.get("record_id", ""))
+        if record_id in seen_record_ids:
+            errors.append(
+                f"{path}: duplicate record_id {record_id!r}; first seen in "
+                f"{seen_record_ids[record_id]}"
+            )
+            continue
+        seen_record_ids[record_id] = path
+        checkpoint_interval = token_checkpoint_interval(data)
+        if checkpoint_interval is not None:
+            if checkpoint_interval in seen_checkpoint_intervals:
+                errors.append(
+                    f"{path}: duplicate checkpoint interval for record_id "
+                    f"{record_id!r}; first seen in "
+                    f"{seen_checkpoint_intervals[checkpoint_interval]}"
+                )
+                continue
+            seen_checkpoint_intervals[checkpoint_interval] = path
         records.append((path, data, calculate_token_costs(data)))
 
     if errors:
@@ -311,6 +331,18 @@ def synthesize_token_markdown(paths: list[Path]) -> str:
         )
     lines.append("")
     return "\n".join(lines)
+
+
+def token_checkpoint_interval(data: dict[str, Any]) -> tuple[str, str, str] | None:
+    checkpoint = data.get("checkpoint_evidence", {})
+    if not isinstance(checkpoint, dict):
+        return None
+    source = str(checkpoint.get("source_session_file", ""))
+    start = str(checkpoint.get("start_snapshot_timestamp", ""))
+    end = str(checkpoint.get("end_snapshot_timestamp", ""))
+    if not source or not start or not end:
+        return None
+    return (source, start, end)
 
 
 def synthesize_graph_token_markdown(paths: list[Path]) -> str:

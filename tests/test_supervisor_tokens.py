@@ -12,6 +12,7 @@ from agent_workbench.supervisor_tokens import (
     write_checkpoint,
 )
 from agent_workbench.tokens import calculate_token_costs, validate_token_record
+from agent_workbench.tokens import synthesize_token_markdown
 
 
 def test_latest_snapshot_reads_codex_token_count_events(tmp_path: Path) -> None:
@@ -84,6 +85,44 @@ def test_usage_delta_fails_closed_on_negative_delta() -> None:
         )
 
 
+def test_token_synthesis_fails_closed_on_duplicate_record_ids(tmp_path: Path) -> None:
+    first = tmp_path / "first.tokens.json"
+    second = tmp_path / "second.tokens.json"
+    first.write_text(json.dumps(token_record("duplicate-record")), encoding="utf-8")
+    second.write_text(json.dumps(token_record("duplicate-record")), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="duplicate record_id"):
+        synthesize_token_markdown([first, second])
+
+
+def test_token_synthesis_fails_closed_on_duplicate_checkpoint_intervals(
+    tmp_path: Path,
+) -> None:
+    first = tmp_path / "first.tokens.json"
+    second = tmp_path / "second.tokens.json"
+    first.write_text(
+        json.dumps(
+            token_record(
+                "first-record",
+                checkpoint_interval=("session.jsonl", "start", "end"),
+            )
+        ),
+        encoding="utf-8",
+    )
+    second.write_text(
+        json.dumps(
+            token_record(
+                "second-record",
+                checkpoint_interval=("session.jsonl", "start", "end"),
+            )
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="duplicate checkpoint interval"):
+        synthesize_token_markdown([first, second])
+
+
 def write_session(path: Path, totals: list[dict[str, int]]) -> None:
     lines = []
     for index, total in enumerate(totals):
@@ -118,3 +157,48 @@ def usage(
         "reasoning_output_tokens": reasoning_output_tokens,
         "total_tokens": total_tokens,
     }
+
+
+def token_record(
+    record_id: str,
+    checkpoint_interval: tuple[str, str, str] | None = None,
+) -> dict[str, object]:
+    record: dict[str, object] = {
+        "record_id": record_id,
+        "source_type": "codex-session",
+        "generated_utc": "2026-07-04T00:00:00Z",
+        "scope": {
+            "project": "agent-workbench",
+            "task_id": "duplicate-check",
+        },
+        "usage": {
+            "supervisor_input_tokens": 1,
+            "supervisor_cached_input_tokens": 2,
+            "supervisor_output_tokens": 3,
+            "supervisor_reasoning_output_tokens": 4,
+            "worker_input_tokens": 0,
+            "worker_output_tokens": 0,
+        },
+        "prices": {
+            "supervisor_input_price_per_1m_usd": 1.75,
+            "supervisor_cached_input_price_per_1m_usd": 0.175,
+            "supervisor_output_price_per_1m_usd": 14.0,
+            "worker_input_price_per_1m_usd": 0.0,
+            "worker_output_price_per_1m_usd": 0.0,
+        },
+        "public_safety": {
+            "raw_prompts_excluded": True,
+            "raw_traces_excluded": True,
+            "provider_urls_excluded": True,
+            "headers_excluded": True,
+            "personal_paths_excluded": True,
+        },
+    }
+    if checkpoint_interval is not None:
+        source, start, end = checkpoint_interval
+        record["checkpoint_evidence"] = {
+            "source_session_file": source,
+            "start_snapshot_timestamp": start,
+            "end_snapshot_timestamp": end,
+        }
+    return record

@@ -2213,6 +2213,8 @@ Active tasks:
     MP11 fixed-x8 benchmark summaries.
   - [x] Record the follow-up direction for excluding GitHub hygiene from task
     economics and representing recurring orchestration as workflow graphs.
+  - [x] Run a first reporting A/B iteration and record the token-ledger overlap
+    lesson for non-overlapping span discipline.
   - [ ] Update benchmark records with actual token economics.
 - [ ] P50.5 Maintainer-reviewed phase closeout (#345)
   - [ ] Close only after the maintainer explicitly says P50 is done.

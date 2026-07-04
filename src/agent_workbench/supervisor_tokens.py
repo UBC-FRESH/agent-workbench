@@ -162,8 +162,9 @@ def span_record_from_checkpoints(
     output_tokens = delta_total["output_tokens"]
     reasoning_output = delta_total["reasoning_output_tokens"]
     span_id = str(start["span_id"])
+    record_suffix = f"{span_id}-{span_kind}" if span_kind else span_id
     record = {
-        "record_id": f"{span_id}-supervisor-token-span",
+        "record_id": f"{record_suffix}-supervisor-token-span",
         "source_type": "codex-session",
         "generated_utc": now_utc(),
         "scope": {

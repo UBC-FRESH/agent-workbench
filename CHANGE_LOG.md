@@ -1111,3 +1111,16 @@ issues, pull requests, and closeout comments.
   paths.
 - Fixed structured-section validation so manifest-required bare section names
   match Markdown headings such as `## Factual Summary`.
+
+## 2026-07-04 - Recorded reporting A/B measurement lesson
+
+- Added `planning/phase50_reporting_ab_iteration_01.md` with the first
+  reporting A/B findings.
+- Recorded that the `gpt-oss:20b` reporting worker used 5746 input tokens and
+  1240 output tokens at zero cash cost.
+- Recorded the combined paid-supervisor reporting comparison interval as
+  `$0.111223`, while preserving the caveat that the first direct/review spans
+  overlapped and cannot be summed independently.
+- Tightened token synthesis so duplicate token `record_id` values and duplicate
+  Codex checkpoint intervals fail closed instead of being silently added into
+  an invalid ledger total.
