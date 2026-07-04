@@ -28,7 +28,11 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P17 Evidence store and summary schema | #129 | `feature/p17-evidence-store-summary-schema` | Complete |
 | P18 Richer restricted tool trial | #136 | `feature/p18-richer-restricted-tool-trial` | Complete |
 | P19 Delegation policy and trust levels | #143 | `feature/p19-delegation-policy-trust-levels` | Complete |
-| P20 Packaging revisit and interface decision | TBD | TBD | Planned |
+| P20 Packaging revisit and interface decision | #150 | `feature/p20-packaging-interface-decision` | Complete |
+| P21 Minimal local package and CLI skeleton | TBD | TBD | Planned |
+| P22 CLI wrappers for existing commands | TBD | TBD | Planned |
+| P23 Evidence summary validation and rendering | TBD | TBD | Planned |
+| P24 CLI dogfood workflow | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -975,25 +979,95 @@ Phase 19 acceptance criteria:
 
 ## Phase 20: Packaging Revisit And Interface Decision
 
+Parent issue: #150
+
+Branch: `feature/p20-packaging-interface-decision`
+
+Status: complete
+
+Goal: revisit package, CLI, VS Code extension, MCP, and hosted-agent options
+using P15-P19 evidence.
+
+Completed tasks:
+
+- [x] P20.1 Review command-surface stability (#151)
+  - [x] Review P16 smoke-check evidence.
+  - [x] Compare direct scripts against a wrapper interface.
+  - [x] Preserve compatibility with existing scripts.
+- [x] P20.2 Review evidence schema stability (#152)
+  - [x] Review P17 evidence summary fields.
+  - [x] Confirm raw evidence remains ignored.
+  - [x] Identify validation as future work.
+- [x] P20.3 Compare interface options and costs (#153)
+  - [x] Compare scripts, local CLI, VS Code extension, MCP, hosted agent, and
+        dashboard options.
+  - [x] Record rejected options.
+  - [x] Keep worker authority unchanged.
+- [x] P20.4 Decide next architecture move (#154)
+  - [x] Add `planning/adr_0002_interface_direction.md`.
+  - [x] Add `planning/phase20_packaging_revisit_notes.md`.
+  - [x] Select a narrow local package/CLI spike for P21.
+- [x] P20.5 Closeout and next-roadmap tranche (#155)
+  - [x] Add `planning/p21_p24_forward_plan.md`.
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Open and merge PR.
+
+Phase 20 acceptance criteria:
+
+- The architecture decision cites concrete evidence from P15-P19.
+- The chosen packaging start has a narrow first slice.
+- VS Code extension, MCP, hosted-agent, and dashboard work remain explicitly
+  deferred.
+
+## Forward Plan: P21-P24
+
+Planning note: `planning/p21_p24_forward_plan.md`
+
+The next tranche starts the narrow local package/CLI path selected in ADR 0002.
+The first slice should wrap existing supervisor-owned local commands without
+changing worker trust levels.
+
+## Phase 21: Minimal Local Package And CLI Skeleton
+
 Parent issue: TBD
 
 Branch: TBD
 
 Status: planned
 
-Goal: revisit package, CLI, VS Code extension, MCP, and hosted-agent options
-using P15-P19 evidence.
+Goal: add the smallest Python package and local CLI entrypoint needed to wrap
+existing supervisor-side scripts.
 
-Planned tasks:
+## Phase 22: CLI Wrappers For Existing Commands
 
-- P20.1 Review command-surface stability.
-- P20.2 Review evidence schema stability.
-- P20.3 Compare interface options and costs.
-- P20.4 Decide next architecture move.
-- P20.5 Closeout and next-roadmap tranche.
+Parent issue: TBD
 
-Phase 20 acceptance criteria:
+Branch: TBD
 
-- The architecture decision cites concrete evidence from P15-P19.
-- If packaging is still deferred, the reason is explicit.
-- If packaging starts, the chosen surface has a narrow first slice.
+Status: planned
+
+Goal: wrap command-surface smoke checks and SDK same-ticket evaluation through
+the new CLI while preserving direct script compatibility.
+
+## Phase 23: Evidence Summary Validation And Rendering
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: make the P17 evidence summary contract executable enough for local
+supervisor review.
+
+## Phase 24: CLI Dogfood Workflow
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: dogfood the new CLI on one no-tool evaluation workflow from ticket through
+sanitized summary.

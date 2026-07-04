@@ -512,3 +512,16 @@ issues, pull requests, and closeout comments.
   so worker authority boundaries are part of the live agent contract.
 - Kept tracked-file mutation, GitHub mutation, issue closure, PR merge, release,
   and final phase closeout supervisor-only.
+
+## 2026-07-04 - Accepted Phase 20 interface direction
+
+- Created the Phase 20 packaging/interface lane on
+  `feature/p20-packaging-interface-decision`, with parent issue #150 and child
+  task issues #151 through #155.
+- Added `planning/adr_0002_interface_direction.md`, accepting a narrow local
+  Python package and CLI spike as the next architecture move.
+- Added `planning/phase20_packaging_revisit_notes.md` and
+  `planning/p21_p24_forward_plan.md` to cite P15-P19 evidence and plan the next
+  tranche.
+- Deferred VS Code extension, MCP server, hosted agent, dashboard, and broad
+  benchmark-harness work until the local CLI path proves useful.
