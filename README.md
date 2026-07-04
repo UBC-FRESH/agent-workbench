@@ -8,6 +8,9 @@ roles, prompt handoffs, evidence-based verification, issue discipline, and
 public-safe planning notes. It now also includes a small local Python package
 and CLI for supervisor-side smoke checks, same-ticket evaluation, pilot
 scaffolding, sanitized evidence summaries, and supervisor decision packets.
+Worker model capability profiles live under `model_profiles/` so supervisors
+can choose worker models from observed task-family evidence rather than broad
+model rankings.
 
 ## Local CLI
 
@@ -46,3 +49,4 @@ See:
 - `playbooks/cli_workflow.md` for the current CLI workflow.
 - `playbooks/real_project_deployment.md` for real-project proposal-assist
   deployment.
+- `model_profiles/` for evidence-scoped worker model capability notes.
