@@ -58,6 +58,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P47 FreshForge deployment test batch | #322 | `feature/p47-freshforge-deployment-test-batch` | Complete |
 | P48 Phase-scale A/B token economics benchmark | #328 | `feature/p48-phase-scale-ab-token-economics` | Complete |
 | P49 Benchmark worktree preparation | #334 | `feature/p49-benchmark-worktree-prep` | Complete |
+| P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2169,3 +2170,46 @@ Phase 49 acceptance criteria:
 - The FreshForge P16 direct and delegated lane branches/worktrees can be created
   from the same recorded start commit or a precise blocker is reported.
 - Roadmap, changelog, planning note, issues, and PR agree.
+
+## Phase 50: FreshForge P16 A/B Benchmark Run
+
+Parent issue: #340
+
+Branch: `feature/p50-freshforge-p16-ab-benchmark-run`
+
+Status: active
+
+Goal: run the first real phase-scale A/B token economics benchmark using
+FreshForge P16 as the target, starting with the direct-supervisor baseline lane
+and iterating until the maintainer explicitly says the phase is done.
+
+Active tasks:
+
+- [ ] P50.1 Direct-supervisor FreshForge P16 baseline iteration (#341)
+  - [ ] Perform substantive FreshForge P16 work in
+    `../freshforge-benchmark-p16-direct`.
+  - [ ] Report first-iteration output to the maintainer.
+- [ ] P50.2 Direct-lane evidence and token accounting capture (#342)
+  - [ ] Record direct-lane command, file, and status evidence.
+  - [ ] Record paid supervisor token usage when available.
+- [ ] P50.3 Delegated-graph FreshForge P16 iteration (#343)
+  - [ ] Run delegated-lane work from the same start commit.
+  - [ ] Preserve worker and supervisor token evidence.
+- [ ] P50.4 A/B comparison and benchmark record update (#344)
+  - [ ] Compare direct and delegated lanes after both have evidence.
+  - [ ] Update benchmark records with actual token economics.
+- [ ] P50.5 Maintainer-reviewed phase closeout (#345)
+  - [ ] Close only after the maintainer explicitly says P50 is done.
+
+Phase 50 acceptance criteria:
+
+- FreshForge P16 direct-lane work produces substantive code/docs/tests or a
+  precise blocker.
+- Direct-lane supervisor token usage is recorded from actual Codex goal/report
+  evidence when available.
+- Delegated-lane work uses Agent Workbench worker/delegation surfaces rather
+  than replaying the direct lane by hand.
+- The final comparison distinguishes paid supervisor token cost, zero-cash
+  local worker token usage, rework burden, verification outcome, and decision
+  quality.
+- P50 remains open until the maintainer explicitly says the phase is done.

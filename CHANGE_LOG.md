@@ -944,3 +944,12 @@ issues, pull requests, and closeout comments.
   setup protocol.
 - Prepared the first direct-supervisor and delegated-graph FreshForge P16
   benchmark lane worktrees from the same recorded start commit.
+
+## 2026-07-04 - Opened P50 FreshForge P16 A/B benchmark run
+
+- Opened P50 GitHub issue #340 with child issues #341 through #345 for the
+  direct lane, evidence capture, delegated lane, A/B comparison, and
+  maintainer-reviewed closeout.
+- Added `planning/phase50_freshforge_p16_ab_benchmark_run.md`.
+- Kept P50 explicitly open for iterative benchmark work rather than a
+  setup-only closeout.
