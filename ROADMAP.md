@@ -41,7 +41,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P30 Real-project deployment playbook | #216 | `feature/p30-real-project-deployment-playbook` | Complete |
 | P31 Delegation economics model | #222 | `feature/p31-delegation-economics-model` | Complete |
 | P32 Task taxonomy and delegation suitability | #228 | `feature/p32-task-taxonomy-delegation-suitability` | Complete |
-| P33 Worker model capability profiles | TBD | TBD | Planned |
+| P33 Worker model capability profiles | #234 | `feature/p33-worker-model-capability-profiles` | Complete |
 | P34 Delegation decision engine v0 | TBD | TBD | Planned |
 | P35 Real-project pilot accounting | TBD | TBD | Planned |
 | P36 Policy tuning loop | TBD | TBD | Planned |
@@ -1536,11 +1536,11 @@ Phase 32 acceptance criteria:
 
 ## Phase 33: Worker Model Capability Profiles
 
-Parent issue: TBD
+Parent issue: #234
 
-Branch: TBD
+Branch: `feature/p33-worker-model-capability-profiles`
 
-Status: planned
+Status: complete
 
 Goal: record per-model capability profiles for installed Ollama workers so
 delegation choices reflect observed model behavior rather than generic model
@@ -1548,27 +1548,30 @@ rankings.
 
 Planned tasks:
 
-- [ ] P33.1 Capability-card template
-  - [ ] Define fields for model name, host inventory evidence, task strengths,
+- [x] P33.1 Capability-card template (#235)
+  - [x] Define fields for model name, host inventory evidence, task strengths,
     failure modes, loop risk, ticket-shape sensitivity, and recommended
     authority limits.
-- [ ] P33.2 Initial qwen-family profiles
-  - [ ] Summarize observed `qwen3-coder:latest` behavior.
-  - [ ] Summarize observed `qwen3-coder-next:latest` behavior.
-  - [ ] Keep claims scoped to observed Agent Workbench tickets.
-- [ ] P33.3 Model comparison evidence links
-  - [ ] Link capability cards to comparison summaries and worker evidence.
-  - [ ] Distinguish task-local observations from broad model rankings.
-- [ ] P33.4 Documentation and closeout
-  - [ ] Add model capability notes.
-  - [ ] Update roadmap and changelog.
-  - [ ] Run governance verification.
+- [x] P33.2 Initial qwen-family profiles (#236)
+  - [x] Summarize observed `qwen3-coder:latest` behavior.
+  - [x] Summarize observed `qwen3-coder-next:latest` behavior.
+  - [x] Keep claims scoped to observed Agent Workbench tickets.
+- [x] P33.3 Model comparison evidence links (#237)
+  - [x] Link capability cards to comparison summaries and worker evidence.
+  - [x] Distinguish task-local observations from broad model rankings.
+  - [x] Add a planned `gpt-oss:*` family lane for future comparison.
+- [x] P33.4 Documentation and closeout (#238)
+  - [x] Add model capability notes.
+  - [x] Update roadmap and changelog.
+  - [x] Run governance verification.
 
 Phase 33 acceptance criteria:
 
 - Agent Workbench has a model capability-card format.
 - Initial installed-worker profiles are evidence-scoped and public-safe.
 - Capability cards are usable inputs for later delegation decisions.
+- `gpt-oss:*` is represented as a planned comparison family without unsupported
+  installed-run claims.
 
 ## Phase 34: Delegation Decision Engine V0
 

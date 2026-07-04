@@ -690,3 +690,18 @@ issues, pull requests, and closeout comments.
 - Linked the taxonomy from the real-project deployment and CLI workflow
   playbooks so supervisors classify candidate tasks before scaffolding worker
   tickets.
+
+## 2026-07-04 - Added Phase 33 worker model capability profiles
+
+- Created the Phase 33 worker-model profile lane on
+  `feature/p33-worker-model-capability-profiles`, with parent issue #234 and
+  child task issues #235 through #238.
+- Added `templates/model_capability_card.md` and `model_profiles/` to record
+  evidence-scoped worker model strengths, failure modes, loop risk,
+  ticket-shape sensitivity, and recommended authority ceilings.
+- Added initial public-safe profiles for `qwen3-coder:latest` and
+  `qwen3-coder-next:latest` from existing Agent Workbench evidence.
+- Added a planned `gpt-oss:*` profile lane so future non-qwen model-family
+  comparisons can be tracked without unsupported installed-run claims.
+- Linked model profiles from the CLI and real-project deployment playbooks so
+  supervisors consult model-specific evidence before assigning worker tickets.

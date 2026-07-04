@@ -43,6 +43,11 @@ agent-workbench eval --manifest runtime/agent_jobs/example_manifest.json --dry-r
 The dry run should show redacted provider values and should not contact the
 model provider.
 
+Before choosing models for a real run, consult `model_profiles/` and verify the
+active Ollama inventory. Use a profile only for the task families and authority
+levels it actually covers. If a model has no profile, start with a marker or
+proposal-only probe rather than assigning project work directly.
+
 ## Scaffold A Real-Project Pilot
 
 For a real development project, generate a bounded ticket, manifest, and
@@ -53,6 +58,11 @@ Before scaffolding, classify the candidate task with
 bundles such as evidence intake, compatibility review, test-design proposal, or
 documentation proposal. Keep implementation, GitHub closeout, and release work
 supervisor-owned.
+
+Also check the selected worker model's capability profile under
+`model_profiles/`. Match the ticket to the profile's observed strengths and
+recommended authority ceiling. Treat planned or partial profiles as a reason to
+run a small probe first.
 
 ```powershell
 agent-workbench pilot scaffold `
@@ -166,6 +176,10 @@ agent-workbench compare eval `
 The comparison report summarizes classification counts, per-model consistency,
 and per-run outcomes. Treat the report as evidence about the supplied ticket
 families only, not as a broad model ranking.
+
+When a repeated comparison changes the supervisor's model-selection judgment,
+update or add a capability profile from sanitized evidence rather than relying
+on the raw comparison output alone.
 
 ## Current Boundary
 

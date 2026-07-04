@@ -13,11 +13,17 @@ Classify the candidate task bundle with
 or subtask bundles with high or medium suitability. Split whole-phase requests
 before delegation.
 
+Select a worker model from `model_profiles/` after classification. A model
+profile is usable only for the task families, harnesses, and authority levels it
+actually covers. If the selected model profile is planned, partial, or missing,
+run a marker or no-tool proposal probe before using it on project work.
+
 Supervisor checks:
 
 - target project is clean on the intended base branch;
 - governing issue or roadmap phase is identified;
 - task type, planning level, and default worker authority are identified;
+- selected model profile supports the proposed task shape;
 - target project has an ignored local work area such as `tmp/`;
 - provider credentials and endpoints are already configured outside tracked
   files; and
@@ -110,6 +116,10 @@ agent-workbench compare eval `
 
 Use the comparison only for that ticket family. Do not promote broad model
 rankings.
+
+Promote stable findings into `model_profiles/` only after supervisor review.
+Record whether the comparison changes the recommended model, retry limit,
+authority ceiling, or stop condition for that task family.
 
 ## 7. Supervisor Promotion
 
