@@ -1,0 +1,48 @@
+{
+  "workflow_id": "documentation-proposal",
+  "step_id": "draft-doc-outline",
+  "title": "Draft a documentation outline from accepted planning notes",
+  "purpose": "Turn selected planning evidence into a documentation proposal.",
+  "input_artifacts": [
+    {
+      "artifact_id": "planning-note",
+      "kind": "source",
+      "path_or_reference": "planning/example_note.md",
+      "provenance": "Supervisor-authored planning note.",
+      "public_safety": "Tracked public-safe planning artifact.",
+      "verifier": "Supervisor"
+    }
+  ],
+  "transformation": "Produce a documentation outline and acceptance checklist.",
+  "implementation": {
+    "type": "local-worker",
+    "name": "qwen3-coder-next:latest",
+    "authority_level": "L1"
+  },
+  "output_artifacts": [
+    {
+      "artifact_id": "doc-outline",
+      "kind": "generated",
+      "path_or_reference": "runtime/agent_workbench/docs/doc_outline.md",
+      "provenance": "Worker-generated outline.",
+      "public_safety": "Ignored until supervisor sanitizes.",
+      "verifier": "Supervisor"
+    }
+  ],
+  "verification": {
+    "manual_checks": [
+      "Supervisor checks outline against planning source and docs audience."
+    ]
+  },
+  "token_accounting": {
+    "supervisor_input_tokens": 25000,
+    "supervisor_output_tokens": 5000,
+    "worker_input_tokens": 70000,
+    "worker_output_tokens": 20000,
+    "estimated_net_savings_usd": 0.05
+  },
+  "supervisor_decision": {
+    "decision": "revise-before-promotion",
+    "rationale": "Generated outline needs supervisor edits before tracking."
+  }
+}

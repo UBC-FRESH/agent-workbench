@@ -1,0 +1,48 @@
+{
+  "workflow_id": "benchmark-proposal",
+  "step_id": "propose-benchmark-task",
+  "title": "Propose a repeatable worker-model benchmark task",
+  "purpose": "Transform a real task family into a bounded benchmark proposal.",
+  "input_artifacts": [
+    {
+      "artifact_id": "pilot-synthesis",
+      "kind": "source",
+      "path_or_reference": "runtime/agent_workbench/pilot/pilot_accounting_synthesis.md",
+      "provenance": "Sanitized accounting synthesis.",
+      "public_safety": "Ignored local runtime path.",
+      "verifier": "Supervisor"
+    }
+  ],
+  "transformation": "Identify a benchmark ticket shape and expected evidence outputs.",
+  "implementation": {
+    "type": "script",
+    "name": "agent-workbench compare eval",
+    "authority_level": "supervisor-owned"
+  },
+  "output_artifacts": [
+    {
+      "artifact_id": "benchmark-ticket-proposal",
+      "kind": "generated",
+      "path_or_reference": "runtime/agent_workbench/benchmarks/ticket_proposal.md",
+      "provenance": "Generated from pilot synthesis.",
+      "public_safety": "Ignored until sanitized.",
+      "verifier": "Supervisor"
+    }
+  ],
+  "verification": {
+    "commands_run": [
+      "agent-workbench compare eval --input <summary.json> --output <comparison.md>"
+    ]
+  },
+  "token_accounting": {
+    "supervisor_input_tokens": 20000,
+    "supervisor_output_tokens": 4000,
+    "worker_input_tokens": 60000,
+    "worker_output_tokens": 12000,
+    "estimated_net_savings_usd": 0.03
+  },
+  "supervisor_decision": {
+    "decision": "use-as-benchmark-candidate",
+    "rationale": "Benchmark proposal is reusable after supervisor review."
+  }
+}

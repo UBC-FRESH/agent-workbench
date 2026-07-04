@@ -37,6 +37,11 @@ from .pilot import (
     scaffold_pilot_pack,
 )
 from .policy import tune_policy
+from .workflow import (
+    load_workflow_step,
+    render_workflow_markdown,
+    validate_workflow_step,
+)
 
 
 def default_repo_root() -> Path:
@@ -182,6 +187,30 @@ def build_parser() -> argparse.ArgumentParser:
     )
     policy_tune_parser.add_argument("--output", type=Path, required=True)
     policy_tune_parser.set_defaults(func=run_policy_tune)
+
+    workflow_parser = subparsers.add_parser(
+        "workflow",
+        help="Validate or render artifact-first workflow step records.",
+    )
+    workflow_subparsers = workflow_parser.add_subparsers(
+        dest="workflow_command",
+        required=True,
+    )
+
+    workflow_validate_parser = workflow_subparsers.add_parser(
+        "validate",
+        help="Validate a workflow step JSON record.",
+    )
+    workflow_validate_parser.add_argument("--input", type=Path, required=True)
+    workflow_validate_parser.set_defaults(func=run_workflow_validate)
+
+    workflow_render_parser = workflow_subparsers.add_parser(
+        "render",
+        help="Render a workflow step JSON record to Markdown.",
+    )
+    workflow_render_parser.add_argument("--input", type=Path, required=True)
+    workflow_render_parser.add_argument("--output", type=Path, required=True)
+    workflow_render_parser.set_defaults(func=run_workflow_render)
 
     decide_parser = subparsers.add_parser(
         "decide",
@@ -431,6 +460,38 @@ def run_policy_tune(args: argparse.Namespace) -> int:
         return 1
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(report, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_workflow_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_workflow_step(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_workflow_step(data)
+    if result.ok:
+        print(f"valid workflow step record: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_workflow_render(args: argparse.Namespace) -> int:
+    try:
+        data = load_workflow_step(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_workflow_step(data)
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(render_workflow_markdown(data), encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
 

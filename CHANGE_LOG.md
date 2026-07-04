@@ -776,3 +776,15 @@ issues, pull requests, and closeout comments.
   bailout guidance, and ML optimizer thresholds.
 - Updated README, the real-project deployment playbook, roadmap, changelog, and
   command-surface smoke coverage.
+
+## 2026-07-04 - Added P37 artifact workflow contracts
+
+- Opened P37 GitHub issue #262 with child issues #263 through #266 for artifact
+  vocabulary, workflow step contracts, example records, and closeout.
+- Added `src/agent_workbench/workflow.py` and the `agent-workbench workflow
+  validate|render` command surface.
+- Added `templates/workflow_step_record.json` and public-safe example workflow
+  records for software task review, documentation proposal, paper outline, and
+  benchmark proposal.
+- Added `planning/phase37_artifact_workflow_contracts.md` and updated README,
+  roadmap, changelog, and command-surface smoke coverage.

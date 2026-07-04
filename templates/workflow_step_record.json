@@ -1,0 +1,61 @@
+{
+  "workflow_id": "example-workflow",
+  "step_id": "evidence-intake",
+  "title": "Summarize issue evidence for supervisor review",
+  "purpose": "Transform source project planning artifacts into a sanitized decision input.",
+  "input_artifacts": [
+    {
+      "artifact_id": "source-issue",
+      "kind": "source",
+      "path_or_reference": "issue or roadmap reference",
+      "provenance": "Maintainer-authored planning source.",
+      "public_safety": "No raw private transcript or provider endpoint included.",
+      "verifier": "Supervisor checks source against live issue or tracked roadmap."
+    }
+  ],
+  "transformation": "Worker or script summarizes source evidence into a bounded proposal artifact.",
+  "implementation": {
+    "type": "local-worker",
+    "name": "qwen3-coder-next:latest",
+    "authority_level": "L1",
+    "notes": "No tracked mutation or GitHub mutation."
+  },
+  "output_artifacts": [
+    {
+      "artifact_id": "proposal-summary",
+      "kind": "generated",
+      "path_or_reference": "runtime/agent_workbench/example/proposal.md",
+      "provenance": "Generated from supplied source issue by local worker.",
+      "public_safety": "Ignored runtime artifact; promote only sanitized findings.",
+      "verifier": "Supervisor reviews claims before promotion."
+    },
+    {
+      "artifact_id": "accepted-summary",
+      "kind": "promoted",
+      "path_or_reference": "planning/example_promoted_summary.md",
+      "provenance": "Supervisor-edited summary derived from accepted worker claims.",
+      "public_safety": "Tracked sanitized note with no raw transcript.",
+      "verifier": "Supervisor",
+      "supervisor_decision": "Promote accepted claims and reject unsupported claims."
+    }
+  ],
+  "verification": {
+    "commands_run": [
+      "agent-workbench evidence validate --input <summary.evidence.json>"
+    ],
+    "manual_checks": [
+      "Supervisor checked accepted claims against source artifacts."
+    ]
+  },
+  "token_accounting": {
+    "supervisor_input_tokens": 45000,
+    "supervisor_output_tokens": 9000,
+    "worker_input_tokens": 150000,
+    "worker_output_tokens": 35000,
+    "estimated_net_savings_usd": 0.17
+  },
+  "supervisor_decision": {
+    "decision": "promote-with-edits",
+    "rationale": "Generated artifact was useful after supervisor verification."
+  }
+}

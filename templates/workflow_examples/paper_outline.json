@@ -1,0 +1,48 @@
+{
+  "workflow_id": "paper-outline",
+  "step_id": "structure-outline",
+  "title": "Propose a paper outline from public-safe evidence summaries",
+  "purpose": "Organize validated evidence summaries into a possible manuscript structure.",
+  "input_artifacts": [
+    {
+      "artifact_id": "evidence-summary",
+      "kind": "source",
+      "path_or_reference": "planning/sanitized_evidence_summary.md",
+      "provenance": "Supervisor-promoted evidence summary.",
+      "public_safety": "No raw transcript or private source content.",
+      "verifier": "Supervisor"
+    }
+  ],
+  "transformation": "Map evidence themes to paper sections and open questions.",
+  "implementation": {
+    "type": "human",
+    "name": "supervisor",
+    "authority_level": "supervisor-owned"
+  },
+  "output_artifacts": [
+    {
+      "artifact_id": "paper-outline-draft",
+      "kind": "generated",
+      "path_or_reference": "runtime/agent_workbench/paper/outline.md",
+      "provenance": "Human or worker-assisted outline draft.",
+      "public_safety": "Ignored working draft.",
+      "verifier": "Supervisor"
+    }
+  ],
+  "verification": {
+    "manual_checks": [
+      "Supervisor checks scientific claims against accepted evidence."
+    ]
+  },
+  "token_accounting": {
+    "supervisor_input_tokens": 50000,
+    "supervisor_output_tokens": 12000,
+    "worker_input_tokens": 0,
+    "worker_output_tokens": 0,
+    "estimated_net_savings_usd": 0
+  },
+  "supervisor_decision": {
+    "decision": "keep-as-working-draft",
+    "rationale": "Outline is a planning artifact, not a publication claim."
+  }
+}

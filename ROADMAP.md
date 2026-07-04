@@ -45,7 +45,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P34 Delegation decision engine v0 | #240 | `feature/p34-delegation-decision-engine-v0` | Complete |
 | P35 Real-project pilot accounting | #250 | `feature/p35-real-project-pilot-accounting` | Complete |
 | P36 Policy tuning loop | #256 | `feature/p36-policy-tuning-loop` | Complete |
-| P37 Artifact and workflow contract model | TBD | TBD | Planned |
+| P37 Artifact and workflow contract model | #262 | `feature/p37-artifact-workflow-contracts` | Complete |
 | P38 Role, capability, and implementation model | TBD | TBD | Planned |
 | P39 Reusable scientific workbench templates | TBD | TBD | Planned |
 | P40 Observability and token-cost ingestion | TBD | TBD | Planned |
@@ -1699,11 +1699,11 @@ Phase 36 acceptance criteria:
 
 ## Phase 37: Artifact And Workflow Contract Model
 
-Parent issue: TBD
+Parent issue: #262
 
-Branch: TBD
+Branch: `feature/p37-artifact-workflow-contracts`
 
-Status: planned
+Status: complete
 
 Goal: define the durable artifact and workflow contract layer needed to move
 from ad hoc worker tickets toward reproducible AI-assisted scientific and
@@ -1711,23 +1711,23 @@ software workbenches.
 
 Planned tasks:
 
-- [ ] P37.1 Artifact vocabulary
-  - [ ] Define source artifact, generated artifact, promoted artifact, and
+- [x] P37.1 Artifact vocabulary (#263)
+  - [x] Define source artifact, generated artifact, promoted artifact, and
     rejected artifact.
-  - [ ] Record provenance, verifier, and supervisor decision fields.
-- [ ] P37.2 Workflow step contract
-  - [ ] Define input artifacts, transformation, implementation, output
+  - [x] Record provenance, verifier, and supervisor decision fields.
+- [x] P37.2 Workflow step contract (#264)
+  - [x] Define input artifacts, transformation, implementation, output
     artifacts, verification, and token/cash accounting.
-  - [ ] Keep the contract compatible with existing evidence summaries and
+  - [x] Keep the contract compatible with existing evidence summaries and
     decision packets.
-- [ ] P37.3 Example workflow records
-  - [ ] Create examples for software task review, documentation proposal, paper
+- [x] P37.3 Example workflow records (#265)
+  - [x] Create examples for software task review, documentation proposal, paper
     outline, and benchmark proposal.
-  - [ ] Keep examples public-safe and generic across UBC-FRESH projects.
-- [ ] P37.4 Documentation and closeout
-  - [ ] Add planning notes.
-  - [ ] Update roadmap and changelog.
-  - [ ] Run verification.
+  - [x] Keep examples public-safe and generic across UBC-FRESH projects.
+- [x] P37.4 Documentation and closeout (#266)
+  - [x] Add planning notes.
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
 
 Phase 37 acceptance criteria:
 
