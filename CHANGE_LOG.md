@@ -474,3 +474,17 @@ issues, pull requests, and closeout comments.
   expectations, and package-readiness checkpoint.
 - Kept packaging deferred until the evidence layout and delegation policy are
   more stable.
+
+## 2026-07-04 - Defined Phase 17 evidence summary schema
+
+- Created the Phase 17 evidence-schema lane on
+  `feature/p17-evidence-store-summary-schema`, with parent issue #129 and child
+  task issues #130 through #134.
+- Added `templates/evidence_summary.md` and
+  `templates/evidence_summary.schema.json` as the lightweight summary contract
+  for local evidence promotion.
+- Added `playbooks/evidence_store.md` to separate ignored raw evidence from
+  tracked public summaries and define promotion rules.
+- Added `planning/phase17_evidence_schema_notes.md` with a sanitized backfilled
+  P15 model-run summary and the decision to defer databases, CI schema
+  validation, and packaged evidence collectors.

@@ -25,7 +25,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P14 Model matrix and packaging decision | #105 | `feature/p14-model-matrix-packaging-decision` | Complete |
 | P15 Model-family expansion trial | #115 | `feature/p15-model-family-expansion-trial` | Complete |
 | P16 Command surface stabilization | #122 | `feature/p16-command-surface-stabilization` | Complete |
-| P17 Evidence store and summary schema | TBD | TBD | Planned |
+| P17 Evidence store and summary schema | #129 | `feature/p17-evidence-store-summary-schema` | Complete |
 | P18 Richer restricted tool trial | TBD | TBD | Planned |
 | P19 Delegation policy and trust levels | TBD | TBD | Planned |
 | P20 Packaging revisit and interface decision | TBD | TBD | Planned |
@@ -850,22 +850,38 @@ Phase 16 acceptance criteria:
 
 ## Phase 17: Evidence Store And Summary Schema
 
-Parent issue: TBD
+Parent issue: #129
 
-Branch: TBD
+Branch: `feature/p17-evidence-store-summary-schema`
 
-Status: planned
+Status: complete
 
 Goal: define an ignored evidence layout and sanitized summary schema for model
 runs, bridge runs, patch trials, and GitHub microtasks.
 
-Planned tasks:
+Completed tasks:
 
-- P17.1 Evidence directory convention.
-- P17.2 Summary JSON/Markdown field schema.
-- P17.3 Sanitized promotion rules.
-- P17.4 Backfill one summary from P15/P16 style outputs.
-- P17.5 Closeout and evidence-retention decision.
+- [x] P17.1 Evidence directory convention (#130)
+  - [x] Add `playbooks/evidence_store.md`.
+  - [x] Separate raw ignored evidence from tracked summaries.
+  - [x] Document promotion paths.
+- [x] P17.2 Summary JSON/Markdown field schema (#131)
+  - [x] Add `templates/evidence_summary.md`.
+  - [x] Add `templates/evidence_summary.schema.json`.
+  - [x] Define required summary fields.
+- [x] P17.3 Sanitized promotion rules (#132)
+  - [x] Document allowed tracked evidence.
+  - [x] Document forbidden private values.
+  - [x] Preserve supervisor verification requirement.
+- [x] P17.4 Backfill one summary from P15/P16 style outputs (#133)
+  - [x] Backfill a sanitized P15 model-run summary.
+  - [x] Use classification counts instead of raw assistant messages.
+  - [x] Keep source runtime paths repo-relative.
+- [x] P17.5 Closeout and evidence-retention decision (#134)
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [x] Open and merge PR.
 
 Phase 17 acceptance criteria:
 
