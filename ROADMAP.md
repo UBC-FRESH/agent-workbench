@@ -19,7 +19,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | Complete |
 | P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | Complete |
 | P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | Complete |
-| P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Active |
+| P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | PR-ready |
 | P12 Restricted tool-enabled worker trial | TBD | TBD | Planned |
 | P13 GitHub workflow microtrial | TBD | TBD | Planned |
 | P14 Model matrix and packaging decision | TBD | TBD | Planned |
@@ -575,7 +575,7 @@ Parent issue: #81
 
 Branch: `feature/p11-supervisor-applied-patch-harness`
 
-Status: active
+Status: PR-ready
 
 Goal: add a supervisor-side harness that can parse a worker patch proposal,
 apply it to an explicitly allowed target, run checks, and classify the result.
@@ -603,8 +603,8 @@ apply it to an explicitly allowed target, run checks, and classify the result.
   - [x] Update `ROADMAP.md`.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Finalize P11 planning notes.
-  - [ ] Run verification.
-  - [ ] Comment on and close child issues.
+  - [x] Run verification.
+  - [x] Comment on and close child issues.
   - [ ] Open, merge, and verify PR closeout.
 
 Phase 11 acceptance criteria:
