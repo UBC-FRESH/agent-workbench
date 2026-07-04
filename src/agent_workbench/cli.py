@@ -32,6 +32,7 @@ from .evidence import (
 from .graph import (
     FreshForgeGraphUnavailable,
     load_graph_document,
+    render_graph_decisions_markdown,
     render_graph_markdown,
     render_graph_validation,
     validate_graph_document,
@@ -325,6 +326,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="Validate Agent Workbench metadata before rendering.",
     )
     graph_render_parser.set_defaults(func=run_graph_render)
+
+    graph_decide_parser = graph_subparsers.add_parser(
+        "decide",
+        help="Render graph-node delegation recommendations.",
+    )
+    graph_decide_parser.add_argument("--input", type=Path, required=True)
+    graph_decide_parser.add_argument("--output", type=Path, required=True)
+    graph_decide_parser.add_argument(
+        "--agent-metadata",
+        action="store_true",
+        help="Validate Agent Workbench metadata before deciding.",
+    )
+    graph_decide_parser.set_defaults(func=run_graph_decide)
 
     decide_parser = subparsers.add_parser(
         "decide",
@@ -734,6 +748,29 @@ def run_graph_render(args: argparse.Namespace) -> int:
         return 1
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(render_graph_markdown(data), encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_graph_decide(args: argparse.Namespace) -> int:
+    try:
+        data = load_graph_document(args.input)
+        result = validate_graph_document(
+            data,
+            source_path=args.input,
+            agent_metadata=args.agent_metadata,
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    except FreshForgeGraphUnavailable as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    if not result.ok:
+        print(render_graph_validation(result), file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(render_graph_decisions_markdown(data), encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
 

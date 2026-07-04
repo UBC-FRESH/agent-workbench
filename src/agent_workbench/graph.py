@@ -262,6 +262,131 @@ def render_graph_markdown(data: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def render_graph_decisions_markdown(data: dict[str, Any]) -> str:
+    """Render graph-node delegation recommendations."""
+    from .decision import decide_task
+
+    workflow = data.get("workflow", {})
+    if not isinstance(workflow, dict):
+        workflow = {}
+    nodes = data.get("nodes", [])
+    if not isinstance(nodes, list):
+        nodes = []
+
+    lines = [
+        "# Graph Delegation Decision Report",
+        "",
+        "## Workflow",
+        "",
+        f"- id: `{workflow.get('id', '')}`",
+        f"- name: {workflow.get('name', '')}",
+        "",
+        "## Node Recommendations",
+        "",
+    ]
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        decision_input = decision_input_from_node(node)
+        result = decide_task(decision_input)
+        parameters = node.get("parameters", {})
+        agent_parameters = (
+            parameters.get("agent_workbench", {}) if isinstance(parameters, dict) else {}
+        )
+        if not isinstance(agent_parameters, dict):
+            agent_parameters = {}
+        needs = node.get("needs", [])
+        if not isinstance(needs, list):
+            needs = []
+
+        lines.extend(
+            [
+                f"### `{node.get('id', '')}`",
+                "",
+                f"- recommendation: `{result.recommendation}`",
+                f"- node_kind: `{agent_parameters.get('node_kind', '')}`",
+                f"- needs: {format_list(needs)}",
+                f"- role: `{decision_input.get('role', '')}`",
+                f"- capability: `{decision_input.get('task_type', '')}`",
+                f"- authority_level: `{decision_input.get('authority_level', '')}`",
+                f"- suitability: `{result.suitability}`",
+                f"- risk: `{result.risk}`",
+                f"- expected_net_savings_usd: {result.economics.expected_net_savings_usd:.6f}",
+                "",
+                "#### Reasons",
+                "",
+            ]
+        )
+        lines.extend(f"- {reason}" for reason in result.reasons)
+        if result.cautions:
+            lines.extend(["", "#### Cautions", ""])
+            lines.extend(f"- {caution}" for caution in result.cautions)
+        lines.extend(["", "#### Supervisor Next Action", "", result.next_action, ""])
+    return "\n".join(lines)
+
+
+def decision_input_from_node(node: dict[str, Any]) -> dict[str, Any]:
+    provenance = node.get("provenance", {})
+    if not isinstance(provenance, dict):
+        provenance = {}
+    parameters = node.get("parameters", {})
+    agent_parameters = (
+        parameters.get("agent_workbench", {}) if isinstance(parameters, dict) else {}
+    )
+    if not isinstance(agent_parameters, dict):
+        agent_parameters = {}
+
+    node_kind = str(agent_parameters.get("node_kind", "graph_node"))
+    authority = str(provenance.get("authority_level", "L6"))
+    supervisor_owned = authority == "supervisor-owned"
+    worker_node = node_kind.startswith("worker_") or authority in {"L0", "L1"}
+
+    if supervisor_owned:
+        decision_authority = "L6"
+    elif authority in {"L0", "L1", "L2", "L3", "L4", "L5", "L6"}:
+        decision_authority = authority
+    else:
+        decision_authority = "L6"
+
+    return {
+        "task_id": str(node.get("id", "")),
+        "title": str(node.get("name") or node.get("id", "")),
+        "task_type": str(provenance.get("capability", node_kind)),
+        "roadmap_level": "subtask" if worker_node else "task",
+        "suitability": "high" if worker_node else "avoid",
+        "risk": "low" if worker_node else "medium",
+        "model": str(provenance.get("model_profile") or provenance.get("implementation", "")),
+        "model_profile_status": "observed",
+        "authority_level": decision_authority,
+        "expected_verification": str(agent_parameters.get("evidence_reference", "")),
+        "role": str(provenance.get("role", "")),
+        "requires_tracked_mutation": node_kind == "supervisor_promotion",
+        "requires_github_mutation": False,
+        "requires_release_or_closeout": node_kind == "supervisor_promotion",
+        "economics": default_node_economics(worker_node),
+    }
+
+
+def default_node_economics(worker_node: bool) -> dict[str, float]:
+    if not worker_node:
+        return {}
+    return {
+        "direct_supervisor_input_tokens": 4000,
+        "direct_supervisor_output_tokens": 1000,
+        "delegated_supervisor_input_tokens": 900,
+        "delegated_supervisor_output_tokens": 250,
+        "worker_input_tokens": 4000,
+        "worker_output_tokens": 1000,
+        "cleanup_supervisor_input_tokens": 500,
+        "cleanup_supervisor_output_tokens": 200,
+        "supervisor_input_price_per_1m_usd": 2.0,
+        "supervisor_output_price_per_1m_usd": 8.0,
+        "worker_input_price_per_1m_usd": 0.0,
+        "worker_output_price_per_1m_usd": 0.0,
+        "failure_probability": 0.25,
+    }
+
+
 def format_list(values: list[Any]) -> str:
     if not values:
         return "`none`"

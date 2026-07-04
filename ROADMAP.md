@@ -51,8 +51,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P40 Observability and token-cost ingestion | #280 | `feature/p40-token-cost-ingestion` | Complete |
 | P41 FreshForge graph integration spike | #286 | `feature/p41-freshforge-graph-integration` | Complete |
 | P42 Agent metadata convention | #292 | `feature/p42-agent-metadata-convention` | Complete |
-| P43 Graph-backed pilot workflow | #298 | `feature/p43-graph-backed-pilot-workflow` | Active |
-| P44 Graph-aware delegation decision engine | TBD | `feature/p44-graph-aware-decision-engine` | Planned |
+| P43 Graph-backed pilot workflow | #298 | `feature/p43-graph-backed-pilot-workflow` | Complete |
+| P44 Graph-aware delegation decision engine | #304 | `feature/p44-graph-aware-decision-engine` | Active |
 | P45 Per-node token economics | TBD | `feature/p45-per-node-token-economics` | Planned |
 | P46 FreshForge dependency decision | TBD | `feature/p46-freshforge-dependency-decision` | Planned |
 
@@ -1942,7 +1942,7 @@ Parent issue: #298
 
 Branch: `feature/p43-graph-backed-pilot-workflow`
 
-Status: active
+Status: complete
 
 Goal: represent one real Agent Workbench deployment pilot as a
 FreshForge-compatible graph and use Agent Workbench evidence/accounting around
@@ -1969,26 +1969,26 @@ Phase 43 acceptance criteria:
 
 ## Phase 44: Graph-Aware Delegation Decision Engine
 
-Parent issue: TBD
+Parent issue: #304
 
 Branch: `feature/p44-graph-aware-decision-engine`
 
-Status: planned
+Status: active
 
 Goal: upgrade delegation decisions from isolated task descriptions to graph-node
 recommendations.
 
 Planned tasks:
 
-- [ ] P44.1 Graph-node decision input
-  - [ ] Resolve task type, authority, dependencies, and verification context
+- [x] P44.1 Graph-node decision input (#305)
+  - [x] Resolve task type, authority, dependencies, and verification context
     from graph nodes.
-- [ ] P44.2 Recommendation logic
-  - [ ] Recommend delegate, split, direct, defer, or human decision per node.
-- [ ] P44.3 Report surface
-  - [ ] Render graph-level and node-level delegation guidance.
-- [ ] P44.4 Dogfood and closeout
-  - [ ] Compare graph-aware recommendations against existing P34-style
+- [x] P44.2 Recommendation logic (#306)
+  - [x] Recommend delegate, split, direct, defer, or human decision per node.
+- [x] P44.3 Report surface (#307)
+  - [x] Render graph-level and node-level delegation guidance.
+- [x] P44.4 Dogfood and closeout (#308)
+  - [x] Compare graph-aware recommendations against existing P34-style
     task-only recommendations.
 
 Phase 44 acceptance criteria:
