@@ -982,3 +982,15 @@ issues, pull requests, and closeout comments.
   commitment.
 - Kept P50.4 open for actual token-economics record completion because paid
   supervisor-token attribution is still goal-level rather than lane-segmented.
+
+## 2026-07-04 - Ran P50 worker diff-review iteration
+
+- Ran a proposal-only P16 diff-review ticket against both `qwen3-coder:latest`
+  and `qwen3-coder-next:latest`.
+- Both workers returned valid structured output and independently selected the
+  `mapping` design over `typed record` or `hybrid`.
+- Recorded 5564 local worker input tokens and 542 local worker output tokens at
+  zero cash cost.
+- Strengthened the P50 recommendation to promote the delegated mapping branch as
+  the current FreshForge P16 candidate, while reserving typed evidence records
+  for later downstream-driven evidence.

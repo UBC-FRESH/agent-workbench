@@ -237,3 +237,47 @@ Recommendation for the next iteration:
   ask workers to review the two concrete diffs and propose either "mapping",
   "typed record", or "hybrid", then have the supervisor choose and apply the
   final branch direction.
+
+## Iteration 2 Worker Diff-Review Evidence
+
+Ticket:
+
+- evaluation id: `p16-diff-design-review`
+- target worktree: `../freshforge-benchmark-p16-delegated`
+- ticket path: ignored `tmp/agent_workbench/p16/p16-diff-design-review.ticket.md`
+- manifest path: ignored
+  `tmp/agent_workbench/p16/p16-diff-design-review.manifest.json`
+- task: review the two actual P16 lane designs and choose exactly one of
+  `mapping`, `typed record`, or `hybrid`
+
+Runs:
+
+| Model | Classification | Decision | Input Tokens | Output Tokens |
+| --- | --- | --- | ---: | ---: |
+| `qwen3-coder:latest` | `structured-output` | `mapping` | 2779 | 267 |
+| `qwen3-coder-next:latest` | `structured-output` | `mapping` | 2785 | 275 |
+
+Worker-token subtotal:
+
+- worker input tokens: 5564
+- worker output tokens: 542
+- worker cash cost: zero under the local Ollama lane
+
+Decision signal:
+
+- Both models followed the section contract with no missing sections.
+- Both independently selected `mapping`.
+- Both identified the same main tradeoff: mapping preserves provider flexibility
+  and avoids premature FreshForge public API commitment, while losing some
+  static typing, IDE discoverability, and cross-provider consistency.
+
+Supervisor interpretation:
+
+- This reinforces the Iteration 1 recommendation: promote the delegated mapping
+  lane as the current FreshForge P16 candidate.
+- The worker consensus does not prove that a typed record will never be needed.
+  It says not to commit FreshForge core to that public shape before P17/P18 or
+  downstream provider usage creates stronger evidence.
+- The next implementation move should be to sharpen the delegated branch docs
+  and examples enough that provider authors get practical guidance without a
+  new dataclass.
