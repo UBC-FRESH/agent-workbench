@@ -29,7 +29,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P18 Richer restricted tool trial | #136 | `feature/p18-richer-restricted-tool-trial` | Complete |
 | P19 Delegation policy and trust levels | #143 | `feature/p19-delegation-policy-trust-levels` | Complete |
 | P20 Packaging revisit and interface decision | #150 | `feature/p20-packaging-interface-decision` | Complete |
-| P21 Minimal local package and CLI skeleton | TBD | TBD | Planned |
+| P21 Minimal local package and CLI skeleton | #157 | `feature/p21-minimal-local-package-cli` | Complete |
 | P22 CLI wrappers for existing commands | TBD | TBD | Planned |
 | P23 Evidence summary validation and rendering | TBD | TBD | Planned |
 | P24 CLI dogfood workflow | TBD | TBD | Planned |
@@ -1030,14 +1030,45 @@ changing worker trust levels.
 
 ## Phase 21: Minimal Local Package And CLI Skeleton
 
-Parent issue: TBD
+Parent issue: #157
 
-Branch: TBD
+Branch: `feature/p21-minimal-local-package-cli`
 
-Status: planned
+Status: complete
 
 Goal: add the smallest Python package and local CLI entrypoint needed to wrap
 existing supervisor-side scripts.
+
+Completed tasks:
+
+- [x] P21.1 Package metadata and layout (#158)
+  - [x] Add `pyproject.toml`.
+  - [x] Use a `src/` package layout.
+  - [x] Add `agent-workbench` console script metadata.
+- [x] P21.2 Importable package namespace (#159)
+  - [x] Add `src/agent_workbench/__init__.py`.
+  - [x] Add package version.
+  - [x] Add `python -m agent_workbench` entrypoint.
+- [x] P21.3 Minimal CLI entrypoint (#160)
+  - [x] Add `src/agent_workbench/cli.py`.
+  - [x] Provide help output.
+  - [x] Provide version output.
+- [x] P21.4 Local install and help verification (#161)
+  - [x] Run editable install.
+  - [x] Verify console help and version.
+  - [x] Verify module help.
+- [x] P21.5 Closeout and package skeleton decision (#162)
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [x] Open and merge PR.
+
+Phase 21 acceptance criteria:
+
+- `agent_workbench` imports from the local checkout.
+- `agent-workbench --help` and `agent-workbench --version` work after editable
+  install.
+- Existing direct scripts remain present and usable.
 
 ## Phase 22: CLI Wrappers For Existing Commands
 
