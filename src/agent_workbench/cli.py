@@ -10,6 +10,13 @@ from pathlib import Path
 
 from . import __version__
 from .comparison import render_eval_comparison
+from .decision import (
+    DecisionInputError,
+    decide_task,
+    load_decision_input,
+    render_markdown_report,
+    result_to_jsonable,
+)
 from .evidence import (
     load_summary,
     render_markdown,
@@ -107,6 +114,34 @@ def build_parser() -> argparse.ArgumentParser:
     )
     eval_compare_parser.add_argument("--output", type=Path, required=True)
     eval_compare_parser.set_defaults(func=run_compare_eval)
+
+    decide_parser = subparsers.add_parser(
+        "decide",
+        help="Render transparent delegation recommendations.",
+    )
+    decide_subparsers = decide_parser.add_subparsers(
+        dest="decide_command",
+        required=True,
+    )
+
+    decide_task_parser = decide_subparsers.add_parser(
+        "task",
+        help="Evaluate one candidate task-bundle decision input.",
+    )
+    decide_task_parser.add_argument("--input", type=Path, required=True)
+    decide_task_parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Optional Markdown report path. Prints to stdout when omitted.",
+    )
+    decide_task_parser.add_argument(
+        "--json-output",
+        type=Path,
+        default=None,
+        help="Optional JSON result path.",
+    )
+    decide_task_parser.set_defaults(func=run_decide_task)
 
     evidence_parser = subparsers.add_parser(
         "evidence",
@@ -264,6 +299,47 @@ def run_compare_eval(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_decide_task(args: argparse.Namespace) -> int:
+    try:
+        data = load_decision_input(args.input)
+        resolve_decision_paths(data, args.input, args.repo_root)
+        result = decide_task(data)
+    except (OSError, json.JSONDecodeError, DecisionInputError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+
+    report = render_markdown_report(result)
+    if args.output is None:
+        print(report)
+    else:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(report, encoding="utf-8")
+        print(f"wrote {args.output}")
+
+    if args.json_output is not None:
+        args.json_output.parent.mkdir(parents=True, exist_ok=True)
+        args.json_output.write_text(
+            json.dumps(result_to_jsonable(result), indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(f"wrote {args.json_output}")
+    return 0
+
+
+def resolve_decision_paths(data: dict[str, object], input_path: Path, repo_root: Path) -> None:
+    profile_path = data.get("model_profile_path")
+    if profile_path is None:
+        return
+    path = Path(str(profile_path))
+    if path.is_absolute() or path.exists():
+        return
+    for base in (input_path.parent, repo_root):
+        candidate = base / path
+        if candidate.exists():
+            data["model_profile_path"] = str(candidate)
+            return
+
+
 def materialize_cross_project_manifest(args: argparse.Namespace) -> Path:
     project_root = args.project_root.resolve()
     manifest_path = resolve_manifest_path(args.manifest, project_root)
@@ -404,3 +480,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     return int(args.func(args))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -120,6 +120,31 @@ def validate_manifest_template(root: Path) -> list[str]:
     ]
 
 
+def run_cli_help_check(root: Path) -> list[str]:
+    command = [sys.executable, "-m", "agent_workbench.cli", "decide", "task", "--help"]
+    completed = subprocess.run(
+        command,
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    output = completed.stdout + completed.stderr
+    required_terms = ("--input", "--output", "--json-output")
+    missing = [term for term in required_terms if term not in output]
+    if completed.returncode != 0 or missing:
+        raise RuntimeError(
+            "agent-workbench decide task help check failed; "
+            f"exit={completed.returncode}; missing={missing}"
+        )
+    return [
+        "## CLI Help Surface Checks",
+        "",
+        "- `agent-workbench decide task --help`: ok",
+        "",
+    ]
+
+
 def run_harness_dry_run(root: Path) -> list[str]:
     smoke_dir = root / "runtime" / "command_surface_smoke"
     smoke_dir.mkdir(parents=True, exist_ok=True)
@@ -186,6 +211,7 @@ def main() -> int:
         "",
     ]
     report_lines.extend(run_help_checks(root))
+    report_lines.extend(run_cli_help_check(root))
     report_lines.extend(validate_manifest_template(root))
     report_lines.extend(run_harness_dry_run(root))
     report_lines.extend(["## Result", "", "ok", ""])

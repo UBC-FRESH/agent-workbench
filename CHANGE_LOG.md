@@ -705,3 +705,20 @@ issues, pull requests, and closeout comments.
   comparisons can be tracked without unsupported installed-run claims.
 - Linked model profiles from the CLI and real-project deployment playbooks so
   supervisors consult model-specific evidence before assigning worker tickets.
+
+## 2026-07-04 - Added Phase 34 delegation decision engine v0
+
+- Created the Phase 34 decision-engine lane on
+  `feature/p34-delegation-decision-engine-v0`, with parent issue #240 and child
+  task issues #241 through #244.
+- Added `templates/delegation_decision_input.json` and a rules-based
+  `agent-workbench decide task` command for transparent delegation
+  recommendations.
+- Implemented deterministic rules for `delegate`, `do-directly`,
+  `split-smaller`, `needs-human-decision`, and `defer` recommendations using
+  task type, roadmap level, risk, suitability, model profile status, authority
+  level, and expected delegation economics.
+- Added `planning/phase34_delegation_decision_engine_v0.md` and linked the
+  decision command from the CLI and real-project deployment playbooks.
+- Dogfooded the command on delegate, split-smaller, and do-directly candidate
+  cases before closeout.

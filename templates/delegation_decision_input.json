@@ -1,0 +1,24 @@
+{
+  "task_id": "example-evidence-intake",
+  "title": "Summarize supplied issue and roadmap evidence",
+  "task_type": "evidence intake",
+  "roadmap_level": "task",
+  "suitability": "high",
+  "risk": "low",
+  "model": "qwen3-coder-next:latest",
+  "model_profile_status": "observed",
+  "authority_level": "L1",
+  "expected_verification": "Supervisor checks cited source files and claim dispositions.",
+  "requires_tracked_mutation": false,
+  "requires_github_mutation": false,
+  "requires_release_or_closeout": false,
+  "requires_private_context": false,
+  "economics": {
+    "avoided_supervisor_minutes": 45,
+    "setup_minutes": 10,
+    "verification_minutes": 15,
+    "retry_minutes": 5,
+    "failure_probability": 0.2,
+    "cleanup_minutes": 10
+  }
+}
