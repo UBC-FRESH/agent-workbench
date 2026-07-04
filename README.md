@@ -77,6 +77,12 @@ permission to delegate tracked-file or GitHub mutation to workers. It is also
 not a replacement workflow engine for FreshForge or other project-native
 execution systems.
 
+FreshForge is the canonical optional graph layer for Agent Workbench graph
+documents. Install `agent-workbench[graph]` when graph validation, rendering,
+graph-aware decisions, or graph-node token economics are needed. The base
+install remains useful for lightweight prompt, evidence, decision, accounting,
+and token tools.
+
 See:
 
 - `AGENTS.md` for the agent operating contract.

@@ -897,3 +897,14 @@ issues, pull requests, and closeout comments.
   economics by graph node.
 - Added sanitized token example records and
   `planning/phase45_per_node_token_economics.md`.
+
+## 2026-07-04 - Recorded P46 FreshForge dependency decision
+
+- Opened P46 GitHub issue #316 with child issues #317 through #320 for
+  evidence review, dependency options, recommendation, and closeout.
+- Added `planning/phase46_freshforge_dependency_decision.md`.
+- Decided to keep FreshForge as the canonical graph-validation layer while
+  retaining it as an optional `graph` extra rather than a required base
+  dependency.
+- Recorded that Agent Workbench should not build a parallel graph engine unless
+  a future FreshForge incompatibility is concrete and documented.
