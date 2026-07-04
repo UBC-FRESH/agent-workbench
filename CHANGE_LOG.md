@@ -818,3 +818,17 @@ issues, pull requests, and closeout comments.
   execution.
 - Added `planning/phase39_reusable_workbench_templates.md` and updated the
   roadmap.
+
+## 2026-07-04 - Added P40 token-cost ingestion records
+
+- Opened P40 GitHub issue #280 with child issues #281 through #284 for
+  observability source audit, sanitized import contract, helper command, and
+  closeout.
+- Added `src/agent_workbench/tokens.py` and the `agent-workbench tokens
+  validate|render|synthesize` command surface.
+- Added `templates/token_cost_record.json` and
+  `planning/phase40_token_cost_ingestion.md`.
+- Updated README, roadmap, changelog, and command-surface smoke coverage.
+- Kept observability as optional measurement input and excluded raw prompts,
+  traces, provider URLs, headers, credentials, and personal paths from tracked
+  token/cost records.

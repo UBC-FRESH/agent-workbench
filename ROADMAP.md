@@ -48,7 +48,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P37 Artifact and workflow contract model | #262 | `feature/p37-artifact-workflow-contracts` | Complete |
 | P38 Role, capability, and implementation model | #268 | `feature/p38-role-capability-implementation` | Complete |
 | P39 Reusable scientific workbench templates | #274 | `feature/p39-reusable-workbench-templates` | Complete |
-| P40 Observability and token-cost ingestion | TBD | TBD | Planned |
+| P40 Observability and token-cost ingestion | #280 | `feature/p40-token-cost-ingestion` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1820,32 +1820,32 @@ Phase 39 acceptance criteria:
 
 ## Phase 40: Observability And Token-Cost Ingestion
 
-Parent issue: TBD
+Parent issue: #280
 
-Branch: TBD
+Branch: `feature/p40-token-cost-ingestion`
 
-Status: planned
+Status: complete
 
 Goal: evaluate how to ingest token/cost observability records into Agent
 Workbench pilot accounting without committing raw traces or provider secrets.
 
 Planned tasks:
 
-- [ ] P40.1 Observability source audit
-  - [ ] Compare SDK result files, provider usage metadata, and PostHog-style AI
+- [x] P40.1 Observability source audit (#281)
+  - [x] Compare SDK result files, provider usage metadata, and PostHog-style AI
     observability exports.
-  - [ ] Identify fields needed for P35/P36 token/cash accounting.
-- [ ] P40.2 Sanitized import contract
-  - [ ] Define a public-safe token/cost record shape.
-  - [ ] Exclude prompts, raw transcripts, provider URLs, headers, and personal
+  - [x] Identify fields needed for P35/P36 token/cash accounting.
+- [x] P40.2 Sanitized import contract (#282)
+  - [x] Define a public-safe token/cost record shape.
+  - [x] Exclude prompts, raw transcripts, provider URLs, headers, and personal
     paths.
-- [ ] P40.3 Prototype import or render helper
-  - [ ] Add a small local helper only if it reduces manual accounting friction.
-  - [ ] Keep raw exports under ignored runtime paths.
-- [ ] P40.4 Documentation and closeout
-  - [ ] Add planning notes.
-  - [ ] Update roadmap and changelog.
-  - [ ] Run verification.
+- [x] P40.3 Prototype import or render helper (#283)
+  - [x] Add a small local helper only if it reduces manual accounting friction.
+  - [x] Keep raw exports under ignored runtime paths.
+- [x] P40.4 Documentation and closeout (#284)
+  - [x] Add planning notes.
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
 
 Phase 40 acceptance criteria:
 

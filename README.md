@@ -25,6 +25,10 @@ Snakemake, notebooks, GitHub Actions, or project CLIs. Agent Workbench records
 delegation decisions, artifacts, claims, verification, and token/cash economics
 around those tools.
 
+Token/cost observability is optional. Sanitized usage records can be validated
+and summarized, but raw prompts, traces, provider URLs, headers, and personal
+paths stay out of tracked files.
+
 ## Local CLI
 
 Install from a checkout:
@@ -49,6 +53,7 @@ agent-workbench accounting synthesize --input-dir runtime/agent_jobs --output ru
 agent-workbench policy tune --input-dir runtime/agent_jobs --output runtime/agent_jobs/policy_tuning.md
 agent-workbench workflow validate --input templates/workflow_step_record.json
 agent-workbench roles validate --input templates/role_capability_implementation.json
+agent-workbench tokens validate --input templates/token_cost_record.json
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in
