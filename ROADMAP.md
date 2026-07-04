@@ -34,6 +34,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P23 Evidence summary validation and rendering | #171 | `feature/p23-evidence-summary-validation-rendering` | Complete |
 | P24 CLI dogfood workflow | #178 | `feature/p24-cli-dogfood-workflow` | Complete |
 | P25 Real-project pilot scaffold | #185 | `feature/p25-real-project-pilot-scaffold` | Complete |
+| P26 Cross-project eval support | #192 | `feature/p26-cross-project-eval` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1245,3 +1246,43 @@ Phase 25 acceptance criteria:
 - Generated evidence stubs validate with `agent-workbench evidence validate`.
 - The CLI workflow playbook explains how to use the scaffold for real project
   trials.
+
+## Phase 26: Cross-Project Eval Support
+
+Parent issue: #192
+
+Branch: `feature/p26-cross-project-eval`
+
+Status: complete
+
+Goal: allow `agent-workbench eval` to execute manifests whose ticket/output
+paths are relative to a target project root while keeping Agent Workbench script
+lookup anchored to the Agent Workbench checkout.
+
+Completed tasks:
+
+- [x] P26.1 Eval project-root CLI contract (#193)
+  - [x] Add `agent-workbench eval --project-root <target-project>`.
+  - [x] Preserve existing eval behavior when omitted.
+- [x] P26.2 Cross-project manifest execution path (#194)
+  - [x] Resolve target-project paths from `--project-root`.
+  - [x] Materialize private manifest copies beside the target manifest.
+  - [x] Anchor probe script lookup to Agent Workbench.
+- [x] P26.3 Dogfood cross-project dry run (#195)
+  - [x] Scaffold ignored target-project files.
+  - [x] Run cross-project eval dry run.
+  - [x] Validate generated evidence stub.
+- [x] P26.4 Documentation and closeout (#196)
+  - [x] Update CLI playbook and planning notes.
+  - [x] Run verification.
+  - [x] Open and merge PR.
+
+Phase 26 acceptance criteria:
+
+- `agent-workbench eval --project-root <target-project> --manifest <manifest>
+  --dry-run` resolves target-project ticket/output paths correctly.
+- Private manifest copies stay in the same ignored target-project artifact
+  tree as the input manifest.
+- Existing `agent-workbench eval --manifest <manifest> --dry-run` behavior still
+  works.
+- `agent-workbench smoke` still passes.

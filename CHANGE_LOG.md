@@ -588,3 +588,16 @@ issues, pull requests, and closeout comments.
 - Updated `playbooks/cli_workflow.md` and added
   `planning/phase25_real_project_pilot_scaffold_notes.md` so the package can be
   used for small real-project trials without hand-writing every runtime file.
+
+## 2026-07-04 - Added Phase 26 cross-project eval support
+
+- Created the Phase 26 cross-project eval lane on
+  `feature/p26-cross-project-eval`, with parent issue #192 and child task issues
+  #193 through #196.
+- Added `agent-workbench eval --project-root <target-project>` so manifests,
+  tickets, outputs, and evidence can live under a target project root while
+  harness scripts stay anchored to the Agent Workbench checkout.
+- Materialized private manifest copies are written beside the target manifest,
+  so ignored target-project artifact trees remain self-contained.
+- Updated the CLI workflow playbook and added
+  `planning/phase26_cross_project_eval_notes.md`.
