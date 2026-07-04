@@ -318,3 +318,24 @@ issues, pull requests, and closeout comments.
   closeout comments.
 - Confirmed the next phase should proceed to patch-proposal trials without
   worker-applied file mutation.
+
+## 2026-07-04 - Launched Phase 10 patch proposal protocol trial
+
+- Created the Phase 10 patch-proposal lane on
+  `feature/p10-patch-proposal-protocol`, with parent issue #73 and child task
+  issues #74 through #78.
+- Added patch-proposal templates and extended the SDK same-ticket summarizer
+  with fenced patch parsing and proposal classifications.
+- Preserved the no-mutation boundary: workers may propose patches, but P10 does
+  not apply them.
+
+## 2026-07-04 - Ran Phase 10 patch-proposal trial
+
+- Ran two no-mutation patch-proposal repeats each for `qwen3-coder:latest` and
+  `qwen3-coder-next:latest` through the SDK/Ollama harness.
+- Verified that all four runs proposed the allowed file path, but
+  `qwen3-coder:latest` omitted the required `## Verification` section in both
+  repeats.
+- Verified that `qwen3-coder-next:latest` produced two complete
+  `patch-proposal` classifications, supporting P11 supervisor-applied patch
+  harness work.
