@@ -11,7 +11,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P0 Governance and workflow scaffold | #1 | `feature/p0-governance-scaffold` | Complete |
 | P1 Worker protocol templates | #7 | `feature/p1-worker-protocol-templates` | Complete |
 | P2 VS Code Chat bridge playbook | #13 | `feature/p2-vscode-chat-bridge-playbook` | Complete |
-| P3 Copilot Chat Bridge V0 Prototype | #21 | `feature/p3-copilot-chat-bridge-v0` | Active |
+| P3 Copilot Chat Bridge V0 Prototype | #21 | `feature/p3-copilot-chat-bridge-v0` | Complete |
 | P4 Worker model evaluation rubric | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -150,7 +150,7 @@ Parent issue: #21
 
 Branch: `feature/p3-copilot-chat-bridge-v0`
 
-Status: active
+Status: complete
 
 Goal: implement a local-only bridge harness that launches bounded VS Code
 Copilot Chat worker tickets via stdin, extracts persisted session evidence, and
@@ -178,13 +178,13 @@ writes supervisor verification reports.
   - [x] Inspect the generated supervisor report.
   - [x] Record sanitized findings in `planning/phase3_copilot_chat_bridge_v0_notes.md`.
   - [x] Update `playbooks/vscode_chat_bridge.md` with v0 lessons.
-- [ ] P3.5 Phase closeout, verification, and PR (#26)
-  - [ ] Run `git diff --check`.
-  - [ ] Inspect changed Markdown files.
-  - [ ] Search for credentials, private paths, raw transcript leakage, and
+- [x] P3.5 Phase closeout, verification, and PR (#26)
+  - [x] Run `git diff --check`.
+  - [x] Inspect changed Markdown files.
+  - [x] Search for credentials, private paths, raw transcript leakage, and
         unrelated project contamination.
-  - [ ] Comment on and close child issues.
-  - [ ] Open, merge, and verify PR closeout.
+  - [x] Comment on and close child issues.
+  - [x] Open, merge, and verify PR closeout.
 
 Phase 3 acceptance criteria:
 
