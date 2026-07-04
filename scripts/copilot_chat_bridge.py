@@ -12,6 +12,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -62,8 +63,9 @@ def appdata_workspace_storage() -> Path:
 
 
 def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
+    code_command = resolve_code_command(args.code_command)
     command = [
-        args.code_command,
+        code_command,
         "chat",
         "--reuse-window",
         "--maximize",
@@ -81,6 +83,19 @@ def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
     )
     if completed.returncode != 0:
         raise RuntimeError(f"code chat failed with exit code {completed.returncode}")
+
+
+def resolve_code_command(code_command: str) -> str:
+    resolved = shutil.which(code_command)
+    if resolved:
+        return resolved
+    if os.name == "nt" and code_command.lower() == "code":
+        local_appdata = os.environ.get("LOCALAPPDATA")
+        if local_appdata:
+            candidate = Path(local_appdata) / "Programs" / "Microsoft VS Code" / "bin" / "code.cmd"
+            if candidate.exists():
+                return str(candidate)
+    return code_command
 
 
 def iter_candidate_files(root: Path) -> list[Path]:
