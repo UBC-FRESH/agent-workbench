@@ -141,6 +141,36 @@ Current v0 limitations:
 - Raw tickets, reports, and transcripts remain ignored unless sanitized and
   intentionally promoted into `planning/`.
 
+## Custom Agent Findings
+
+Workspace custom agents can be launched through the local bridge by passing a
+custom mode identifier:
+
+```powershell
+python scripts\copilot_chat_bridge.py `
+  --mode qwen3-coder-next-strict-worker `
+  --ticket runtime\agent_jobs\<task>.ticket.md `
+  --marker <unique-marker> `
+  --workspace-root . `
+  --report runtime\agent_jobs\<task>.supervisor.md
+```
+
+Agent Workbench keeps experimental custom agents under `.github/agents/`.
+
+Current finding: custom agents are useful for instruction profiles and tool
+restriction, but they are not a reliable Ollama model-selection mechanism in
+the tested VS Code setup. A `qwen3-coder-next` custom agent loaded successfully,
+but persisted session evidence still resolved to `qwen3-coder:latest`.
+
+The bridge treats persisted session evidence as authoritative. If the session
+does not report the requested model, the run is blocked for model-comparison
+purposes even if the worker response appears correct.
+
+No-tool custom-agent probes can still produce repeated completion summaries in
+the visible Copilot Chat UI. Treat that as `looping-output` behavior from the
+host/model interaction, not as proof that the underlying ticket succeeded or
+failed by itself.
+
 ## Minimal Dry-Run Command
 
 For public-safe bridge trials, use a ticket that asks the worker to inspect only

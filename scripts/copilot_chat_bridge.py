@@ -50,6 +50,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout-seconds", type=int, default=240, help="Session polling timeout.")
     parser.add_argument("--poll-seconds", type=float, default=3.0, help="Polling interval.")
     parser.add_argument("--code-command", default="code", help="VS Code command executable.")
+    parser.add_argument("--mode", default="agent", help="VS Code chat mode or custom agent identifier.")
     parser.add_argument("--prompt", default=DEFAULT_PROMPT, help="One-line prompt for code chat.")
     parser.add_argument("--no-launch", action="store_true", help="Skip launch and only parse existing sessions.")
     return parser.parse_args()
@@ -70,7 +71,7 @@ def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
         "--reuse-window",
         "--maximize",
         "--mode",
-        "agent",
+        args.mode,
         args.prompt,
         "-",
     ]
@@ -155,7 +156,9 @@ def load_evidence(marker: str, session_path: Path | None, transcript_path: Path 
     text = session_path.read_text(encoding="utf-8", errors="replace")
     evidence.raw_excerpt = text[:2000]
     resolved = re.findall(r'"resolvedModel":"([^"]+)"', text)
-    evidence.resolved_model = resolved[-1] if resolved else None
+    model_ids = re.findall(r'"modelId":"([^"]+)"', text)
+    model_values = resolved or model_ids
+    evidence.resolved_model = normalize_model_id(model_values[-1]) if model_values else None
     evidence.permission_levels = sorted(set(re.findall(r'"permissionLevel":"([^"]+)"', text)))
     evidence.completed = '"modelState":{"value":1' in text or f"{marker} done" in text
     evidence.final_marker_present = f"{marker} done" in text
@@ -174,6 +177,10 @@ def unescape_json_text(value: str) -> str:
         return json.loads(f'"{value}"')
     except json.JSONDecodeError:
         return value.replace("\\\\", "\\")
+
+
+def normalize_model_id(model_id: str) -> str:
+    return model_id.removeprefix("ollama-models/Ollama/")
 
 
 def extract_file_edit_paths(text: str) -> list[str]:

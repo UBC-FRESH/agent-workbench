@@ -30,6 +30,7 @@ and Markdown evaluation rubrics:
 - `ROADMAP.md`: phase/task roadmap and issue tracker map.
 - `CHANGE_LOG.md`: append-only project narrative.
 - `planning/`: sanitized planning notes.
+- `.github/agents/`: experimental VS Code workspace custom agents.
 - `playbooks/`: public-safe workflow playbooks.
 - `templates/`: reusable worker ticket, result, failure, acceptance, and
   evaluation templates.
@@ -89,6 +90,9 @@ Current worker-model boundary:
   for available worker models.
 - Do not assign non-Ollama models or Ollama models that are not installed in the
   active host inventory by default.
+- Do not treat VS Code custom-agent `model` frontmatter as proof of model
+  selection. Persisted session evidence must show the expected model before a
+  run counts for model comparison.
 - Installing a new or larger model is a separate setup task that must include
   the model name, host/session used for installation, and post-install
   verification with `ollama list`.

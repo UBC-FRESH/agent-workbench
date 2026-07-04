@@ -13,6 +13,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P2 VS Code Chat bridge playbook | #13 | `feature/p2-vscode-chat-bridge-playbook` | Complete |
 | P3 Copilot Chat Bridge V0 Prototype | #21 | `feature/p3-copilot-chat-bridge-v0` | Complete |
 | P4 Worker model evaluation rubric | #28 | `feature/p4-worker-model-evaluation-rubric` | Complete |
+| P5 Custom agent model switching spike | #35 | `feature/p5-custom-agent-model-switching` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -250,3 +251,49 @@ Phase 4 acceptance criteria:
 - A bounded P4 dry run compares `qwen3-coder:latest` and
   `qwen3-coder-next:latest` on the same ticket, or explicitly records why that
   comparison could not be completed in this phase.
+
+## Phase 5: Custom Agent Model Switching Spike
+
+Parent issue: #35
+
+Branch: `feature/p5-custom-agent-model-switching`
+
+Status: complete
+
+Goal: determine whether VS Code workspace custom agents can provide a reliable,
+scriptable model-selection path for Ollama-backed worker evaluations.
+
+- [x] P5.1 Workspace custom agent definitions (#36)
+  - [x] Add qwen3-coder worker custom agent.
+  - [x] Add qwen3-coder-next worker custom agent.
+  - [x] Include model frontmatter fields.
+  - [x] Include strict worker-ticket behavior instructions.
+- [x] P5.2 Custom-agent launch probe (#37)
+  - [x] Prepare ignored probe tickets.
+  - [x] Attempt qwen3-coder custom-agent launch.
+  - [x] Attempt qwen3-coder-next custom-agent launch.
+  - [x] Inspect resolved model evidence.
+  - [x] Record blockers or success criteria in planning notes.
+- [x] P5.3 Bridge and playbook updates (#38)
+  - [x] Add `planning/phase5_custom_agent_model_switching_notes.md`.
+  - [x] Update the VS Code chat bridge playbook.
+  - [x] Update the bridge parser for custom-mode and model evidence.
+  - [x] Keep raw evidence ignored and promote only sanitized findings.
+- [x] P5.4 Closeout, PR, and next-step decision (#39)
+  - [x] Run `git diff --check`.
+  - [x] Inspect changed Markdown files.
+  - [x] Search for credentials, private paths, raw transcript leakage, and
+        unrelated project contamination.
+  - [x] Comment on and close child issues.
+  - [x] Open, merge, and verify PR closeout.
+
+Phase 5 acceptance criteria:
+
+- Workspace custom agent files are public-safe and use documented `.agent.md`
+  structure.
+- A same-ticket probe is attempted for both `qwen3-coder:latest` and
+  `qwen3-coder-next:latest` through custom-agent launch paths.
+- Persisted session evidence either proves model switching works or records the
+  exact blocker.
+- `ROADMAP.md`, `CHANGE_LOG.md`, planning notes, issue comments, and PR body
+  agree.
