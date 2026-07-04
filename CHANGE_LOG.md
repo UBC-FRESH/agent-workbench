@@ -919,3 +919,16 @@ issues, pull requests, and closeout comments.
   conventions, P17 matrix export surfaces, and P18 release-readiness review.
 - Kept the phase as queueing and validation only: no FreshForge mutation, no
   worker execution, and no release or GitHub closeout delegation.
+
+## 2026-07-04 - Added P48 phase-scale A/B token economics protocol
+
+- Opened P48 GitHub issue #328 with child issues #329 through #332 for
+  benchmark protocol, validation/rendering, FreshForge P16 packet, and
+  closeout.
+- Added `src/agent_workbench/benchmark.py` and
+  `agent-workbench benchmark validate|render`.
+- Added `templates/benchmarks/freshforge_p16_phase_ab_benchmark.json` as the
+  first phase-scale direct-vs-delegated benchmark packet.
+- Added `planning/phase48_phase_scale_ab_token_economics.md`.
+- Defined the experimental design around two disposable FreshForge worktrees
+  from the same start commit instead of stash-based rollback.

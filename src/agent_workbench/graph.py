@@ -56,7 +56,6 @@ def validate_graph_document(
 ) -> GraphValidation:
     """Validate a FreshForge-compatible workflow graph without executing it."""
     try:
-        from freshforge.records import DiagnosticSeverity
         from freshforge.validation import has_error_diagnostics, validate_workflow_document
     except ImportError as exc:
         raise FreshForgeGraphUnavailable(

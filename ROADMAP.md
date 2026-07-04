@@ -55,7 +55,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P44 Graph-aware delegation decision engine | #304 | `feature/p44-graph-aware-decision-engine` | Complete |
 | P45 Per-node token economics | #310 | `feature/p45-per-node-token-economics` | Complete |
 | P46 FreshForge dependency decision | #316 | `feature/p46-freshforge-dependency-decision` | Complete |
-| P47 FreshForge deployment test batch | #322 | `feature/p47-freshforge-deployment-test-batch` | Active |
+| P47 FreshForge deployment test batch | #322 | `feature/p47-freshforge-deployment-test-batch` | Complete |
+| P48 Phase-scale A/B token economics benchmark | #328 | `feature/p48-phase-scale-ab-token-economics` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2063,7 +2064,7 @@ Parent issue: #322
 
 Branch: `feature/p47-freshforge-deployment-test-batch`
 
-Status: active
+Status: complete
 
 Goal: queue a non-trivial FreshForge deployment-test batch that uses Agent
 Workbench graph, decision, and token-economics surfaces against FreshForge
@@ -2092,3 +2093,41 @@ Phase 47 acceptance criteria:
 - Graph decision reports identify worker-proposal nodes as delegation
   candidates and release/closeout nodes as supervisor-owned.
 - No FreshForge repo files are mutated by this phase.
+
+## Phase 48: Phase-Scale A/B Token Economics Benchmark
+
+Parent issue: #328
+
+Branch: `feature/p48-phase-scale-ab-token-economics`
+
+Status: complete
+
+Goal: create the first phase-scale A/B token-economics benchmark protocol so
+Agent Workbench can compare direct paid-supervisor implementation against
+graph-backed delegated implementation on the same FreshForge phase target.
+
+Planned tasks:
+
+- [x] P48.1 Benchmark protocol and lane design (#329)
+  - [x] Define direct supervisor and delegated graph lanes.
+  - [x] Use isolated worktrees from the same FreshForge start commit.
+- [x] P48.2 Benchmark record validation and rendering (#330)
+  - [x] Add benchmark validation and rendering command surface.
+  - [x] Include token fields, price assumptions, validation commands, and
+    win/loss rules.
+- [x] P48.3 FreshForge P16 benchmark packet (#331)
+  - [x] Add the FreshForge P16 phase-scale benchmark record.
+  - [x] Link the delegated lane to the P47 P16 graph packet.
+- [x] P48.4 Verification and closeout (#332)
+  - [x] Validate and render the benchmark packet.
+  - [x] Update roadmap and changelog.
+
+Phase 48 acceptance criteria:
+
+- A tracked benchmark record template exists for phase-scale direct-vs-delegated
+  comparisons.
+- Agent Workbench can validate and render the benchmark record.
+- The FreshForge P16 benchmark packet identifies target repo, start commit,
+  direct lane, delegated lane, rollback/worktree isolation, token fields,
+  validation commands, and win/loss decision rules.
+- P48 queues execution without mutating FreshForge.

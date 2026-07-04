@@ -15,6 +15,11 @@ from .accounting import (
     synthesize_accounting_markdown,
     validate_accounting_record,
 )
+from .benchmark import (
+    load_benchmark_record,
+    render_benchmark_markdown,
+    validate_benchmark_record,
+)
 from .comparison import render_eval_comparison
 from .decision import (
     DecisionInputError,
@@ -307,6 +312,30 @@ def build_parser() -> argparse.ArgumentParser:
     )
     tokens_graph_synthesize_parser.add_argument("--output", type=Path, required=True)
     tokens_graph_synthesize_parser.set_defaults(func=run_tokens_graph_synthesize)
+
+    benchmark_parser = subparsers.add_parser(
+        "benchmark",
+        help="Validate or render phase-scale A/B benchmark records.",
+    )
+    benchmark_subparsers = benchmark_parser.add_subparsers(
+        dest="benchmark_command",
+        required=True,
+    )
+
+    benchmark_validate_parser = benchmark_subparsers.add_parser(
+        "validate",
+        help="Validate a phase-scale A/B benchmark JSON record.",
+    )
+    benchmark_validate_parser.add_argument("--input", type=Path, required=True)
+    benchmark_validate_parser.set_defaults(func=run_benchmark_validate)
+
+    benchmark_render_parser = benchmark_subparsers.add_parser(
+        "render",
+        help="Render a phase-scale A/B benchmark JSON record to Markdown.",
+    )
+    benchmark_render_parser.add_argument("--input", type=Path, required=True)
+    benchmark_render_parser.add_argument("--output", type=Path, required=True)
+    benchmark_render_parser.set_defaults(func=run_benchmark_render)
 
     graph_parser = subparsers.add_parser(
         "graph",
@@ -735,6 +764,38 @@ def run_tokens_graph_synthesize(args: argparse.Namespace) -> int:
         return 1
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(report, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_benchmark_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_benchmark_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_benchmark_record(data)
+    if result.ok:
+        print(f"valid benchmark record: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_benchmark_render(args: argparse.Namespace) -> int:
+    try:
+        data = load_benchmark_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_benchmark_record(data)
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(render_benchmark_markdown(data), encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
 
