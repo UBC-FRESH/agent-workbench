@@ -41,6 +41,11 @@ PRICE_FIELDS = (
     "worker_output_price_per_1m_usd",
 )
 
+COUNTERFACTUAL_FIELDS = (
+    "direct_supervisor_input_tokens",
+    "direct_supervisor_output_tokens",
+)
+
 FORBIDDEN_FIELDS = {
     "prompt",
     "prompts",
@@ -104,6 +109,15 @@ def validate_token_record(data: dict[str, Any]) -> TokenValidation:
             if value is None or value < 0:
                 errors.append(f"prices.{field} must be a nonnegative number")
 
+    counterfactual = data.get("counterfactual", {})
+    if counterfactual is not None and not isinstance(counterfactual, dict):
+        errors.append("counterfactual must be an object when provided")
+    elif isinstance(counterfactual, dict):
+        for field in COUNTERFACTUAL_FIELDS:
+            value = number_or_none(counterfactual.get(field, 0))
+            if value is None or value < 0:
+                errors.append(f"counterfactual.{field} must be a nonnegative number")
+
     public_safety = data.get("public_safety")
     if not isinstance(public_safety, dict):
         errors.append("public_safety must be an object")
@@ -152,6 +166,21 @@ def calculate_token_costs(data: dict[str, Any]) -> TokenCosts:
     )
 
 
+def calculate_counterfactual_direct_cost(data: dict[str, Any]) -> float | None:
+    counterfactual = data.get("counterfactual", {})
+    prices = data.get("prices", {})
+    if not isinstance(counterfactual, dict) or not isinstance(prices, dict):
+        return None
+    if not any(field in counterfactual for field in COUNTERFACTUAL_FIELDS):
+        return None
+    return cost_usd(
+        counterfactual.get("direct_supervisor_input_tokens", 0),
+        counterfactual.get("direct_supervisor_output_tokens", 0),
+        prices.get("supervisor_input_price_per_1m_usd", 0),
+        prices.get("supervisor_output_price_per_1m_usd", 0),
+    )
+
+
 def render_token_markdown(data: dict[str, Any]) -> str:
     costs = calculate_token_costs(data)
     lines = [
@@ -183,6 +212,12 @@ def render_token_markdown(data: dict[str, Any]) -> str:
         for key, value in prices.items():
             lines.append(f"- {key}: {value}")
 
+    counterfactual = data.get("counterfactual", {})
+    if isinstance(counterfactual, dict) and counterfactual:
+        lines.extend(["", "## Counterfactual", ""])
+        for key, value in counterfactual.items():
+            lines.append(f"- {key}: {value}")
+
     lines.extend(
         [
             "",
@@ -191,6 +226,8 @@ def render_token_markdown(data: dict[str, Any]) -> str:
             f"- supervisor_cost_usd: {format_usd(costs.supervisor_cost_usd)}",
             f"- worker_cost_usd: {format_usd(costs.worker_cost_usd)}",
             f"- total_cost_usd: {format_usd(costs.total_cost_usd)}",
+            f"- counterfactual_direct_cost_usd: {format_optional_usd(calculate_counterfactual_direct_cost(data))}",
+            f"- expected_net_savings_usd: {format_optional_usd(calculate_net_savings(data, costs))}",
             "",
             "## Public Safety",
             "",
@@ -264,6 +301,83 @@ def synthesize_token_markdown(paths: list[Path]) -> str:
     return "\n".join(lines)
 
 
+def synthesize_graph_token_markdown(paths: list[Path]) -> str:
+    records: list[tuple[Path, dict[str, Any], TokenCosts, float | None]] = []
+    errors: list[str] = []
+    for path in paths:
+        try:
+            data = load_token_record(path)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"{path}: {exc}")
+            continue
+        result = validate_token_record(data)
+        if not result.ok:
+            errors.extend(f"{path}: {error}" for error in result.errors)
+            continue
+        scope = data.get("scope", {})
+        if not isinstance(scope, dict):
+            scope = {}
+        if not scope.get("graph_id") or not scope.get("node_id"):
+            errors.append(f"{path}: scope.graph_id and scope.node_id are required")
+            continue
+        costs = calculate_token_costs(data)
+        records.append((path, data, costs, calculate_counterfactual_direct_cost(data)))
+
+    if errors:
+        joined = "\n".join(f"- {error}" for error in errors)
+        raise ValueError(f"cannot synthesize invalid graph token records:\n{joined}")
+
+    total_actual = sum(costs.total_cost_usd for _path, _data, costs, _direct in records)
+    total_direct = sum(direct for _path, _data, _costs, direct in records if direct is not None)
+    known_direct_count = sum(1 for _path, _data, _costs, direct in records if direct is not None)
+    net_savings = total_direct - total_actual if known_direct_count == len(records) else None
+
+    lines = [
+        "# Graph Token Economics Synthesis",
+        "",
+        "This report summarizes sanitized token/cost records by graph node.",
+        "Raw prompts, traces, provider URLs, headers, and personal paths are excluded.",
+        "",
+        "## Summary",
+        "",
+        f"- records: {len(records)}",
+        f"- total_actual_cost_usd: {format_usd(total_actual)}",
+        f"- total_counterfactual_direct_cost_usd: {format_usd(total_direct)}",
+        f"- expected_net_savings_usd: {format_optional_usd(net_savings)}",
+        "",
+        "## Node Table",
+        "",
+        "| Graph | Node | Kind | Record | Actual USD | Direct USD | Net Savings USD |",
+        "| --- | --- | --- | --- | ---: | ---: | ---: |",
+    ]
+    for _path, data, costs, direct in records:
+        scope = data.get("scope", {})
+        if not isinstance(scope, dict):
+            scope = {}
+        node_kind = scope.get("node_kind", "")
+        net = None if direct is None else direct - costs.total_cost_usd
+        lines.append(
+            "| {graph} | {node} | {kind} | {record} | {actual} | {direct} | {net} |".format(
+                graph=scope.get("graph_id", ""),
+                node=scope.get("node_id", ""),
+                kind=node_kind,
+                record=data.get("record_id", ""),
+                actual=format_usd(costs.total_cost_usd),
+                direct=format_optional_usd(direct),
+                net=format_optional_usd(net),
+            )
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def calculate_net_savings(data: dict[str, Any], costs: TokenCosts) -> float | None:
+    direct_cost = calculate_counterfactual_direct_cost(data)
+    if direct_cost is None:
+        return None
+    return direct_cost - costs.total_cost_usd
+
+
 def find_forbidden_keys(value: Any, path: str = "$") -> list[str]:
     findings: list[str] = []
     if isinstance(value, dict):
@@ -304,6 +418,12 @@ def number_or_none(value: Any) -> float | None:
 
 def format_usd(value: float) -> str:
     return f"{value:.6f}"
+
+
+def format_optional_usd(value: float | None) -> str:
+    if value is None:
+        return "unknown"
+    return format_usd(value)
 
 
 def format_value(value: Any) -> str:

@@ -52,8 +52,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P41 FreshForge graph integration spike | #286 | `feature/p41-freshforge-graph-integration` | Complete |
 | P42 Agent metadata convention | #292 | `feature/p42-agent-metadata-convention` | Complete |
 | P43 Graph-backed pilot workflow | #298 | `feature/p43-graph-backed-pilot-workflow` | Complete |
-| P44 Graph-aware delegation decision engine | #304 | `feature/p44-graph-aware-decision-engine` | Active |
-| P45 Per-node token economics | TBD | `feature/p45-per-node-token-economics` | Planned |
+| P44 Graph-aware delegation decision engine | #304 | `feature/p44-graph-aware-decision-engine` | Complete |
+| P45 Per-node token economics | #310 | `feature/p45-per-node-token-economics` | Active |
 | P46 FreshForge dependency decision | TBD | `feature/p46-freshforge-dependency-decision` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -1973,7 +1973,7 @@ Parent issue: #304
 
 Branch: `feature/p44-graph-aware-decision-engine`
 
-Status: active
+Status: complete
 
 Goal: upgrade delegation decisions from isolated task descriptions to graph-node
 recommendations.
@@ -1999,25 +1999,25 @@ Phase 44 acceptance criteria:
 
 ## Phase 45: Per-Node Token Economics
 
-Parent issue: TBD
+Parent issue: #310
 
 Branch: `feature/p45-per-node-token-economics`
 
-Status: planned
+Status: active
 
 Goal: attribute paid supervisor tokens, local worker tokens, verification cost,
 cleanup, and net benefit to graph nodes.
 
 Planned tasks:
 
-- [ ] P45.1 Node-level token/cost record
-  - [ ] Extend token/cost records with graph and node identifiers.
-- [ ] P45.2 Graph economics synthesis
-  - [ ] Summarize which node types save paid supervisor tokens.
-- [ ] P45.3 Policy feedback
-  - [ ] Feed node-level economics into policy tuning.
-- [ ] P45.4 Documentation and closeout
-  - [ ] Update accounting docs and examples.
+- [x] P45.1 Node-level token/cost record (#311)
+  - [x] Extend token/cost records with graph and node identifiers.
+- [x] P45.2 Graph economics synthesis (#312)
+  - [x] Summarize which node types save paid supervisor tokens.
+- [x] P45.3 Policy feedback (#313)
+  - [x] Feed node-level economics into policy tuning.
+- [x] P45.4 Documentation and closeout (#314)
+  - [x] Update accounting docs and examples.
 
 Phase 45 acceptance criteria:
 

@@ -1,0 +1,41 @@
+{
+  "record_id": "freshforge-worker-cli-proposal",
+  "source_type": "manual-estimate",
+  "generated_utc": "2026-07-04T00:00:00Z",
+  "scope": {
+    "project": "freshforge",
+    "phase": "proposal-assist-pilot",
+    "task_id": "freshforge-proposal-assist",
+    "graph_id": "freshforge_proposal_assist_pilot",
+    "node_id": "worker_cli_proposal",
+    "node_kind": "worker_proposal",
+    "model_or_worker": "qwen3-coder-next:latest",
+    "protocol": "proposal-assist/no-tool"
+  },
+  "usage": {
+    "supervisor_input_tokens": 1500,
+    "supervisor_output_tokens": 400,
+    "worker_input_tokens": 7000,
+    "worker_output_tokens": 2200
+  },
+  "prices": {
+    "supervisor_input_price_per_1m_usd": 2.0,
+    "supervisor_output_price_per_1m_usd": 8.0,
+    "worker_input_price_per_1m_usd": 0.0,
+    "worker_output_price_per_1m_usd": 0.0
+  },
+  "counterfactual": {
+    "direct_supervisor_input_tokens": 6500,
+    "direct_supervisor_output_tokens": 1800
+  },
+  "public_safety": {
+    "raw_prompts_excluded": true,
+    "raw_traces_excluded": true,
+    "provider_urls_excluded": true,
+    "headers_excluded": true,
+    "personal_paths_excluded": true
+  },
+  "notes": [
+    "Sanitized example for graph-node accounting."
+  ]
+}

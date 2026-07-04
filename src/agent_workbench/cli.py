@@ -52,6 +52,7 @@ from .roles import (
 )
 from .tokens import (
     load_token_record,
+    synthesize_graph_token_markdown,
     render_token_markdown,
     synthesize_token_markdown,
     validate_token_record,
@@ -292,6 +293,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     tokens_synthesize_parser.add_argument("--output", type=Path, required=True)
     tokens_synthesize_parser.set_defaults(func=run_tokens_synthesize)
+
+    tokens_graph_synthesize_parser = tokens_subparsers.add_parser(
+        "graph-synthesize",
+        help="Synthesize sanitized token/cost records by graph node.",
+    )
+    tokens_graph_synthesize_parser.add_argument("--input", type=Path, action="append", default=[])
+    tokens_graph_synthesize_parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=None,
+        help="Directory containing *.tokens.json files.",
+    )
+    tokens_graph_synthesize_parser.add_argument("--output", type=Path, required=True)
+    tokens_graph_synthesize_parser.set_defaults(func=run_tokens_graph_synthesize)
 
     graph_parser = subparsers.add_parser(
         "graph",
@@ -697,6 +712,24 @@ def run_tokens_synthesize(args: argparse.Namespace) -> int:
         return 1
     try:
         report = synthesize_token_markdown(paths)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(report, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_tokens_graph_synthesize(args: argparse.Namespace) -> int:
+    paths = list(args.input)
+    if args.input_dir is not None:
+        paths.extend(sorted(args.input_dir.glob("*.tokens.json")))
+    if not paths:
+        print("error: provide --input or --input-dir", file=sys.stderr)
+        return 1
+    try:
+        report = synthesize_graph_token_markdown(paths)
     except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
