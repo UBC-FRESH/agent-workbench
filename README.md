@@ -11,7 +11,9 @@ scaffolding, sanitized evidence summaries, and supervisor decision packets.
 Worker model capability profiles live under `model_profiles/` so supervisors
 can choose worker models from observed task-family evidence rather than broad
 model rankings. A rules-based `decide` command renders transparent delegation
-recommendations from inspectable JSON inputs.
+recommendations from inspectable JSON inputs. A pilot `accounting` command
+validates, renders, and synthesizes token/cash records from real-project
+delegation experiments.
 
 ## Local CLI
 
@@ -32,6 +34,8 @@ agent-workbench evidence validate --input runtime/agent_jobs/example_evidence.js
 agent-workbench evidence render --input runtime/agent_jobs/example_evidence.json --output runtime/agent_jobs/example_evidence.md
 agent-workbench evidence synthesize --input-dir runtime/agent_jobs --output runtime/agent_jobs/decision_packet.md
 agent-workbench decide task --input runtime/agent_jobs/example_decision.json --output runtime/agent_jobs/example_decision.md
+agent-workbench accounting validate --input runtime/agent_jobs/example.accounting.json
+agent-workbench accounting synthesize --input-dir runtime/agent_jobs --output runtime/agent_jobs/accounting_synthesis.md
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in

@@ -134,7 +134,42 @@ Promote stable findings into `model_profiles/` only after supervisor review.
 Record whether the comparison changes the recommended model, retry limit,
 authority ceiling, or stop condition for that task family.
 
-## 7. Supervisor Promotion
+## 7. Pilot Accounting
+
+For real-project pilots, create one sanitized accounting record per task/model
+run using `templates/pilot_accounting_record.json` as the starting point.
+
+Each record should include:
+
+- paid supervisor input/output token counts and prices;
+- worker input/output token counts and prices;
+- verification, cleanup, and retry token counts;
+- accepted, rejected, and needs-evidence claim counts;
+- whether worker output changed the supervisor decision; and
+- a final outcome classification.
+
+Validate and render each record:
+
+```powershell
+agent-workbench accounting validate --input <pilot.accounting.json>
+agent-workbench accounting render `
+  --input <pilot.accounting.json> `
+  --output <pilot.accounting.md>
+```
+
+Synthesize the pilot batch:
+
+```powershell
+agent-workbench accounting synthesize `
+  --input-dir tmp/agent_workbench/<phase> `
+  --output tmp/agent_workbench/<phase>/pilot_accounting_synthesis.md
+```
+
+Use this synthesis to distinguish useful imperfect proposals from costly
+failures. Do not treat net savings as stable until the pilot set includes varied
+task/model/protocol records.
+
+## 8. Supervisor Promotion
 
 Only the supervisor may mutate tracked project files, GitHub issues, branches,
 pull requests, releases, or closeout state.
@@ -148,7 +183,7 @@ Promotion gate:
 - target project verification commands are known; and
 - raw worker outputs remain ignored.
 
-## 8. Cleanup
+## 9. Cleanup
 
 Keep raw tickets, manifests, model outputs, and provider scratch state under the
 target project's ignored local work area. Do not commit them.
@@ -170,7 +205,7 @@ git diff --check
 Search tracked files for private paths, credentials, raw transcript fragments,
 and unrelated project contamination.
 
-## 9. Stop Conditions
+## 10. Stop Conditions
 
 Stop worker use and keep work in the supervisor lane when:
 

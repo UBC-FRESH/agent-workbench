@@ -749,3 +749,18 @@ issues, pull requests, and closeout comments.
   workbench templates, and observability/token-cost ingestion.
 - Kept P35/P36 as the immediate empirical tranche for real-project pilot
   accounting and policy tuning before broadening the architecture.
+
+## 2026-07-04 - Added P35 real-project pilot accounting
+
+- Opened P35 GitHub issue #250 with child issues #251 through #254 for pilot
+  selection, accounting records, synthesis, and closeout.
+- Added `src/agent_workbench/accounting.py` and the `agent-workbench
+  accounting validate|render|synthesize` command surface for sanitized
+  token/cash pilot accounting records.
+- Added `templates/pilot_accounting_record.json` and
+  `planning/phase35_real_project_pilot_accounting.md` to define the real-project
+  pilot accounting protocol.
+- Updated the real-project deployment playbook and README with accounting
+  workflow examples.
+- Updated the command-surface smoke check to include the accounting synthesis
+  help surface.

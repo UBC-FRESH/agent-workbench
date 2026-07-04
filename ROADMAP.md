@@ -43,7 +43,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P32 Task taxonomy and delegation suitability | #228 | `feature/p32-task-taxonomy-delegation-suitability` | Complete |
 | P33 Worker model capability profiles | #234 | `feature/p33-worker-model-capability-profiles` | Complete |
 | P34 Delegation decision engine v0 | #240 | `feature/p34-delegation-decision-engine-v0` | Complete |
-| P35 Real-project pilot accounting | TBD | TBD | Planned |
+| P35 Real-project pilot accounting | #250 | `feature/p35-real-project-pilot-accounting` | Complete |
 | P36 Policy tuning loop | TBD | TBD | Planned |
 | P37 Artifact and workflow contract model | TBD | TBD | Planned |
 | P38 Role, capability, and implementation model | TBD | TBD | Planned |
@@ -1620,35 +1620,35 @@ Phase 34 acceptance criteria:
 
 ## Phase 35: Real-Project Pilot Accounting
 
-Parent issue: TBD
+Parent issue: #250
 
-Branch: TBD
+Branch: `feature/p35-real-project-pilot-accounting`
 
-Status: planned
+Status: complete
 
 Goal: run multiple real-project delegation pilots with explicit accounting so
 Agent Workbench can estimate whether delegation is producing net benefit.
 
 Planned tasks:
 
-- [ ] P35.1 Pilot selection protocol
-  - [ ] Choose candidate tasks from a live project roadmap.
-  - [ ] Include varied task sizes and task types.
-  - [ ] Avoid project-critical-path tasks for early experiments.
-- [ ] P35.2 Delegation accounting record
-  - [ ] Record paid supervisor input/output tokens, worker input/output tokens,
+- [x] P35.1 Pilot selection protocol (#251)
+  - [x] Choose candidate tasks from a live project roadmap.
+  - [x] Include varied task sizes and task types.
+  - [x] Avoid project-critical-path tasks for early experiments.
+- [x] P35.2 Delegation accounting record (#252)
+  - [x] Record paid supervisor input/output tokens, worker input/output tokens,
     token price assumptions, verification, retry, cleanup, and direct-work
     counterfactual estimates.
-  - [ ] Record accepted, rejected, and needs-evidence claims.
-  - [ ] Record whether the worker changed the supervisor decision.
-- [ ] P35.3 Pilot execution and synthesis
-  - [ ] Run several proposal-assist pilots.
-  - [ ] Synthesize net-benefit estimates.
-  - [ ] Identify task/model/protocol pairs that appear promising.
-- [ ] P35.4 Documentation and closeout
-  - [ ] Add sanitized pilot accounting notes.
-  - [ ] Update roadmap and changelog.
-  - [ ] Run verification.
+  - [x] Record accepted, rejected, and needs-evidence claims.
+  - [x] Record whether the worker changed the supervisor decision.
+- [x] P35.3 Pilot execution and synthesis (#253)
+  - [x] Provide a CLI synthesis surface for several proposal-assist pilots.
+  - [x] Synthesize net-benefit estimates.
+  - [x] Identify task/model/protocol pairs that appear promising or poor.
+- [x] P35.4 Documentation and closeout (#254)
+  - [x] Add sanitized pilot accounting notes.
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
 
 Phase 35 acceptance criteria:
 
