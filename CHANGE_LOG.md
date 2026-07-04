@@ -1036,3 +1036,16 @@ issues, pull requests, and closeout comments.
 - Recorded that the PR is open, draft, clean, and has no configured checks.
 - Preserved the separation between FreshForge PR #118 for the package candidate
   and Agent Workbench PR #346 for benchmark evidence.
+
+## 2026-07-04 - Reassessed P50 benchmark target class
+
+- Recorded the maintainer decision that broad FreshForge API-design work is a
+  low-yield benchmark class for current local Ollama workers.
+- Identified high-volume document metadata indexing as a stronger near-term
+  delegation target because the work is input-heavy, chunkable, evidence-rich,
+  and expensive for a paid supervisor to perform directly.
+- Created `UBC-FRESH/agent-delegation-lab` as the public-safe sandbox for
+  synthetic and real-document delegation benchmark tasks.
+- Seeded the new lab with an MP11 475-page PDF metadata-indexing benchmark plan
+  and left Agent Workbench P50 open rather than treating this reassessment as
+  phase closeout.

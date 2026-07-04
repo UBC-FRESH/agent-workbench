@@ -2197,6 +2197,9 @@ Active tasks:
   - [x] Preserve worker and supervisor token evidence.
 - [ ] P50.4 A/B comparison and benchmark record update (#344)
   - [x] Compare direct and delegated lanes after both have evidence.
+  - [x] Record the target reassessment: broad FreshForge API-design work is a
+    low-yield benchmark class for current local workers; high-volume
+    document-metadata indexing is the stronger next delegation target.
   - [ ] Update benchmark records with actual token economics.
 - [ ] P50.5 Maintainer-reviewed phase closeout (#345)
   - [ ] Close only after the maintainer explicitly says P50 is done.
@@ -2212,4 +2215,6 @@ Phase 50 acceptance criteria:
 - The final comparison distinguishes paid supervisor token cost, zero-cash
   local worker token usage, rework burden, verification outcome, and decision
   quality.
+- The phase records whether the benchmark task class itself appears profitable
+  before further paid supervisor tokens are spent on that class.
 - P50 remains open until the maintainer explicitly says the phase is done.

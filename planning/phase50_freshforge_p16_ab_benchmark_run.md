@@ -434,3 +434,43 @@ Current P50 position after Agent Workbench PR creation:
 - P50 remains open because the maintainer has not said the phase is done,
   child issues remain open, and the economics ledger is still checkpoint-level
   rather than final lane-local accounting.
+
+## Iteration 7 Benchmark Target Reassessment
+
+The FreshForge P16 A/B test produced useful process evidence, but it is not the
+best next place to mine for high-return delegation economics.
+
+The key maintainer feedback is that broad API-design and architecture-choice
+tasks are a low-yield benchmark target for the current open Ollama worker
+models. The project already has enough evidence that these models struggle with
+wide-context design judgment. Continuing to benchmark that task shape would
+mostly prove a known weakness.
+
+The higher-potential delegation target is input-heavy, chunkable, evidence-rich
+work where paid supervisor tokens would otherwise be spent grinding through
+large source material. A concrete candidate is MP11 document metadata indexing:
+
+- source: `Tree Farm Licence 6 Management Plan 11`;
+- source package: `tfl6_mp11_202606_public_pdf`;
+- page count: `475`;
+- source class: long public PDF with structure, appendices, tables, figures,
+  claims, and page-anchored metadata;
+- expected delegation advantage: local Ollama workers can spend large numbers
+  of zero-cash input tokens on exported page/chunk text, while the paid
+  supervisor audits samples, validates schema, and decides whether the index is
+  useful.
+
+Created a separate benchmark sandbox so this work does not contaminate
+Agent Workbench, FreshForge, or FEMIC:
+
+- repository: `UBC-FRESH/agent-delegation-lab`;
+- URL: `https://github.com/UBC-FRESH/agent-delegation-lab`;
+- local clone: `../agent-delegation-lab`;
+- P0 issue: `https://github.com/UBC-FRESH/agent-delegation-lab/issues/1`;
+- P1 issue: `https://github.com/UBC-FRESH/agent-delegation-lab/issues/2`.
+
+The new lab repo is now the preferred next benchmark surface for high-volume
+delegation experiments. P50 should preserve the FreshForge P16 evidence but
+should not keep spending paid supervisor tokens on broad API-design delegation
+unless there is a specific reason to compare against that known-difficult task
+class.
