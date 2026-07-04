@@ -56,6 +56,12 @@ from .roles import (
     render_role_markdown,
     validate_role_record,
 )
+from .supervisor_tokens import (
+    latest_snapshot,
+    span_record_from_checkpoints,
+    synthesize_supervisor_token_spans,
+    write_checkpoint,
+)
 from .tokens import (
     load_token_record,
     synthesize_graph_token_markdown,
@@ -72,6 +78,21 @@ from .workflow import (
 
 def default_repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
+
+
+def add_codex_session_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--session-jsonl",
+        type=Path,
+        default=None,
+        help="Explicit Codex session JSONL path. Fails closed if no token_count events exist.",
+    )
+    parser.add_argument(
+        "--session-root",
+        type=Path,
+        default=None,
+        help="Codex sessions root to search when --session-jsonl is omitted.",
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -181,7 +202,9 @@ def build_parser() -> argparse.ArgumentParser:
         "synthesize",
         help="Synthesize multiple pilot accounting records into one report.",
     )
-    accounting_synthesize_parser.add_argument("--input", type=Path, action="append", default=[])
+    accounting_synthesize_parser.add_argument(
+        "--input", type=Path, action="append", default=[]
+    )
     accounting_synthesize_parser.add_argument(
         "--input-dir",
         type=Path,
@@ -290,7 +313,9 @@ def build_parser() -> argparse.ArgumentParser:
         "synthesize",
         help="Synthesize sanitized token/cost records.",
     )
-    tokens_synthesize_parser.add_argument("--input", type=Path, action="append", default=[])
+    tokens_synthesize_parser.add_argument(
+        "--input", type=Path, action="append", default=[]
+    )
     tokens_synthesize_parser.add_argument(
         "--input-dir",
         type=Path,
@@ -304,7 +329,9 @@ def build_parser() -> argparse.ArgumentParser:
         "graph-synthesize",
         help="Synthesize sanitized token/cost records by graph node.",
     )
-    tokens_graph_synthesize_parser.add_argument("--input", type=Path, action="append", default=[])
+    tokens_graph_synthesize_parser.add_argument(
+        "--input", type=Path, action="append", default=[]
+    )
     tokens_graph_synthesize_parser.add_argument(
         "--input-dir",
         type=Path,
@@ -313,6 +340,82 @@ def build_parser() -> argparse.ArgumentParser:
     )
     tokens_graph_synthesize_parser.add_argument("--output", type=Path, required=True)
     tokens_graph_synthesize_parser.set_defaults(func=run_tokens_graph_synthesize)
+
+    supervisor_tokens_parser = subparsers.add_parser(
+        "supervisor-tokens",
+        help="Capture Codex supervisor-token checkpoints and span records.",
+    )
+    supervisor_tokens_subparsers = supervisor_tokens_parser.add_subparsers(
+        dest="supervisor_tokens_command",
+        required=True,
+    )
+
+    supervisor_tokens_latest_parser = supervisor_tokens_subparsers.add_parser(
+        "latest",
+        help="Print the latest Codex token_count snapshot.",
+    )
+    add_codex_session_args(supervisor_tokens_latest_parser)
+    supervisor_tokens_latest_parser.set_defaults(func=run_supervisor_tokens_latest)
+
+    supervisor_tokens_checkpoint_parser = supervisor_tokens_subparsers.add_parser(
+        "checkpoint",
+        help="Write a start/end checkpoint from the latest Codex token_count event.",
+    )
+    supervisor_tokens_checkpoint_parser.add_argument("--span", required=True)
+    supervisor_tokens_checkpoint_parser.add_argument(
+        "--event",
+        choices=("start", "end"),
+        required=True,
+    )
+    supervisor_tokens_checkpoint_parser.add_argument(
+        "--output", type=Path, required=True
+    )
+    add_codex_session_args(supervisor_tokens_checkpoint_parser)
+    supervisor_tokens_checkpoint_parser.set_defaults(
+        func=run_supervisor_tokens_checkpoint
+    )
+
+    supervisor_tokens_span_parser = supervisor_tokens_subparsers.add_parser(
+        "span",
+        help="Convert start/end checkpoints into a sanitized token/cost record.",
+    )
+    supervisor_tokens_span_parser.add_argument("--start", type=Path, required=True)
+    supervisor_tokens_span_parser.add_argument("--end", type=Path, required=True)
+    supervisor_tokens_span_parser.add_argument("--output", type=Path, required=True)
+    supervisor_tokens_span_parser.add_argument("--project", default="agent-workbench")
+    supervisor_tokens_span_parser.add_argument("--phase", default="")
+    supervisor_tokens_span_parser.add_argument("--task-id", default="")
+    supervisor_tokens_span_parser.add_argument("--span-kind", default="")
+    supervisor_tokens_span_parser.add_argument(
+        "--supervisor-input-price-per-1m-usd",
+        type=float,
+        default=1.75,
+    )
+    supervisor_tokens_span_parser.add_argument(
+        "--supervisor-cached-input-price-per-1m-usd",
+        type=float,
+        default=0.175,
+    )
+    supervisor_tokens_span_parser.add_argument(
+        "--supervisor-output-price-per-1m-usd",
+        type=float,
+        default=14.0,
+    )
+    supervisor_tokens_span_parser.set_defaults(func=run_supervisor_tokens_span)
+
+    supervisor_tokens_synthesize_parser = supervisor_tokens_subparsers.add_parser(
+        "synthesize",
+        help="Synthesize supervisor-token span records in a runtime ledger directory.",
+    )
+    supervisor_tokens_synthesize_parser.add_argument(
+        "--input-dir", type=Path, required=True
+    )
+    supervisor_tokens_synthesize_parser.add_argument(
+        "--output", type=Path, required=True
+    )
+    supervisor_tokens_synthesize_parser.set_defaults(
+        func=run_supervisor_tokens_synthesize
+    )
 
     benchmark_parser = subparsers.add_parser(
         "benchmark",
@@ -441,7 +544,9 @@ def build_parser() -> argparse.ArgumentParser:
         "evidence",
         help="Validate or render sanitized evidence summaries.",
     )
-    evidence_subparsers = evidence_parser.add_subparsers(dest="evidence_command", required=True)
+    evidence_subparsers = evidence_parser.add_subparsers(
+        dest="evidence_command", required=True
+    )
 
     validate_parser = evidence_subparsers.add_parser(
         "validate",
@@ -565,8 +670,12 @@ def run_smoke(args: argparse.Namespace) -> int:
 
 def run_eval(args: argparse.Namespace) -> int:
     script = script_path(args.repo_root, "sdk_same_ticket_eval.py")
-    cwd = args.project_root.resolve() if args.project_root is not None else args.repo_root
-    manifest = materialize_cross_project_manifest(args) if args.project_root else args.manifest
+    cwd = (
+        args.project_root.resolve() if args.project_root is not None else args.repo_root
+    )
+    manifest = (
+        materialize_cross_project_manifest(args) if args.project_root else args.manifest
+    )
     command = [sys.executable, str(script), "--manifest", str(manifest)]
     if args.dry_run:
         command.append("--dry-run")
@@ -793,6 +902,89 @@ def run_tokens_graph_synthesize(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_supervisor_tokens_latest(args: argparse.Namespace) -> int:
+    try:
+        snapshot = latest_snapshot(
+            session_jsonl=args.session_jsonl,
+            session_root=args.session_root,
+        )
+    except (OSError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    payload = {
+        "timestamp": snapshot.timestamp,
+        "source_session_path": str(snapshot.source_session_path),
+        "source_session_file": snapshot.source_session_file,
+        "usage": snapshot.usage,
+        "last_usage": snapshot.last_usage,
+        "model_context_window": snapshot.model_context_window,
+    }
+    print(json.dumps(payload, indent=2))
+    return 0
+
+
+def run_supervisor_tokens_checkpoint(args: argparse.Namespace) -> int:
+    try:
+        checkpoint = write_checkpoint(
+            span_id=args.span,
+            event=args.event,
+            output=args.output,
+            session_jsonl=args.session_jsonl,
+            session_root=args.session_root,
+        )
+    except (OSError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"wrote {args.output}")
+    usage = checkpoint.get("usage", {})
+    if isinstance(usage, dict):
+        print(
+            "snapshot total_tokens={total} input_tokens={input} "
+            "cached_input_tokens={cached} output_tokens={output} "
+            "reasoning_output_tokens={reasoning}".format(
+                total=usage.get("total_tokens", 0),
+                input=usage.get("input_tokens", 0),
+                cached=usage.get("cached_input_tokens", 0),
+                output=usage.get("output_tokens", 0),
+                reasoning=usage.get("reasoning_output_tokens", 0),
+            )
+        )
+    return 0
+
+
+def run_supervisor_tokens_span(args: argparse.Namespace) -> int:
+    try:
+        span_record_from_checkpoints(
+            start_path=args.start,
+            end_path=args.end,
+            output=args.output,
+            project=args.project,
+            phase=args.phase,
+            task_id=args.task_id,
+            span_kind=args.span_kind,
+            supervisor_input_price_per_1m_usd=args.supervisor_input_price_per_1m_usd,
+            supervisor_cached_input_price_per_1m_usd=(
+                args.supervisor_cached_input_price_per_1m_usd
+            ),
+            supervisor_output_price_per_1m_usd=args.supervisor_output_price_per_1m_usd,
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_supervisor_tokens_synthesize(args: argparse.Namespace) -> int:
+    try:
+        synthesize_supervisor_token_spans(args.input_dir, args.output)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"wrote {args.output}")
+    return 0
+
+
 def run_benchmark_validate(args: argparse.Namespace) -> int:
     try:
         data = load_benchmark_record(args.input)
@@ -950,7 +1142,9 @@ def run_decide_task(args: argparse.Namespace) -> int:
     return 0
 
 
-def resolve_decision_paths(data: dict[str, object], input_path: Path, repo_root: Path) -> None:
+def resolve_decision_paths(
+    data: dict[str, object], input_path: Path, repo_root: Path
+) -> None:
     profile_path = data.get("model_profile_path")
     if profile_path is None:
         return

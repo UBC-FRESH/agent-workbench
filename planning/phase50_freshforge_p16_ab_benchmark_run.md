@@ -405,6 +405,14 @@ Next instrumentation requirement:
   exposes it.
 - Until that exists, P50 should report goal-token checkpoints and deltas as
   approximate process evidence, not as precise cost accounting.
+- Implemented follow-up: `agent-workbench supervisor-tokens
+  latest|checkpoint|span|synthesize` now reads local Codex session
+  `token_count` events, writes ignored start/end checkpoints, and derives
+  sanitized `.tokens.json` records with fresh input, cached input, output, and
+  reasoning-output deltas.
+- Updated benchmark rule: no future benchmark iteration may claim economics
+  evidence unless every supervisor-owned subtask has named start/end
+  supervisor-token checkpoints.
 
 ## Iteration 6 Agent Workbench Draft PR Review Surface
 

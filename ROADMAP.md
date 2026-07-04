@@ -2192,6 +2192,8 @@ Active tasks:
 - [ ] P50.2 Direct-lane evidence and token accounting capture (#342)
   - [x] Record direct-lane command, file, and status evidence.
   - [x] Record paid supervisor token usage when available.
+  - [x] Add mandatory Codex supervisor-token checkpoint commands with
+    fresh-input, cached-input, output, and reasoning-output separation.
 - [ ] P50.3 Delegated-graph FreshForge P16 iteration (#343)
   - [x] Run delegated-lane work from the same start commit.
   - [x] Preserve worker and supervisor token evidence.
@@ -2200,6 +2202,8 @@ Active tasks:
   - [x] Record the target reassessment: broad FreshForge API-design work is a
     low-yield benchmark class for current local workers; high-volume
     document-metadata indexing is the stronger next delegation target.
+  - [x] Establish that future benchmark economics claims require named
+    supervisor-token start/end checkpoints for each supervisor-owned subtask.
   - [ ] Update benchmark records with actual token economics.
 - [ ] P50.5 Maintainer-reviewed phase closeout (#345)
   - [ ] Close only after the maintainer explicitly says P50 is done.
@@ -2208,13 +2212,18 @@ Phase 50 acceptance criteria:
 
 - FreshForge P16 direct-lane work produces substantive code/docs/tests or a
   precise blocker.
-- Direct-lane supervisor token usage is recorded from actual Codex goal/report
-  evidence when available.
+- Direct-lane supervisor token usage is recorded from actual Codex
+  `token_count` checkpoints with input, cached input, output, and reasoning
+  output deltas.
 - Delegated-lane work uses Agent Workbench worker/delegation surfaces rather
   than replaying the direct lane by hand.
 - The final comparison distinguishes paid supervisor token cost, zero-cash
   local worker token usage, rework burden, verification outcome, and decision
   quality.
+- Future benchmark economics claims are blocked unless setup, ticket build,
+  worker orchestration, worker-output summarization, supervisor audit, tracked
+  updates, GitHub hygiene, and any direct-supervisor baseline spans have
+  start/end supervisor-token checkpoints.
 - The phase records whether the benchmark task class itself appears profitable
   before further paid supervisor tokens are spent on that class.
 - P50 remains open until the maintainer explicitly says the phase is done.

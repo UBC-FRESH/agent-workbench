@@ -1049,3 +1049,18 @@ issues, pull requests, and closeout comments.
 - Seeded the new lab with an MP11 475-page PDF metadata-indexing benchmark plan
   and left Agent Workbench P50 open rather than treating this reassessment as
   phase closeout.
+
+## 2026-07-04 - Added mandatory supervisor-token checkpoints
+
+- Added `agent-workbench supervisor-tokens latest|checkpoint|span|synthesize`
+  so paid supervisor token usage can be captured from local Codex
+  `token_count` session events at named subtask boundaries.
+- Extended token/cost records to distinguish fresh supervisor input, cached
+  supervisor input, supervisor output, supervisor reasoning output, and local
+  worker input/output tokens.
+- Updated the token pricing calculation so cached input is priced separately
+  and reasoning output is priced as output.
+- Added fixture tests for Codex session parsing, start/end token deltas,
+  fail-closed negative deltas, and supervisor cost calculation.
+- Recorded the new benchmark rule: future economics claims require start/end
+  supervisor-token checkpoints for every supervisor-owned subtask.

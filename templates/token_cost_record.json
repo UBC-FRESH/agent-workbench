@@ -14,19 +14,24 @@
   },
   "usage": {
     "supervisor_input_tokens": 45000,
+    "supervisor_cached_input_tokens": 15000,
     "supervisor_output_tokens": 9000,
+    "supervisor_reasoning_output_tokens": 1200,
     "worker_input_tokens": 150000,
     "worker_output_tokens": 35000
   },
   "prices": {
     "supervisor_input_price_per_1m_usd": 1.75,
+    "supervisor_cached_input_price_per_1m_usd": 0.175,
     "supervisor_output_price_per_1m_usd": 14.0,
     "worker_input_price_per_1m_usd": 0.0,
     "worker_output_price_per_1m_usd": 0.0
   },
   "counterfactual": {
     "direct_supervisor_input_tokens": 60000,
-    "direct_supervisor_output_tokens": 12000
+    "direct_supervisor_cached_input_tokens": 10000,
+    "direct_supervisor_output_tokens": 12000,
+    "direct_supervisor_reasoning_output_tokens": 2000
   },
   "public_safety": {
     "raw_prompts_excluded": true,

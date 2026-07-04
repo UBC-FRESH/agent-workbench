@@ -11,6 +11,7 @@ from .evidence import find_private_values
 
 
 SOURCE_TYPES = {
+    "codex-session",
     "sdk-summary",
     "provider-usage",
     "observability-export",
@@ -29,13 +30,16 @@ REQUIRED_FIELDS = (
 
 USAGE_FIELDS = (
     "supervisor_input_tokens",
+    "supervisor_cached_input_tokens",
     "supervisor_output_tokens",
+    "supervisor_reasoning_output_tokens",
     "worker_input_tokens",
     "worker_output_tokens",
 )
 
 PRICE_FIELDS = (
     "supervisor_input_price_per_1m_usd",
+    "supervisor_cached_input_price_per_1m_usd",
     "supervisor_output_price_per_1m_usd",
     "worker_input_price_per_1m_usd",
     "worker_output_price_per_1m_usd",
@@ -43,7 +47,9 @@ PRICE_FIELDS = (
 
 COUNTERFACTUAL_FIELDS = (
     "direct_supervisor_input_tokens",
+    "direct_supervisor_cached_input_tokens",
     "direct_supervisor_output_tokens",
+    "direct_supervisor_reasoning_output_tokens",
 )
 
 FORBIDDEN_FIELDS = {
@@ -147,10 +153,13 @@ def calculate_token_costs(data: dict[str, Any]) -> TokenCosts:
         usage = {}
     if not isinstance(prices, dict):
         prices = {}
-    supervisor_cost = cost_usd(
+    supervisor_cost = supervisor_cost_usd(
         usage.get("supervisor_input_tokens", 0),
+        usage.get("supervisor_cached_input_tokens", 0),
         usage.get("supervisor_output_tokens", 0),
+        usage.get("supervisor_reasoning_output_tokens", 0),
         prices.get("supervisor_input_price_per_1m_usd", 0),
+        prices.get("supervisor_cached_input_price_per_1m_usd", 0),
         prices.get("supervisor_output_price_per_1m_usd", 0),
     )
     worker_cost = cost_usd(
@@ -173,10 +182,13 @@ def calculate_counterfactual_direct_cost(data: dict[str, Any]) -> float | None:
         return None
     if not any(field in counterfactual for field in COUNTERFACTUAL_FIELDS):
         return None
-    return cost_usd(
+    return supervisor_cost_usd(
         counterfactual.get("direct_supervisor_input_tokens", 0),
+        counterfactual.get("direct_supervisor_cached_input_tokens", 0),
         counterfactual.get("direct_supervisor_output_tokens", 0),
+        counterfactual.get("direct_supervisor_reasoning_output_tokens", 0),
         prices.get("supervisor_input_price_per_1m_usd", 0),
+        prices.get("supervisor_cached_input_price_per_1m_usd", 0),
         prices.get("supervisor_output_price_per_1m_usd", 0),
     )
 
@@ -328,9 +340,15 @@ def synthesize_graph_token_markdown(paths: list[Path]) -> str:
         raise ValueError(f"cannot synthesize invalid graph token records:\n{joined}")
 
     total_actual = sum(costs.total_cost_usd for _path, _data, costs, _direct in records)
-    total_direct = sum(direct for _path, _data, _costs, direct in records if direct is not None)
-    known_direct_count = sum(1 for _path, _data, _costs, direct in records if direct is not None)
-    net_savings = total_direct - total_actual if known_direct_count == len(records) else None
+    total_direct = sum(
+        direct for _path, _data, _costs, direct in records if direct is not None
+    )
+    known_direct_count = sum(
+        1 for _path, _data, _costs, direct in records if direct is not None
+    )
+    net_savings = (
+        total_direct - total_actual if known_direct_count == len(records) else None
+    )
 
     lines = [
         "# Graph Token Economics Synthesis",
@@ -398,9 +416,28 @@ def cost_usd(
     input_price_per_1m_usd: Any,
     output_price_per_1m_usd: Any,
 ) -> float:
+    return number(input_tokens) / 1_000_000 * number(input_price_per_1m_usd) + number(
+        output_tokens
+    ) / 1_000_000 * number(output_price_per_1m_usd)
+
+
+def supervisor_cost_usd(
+    fresh_input_tokens: Any,
+    cached_input_tokens: Any,
+    output_tokens: Any,
+    reasoning_output_tokens: Any,
+    input_price_per_1m_usd: Any,
+    cached_input_price_per_1m_usd: Any,
+    output_price_per_1m_usd: Any,
+) -> float:
     return (
-        number(input_tokens) / 1_000_000 * number(input_price_per_1m_usd)
-        + number(output_tokens) / 1_000_000 * number(output_price_per_1m_usd)
+        number(fresh_input_tokens) / 1_000_000 * number(input_price_per_1m_usd)
+        + number(cached_input_tokens)
+        / 1_000_000
+        * number(cached_input_price_per_1m_usd)
+        + (number(output_tokens) + number(reasoning_output_tokens))
+        / 1_000_000
+        * number(output_price_per_1m_usd)
     )
 
 
