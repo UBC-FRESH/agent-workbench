@@ -1080,3 +1080,13 @@ issues, pull requests, and closeout comments.
 - Rendered benefit-cost ratio as undefined when a record has no audited
   delegated supervisor cost, so worker-only scale signals are not mistaken for
   final economics claims.
+
+## 2026-07-04 - Planned supervisor overhead delegation strategy
+
+- Added `planning/supervisor_overhead_delegation_strategy.md`.
+- Separated task-economics overhead from GitHub/repository governance overhead.
+- Identified worker-output summarization as a good candidate for delegation to
+  a local `gpt-oss:*` reporting worker.
+- Proposed representing recurring orchestration rituals as FreshForge-shaped
+  workflow graphs so the paid supervisor does not repeatedly reinvent the same
+  process structure.
