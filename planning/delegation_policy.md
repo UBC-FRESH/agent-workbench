@@ -63,3 +63,33 @@ Agent Workbench currently permits L0-L1 work broadly, L2 work only through
 supervisor-owned scripts and ignored sandbox targets, and L3 work only for
 explicitly bounded VS Code Chat sandbox trials. L4-L6 remain forbidden for
 worker agents.
+
+## Policy Tuning Loop
+
+Real-project pilots may update delegation guidance only through sanitized P35
+accounting records and supervisor review.
+
+Use:
+
+```powershell
+agent-workbench policy tune `
+  --input-dir <pilot-runtime-dir> `
+  --output <policy-tuning-report.md>
+```
+
+The first tuning loop is rules-based:
+
+- maintain or promote task/model/protocol groups when repeated records are
+  mostly promising, net savings are positive, and accepted claims exceed
+  rejected claims;
+- hold groups steady when evidence is sparse or mixed;
+- lower trust when records are mostly poor, net savings are negative, or
+  rejected claims exceed accepted claims;
+- use one retry for sparse or mixed evidence;
+- allow two retries only for positive groups with repeat evidence; and
+- bail out after two poor outcomes for the same task/model/protocol group
+  unless the supervisor rewrites the ticket or changes the model.
+
+Machine-learning policy optimization is out of scope until the sanitized record
+set is large, varied, and independently verifiable. The current threshold is at
+least 100 records, 6 task types, and 3 model or project groups.

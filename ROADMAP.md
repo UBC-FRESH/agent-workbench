@@ -44,7 +44,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P33 Worker model capability profiles | #234 | `feature/p33-worker-model-capability-profiles` | Complete |
 | P34 Delegation decision engine v0 | #240 | `feature/p34-delegation-decision-engine-v0` | Complete |
 | P35 Real-project pilot accounting | #250 | `feature/p35-real-project-pilot-accounting` | Complete |
-| P36 Policy tuning loop | TBD | TBD | Planned |
+| P36 Policy tuning loop | #256 | `feature/p36-policy-tuning-loop` | Complete |
 | P37 Artifact and workflow contract model | TBD | TBD | Planned |
 | P38 Role, capability, and implementation model | TBD | TBD | Planned |
 | P39 Reusable scientific workbench templates | TBD | TBD | Planned |
@@ -1661,33 +1661,33 @@ Phase 35 acceptance criteria:
 
 ## Phase 36: Policy Tuning Loop
 
-Parent issue: TBD
+Parent issue: #256
 
-Branch: TBD
+Branch: `feature/p36-policy-tuning-loop`
 
-Status: planned
+Status: complete
 
 Goal: turn pilot accounting into a repeatable policy-tuning loop for task
 sizing, model selection, ticket shape, and retry limits.
 
 Planned tasks:
 
-- [ ] P36.1 Outcome schema
-  - [ ] Define outcome fields needed to tune delegation policy over time.
-  - [ ] Preserve enough detail for later empirical analysis without tracking
+- [x] P36.1 Outcome schema (#257)
+  - [x] Define outcome fields needed to tune delegation policy over time.
+  - [x] Preserve enough detail for later empirical analysis without tracking
     raw private transcripts.
-- [ ] P36.2 Tuning rules
-  - [ ] Define how positive and negative outcomes update task suitability.
-  - [ ] Define how repeated failures lower model/task trust.
-  - [ ] Define retry and bailout threshold updates.
-- [ ] P36.3 Reporting surface
-  - [ ] Summarize policy changes after pilot batches.
-  - [ ] Show before/after recommendations for representative task bundles.
-  - [ ] Keep all policy changes auditable by the supervisor.
-- [ ] P36.4 Future ML boundary
-  - [ ] Define what data volume and quality would be required before an ML
+- [x] P36.2 Tuning rules (#258)
+  - [x] Define how positive and negative outcomes update task suitability.
+  - [x] Define how repeated failures lower model/task trust.
+  - [x] Define retry and bailout threshold updates.
+- [x] P36.3 Reporting surface (#259)
+  - [x] Summarize policy changes after pilot batches.
+  - [x] Show before/after recommendations for representative task bundles.
+  - [x] Keep all policy changes auditable by the supervisor.
+- [x] P36.4 Future ML boundary (#260)
+  - [x] Define what data volume and quality would be required before an ML
     policy optimizer is worth attempting.
-  - [ ] Keep ML optimization explicitly out of the first tuning loop unless a
+  - [x] Keep ML optimization explicitly out of the first tuning loop unless a
     later phase activates it.
 
 Phase 36 acceptance criteria:
