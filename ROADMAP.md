@@ -15,7 +15,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P4 Worker model evaluation rubric | #28 | `feature/p4-worker-model-evaluation-rubric` | Complete |
 | P5 Custom agent model switching spike | #35 | `feature/p5-custom-agent-model-switching` | Complete |
 | P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Complete |
-| P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | PR-ready |
+| P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -353,7 +353,7 @@ Parent issue: #48
 
 Branch: `feature/p7-copilot-sdk-local-probe-env`
 
-Status: PR-ready
+Status: complete
 
 Goal: turn the P6 Copilot SDK/Ollama feasibility scaffold into a locally
 runnable probe path by documenting and supporting a local SDK runtime
@@ -383,7 +383,7 @@ and provider configuration.
   - [x] Finalize P7 planning notes.
   - [x] Run verification.
   - [x] Comment on and close child issues.
-  - [ ] Open, merge, and verify PR closeout.
+  - [x] Open, merge, and verify PR closeout.
 
 Phase 7 acceptance criteria:
 
