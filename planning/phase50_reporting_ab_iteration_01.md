@@ -108,3 +108,29 @@ The source-level audit/repair cost remains the next nondelegable task cost.
 Run a corrected reporting A/B with separate start/end checkpoints for each lane,
 then run a narrow source-level audit on the highest-value anomaly target:
 `x8-4x24` with `qwen3-coder-next:latest`, part02 pages 70-93.
+
+## Corrected AB02 Result
+
+A corrected sequential checkpoint run was completed after the overlap lesson.
+This run measured direct reporting and delegated-report review as separate
+non-overlapping supervisor spans.
+
+| Lane | Fresh input | Cached input | Output | Reasoning output | Supervisor USD |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| direct supervisor reporting baseline | 1480 | 262912 | 775 | 28 | `$0.059842` |
+| delegated `gpt-oss:20b` report review | 1396 | 265472 | 480 | 23 | `$0.055943` |
+
+Isolated reporting delta:
+
+```text
+$0.059842 - $0.055943 = $0.003899
+```
+
+This is a small savings signal for the delegated-reporting lane, not a broad
+workflow win. It excludes GitHub hygiene and does not include the still-required
+source-level audit/repair span. It also assumes the reporting worker draft is
+available through the scripted local-worker lane at zero cash cost.
+
+The practical lesson is that reporting delegation probably helps most when the
+reporting packet is much larger than this compact fixed-x8 summary. For small
+summaries, the savings exist but are marginal.

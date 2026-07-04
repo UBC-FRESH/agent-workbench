@@ -1124,3 +1124,6 @@ issues, pull requests, and closeout comments.
 - Tightened token synthesis so duplicate token `record_id` values and duplicate
   Codex checkpoint intervals fail closed instead of being silently added into
   an invalid ledger total.
+- Ran a corrected non-overlapping reporting A/B: direct supervisor reporting
+  cost `$0.059842`; delegated `gpt-oss:20b` report review cost `$0.055943`;
+  isolated reporting delta `$0.003899` before source-level audit/repair.
