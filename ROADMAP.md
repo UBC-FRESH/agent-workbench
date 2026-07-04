@@ -18,7 +18,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Complete |
 | P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | Complete |
 | P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | Complete |
-| P10 Patch proposal protocol trial | TBD | TBD | Planned |
+| P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | PR-ready |
 | P11 Supervisor-applied patch harness | TBD | TBD | Planned |
 | P12 Restricted tool-enabled worker trial | TBD | TBD | Planned |
 | P13 GitHub workflow microtrial | TBD | TBD | Planned |
@@ -523,22 +523,43 @@ Phase 9 acceptance criteria:
 
 ## Phase 10: Patch Proposal Protocol Trial
 
-Parent issue: TBD
+Parent issue: #73
 
-Branch: TBD
+Branch: `feature/p10-patch-proposal-protocol`
 
-Status: planned
+Status: PR-ready
 
 Goal: ask workers to produce a small, parseable patch proposal without applying
 it, so the supervisor can validate candidate edits before any file mutation.
 
-Planned tasks:
-
-- P10.1 Patch-proposal ticket template.
-- P10.2 Patch block parser and classifier.
-- P10.3 Repeated patch-proposal model trial.
-- P10.4 Supervisor acceptance checklist for proposed patches.
-- P10.5 Closeout and mutation-readiness decision.
+- [x] P10.1 Patch-proposal ticket template (#74)
+  - [x] Add a tracked template under `templates/`.
+  - [x] Require rationale and fenced diff sections.
+  - [x] Forbid tools, commands, and file edits.
+  - [x] State that the patch is a proposal only.
+- [x] P10.2 Patch block parser and classifier (#75)
+  - [x] Add manifest fields for requiring a patch proposal.
+  - [x] Parse fenced diff or patch blocks.
+  - [x] Classify missing patch, malformed patch, wrong file, and valid
+        proposal.
+  - [x] Preserve existing marker and structured-output behavior.
+- [x] P10.3 Repeated patch-proposal model trial (#76)
+  - [x] Create an ignored local patch-proposal ticket.
+  - [x] Create an ignored P10 manifest with allowed patch files.
+  - [x] Run repeated trials for `qwen3-coder:latest`.
+  - [x] Run repeated trials for `qwen3-coder-next:latest`.
+  - [x] Inspect ignored result summary.
+- [x] P10.4 Supervisor acceptance checklist for proposed patches (#77)
+  - [x] Add patch proposal acceptance criteria.
+  - [x] Map patch classifications to supervisor decisions.
+  - [x] Preserve proposal-only boundary until P11.
+- [ ] P10.5 Closeout and mutation-readiness decision (#78)
+  - [x] Update `ROADMAP.md`.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Finalize P10 planning notes.
+  - [x] Run verification.
+  - [x] Comment on and close child issues.
+  - [ ] Open, merge, and verify PR closeout.
 
 Phase 10 acceptance criteria:
 

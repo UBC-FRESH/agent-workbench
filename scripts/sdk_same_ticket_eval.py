@@ -31,6 +31,8 @@ class EvalConfig:
     forbidden_phrases: list[str]
     allow_unexpected_sections: bool
     allow_preamble: bool
+    require_patch: bool
+    allowed_patch_files: list[str]
     models: list[str]
     repeats: int
     timeout_seconds: int
@@ -106,6 +108,8 @@ def load_manifest(path: Path) -> EvalConfig:
         forbidden_phrases=[str(phrase) for phrase in data.get("forbidden_phrases", [])],
         allow_unexpected_sections=bool(data.get("allow_unexpected_sections", True)),
         allow_preamble=bool(data.get("allow_preamble", True)),
+        require_patch=bool(data.get("require_patch", False)),
+        allowed_patch_files=[str(path) for path in data.get("allowed_patch_files", [])],
         models=models,
         repeats=repeats,
         timeout_seconds=int(data.get("timeout_seconds", 120)),
@@ -228,6 +232,8 @@ def summarize(config: EvalConfig, runs: list[PlannedRun]) -> dict[str, Any]:
         "ticket": str(config.ticket),
         "expected_marker": config.expected_marker,
         "required_sections": config.required_sections,
+        "require_patch": config.require_patch,
+        "allowed_patch_files": config.allowed_patch_files,
         "models": config.models,
         "repeats": config.repeats,
         "rows": rows,
@@ -262,8 +268,11 @@ def summarize_run(config: EvalConfig, run: PlannedRun) -> dict[str, Any]:
         forbidden_phrases=config.forbidden_phrases,
         allow_unexpected_sections=config.allow_unexpected_sections,
         allow_preamble=config.allow_preamble,
+        require_patch=config.require_patch,
+        allowed_patch_files=config.allowed_patch_files,
     )
     section_report = structured_section_report(assistant_message, config.required_sections)
+    patch_report = patch_proposal_report(assistant_message, config.allowed_patch_files)
     return {
         "model": run.model,
         "repeat_index": run.repeat_index,
@@ -276,6 +285,9 @@ def summarize_run(config: EvalConfig, run: PlannedRun) -> dict[str, Any]:
         "missing_sections": section_report["missing_sections"],
         "unexpected_sections": section_report["unexpected_sections"],
         "has_preamble": section_report["has_preamble"],
+        "patch_files": patch_report["patch_files"],
+        "patch_block_count": patch_report["patch_block_count"],
+        "patch_error": patch_report["patch_error"],
     }
 
 
@@ -308,6 +320,8 @@ def classify_result(
     forbidden_phrases: list[str],
     allow_unexpected_sections: bool,
     allow_preamble: bool,
+    require_patch: bool,
+    allowed_patch_files: list[str],
 ) -> str:
     if status != "completed":
         if blocker == "session-idle-timeout":
@@ -324,6 +338,12 @@ def classify_result(
         return "refusal-or-forbidden-phrase"
     if looks_loop_like(assistant_message):
         return "loop-like-repetition"
+    if require_patch:
+        patch_report = patch_proposal_report(assistant_message, allowed_patch_files)
+        if patch_report["patch_block_count"] == 0:
+            return "missing-patch"
+        if patch_report["patch_error"]:
+            return patch_report["patch_error"]
     if required_sections:
         section_report = structured_section_report(assistant_message, required_sections)
         if section_report["missing_sections"]:
@@ -332,6 +352,8 @@ def classify_result(
             return "extra-prose"
         if section_report["has_preamble"] and not allow_preamble:
             return "extra-prose"
+        if require_patch:
+            return "patch-proposal"
         return "structured-output"
     if assistant_message == expected_marker:
         return "exact-marker"
@@ -341,6 +363,72 @@ def classify_result(
     if marker_count == 1:
         return "extra-output"
     return "missing-marker"
+
+
+def patch_proposal_report(
+    assistant_message: str,
+    allowed_patch_files: list[str],
+) -> dict[str, Any]:
+    blocks = fenced_code_blocks(assistant_message, {"diff", "patch"})
+    if not blocks:
+        return {
+            "patch_block_count": 0,
+            "patch_files": [],
+            "patch_error": "",
+        }
+    patch_files: list[str] = []
+    malformed = False
+    for block in blocks:
+        files = patch_files_from_block(block)
+        if not files:
+            malformed = True
+        for file_path in files:
+            if file_path not in patch_files:
+                patch_files.append(file_path)
+    if malformed:
+        return {
+            "patch_block_count": len(blocks),
+            "patch_files": patch_files,
+            "patch_error": "malformed-patch",
+        }
+    allowed = set(allowed_patch_files)
+    if allowed and any(file_path not in allowed for file_path in patch_files):
+        return {
+            "patch_block_count": len(blocks),
+            "patch_files": patch_files,
+            "patch_error": "wrong-file",
+        }
+    return {
+        "patch_block_count": len(blocks),
+        "patch_files": patch_files,
+        "patch_error": "",
+    }
+
+
+def fenced_code_blocks(text: str, languages: set[str]) -> list[str]:
+    pattern = re.compile(r"```([a-zA-Z0-9_-]*)\n(.*?)\n```", re.DOTALL)
+    blocks: list[str] = []
+    for match in pattern.finditer(text):
+        language = match.group(1).strip().lower()
+        if language in languages:
+            blocks.append(match.group(2))
+    return blocks
+
+
+def patch_files_from_block(block: str) -> list[str]:
+    files: list[str] = []
+    for line in block.splitlines():
+        if line.startswith("+++ "):
+            path = normalize_patch_path(line[4:].strip())
+            if path and path != "/dev/null" and path not in files:
+                files.append(path)
+    return files
+
+
+def normalize_patch_path(path: str) -> str:
+    if path.startswith("a/") or path.startswith("b/"):
+        return path[2:]
+    return path
 
 
 def structured_section_report(
@@ -411,6 +499,7 @@ def summary_markdown(summary: dict[str, Any]) -> str:
         f"- ticket: `{summary['ticket']}`",
         f"- expected_marker: `{summary['expected_marker']}`",
         f"- required_sections: `{len(summary['required_sections'])}`",
+        f"- require_patch: `{summary['require_patch']}`",
         f"- repeats: `{summary['repeats']}`",
         "",
         "## Classification Counts",
@@ -426,12 +515,13 @@ def summary_markdown(summary: dict[str, Any]) -> str:
             "",
             "## Runs",
             "",
-            "| Model | Repeat | Status | Blocker | Classification | Missing Sections | Result File |",
-            "| --- | ---: | --- | --- | --- | --- | --- |",
+            "| Model | Repeat | Status | Blocker | Classification | Missing Sections | Patch Files | Result File |",
+            "| --- | ---: | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for row in summary["rows"]:
         missing = ", ".join(row.get("missing_sections", []))
+        patch_files = ", ".join(row.get("patch_files", []))
         lines.append(
             "| "
             f"`{row['model']}` | "
@@ -440,6 +530,7 @@ def summary_markdown(summary: dict[str, Any]) -> str:
             f"`{row['blocker']}` | "
             f"`{row['classification']}` | "
             f"`{missing}` | "
+            f"`{patch_files}` | "
             f"`{row['result_file']}` |"
         )
     lines.extend(

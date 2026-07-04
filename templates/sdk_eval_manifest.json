@@ -11,6 +11,8 @@
   ],
   "allow_unexpected_sections": true,
   "allow_preamble": true,
+  "require_patch": false,
+  "allowed_patch_files": [],
   "models": [
     "qwen3-coder:latest",
     "qwen3-coder-next:latest"
