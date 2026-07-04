@@ -1,0 +1,44 @@
+{
+  "schema_name": "agent_workbench_evidence_summary",
+  "schema_version": "0.1",
+  "required_fields": [
+    "phase",
+    "task",
+    "evidence_id",
+    "evidence_type",
+    "generated_utc",
+    "source_runtime_paths",
+    "ticket_family",
+    "models_or_agent_host",
+    "bridge_or_harness",
+    "allowed_authority",
+    "forbidden_authority",
+    "outcomes",
+    "verification",
+    "promotion_boundary",
+    "supervisor_decision"
+  ],
+  "field_notes": {
+    "phase": "Roadmap phase identifier such as P17.",
+    "task": "Roadmap task or issue identifier.",
+    "evidence_id": "Stable local evidence identifier without private paths.",
+    "evidence_type": "One of model-run, bridge-run, patch-trial, github-microtask, smoke-check, or planning-audit.",
+    "generated_utc": "UTC timestamp for the sanitized summary.",
+    "source_runtime_paths": "Repo-relative ignored paths only; never absolute workstation paths.",
+    "ticket_family": "Marker, structured-output, patch-proposal, restricted-tool, GitHub microtask, or other bounded family.",
+    "models_or_agent_host": "Sanitized model IDs or agent host names.",
+    "bridge_or_harness": "Script or bridge surface used to produce the evidence.",
+    "allowed_authority": "What the worker or harness was allowed to do.",
+    "forbidden_authority": "What was explicitly out of scope.",
+    "outcomes": "Array of sanitized classification/count/note records.",
+    "verification": "Supervisor commands, inspections, checks, and blockers.",
+    "promotion_boundary": "Raw evidence retention path and private-value exclusions.",
+    "supervisor_decision": "accept, retry, reject, blocked, or defer with rationale."
+  },
+  "privacy_rules": [
+    "Do not include provider URLs, access headers, tokens, raw transcripts, or personal workstation paths.",
+    "Do not paste raw assistant messages unless they are explicitly sanitized and short enough for public review.",
+    "Use repo-relative ignored runtime paths when referring to raw evidence.",
+    "Record classifications and counts before narrative interpretation."
+  ]
+}
