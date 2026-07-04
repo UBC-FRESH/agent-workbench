@@ -932,3 +932,15 @@ issues, pull requests, and closeout comments.
 - Added `planning/phase48_phase_scale_ab_token_economics.md`.
 - Defined the experimental design around two disposable FreshForge worktrees
   from the same start commit instead of stash-based rollback.
+
+## 2026-07-04 - Added P49 benchmark worktree preparation
+
+- Opened P49 GitHub issue #334 with child issues #335 through #338 for
+  worktree setup contracts, command implementation, FreshForge P16 setup, and
+  closeout.
+- Added `agent-workbench benchmark prepare-worktrees` so benchmark records can
+  create or report lane worktrees in a target project checkout.
+- Added `planning/phase49_benchmark_worktree_prep.md` with the FreshForge P16
+  setup protocol.
+- Prepared the first direct-supervisor and delegated-graph FreshForge P16
+  benchmark lane worktrees from the same recorded start commit.
