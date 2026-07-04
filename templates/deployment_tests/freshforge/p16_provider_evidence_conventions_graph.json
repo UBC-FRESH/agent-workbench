@@ -1,0 +1,56 @@
+{
+  "workflow": {
+    "id": "freshforge_p16_provider_evidence_test",
+    "name": "FreshForge P16 Provider Evidence Test",
+    "description": "Agent Workbench deployment-test graph for FreshForge P16 provider result and validation evidence conventions."
+  },
+  "nodes": [
+    {
+      "id": "select_p16_scope",
+      "provider": "agent_workbench_supervisor.task_selection",
+      "name": "Select P16 scope",
+      "description": "Supervisor scopes the FreshForge P16 provider evidence convention test.",
+      "inputs": {"freshforge_phase": "P16 provider result and validation evidence conventions"},
+      "outputs": {"task_bundle": "bounded P16 evidence-convention review"},
+      "parameters": {"agent_workbench": {"node_kind": "supervisor_decision", "execution_boundary": "supervisor selects the bounded test scope", "evidence_reference": "FreshForge ROADMAP.md P16", "supervisor_decision": "accept, split, or defer P16 deployment test"}},
+      "artifacts": [{"artifact_id": "freshforge_p16_roadmap_context", "kind": "source", "path_or_reference": "FreshForge ROADMAP.md P16 section"}],
+      "provenance": {"role": "supervisor", "capability": "pilot_selection", "authority_level": "supervisor-owned", "implementation": "human or paid supervisor"}
+    },
+    {
+      "id": "worker_provider_evidence_review",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Worker provider evidence review",
+      "description": "Worker reviews proposed generic provider evidence fields and identifies ambiguity or overreach.",
+      "needs": ["select_p16_scope"],
+      "inputs": {"task_bundle": "${nodes.select_p16_scope.outputs.task_bundle}"},
+      "outputs": {"proposal": "provider evidence convention review"},
+      "parameters": {"agent_workbench": {"node_kind": "worker_proposal", "execution_boundary": "proposal-only worker review", "allowed_authority": "L1", "evidence_reference": "runtime/agent_workbench/freshforge_p16/provider_evidence_review.evidence.json", "claim_review": "supervisor verifies claims against FreshForge roadmap and code", "token_accounting": "runtime/agent_workbench/freshforge_p16/provider_evidence_review.tokens.json"}},
+      "artifacts": [{"artifact_id": "provider_evidence_review", "kind": "generated", "path_or_reference": "ignored runtime worker output"}],
+      "provenance": {"role": "analyst", "capability": "evidence_intake", "authority_level": "L1", "implementation": "configured Ollama worker model", "model_profile": "model_profiles/qwen3-coder-next.md"}
+    },
+    {
+      "id": "worker_fixture_proposal",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Worker fixture proposal",
+      "description": "Worker proposes fixture-provider examples and acceptance criteria without editing FreshForge.",
+      "needs": ["worker_provider_evidence_review"],
+      "inputs": {"review": "${nodes.worker_provider_evidence_review.outputs.proposal}"},
+      "outputs": {"proposal": "fixture evidence example proposal"},
+      "parameters": {"agent_workbench": {"node_kind": "worker_proposal", "execution_boundary": "proposal-only fixture design", "allowed_authority": "L1", "evidence_reference": "runtime/agent_workbench/freshforge_p16/fixture_proposal.evidence.json", "claim_review": "supervisor accepts, rewrites, or rejects before implementation", "token_accounting": "runtime/agent_workbench/freshforge_p16/fixture_proposal.tokens.json"}},
+      "artifacts": [{"artifact_id": "fixture_proposal", "kind": "generated", "path_or_reference": "ignored runtime proposal output"}],
+      "provenance": {"role": "programmer", "capability": "test_design_proposal", "authority_level": "L1", "implementation": "configured Ollama worker model", "model_profile": "model_profiles/qwen3-coder-next.md"}
+    },
+    {
+      "id": "supervisor_p16_acceptance",
+      "provider": "agent_workbench_supervisor.promotion",
+      "name": "Supervisor P16 acceptance decision",
+      "description": "Supervisor decides whether P16 should proceed and what FreshForge implementation scope is acceptable.",
+      "needs": ["worker_provider_evidence_review", "worker_fixture_proposal"],
+      "inputs": {"review": "${nodes.worker_provider_evidence_review.outputs.proposal}", "proposal": "${nodes.worker_fixture_proposal.outputs.proposal}"},
+      "outputs": {"decision_packet": "P16 supervisor decision packet"},
+      "parameters": {"agent_workbench": {"node_kind": "supervisor_promotion", "execution_boundary": "supervisor-owned acceptance decision", "evidence_reference": "runtime/agent_workbench/freshforge_p16/decision_packet.md", "supervisor_decision": "promote, revise, reject, or defer", "token_accounting": "runtime/agent_workbench/freshforge_p16/pilot_accounting.accounting.json"}},
+      "artifacts": [{"artifact_id": "p16_decision_packet", "kind": "promoted", "path_or_reference": "tracked sanitized note or issue comment if accepted later"}],
+      "provenance": {"role": "supervisor", "capability": "promotion_decision", "authority_level": "supervisor-owned", "implementation": "human or paid supervisor"}
+    }
+  ]
+}

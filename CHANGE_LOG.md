@@ -908,3 +908,14 @@ issues, pull requests, and closeout comments.
   dependency.
 - Recorded that Agent Workbench should not build a parallel graph engine unless
   a future FreshForge incompatibility is concrete and documented.
+
+## 2026-07-04 - Queued P47 FreshForge deployment test batch
+
+- Opened P47 GitHub issue #322 with child issues #323 through #326 for roadmap
+  cleanup, FreshForge P16/P17/P18 graph-backed test packets, and closeout.
+- Fixed the stale P46 roadmap status after the merged P46 closeout.
+- Added `planning/phase47_freshforge_deployment_test_batch.md`.
+- Added FreshForge deployment-test packet graphs for P16 provider evidence
+  conventions, P17 matrix export surfaces, and P18 release-readiness review.
+- Kept the phase as queueing and validation only: no FreshForge mutation, no
+  worker execution, and no release or GitHub closeout delegation.

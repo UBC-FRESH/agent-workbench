@@ -1,0 +1,68 @@
+{
+  "workflow": {
+    "id": "freshforge_p18_release_readiness_test",
+    "name": "FreshForge P18 Release Readiness Test",
+    "description": "Agent Workbench deployment-test graph for FreshForge P18 v0.1.0a6 release readiness. Release actions remain supervisor-owned."
+  },
+  "nodes": [
+    {
+      "id": "select_p18_release_scope",
+      "provider": "agent_workbench_supervisor.task_selection",
+      "name": "Select P18 release scope",
+      "description": "Supervisor scopes release-readiness review after FreshForge P16-P17 merge evidence exists.",
+      "inputs": {"freshforge_phase": "P18 v0.1.0a6 evidence-orchestration PyPI alpha release"},
+      "outputs": {"task_bundle": "bounded P18 release-readiness review"},
+      "parameters": {"agent_workbench": {"node_kind": "supervisor_decision", "execution_boundary": "supervisor selects release-readiness review scope", "evidence_reference": "FreshForge ROADMAP.md P18", "supervisor_decision": "review only after P16-P17 merge evidence exists"}},
+      "artifacts": [{"artifact_id": "freshforge_p18_roadmap_context", "kind": "source", "path_or_reference": "FreshForge ROADMAP.md P18 section"}],
+      "provenance": {"role": "supervisor", "capability": "pilot_selection", "authority_level": "supervisor-owned", "implementation": "human or paid supervisor"}
+    },
+    {
+      "id": "worker_release_readiness_review",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Worker release readiness review",
+      "description": "Worker reviews release checklist, docs, and evidence-orchestration acceptance boundaries.",
+      "needs": ["select_p18_release_scope"],
+      "inputs": {"task_bundle": "${nodes.select_p18_release_scope.outputs.task_bundle}"},
+      "outputs": {"proposal": "release readiness review"},
+      "parameters": {"agent_workbench": {"node_kind": "worker_proposal", "execution_boundary": "proposal-only release readiness review", "allowed_authority": "L1", "evidence_reference": "runtime/agent_workbench/freshforge_p18/release_readiness_review.evidence.json", "claim_review": "supervisor verifies against release checklist and merged P16-P17 evidence", "token_accounting": "runtime/agent_workbench/freshforge_p18/release_readiness_review.tokens.json"}},
+      "artifacts": [{"artifact_id": "release_readiness_review", "kind": "generated", "path_or_reference": "ignored runtime worker output"}],
+      "provenance": {"role": "editor", "capability": "release_readiness_review", "authority_level": "L1", "implementation": "configured Ollama worker model", "model_profile": "model_profiles/qwen3-coder-next.md"}
+    },
+    {
+      "id": "worker_release_gap_scan",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Worker release gap scan",
+      "description": "Worker identifies missing release notes, docs, tests, or artifact checks without running release commands.",
+      "needs": ["worker_release_readiness_review"],
+      "inputs": {"review": "${nodes.worker_release_readiness_review.outputs.proposal}"},
+      "outputs": {"proposal": "release gap scan"},
+      "parameters": {"agent_workbench": {"node_kind": "worker_proposal", "execution_boundary": "proposal-only release gap scan", "allowed_authority": "L1", "evidence_reference": "runtime/agent_workbench/freshforge_p18/release_gap_scan.evidence.json", "claim_review": "supervisor verifies every claimed gap", "token_accounting": "runtime/agent_workbench/freshforge_p18/release_gap_scan.tokens.json"}},
+      "artifacts": [{"artifact_id": "release_gap_scan", "kind": "generated", "path_or_reference": "ignored runtime proposal output"}],
+      "provenance": {"role": "editor", "capability": "checklist_gap_scan", "authority_level": "L1", "implementation": "configured Ollama worker model", "model_profile": "model_profiles/qwen3-coder-next.md"}
+    },
+    {
+      "id": "supervisor_release_verification",
+      "provider": "project_native.verify",
+      "name": "Supervisor release verification",
+      "description": "Supervisor runs FreshForge release candidate checks after any accepted implementation work.",
+      "needs": ["worker_release_gap_scan"],
+      "inputs": {"gap_scan": "${nodes.worker_release_gap_scan.outputs.proposal}"},
+      "outputs": {"verification_evidence": "FreshForge release candidate verification"},
+      "parameters": {"agent_workbench": {"node_kind": "verification", "execution_boundary": "supervisor-owned release candidate verification", "evidence_reference": "runtime/agent_workbench/freshforge_p18/release_verification.evidence.json", "claim_review": "supervisor inspects tests, docs, build, and twine checks"}},
+      "artifacts": [{"artifact_id": "release_verification_report", "kind": "generated", "path_or_reference": "ignored runtime verification report"}],
+      "provenance": {"role": "supervisor", "capability": "project_native_verification", "authority_level": "supervisor-owned", "implementation": "FreshForge tests, docs build, package build, twine check"}
+    },
+    {
+      "id": "supervisor_release_decision",
+      "provider": "agent_workbench_supervisor.promotion",
+      "name": "Supervisor release decision",
+      "description": "Supervisor decides whether to tag and publish. Worker agents never own release mutation.",
+      "needs": ["worker_release_readiness_review", "worker_release_gap_scan", "supervisor_release_verification"],
+      "inputs": {"review": "${nodes.worker_release_readiness_review.outputs.proposal}", "gap_scan": "${nodes.worker_release_gap_scan.outputs.proposal}", "verification_evidence": "${nodes.supervisor_release_verification.outputs.verification_evidence}"},
+      "outputs": {"decision_packet": "P18 release decision packet"},
+      "parameters": {"agent_workbench": {"node_kind": "supervisor_promotion", "execution_boundary": "supervisor-owned release/tag/publish decision", "evidence_reference": "runtime/agent_workbench/freshforge_p18/release_decision.md", "supervisor_decision": "tag and publish, revise, reject, or defer", "token_accounting": "runtime/agent_workbench/freshforge_p18/pilot_accounting.accounting.json"}},
+      "artifacts": [{"artifact_id": "p18_release_decision", "kind": "promoted", "path_or_reference": "tracked sanitized issue comment or PR body if accepted later"}],
+      "provenance": {"role": "supervisor", "capability": "release_closeout_decision", "authority_level": "supervisor-owned", "implementation": "human or paid supervisor"}
+    }
+  ]
+}

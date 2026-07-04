@@ -54,7 +54,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P43 Graph-backed pilot workflow | #298 | `feature/p43-graph-backed-pilot-workflow` | Complete |
 | P44 Graph-aware delegation decision engine | #304 | `feature/p44-graph-aware-decision-engine` | Complete |
 | P45 Per-node token economics | #310 | `feature/p45-per-node-token-economics` | Complete |
-| P46 FreshForge dependency decision | #316 | `feature/p46-freshforge-dependency-decision` | Active |
+| P46 FreshForge dependency decision | #316 | `feature/p46-freshforge-dependency-decision` | Complete |
+| P47 FreshForge deployment test batch | #322 | `feature/p47-freshforge-deployment-test-batch` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2031,7 +2032,7 @@ Parent issue: #316
 
 Branch: `feature/p46-freshforge-dependency-decision`
 
-Status: active
+Status: complete
 
 Goal: decide whether FreshForge becomes a required Agent Workbench dependency,
 stays optional, or remains behind a compatibility adapter.
@@ -2055,3 +2056,39 @@ Phase 46 acceptance criteria:
 - The FreshForge relationship is no longer ambiguous.
 - Agent Workbench avoids a parallel graph engine unless the FreshForge
   integration failed for concrete technical reasons.
+
+## Phase 47: FreshForge Deployment Test Batch
+
+Parent issue: #322
+
+Branch: `feature/p47-freshforge-deployment-test-batch`
+
+Status: active
+
+Goal: queue a non-trivial FreshForge deployment-test batch that uses Agent
+Workbench graph, decision, and token-economics surfaces against FreshForge
+P16-P18 roadmap work.
+
+Planned tasks:
+
+- [x] P47.1 Roadmap cleanup and batch scope (#323)
+  - [x] Mark P46 complete after merged closeout.
+  - [x] Add a public-safe FreshForge deployment-test batch note.
+- [x] P47.2 FreshForge P16 provider evidence test packet (#324)
+  - [x] Add a graph-backed packet for provider evidence conventions.
+  - [x] Validate and render the packet.
+- [x] P47.3 FreshForge P17 matrix export test packet (#325)
+  - [x] Add a graph-backed packet for matrix aggregation and exports.
+  - [x] Validate and render the packet.
+- [x] P47.4 FreshForge P18 release-readiness test packet and closeout (#326)
+  - [x] Add a graph-backed packet for release-readiness review.
+  - [x] Run graph decision reports and governance checks.
+
+Phase 47 acceptance criteria:
+
+- Agent Workbench roadmap status matches GitHub closeout state for P46.
+- Three FreshForge deployment-test packet graphs validate with
+  `--agent-metadata`.
+- Graph decision reports identify worker-proposal nodes as delegation
+  candidates and release/closeout nodes as supervisor-owned.
+- No FreshForge repo files are mutated by this phase.
