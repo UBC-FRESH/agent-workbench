@@ -846,3 +846,17 @@ issues, pull requests, and closeout comments.
 - Added an optional `graph` dependency extra, a FreshForge-backed
   `agent-workbench graph validate` command, and a FreshForge-compatible agentic
   workflow graph template.
+
+## 2026-07-04 - Added P42 agent metadata convention
+
+- Opened P42 GitHub issue #292 with child issues #293 through #296 for metadata
+  placement, role/capability/authority metadata, evidence/decision/token
+  metadata, and closeout.
+- Added `planning/phase42_agent_metadata_convention.md` to define how Agent
+  Workbench metadata lives inside FreshForge-compatible graph fields.
+- Extended `agent-workbench graph validate` with `--agent-metadata` so
+  supervisors can check required Agent Workbench metadata without executing
+  graph nodes.
+- Updated the FreshForge-compatible graph template to use
+  `parameters.agent_workbench` and node `provenance` as the canonical metadata
+  locations.

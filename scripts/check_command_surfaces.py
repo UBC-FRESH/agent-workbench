@@ -175,7 +175,7 @@ def run_cli_help_check(root: Path) -> list[str]:
                 "validate",
                 "--help",
             ],
-            ("--input",),
+            ("--input", "--agent-metadata"),
             "agent-workbench graph validate --help",
         ),
     )

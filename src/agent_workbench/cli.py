@@ -305,6 +305,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Validate graph structure without executing workflow nodes.",
     )
     graph_validate_parser.add_argument("--input", type=Path, required=True)
+    graph_validate_parser.add_argument(
+        "--agent-metadata",
+        action="store_true",
+        help="Also validate Agent Workbench metadata convention fields.",
+    )
     graph_validate_parser.set_defaults(func=run_graph_validate)
 
     decide_parser = subparsers.add_parser(
@@ -676,7 +681,11 @@ def run_tokens_synthesize(args: argparse.Namespace) -> int:
 def run_graph_validate(args: argparse.Namespace) -> int:
     try:
         data = load_graph_document(args.input)
-        result = validate_graph_document(data, source_path=args.input)
+        result = validate_graph_document(
+            data,
+            source_path=args.input,
+            agent_metadata=args.agent_metadata,
+        )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1

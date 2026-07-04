@@ -17,7 +17,12 @@
         "task_bundle": "bounded task selected for delegation"
       },
       "parameters": {
-        "execution_boundary": "supervisor decision only"
+        "agent_workbench": {
+          "node_kind": "supervisor_decision",
+          "execution_boundary": "supervisor decision only",
+          "evidence_reference": "project roadmap or issue reference",
+          "supervisor_decision": "select bounded task or defer"
+        }
       },
       "artifacts": [
         {
@@ -48,8 +53,14 @@
         "proposal": "worker generated proposal"
       },
       "parameters": {
-        "allowed_authority": "proposal-only",
-        "claim_policy": "unsupported claims require supervisor rejection"
+        "agent_workbench": {
+          "node_kind": "worker_proposal",
+          "execution_boundary": "proposal-only local worker output",
+          "allowed_authority": "L1",
+          "claim_review": "unsupported claims require supervisor rejection",
+          "evidence_reference": "ignored runtime evidence summary",
+          "token_accounting": "ignored runtime token/cost record"
+        }
       },
       "artifacts": [
         {
@@ -81,7 +92,12 @@
         "verification_evidence": "project-native command or report output"
       },
       "parameters": {
-        "execution_boundary": "project-native tools execute project work"
+        "agent_workbench": {
+          "node_kind": "verification",
+          "execution_boundary": "project-native tools execute project work",
+          "evidence_reference": "ignored runtime verification report",
+          "claim_review": "verification evidence is supervisor-inspected before promotion"
+        }
       },
       "artifacts": [
         {
@@ -114,12 +130,17 @@
         "promotion_decision": "promote, revise, reject, or defer"
       },
       "parameters": {
-        "nondelegable_actions": [
-          "tracked-file mutation",
-          "GitHub mutation",
-          "PR merge",
-          "phase closeout"
-        ]
+        "agent_workbench": {
+          "node_kind": "supervisor_promotion",
+          "execution_boundary": "supervisor-owned promotion decision",
+          "supervisor_decision": "promote, revise, reject, or defer",
+          "nondelegable_actions": [
+            "tracked-file mutation",
+            "GitHub mutation",
+            "PR merge",
+            "phase closeout"
+          ]
+        }
       },
       "artifacts": [
         {
