@@ -22,7 +22,7 @@ that case study as a public-safe example.
 
 This repository is an active workflow sandbox. It currently contains governance
 documents, planning notes, worker templates, a local VS Code Chat bridge helper,
-and Markdown evaluation rubrics:
+a local Copilot SDK/Ollama probe scaffold, and Markdown evaluation rubrics:
 
 - `README.md`: concise public overview.
 - `AGENTS.md`: agent operating contract.
@@ -35,7 +35,8 @@ and Markdown evaluation rubrics:
 - `templates/`: reusable worker ticket, result, failure, acceptance, and
   evaluation templates.
 - `rubrics/`: Markdown scoring rubrics.
-- `scripts/`: local repo helper scripts.
+- `scripts/`: local repo helper scripts, including local-only bridge/probe
+  helpers that write raw evidence to ignored runtime paths.
 - `tmp/`, `runtime/`, `local/`, and `outputs/`: ignored local working areas.
 
 Do not claim that this repository contains a package, test framework, CI system,
@@ -93,6 +94,9 @@ Current worker-model boundary:
 - Do not treat VS Code custom-agent `model` frontmatter as proof of model
   selection. Persisted session evidence must show the expected model before a
   run counts for model comparison.
+- Do not treat a Copilot SDK provider/model configuration as proof of successful
+  model execution. Captured event/output evidence must show that the run reached
+  the expected stop condition before it counts for model comparison.
 - Installing a new or larger model is a separate setup task that must include
   the model name, host/session used for installation, and post-install
   verification with `ollama list`.
