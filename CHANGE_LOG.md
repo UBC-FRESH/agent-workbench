@@ -803,3 +803,18 @@ issues, pull requests, and closeout comments.
 - Clarified the non-orchestration boundary: FreshForge and other project-native
   tools are implementation candidates that Agent Workbench records around, not
   systems that Agent Workbench replaces.
+
+## 2026-07-04 - Added P39 graph-envelope workbench templates
+
+- Opened P39 GitHub issue #274 with child issues #275 through #278 for template
+  scope, artifact layout examples, integration boundaries, and closeout.
+- Added `templates/workbench_templates/agentic_graph_envelope.json` to reuse
+  FreshForge-style graph vocabulary for agentic workflows: workflow, nodes,
+  needs, providers, inputs, outputs, artifacts, and diagnostics.
+- Added reusable Markdown template envelopes for software tasks, paper tasks,
+  proposal tasks, and benchmark tasks.
+- Kept the non-orchestration boundary explicit: templates point to FreshForge,
+  project CLIs, notebooks, Snakemake, CI, Quarto, scripts, or human review for
+  execution.
+- Added `planning/phase39_reusable_workbench_templates.md` and updated the
+  roadmap.
