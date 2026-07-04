@@ -7,7 +7,7 @@ UBC-FRESH projects.
 The important question is not whether a local Ollama-backed worker can generate
 a plausible answer. That has already been demonstrated. The important question
 is whether a supervisor using Agent Workbench can complete useful project work
-with less paid supervisor-token effort than the supervisor would have spent
+with less paid supervisor-token spend than the supervisor would have spent
 doing the work directly.
 
 ## Core Objective
@@ -51,16 +51,22 @@ The first planning model can be simple and explicit:
 
 ```text
 expected net benefit =
-  avoided paid-supervisor effort
-  - delegation setup effort
-  - supervisor verification effort
-  - retry and context-switching effort
-  - probability_of_failure * expected_cleanup_cost
+  direct paid-supervisor token cost
+  - delegated paid-supervisor token cost
+  - self-hosted worker token cost
+  - probability_of_failure * expected paid-supervisor cleanup token cost
 ```
 
 This does not need to be perfectly calibrated at first. It needs to be concrete
 enough that the supervisor can compare candidate delegation decisions and learn
 from real outcomes.
+
+Wall-clock time is a secondary friction signal, not the primary cost unit. The
+supervisor agent costs little while waiting for a local worker, but it costs
+real money when it consumes paid input/output tokens to plan, verify, retry, or
+repair. Agent Workbench should therefore track token counts and USD estimates
+first, then record latency or context-switching only when they affect practical
+workflow value.
 
 ## Decision Variables
 
@@ -134,13 +140,15 @@ Each real-project pilot should record:
 - task type and size;
 - selected worker model;
 - protocol and authority level;
-- setup effort;
+- direct paid-supervisor input/output tokens;
+- delegated paid-supervisor input/output tokens;
+- worker input/output tokens;
+- current input/output token prices used for the estimate;
+- setup, verification, retry, and cleanup token budgets;
 - worker runtime and output classification;
-- verification effort;
 - accepted, rejected, and needs-evidence claims;
-- cleanup or repair effort;
 - whether the worker changed the supervisor's decision;
-- estimated direct-work counterfactual; and
+- estimated direct-work token/cost counterfactual; and
 - final supervisor judgment of net benefit.
 
 The first target is not global optimality. The first target is evidence that

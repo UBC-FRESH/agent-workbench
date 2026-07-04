@@ -722,3 +722,15 @@ issues, pull requests, and closeout comments.
   decision command from the CLI and real-project deployment playbooks.
 - Dogfooded the command on delegate, split-smaller, and do-directly candidate
   cases before closeout.
+
+## 2026-07-04 - Corrected delegation economics to token-priced cost
+
+- Updated the P34 decision engine and `templates/delegation_decision_input.json`
+  so expected net benefit is driven by input/output token counts and
+  per-1M-token USD prices instead of wall-clock minutes.
+- Kept latency/friction minutes as optional metadata only.
+- Updated the delegation economics vision, P34 planning note, roadmap, and
+  changelog to make paid supervisor token spend the primary optimization target.
+- Recorded PostHog-style AI observability and current provider price matrices as
+  useful sources for future token/cost accounting without wiring external
+  observability into Agent Workbench yet.
