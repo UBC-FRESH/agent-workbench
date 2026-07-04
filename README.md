@@ -44,3 +44,5 @@ See:
 - `ROADMAP.md` for the active phase/task plan.
 - `CHANGE_LOG.md` for the append-only project narrative.
 - `playbooks/cli_workflow.md` for the current CLI workflow.
+- `playbooks/real_project_deployment.md` for real-project proposal-assist
+  deployment.

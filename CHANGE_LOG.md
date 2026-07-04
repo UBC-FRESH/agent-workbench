@@ -640,3 +640,18 @@ issues, pull requests, and closeout comments.
   per-run outcomes, and a boundary warning against broad model rankings.
 - Added `planning/phase29_repeat_run_model_comparison.md` and updated the CLI
   workflow playbook.
+
+## 2026-07-04 - Added Phase 30 real-project deployment playbook
+
+- Created the Phase 30 deployment-playbook lane on
+  `feature/p30-real-project-deployment-playbook`, with parent issue #216 and
+  child task issues #217 through #220.
+- Added `playbooks/real_project_deployment.md` to document target selection,
+  proposal-pack scaffolding, evidence summaries, decision packets, claim review,
+  optional model/repeat comparison, supervisor promotion, cleanup, and stop
+  conditions.
+- Added `planning/phase30_real_project_deployment_playbook.md` and linked the
+  deployment playbook from the README.
+- Closed the P27-P30 tranche with Agent Workbench ready for cautious
+  real-project proposal-assist use, not autonomous implementation or delegated
+  GitHub closeout.
