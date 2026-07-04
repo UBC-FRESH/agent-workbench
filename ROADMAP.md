@@ -19,7 +19,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | Complete |
 | P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | Complete |
 | P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | Complete |
-| P11 Supervisor-applied patch harness | TBD | TBD | Planned |
+| P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Active |
 | P12 Restricted tool-enabled worker trial | TBD | TBD | Planned |
 | P13 GitHub workflow microtrial | TBD | TBD | Planned |
 | P14 Model matrix and packaging decision | TBD | TBD | Planned |
@@ -571,22 +571,41 @@ Phase 10 acceptance criteria:
 
 ## Phase 11: Supervisor-Applied Patch Harness
 
-Parent issue: TBD
+Parent issue: #81
 
-Branch: TBD
+Branch: `feature/p11-supervisor-applied-patch-harness`
 
-Status: planned
+Status: active
 
 Goal: add a supervisor-side harness that can parse a worker patch proposal,
 apply it to an explicitly allowed target, run checks, and classify the result.
 
-Planned tasks:
-
-- P11.1 Allowed-target patch application protocol.
-- P11.2 Temporary-worktree or guarded-apply harness.
-- P11.3 Check runner and rollback behavior.
-- P11.4 Repeated supervisor-applied patch trial.
-- P11.5 Closeout and tool-readiness decision.
+- [x] P11.1 Allowed-target patch application protocol (#82)
+  - [x] Define allowed sandbox target rules.
+  - [x] Document forbidden tracked-target mutation.
+  - [x] Record protocol in planning notes.
+- [x] P11.2 Guarded apply harness (#83)
+  - [x] Add supervisor-side apply script under `scripts/`.
+  - [x] Parse worker result assistant messages.
+  - [x] Extract fenced diff blocks.
+  - [x] Apply only to explicitly allowed sandbox paths.
+- [x] P11.3 Check runner and rollback behavior (#84)
+  - [x] Write a local report with status and exact error text.
+  - [x] Support a post-apply expected-text check.
+  - [x] Keep rollback/retry guidance explicit.
+- [x] P11.4 Supervisor-applied patch trial (#85)
+  - [x] Create ignored sandbox target.
+  - [x] Create or reuse ignored patch proposal result.
+  - [x] Run the guarded apply harness.
+  - [x] Inspect the ignored report.
+  - [x] Promote sanitized findings.
+- [ ] P11.5 Closeout and tool-readiness decision (#86)
+  - [x] Update `ROADMAP.md`.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Finalize P11 planning notes.
+  - [ ] Run verification.
+  - [ ] Comment on and close child issues.
+  - [ ] Open, merge, and verify PR closeout.
 
 Phase 11 acceptance criteria:
 
