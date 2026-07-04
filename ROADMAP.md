@@ -38,7 +38,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P27 Supervisor decision packets | #198 | `feature/p27-supervisor-decision-packets` | Complete |
 | P28 Claim review aids | #204 | `feature/p28-claim-review-aids` | Complete |
 | P29 Repeat-run and model comparison | #210 | `feature/p29-repeat-run-model-comparison` | Complete |
-| P30 Real-project deployment playbook | TBD | TBD | Planned |
+| P30 Real-project deployment playbook | #216 | `feature/p30-real-project-deployment-playbook` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1412,17 +1412,38 @@ Phase 29 acceptance criteria:
 
 ## Phase 30: Real-Project Deployment Playbook
 
-Parent issue: TBD
+Parent issue: #216
 
-Branch: TBD
+Branch: `feature/p30-real-project-deployment-playbook`
 
-Status: planned
+Status: complete
 
 Goal: turn the P26-P29 workflow into a reusable deployment playbook for
 UBC-FRESH projects.
 
-Planned scope:
+Completed tasks:
 
-- Add real-project deployment checklist.
-- Document supervisor decision gates.
-- Document cleanup, promotion, and stop conditions for target projects.
+- [x] P30.1 Deployment playbook structure (#217)
+  - [x] Add `playbooks/real_project_deployment.md`.
+  - [x] Add P30 planning notes.
+  - [x] Link the playbook from README.
+- [x] P30.2 Supervisor gates and stop conditions (#218)
+  - [x] Document target selection gates.
+  - [x] Document supervisor promotion gates.
+  - [x] Document stop conditions for worker use.
+- [x] P30.3 Cleanup and promotion rules (#219)
+  - [x] Document ignored target-project artifact rules.
+  - [x] Document sanitized promotion rules.
+  - [x] Document final closeout hygiene checks.
+- [x] P30.4 Verification and closeout (#220)
+  - [x] Inspect playbook Markdown.
+  - [x] Run verification.
+  - [x] Open and merge PR.
+
+Phase 30 acceptance criteria:
+
+- The playbook explains how to deploy Agent Workbench on a real project from
+  target selection through supervisor promotion.
+- The playbook references P27 packets, P28 claim review, and P29 comparison
+  reports.
+- The playbook includes cleanup rules and stop conditions.
