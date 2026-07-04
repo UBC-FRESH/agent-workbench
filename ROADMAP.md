@@ -21,7 +21,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | Complete |
 | P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Complete |
 | P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Complete |
-| P13 GitHub workflow microtrial | #97 | `feature/p13-github-workflow-microtrial` | PR-ready |
+| P13 GitHub workflow microtrial | #97 | `feature/p13-github-workflow-microtrial` | Complete |
 | P14 Model matrix and packaging decision | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -666,7 +666,7 @@ Parent issue: #97
 
 Branch: `feature/p13-github-workflow-microtrial`
 
-Status: PR-ready
+Status: complete
 
 Goal: test small, bounded GitHub workflow participation without delegating broad
 phase closeout.
@@ -687,12 +687,12 @@ phase closeout.
   - [x] Supervisor reviews candidate body.
   - [x] Supervisor posts one file-backed comment.
   - [x] Verify the mutation with read-only `gh issue view`.
-- [ ] P13.5 Closeout and GitHub delegation boundary decision (#102)
+- [x] P13.5 Closeout and GitHub delegation boundary decision (#102)
   - [x] Update roadmap, changelog, and planning notes.
   - [x] Run verification.
   - [x] Close child issues.
-  - [ ] Open and merge PR.
-  - [ ] Close parent issue after merge.
+  - [x] Open and merge PR.
+  - [x] Close parent issue after merge.
 
 Phase 13 acceptance criteria:
 
