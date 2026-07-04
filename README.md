@@ -17,7 +17,8 @@ delegation experiments. A `policy tune` command turns those records into
 transparent rules-based tuning guidance. A `workflow` command validates and
 renders artifact-first workflow step records. A `roles` command validates and
 renders role/capability/implementation records so model swaps do not rewrite
-the workflow contract.
+the workflow contract. An optional `graph` command validates FreshForge-compatible
+agentic workflow graphs when Agent Workbench is installed with the graph extra.
 
 Agent Workbench is not a workflow orchestration framework. Real project work
 should continue to run through project-native tools such as FreshForge,
@@ -38,6 +39,12 @@ python -m pip install -e .
 agent-workbench --help
 ```
 
+Install graph validation support:
+
+```powershell
+python -m pip install -e ".[graph]"
+```
+
 Useful first commands:
 
 ```powershell
@@ -54,6 +61,7 @@ agent-workbench policy tune --input-dir runtime/agent_jobs --output runtime/agen
 agent-workbench workflow validate --input templates/workflow_step_record.json
 agent-workbench roles validate --input templates/role_capability_implementation.json
 agent-workbench tokens validate --input templates/token_cost_record.json
+agent-workbench graph validate --input templates/workbench_templates/agentic_workflow_graph.json
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in

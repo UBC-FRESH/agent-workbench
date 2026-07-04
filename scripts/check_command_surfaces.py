@@ -166,6 +166,18 @@ def run_cli_help_check(root: Path) -> list[str]:
             ("--input", "--input-dir", "--output"),
             "agent-workbench tokens synthesize --help",
         ),
+        (
+            [
+                sys.executable,
+                "-m",
+                "agent_workbench.cli",
+                "graph",
+                "validate",
+                "--help",
+            ],
+            ("--input",),
+            "agent-workbench graph validate --help",
+        ),
     )
     for command, required_terms, label in checks:
         completed = subprocess.run(
@@ -190,6 +202,7 @@ def run_cli_help_check(root: Path) -> list[str]:
         "- `agent-workbench workflow render --help`: ok",
         "- `agent-workbench roles render --help`: ok",
         "- `agent-workbench tokens synthesize --help`: ok",
+        "- `agent-workbench graph validate --help`: ok",
         "",
     ]
 

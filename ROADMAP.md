@@ -49,6 +49,12 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P38 Role, capability, and implementation model | #268 | `feature/p38-role-capability-implementation` | Complete |
 | P39 Reusable scientific workbench templates | #274 | `feature/p39-reusable-workbench-templates` | Complete |
 | P40 Observability and token-cost ingestion | #280 | `feature/p40-token-cost-ingestion` | Complete |
+| P41 FreshForge graph integration spike | #286 | `feature/p41-freshforge-graph-integration` | Active |
+| P42 Agent metadata convention | TBD | `feature/p42-agent-metadata-convention` | Planned |
+| P43 Graph-backed pilot workflow | TBD | `feature/p43-graph-backed-pilot-workflow` | Planned |
+| P44 Graph-aware delegation decision engine | TBD | `feature/p44-graph-aware-decision-engine` | Planned |
+| P45 Per-node token economics | TBD | `feature/p45-per-node-token-economics` | Planned |
+| P46 FreshForge dependency decision | TBD | `feature/p46-freshforge-dependency-decision` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1853,3 +1859,199 @@ Phase 40 acceptance criteria:
   usage without exposing raw traces.
 - Observability remains a measurement aid, not a dependency for basic pilot
   workflows.
+
+## Phase 41: FreshForge Graph Integration Spike
+
+Parent issue: #286
+
+Branch: `feature/p41-freshforge-graph-integration`
+
+Status: active
+
+Goal: test FreshForge as the optional structural graph-validation layer for
+Agent Workbench agentic role workflows.
+
+Planned tasks:
+
+- [x] P41.1 Optional FreshForge dependency and graph command surface (#287)
+  - [x] Add a `graph` optional dependency extra for FreshForge.
+  - [x] Add `agent-workbench graph validate --input <path>`.
+  - [x] Keep base package behavior working without FreshForge installed.
+- [x] P41.2 FreshForge-valid agentic graph template (#288)
+  - [x] Add `templates/workbench_templates/agentic_workflow_graph.json`.
+  - [x] Move Agent Workbench-specific metadata into FreshForge-compatible
+    `parameters`, `artifacts`, and `provenance` fields.
+  - [x] Validate the template with FreshForge structural validation.
+- [x] P41.3 Validation behavior and diagnostics (#289)
+  - [x] Report workflow id, node count, and diagnostics.
+  - [x] Exit nonzero on structural errors.
+  - [x] Record that provider-registry validation is deferred.
+- [x] P41.4 Documentation, roadmap tranche, and closeout (#290)
+  - [x] Add P41 planning notes.
+  - [x] Add P42-P46 roadmap tranche.
+  - [x] Update README and changelog.
+  - [x] Run verification.
+
+Phase 41 acceptance criteria:
+
+- Agent Workbench exposes a documented `graph validate` command.
+- The command uses FreshForge structural workflow validation when the optional
+  dependency is installed.
+- The command fails clearly when FreshForge is missing and tells the user how
+  to install the optional graph extra.
+- The existing graph envelope has a FreshForge-valid tracked companion
+  template.
+- P42-P46 are planned as the next graph-backed delegation tranche.
+
+## Phase 42: Agent Metadata Convention
+
+Parent issue: TBD
+
+Branch: `feature/p42-agent-metadata-convention`
+
+Status: planned
+
+Goal: define the stable Agent Workbench metadata convention inside
+FreshForge-compatible graph documents.
+
+Planned tasks:
+
+- [ ] P42.1 Metadata field placement
+  - [ ] Define which fields belong in `parameters`, `artifacts`, and
+    `provenance`.
+  - [ ] Avoid adding Agent Workbench-only top-level graph fields.
+- [ ] P42.2 Role and capability metadata
+  - [ ] Define role, capability, authority level, implementation, and model
+    profile references.
+- [ ] P42.3 Evidence and decision metadata
+  - [ ] Define evidence packet, claim review, supervisor decision, and
+    promotion metadata.
+- [ ] P42.4 Documentation and closeout
+  - [ ] Add examples and update templates.
+  - [ ] Run validation and governance checks.
+
+Phase 42 acceptance criteria:
+
+- Agent Workbench can represent its delegation metadata without forking the
+  FreshForge graph shape.
+- The convention is documented enough for graph-backed pilot workflows.
+
+## Phase 43: Graph-Backed Pilot Workflow
+
+Parent issue: TBD
+
+Branch: `feature/p43-graph-backed-pilot-workflow`
+
+Status: planned
+
+Goal: represent one real Agent Workbench deployment pilot as a
+FreshForge-compatible graph and use Agent Workbench evidence/accounting around
+that graph.
+
+Planned tasks:
+
+- [ ] P43.1 Pilot selection
+  - [ ] Choose one bounded real-project pilot that is not on a project critical
+    path.
+- [ ] P43.2 Graph representation
+  - [ ] Encode supervisor selection, worker proposal, project-native
+    verification, and supervisor promotion as graph nodes.
+- [ ] P43.3 Evidence and accounting linkage
+  - [ ] Link evidence summaries and token/cost records to graph nodes.
+- [ ] P43.4 Pilot synthesis and closeout
+  - [ ] Record what graph structure helped or hindered.
+
+Phase 43 acceptance criteria:
+
+- A real pilot can be described as a FreshForge-compatible graph without making
+  Agent Workbench the executor.
+- Evidence and accounting can be associated with specific graph nodes.
+
+## Phase 44: Graph-Aware Delegation Decision Engine
+
+Parent issue: TBD
+
+Branch: `feature/p44-graph-aware-decision-engine`
+
+Status: planned
+
+Goal: upgrade delegation decisions from isolated task descriptions to graph-node
+recommendations.
+
+Planned tasks:
+
+- [ ] P44.1 Graph-node decision input
+  - [ ] Resolve task type, authority, dependencies, and verification context
+    from graph nodes.
+- [ ] P44.2 Recommendation logic
+  - [ ] Recommend delegate, split, direct, defer, or human decision per node.
+- [ ] P44.3 Report surface
+  - [ ] Render graph-level and node-level delegation guidance.
+- [ ] P44.4 Dogfood and closeout
+  - [ ] Compare graph-aware recommendations against existing P34-style
+    task-only recommendations.
+
+Phase 44 acceptance criteria:
+
+- Delegation recommendations can account for upstream/downstream graph context.
+- Supervisor-only nodes remain nondelegable regardless of local model
+  capability.
+
+## Phase 45: Per-Node Token Economics
+
+Parent issue: TBD
+
+Branch: `feature/p45-per-node-token-economics`
+
+Status: planned
+
+Goal: attribute paid supervisor tokens, local worker tokens, verification cost,
+cleanup, and net benefit to graph nodes.
+
+Planned tasks:
+
+- [ ] P45.1 Node-level token/cost record
+  - [ ] Extend token/cost records with graph and node identifiers.
+- [ ] P45.2 Graph economics synthesis
+  - [ ] Summarize which node types save paid supervisor tokens.
+- [ ] P45.3 Policy feedback
+  - [ ] Feed node-level economics into policy tuning.
+- [ ] P45.4 Documentation and closeout
+  - [ ] Update accounting docs and examples.
+
+Phase 45 acceptance criteria:
+
+- Agent Workbench can answer which graph-node classes produce useful token/cash
+  savings.
+- Token economics remain priced by token counts, not wall-clock minutes.
+
+## Phase 46: FreshForge Dependency Decision
+
+Parent issue: TBD
+
+Branch: `feature/p46-freshforge-dependency-decision`
+
+Status: planned
+
+Goal: decide whether FreshForge becomes a required Agent Workbench dependency,
+stays optional, or remains behind a compatibility adapter.
+
+Planned tasks:
+
+- [ ] P46.1 Evidence review
+  - [ ] Review P41-P45 implementation friction, validation coverage, and
+    pilot usefulness.
+- [ ] P46.2 Dependency options
+  - [ ] Compare required dependency, optional dependency, and adapter-only
+    strategies.
+- [ ] P46.3 Recommendation
+  - [ ] Record a decision with concrete package and maintenance implications.
+- [ ] P46.4 Closeout
+  - [ ] Update roadmap, README, package metadata, and planning notes according
+    to the decision.
+
+Phase 46 acceptance criteria:
+
+- The FreshForge relationship is no longer ambiguous.
+- Agent Workbench avoids a parallel graph engine unless the FreshForge
+  integration failed for concrete technical reasons.

@@ -22,6 +22,9 @@ classifiers = [
 ]
 dependencies = []
 
+[project.optional-dependencies]
+graph = ["freshforge>=0.1.0a5"]
+
 [project.scripts]
 agent-workbench = "agent_workbench.cli:main"
 
