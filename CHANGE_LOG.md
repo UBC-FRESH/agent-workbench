@@ -488,3 +488,15 @@ issues, pull requests, and closeout comments.
 - Added `planning/phase17_evidence_schema_notes.md` with a sanitized backfilled
   P15 model-run summary and the decision to defer databases, CI schema
   validation, and packaged evidence collectors.
+
+## 2026-07-04 - Ran Phase 18 richer restricted tool trial
+
+- Created the Phase 18 richer restricted-tool lane on
+  `feature/p18-richer-restricted-tool-trial`, with parent issue #136 and child
+  task issues #137 through #141.
+- Updated `templates/restricted_tool_ticket.md` so restricted tool tickets can
+  explicitly list required ignored-runtime reads as well as one allowed output.
+- Ran one VS Code Chat bridge worker trial that read an ignored input file and
+  created the allowed ignored output file without terminal commands.
+- Added `planning/phase18_richer_restricted_tool_trial_notes.md` with
+  sanitized supervisor evidence and kept tracked-file mutation forbidden.
