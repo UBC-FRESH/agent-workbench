@@ -20,7 +20,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | Complete |
 | P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | Complete |
 | P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Complete |
-| P12 Restricted tool-enabled worker trial | TBD | TBD | Planned |
+| P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Active |
 | P13 GitHub workflow microtrial | TBD | TBD | Planned |
 | P14 Model matrix and packaging decision | TBD | TBD | Planned |
 
@@ -617,23 +617,40 @@ Phase 11 acceptance criteria:
 
 ## Phase 12: Restricted Tool-Enabled Worker Trial
 
-Parent issue: TBD
+Parent issue: #89
 
-Branch: TBD
+Branch: `feature/p12-restricted-tool-worker-trial`
 
-Status: planned
+Status: active
 
 Goal: test the narrowest available tool-enabled worker path with explicit
 allowed paths, commands, and stop conditions, then verify observed tool evidence
 against the ticket.
 
-Planned tasks:
-
-- P12.1 Tool-enabled ticket safety contract.
-- P12.2 Bridge capability audit for restricted mutation.
-- P12.3 Tiny allowed-file mutation trial.
-- P12.4 Supervisor verification report update.
-- P12.5 Closeout and delegation boundary decision.
+- [x] P12.1 Tool-enabled ticket safety contract (#90)
+  - [x] Add a restricted tool-enabled ticket template.
+  - [x] State allowed target paths.
+  - [x] State forbidden commands and files.
+  - [x] Require supervisor evidence review.
+- [x] P12.2 Bridge capability audit for restricted mutation (#91)
+  - [x] Compare SDK and VS Code Chat bridge tool surfaces.
+  - [x] Record which bridge can observe file/tool evidence.
+  - [x] Record model-selection caveats.
+- [x] P12.3 Tiny allowed-file mutation trial (#92)
+  - [x] Prepare ignored worker ticket.
+  - [x] Attempt one tiny ignored file mutation through the selected bridge.
+  - [x] Inspect supervisor report and target file.
+  - [x] Promote sanitized findings.
+- [x] P12.4 Supervisor verification report update (#93)
+  - [x] Confirm the existing verifier captures allowed files and observed tools.
+  - [x] Record any gaps or required changes.
+  - [x] Keep raw reports ignored.
+- [ ] P12.5 Closeout and delegation boundary decision (#94)
+  - [x] Update roadmap, changelog, and planning notes.
+  - [ ] Run verification.
+  - [ ] Close child issues.
+  - [ ] Open and merge PR.
+  - [ ] Close parent issue after merge.
 
 Phase 12 acceptance criteria:
 
