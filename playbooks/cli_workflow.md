@@ -122,6 +122,28 @@ agent-workbench evidence synthesize `
 Synthesis validates every input summary first. Invalid or private-looking
 evidence stops the packet rather than being silently promoted.
 
+## Review Worker Claims
+
+When worker output includes factual claims, add claim disposition fields to the
+sanitized evidence summary before rendering or synthesizing:
+
+```json
+{
+  "accepted_claims": [
+    "The worker returned all required proposal sections."
+  ],
+  "rejected_claims": [
+    "The worker claimed user reports existed, but no issue or source was supplied."
+  ],
+  "needs_evidence_claims": [
+    "A proposed CLI improvement may be useful, but needs a downstream example."
+  ]
+}
+```
+
+Use `templates/claim_review_checklist.md` before promoting worker claims into
+tracked planning notes, issue comments, or PR descriptions.
+
 Promote only the sanitized findings into tracked planning notes.
 
 ## Current Boundary

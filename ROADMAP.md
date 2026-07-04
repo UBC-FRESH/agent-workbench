@@ -36,7 +36,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P25 Real-project pilot scaffold | #185 | `feature/p25-real-project-pilot-scaffold` | Complete |
 | P26 Cross-project eval support | #192 | `feature/p26-cross-project-eval` | Complete |
 | P27 Supervisor decision packets | #198 | `feature/p27-supervisor-decision-packets` | Complete |
-| P28 Claim review aids | TBD | TBD | Planned |
+| P28 Claim review aids | #204 | `feature/p28-claim-review-aids` | Complete |
 | P29 Repeat-run and model comparison | TBD | TBD | Planned |
 | P30 Real-project deployment playbook | TBD | TBD | Planned |
 
@@ -1334,21 +1334,43 @@ Phase 27 acceptance criteria:
 
 ## Phase 28: Claim Review Aids
 
-Parent issue: TBD
+Parent issue: #204
 
-Branch: TBD
+Branch: `feature/p28-claim-review-aids`
 
-Status: planned
+Status: complete
 
 Goal: make unsupported worker claims easier to identify before supervisor
 promotion.
 
-Planned scope:
+Completed tasks:
 
-- Add claim disposition fields or templates for accepted, rejected, and
-  needs-evidence claims.
-- Extend decision packets with claim-review prompts.
-- Dogfood against prior real-project worker outputs.
+- [x] P28.1 Claim review evidence contract (#205)
+  - [x] Add optional `accepted_claims`, `rejected_claims`, and
+    `needs_evidence_claims` fields.
+  - [x] Validate claim-review fields when present.
+  - [x] Preserve compatibility with evidence summaries that omit claim fields.
+- [x] P28.2 Claim-aware rendering and packets (#206)
+  - [x] Render claim review sections in evidence summaries.
+  - [x] Render claim disposition counts and per-evidence claim review in
+    supervisor decision packets.
+- [x] P28.3 Claim review template and docs (#207)
+  - [x] Add `templates/claim_review_checklist.md`.
+  - [x] Update the CLI workflow playbook.
+  - [x] Add P28 planning notes.
+- [x] P28.4 Dogfood and closeout (#208)
+  - [x] Dogfood valid and invalid claim-review evidence.
+  - [x] Run verification.
+  - [x] Open and merge PR.
+
+Phase 28 acceptance criteria:
+
+- Evidence summaries may include accepted, rejected, and needs-evidence claim
+  fields.
+- Invalid claim-review fields fail validation.
+- Evidence rendering and synthesis show claim review sections when fields are
+  present.
+- The claim review checklist documents the promotion boundary.
 
 ## Phase 29: Repeat-Run And Model Comparison
 
