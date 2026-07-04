@@ -12,7 +12,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P1 Worker protocol templates | #7 | `feature/p1-worker-protocol-templates` | Complete |
 | P2 VS Code Chat bridge playbook | #13 | `feature/p2-vscode-chat-bridge-playbook` | Complete |
 | P3 Copilot Chat Bridge V0 Prototype | #21 | `feature/p3-copilot-chat-bridge-v0` | Complete |
-| P4 Worker model evaluation rubric | #28 | `feature/p4-worker-model-evaluation-rubric` | Active |
+| P4 Worker model evaluation rubric | #28 | `feature/p4-worker-model-evaluation-rubric` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -205,7 +205,7 @@ Parent issue: #28
 
 Branch: `feature/p4-worker-model-evaluation-rubric`
 
-Status: active
+Status: complete
 
 Goal: create a lightweight Markdown rubric for comparing local Ollama-backed
 worker models on bounded repo tasks, using P3 bridge evidence rather than
@@ -230,12 +230,12 @@ subjective impressions.
   - [x] Add `templates/model_eval_result.md`.
   - [x] Include model, ticket, bridge-evidence, score, failure-mode, and
         decision fields.
-- [ ] P4.5 A/B dry scoring run and closeout (#33)
+- [x] P4.5 A/B dry scoring run and closeout (#33)
   - [x] Prepare one fixed evaluation ticket.
   - [x] Attempt or complete qwen3-coder baseline scoring.
   - [x] Attempt or complete qwen3-coder-next scoring.
   - [x] Record comparison findings and caveats.
-  - [ ] Close P4 through PR.
+  - [x] Close P4 through PR.
 
 Phase 4 acceptance criteria:
 

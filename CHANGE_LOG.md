@@ -153,3 +153,15 @@ issues, pull requests, and closeout comments.
 - Checked off completed Phase 4 roadmap tasks for model inventory, run
   metadata, rubric, failure taxonomy, evaluation template, and dry-run scoring
   evidence.
+
+## 2026-07-04 - Closed Phase 4 worker model evaluation rubric
+
+- Verified the Phase 4 artifacts with Python compilation of the bridge helper,
+  `git diff --check`, Markdown inspection, and public-safety searches for
+  private paths, credentials, raw transcript leakage, and unrelated project
+  assumptions.
+- Closed child issues #29 through #32 after rubric, taxonomy, inventory, and
+  template work landed; used issue #33 for final A/B dry-run and PR closeout.
+- Recorded the qwen3-coder-next comparison as blocked by observed model
+  mismatch, which confirms the rubric's rule that model-comparison claims need
+  persisted `resolvedModel` evidence.
