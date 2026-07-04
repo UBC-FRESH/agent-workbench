@@ -71,3 +71,13 @@ issues, pull requests, and closeout comments.
   `code chat --help` command-surface dry run and sanitized findings.
 - Updated `ROADMAP.md` and `CHANGE_LOG.md` so Phase 2 can close through the
   normal issue, PR, and verification ritual.
+
+## 2026-07-04 - Documented current Ollama worker-model boundary
+
+- Updated `AGENTS.md` and `playbooks/vscode_chat_bridge.md` to require worker
+  model choices to come from the configured Ollama host's live `ollama list`
+  inventory by default.
+- Clarified that installing larger or additional models is a separate setup task
+  requiring explicit post-install verification.
+- Kept public wording generic around the configured Ollama/GPU worker host rather
+  than publishing personal server details.
