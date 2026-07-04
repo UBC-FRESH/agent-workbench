@@ -40,7 +40,7 @@
       "status": "complete",
       "branch": "benchmark/p16-agent-workbench-delegated",
       "worktree": "../freshforge-benchmark-p16-delegated",
-      "commit": "c781775",
+      "commit": "a4975a8",
       "method": "Supervisor uses Agent Workbench P47 P16 graph packet to delegate proposal-only worker nodes, then performs all FreshForge mutations, verification, PR, and closeout directly.",
       "rollback_plan": "Delete the disposable worktree and branch after recording token/cost and verification evidence.",
       "graph_packet": "templates/deployment_tests/freshforge/p16_provider_evidence_conventions_graph.json",
@@ -127,6 +127,14 @@
     "worker_cost_usd": 0.0,
     "consensus": "Both workers selected mapping and identified the same primary tradeoff: flexibility and low migration risk versus weaker typing and consistency.",
     "supervisor_interpretation": "Promote the delegated mapping branch as the current FreshForge P16 candidate, then strengthen docs and examples instead of adding a public ProviderEvidence dataclass now."
+  },
+  "current_promotion_candidate": {
+    "lane_id": "delegated_graph",
+    "branch": "benchmark/p16-agent-workbench-delegated",
+    "commit": "a4975a8",
+    "design": "Opaque provider-owned JSON-compatible evidence mapping with recommended documentation fields.",
+    "verification": "Targeted tests, full pytest, Ruff, Sphinx -W, build, twine check, git diff --check, and public-safety scan passed.",
+    "remaining_decision": "Maintainer review should decide whether to promote this delegated branch into the actual FreshForge P16 PR or request another P50 iteration."
   },
   "decision_rules": [
     "The delegated lane wins only if it reaches equivalent or better FreshForge verification with lower paid supervisor token cost.",

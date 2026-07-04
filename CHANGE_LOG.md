@@ -994,3 +994,14 @@ issues, pull requests, and closeout comments.
 - Strengthened the P50 recommendation to promote the delegated mapping branch as
   the current FreshForge P16 candidate, while reserving typed evidence records
   for later downstream-driven evidence.
+
+## 2026-07-04 - Refined P50 delegated FreshForge P16 candidate
+
+- Updated the delegated FreshForge P16 branch to commit `a4975a8`.
+- Strengthened provider evidence mapping docs with recommended keys and fields
+  while keeping FreshForge core schema-neutral.
+- Added test coverage proving provider-owned `uri` and `metadata` values are
+  preserved in workflow evidence manifests.
+- Verified the delegated candidate with targeted tests, full pytest, Ruff,
+  warning-clean Sphinx docs, package build, `twine check`, `git diff --check`,
+  and a public-safety scan.

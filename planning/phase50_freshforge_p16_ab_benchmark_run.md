@@ -281,3 +281,46 @@ Supervisor interpretation:
 - The next implementation move should be to sharpen the delegated branch docs
   and examples enough that provider authors get practical guidance without a
   new dataclass.
+
+## Iteration 3 Delegated Candidate Refinement
+
+FreshForge delegated lane:
+
+- worktree: `../freshforge-benchmark-p16-delegated`
+- branch: `benchmark/p16-agent-workbench-delegated`
+- commit: `a4975a8` (`P16 refine delegated evidence mapping docs`)
+
+Implemented:
+
+- expanded provider documentation with a recommended evidence mapping example;
+- documented stable provider-owned mapping keys, suggested entry fields, and
+  the boundary that FreshForge core preserves mappings but does not validate
+  provider semantics;
+- clarified in workflow-runner docs that summaries expose evidence counts and
+  compact mappings while full evidence manifests retain provider-owned details;
+- strengthened the evidence-manifest test to prove provider-owned `uri` and
+  `metadata` fields survive through run evidence and summaries;
+- recorded the decision to defer a tracked example payload file until a
+  downstream provider creates a real need.
+
+Verification:
+
+- `python -m pytest tests/test_evidence.py tests/test_execution.py tests/test_records.py`
+  passed with 12 tests;
+- `sphinx-build -b html docs _build/html -W` passed;
+- `git diff --check` passed;
+- `python -m pytest` passed with 96 tests;
+- `python -m ruff check .` passed;
+- `python -m build` passed;
+- `python -m twine check dist/*` passed;
+- public-safety scan found only existing policy text.
+
+Current P50 position:
+
+- The delegated mapping branch is now the active FreshForge P16 promotion
+  candidate.
+- The direct typed-record branch remains useful as a comparison artifact, but
+  not as the favored branch to merge unless maintainer review rejects the
+  mapping approach.
+- P50 still needs an explicit maintainer decision before FreshForge PR/merge
+  closeout.
