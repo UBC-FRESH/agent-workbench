@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .evidence import load_summary, render_markdown, validate_summary
 
 
 def default_repo_root() -> Path:
@@ -61,6 +62,27 @@ def build_parser() -> argparse.ArgumentParser:
     )
     eval_parser.set_defaults(func=run_eval)
 
+    evidence_parser = subparsers.add_parser(
+        "evidence",
+        help="Validate or render sanitized evidence summaries.",
+    )
+    evidence_subparsers = evidence_parser.add_subparsers(dest="evidence_command", required=True)
+
+    validate_parser = evidence_subparsers.add_parser(
+        "validate",
+        help="Validate a JSON evidence summary.",
+    )
+    validate_parser.add_argument("--input", type=Path, required=True)
+    validate_parser.set_defaults(func=run_evidence_validate)
+
+    render_parser = evidence_subparsers.add_parser(
+        "render",
+        help="Render a JSON evidence summary to Markdown.",
+    )
+    render_parser.add_argument("--input", type=Path, required=True)
+    render_parser.add_argument("--output", type=Path, required=True)
+    render_parser.set_defaults(func=run_evidence_render)
+
     parser.set_defaults(func=run_overview)
     return parser
 
@@ -87,6 +109,30 @@ def run_eval(args: argparse.Namespace) -> int:
     if args.summary_only:
         command.append("--summary-only")
     return run_command(command, args.repo_root)
+
+
+def run_evidence_validate(args: argparse.Namespace) -> int:
+    data = load_summary(args.input)
+    result = validate_summary(data)
+    if result.ok:
+        print(f"valid evidence summary: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_evidence_render(args: argparse.Namespace) -> int:
+    data = load_summary(args.input)
+    result = validate_summary(data)
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(render_markdown(data), encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
 
 
 def script_path(repo_root: Path, script_name: str) -> Path:

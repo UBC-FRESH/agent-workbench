@@ -31,7 +31,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P20 Packaging revisit and interface decision | #150 | `feature/p20-packaging-interface-decision` | Complete |
 | P21 Minimal local package and CLI skeleton | #157 | `feature/p21-minimal-local-package-cli` | Complete |
 | P22 CLI wrappers for existing commands | #164 | `feature/p22-cli-wrappers-existing-commands` | Complete |
-| P23 Evidence summary validation and rendering | TBD | TBD | Planned |
+| P23 Evidence summary validation and rendering | #171 | `feature/p23-evidence-summary-validation-rendering` | Complete |
 | P24 CLI dogfood workflow | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -1114,14 +1114,45 @@ Phase 22 acceptance criteria:
 
 ## Phase 23: Evidence Summary Validation And Rendering
 
-Parent issue: TBD
+Parent issue: #171
 
-Branch: TBD
+Branch: `feature/p23-evidence-summary-validation-rendering`
 
-Status: planned
+Status: complete
 
 Goal: make the P17 evidence summary contract executable enough for local
 supervisor review.
+
+Completed tasks:
+
+- [x] P23.1 Evidence validation module (#172)
+  - [x] Add `src/agent_workbench/evidence.py`.
+  - [x] Check required top-level fields.
+  - [x] Detect obvious private-looking values.
+- [x] P23.2 Evidence rendering module (#173)
+  - [x] Render validated JSON summaries to Markdown.
+  - [x] Include metadata, scope, outcomes, verification, boundary, and decision.
+- [x] P23.3 CLI evidence commands (#174)
+  - [x] Add `agent-workbench evidence validate`.
+  - [x] Add `agent-workbench evidence render`.
+  - [x] Fail invalid inputs with actionable errors.
+- [x] P23.4 Validation fixtures and checks (#175)
+  - [x] Prepare ignored valid evidence fixture.
+  - [x] Prepare ignored invalid evidence fixture.
+  - [x] Verify success and failure paths.
+- [x] P23.5 Closeout and rendering decision (#176)
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [x] Open and merge PR.
+
+Phase 23 acceptance criteria:
+
+- `agent-workbench evidence validate --input <summary.json>` validates required
+  fields and privacy rules.
+- `agent-workbench evidence render --input <summary.json> --output <summary.md>`
+  writes a sanitized Markdown summary.
+- Invalid summaries fail with actionable error text.
 
 ## Phase 24: CLI Dogfood Workflow
 
