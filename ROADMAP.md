@@ -20,7 +20,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | Complete |
 | P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | Complete |
 | P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Complete |
-| P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | PR-ready |
+| P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Complete |
 | P13 GitHub workflow microtrial | TBD | TBD | Planned |
 | P14 Model matrix and packaging decision | TBD | TBD | Planned |
 
@@ -621,7 +621,7 @@ Parent issue: #89
 
 Branch: `feature/p12-restricted-tool-worker-trial`
 
-Status: PR-ready
+Status: complete
 
 Goal: test the narrowest available tool-enabled worker path with explicit
 allowed paths, commands, and stop conditions, then verify observed tool evidence
@@ -645,12 +645,12 @@ against the ticket.
   - [x] Confirm the existing verifier captures allowed files and observed tools.
   - [x] Record any gaps or required changes.
   - [x] Keep raw reports ignored.
-- [ ] P12.5 Closeout and delegation boundary decision (#94)
+- [x] P12.5 Closeout and delegation boundary decision (#94)
   - [x] Update roadmap, changelog, and planning notes.
   - [x] Run verification.
   - [x] Close child issues.
-  - [ ] Open and merge PR.
-  - [ ] Close parent issue after merge.
+  - [x] Open and merge PR.
+  - [x] Close parent issue after merge.
 
 Phase 12 acceptance criteria:
 

@@ -395,3 +395,9 @@ issues, pull requests, and closeout comments.
   produced the final marker.
 - Confirmed the target file contained exactly the requested marker line, while
   raw session and transcript paths remained ignored local evidence.
+
+## 2026-07-04 - Closed Phase 12 restricted tool-enabled worker trial
+
+- Merged PR #95 for the Phase 12 restricted tool-enabled worker trial and verified merge commit `9968858eb84994d89245ac427eb93a51885e891c`.
+- Closed P12 implementation child issues after posting closeout comments.
+- Confirmed the next phase can test GitHub workflow microtasks, but issue closure and PR merge remain supervisor-only.
