@@ -18,7 +18,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Complete |
 | P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | Complete |
 | P9 SDK structured documentation-output trial | #65 | `feature/p9-structured-doc-output-trial` | Complete |
-| P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | PR-ready |
+| P10 Patch proposal protocol trial | #73 | `feature/p10-patch-proposal-protocol` | Complete |
 | P11 Supervisor-applied patch harness | TBD | TBD | Planned |
 | P12 Restricted tool-enabled worker trial | TBD | TBD | Planned |
 | P13 GitHub workflow microtrial | TBD | TBD | Planned |
@@ -527,7 +527,7 @@ Parent issue: #73
 
 Branch: `feature/p10-patch-proposal-protocol`
 
-Status: PR-ready
+Status: complete
 
 Goal: ask workers to produce a small, parseable patch proposal without applying
 it, so the supervisor can validate candidate edits before any file mutation.
@@ -553,13 +553,13 @@ it, so the supervisor can validate candidate edits before any file mutation.
   - [x] Add patch proposal acceptance criteria.
   - [x] Map patch classifications to supervisor decisions.
   - [x] Preserve proposal-only boundary until P11.
-- [ ] P10.5 Closeout and mutation-readiness decision (#78)
+- [x] P10.5 Closeout and mutation-readiness decision (#78)
   - [x] Update `ROADMAP.md`.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Finalize P10 planning notes.
   - [x] Run verification.
   - [x] Comment on and close child issues.
-  - [ ] Open, merge, and verify PR closeout.
+  - [x] Open, merge, and verify PR closeout.
 
 Phase 10 acceptance criteria:
 
