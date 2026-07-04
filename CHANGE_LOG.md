@@ -673,3 +673,20 @@ issues, pull requests, and closeout comments.
   delegation decision engine, real-project pilot accounting, and policy tuning.
 - Kept P32-P36 planned only so the next development environment can activate
   the FreshForge or CLEWS pilot lane deliberately.
+
+## 2026-07-04 - Added Phase 32 task delegation taxonomy
+
+- Created the Phase 32 task-taxonomy lane on
+  `feature/p32-task-taxonomy-delegation-suitability`, with parent issue #228
+  and child task issues #229 through #232.
+- Added `planning/task_delegation_taxonomy.md` to classify common UBC-FRESH
+  development task types by planning level, delegation suitability, default
+  worker authority, expected value, and main risk.
+- Defined high, medium, low, and avoid suitability levels plus good-delegation,
+  poor-delegation, and split-or-supervise-more criteria.
+- Mapped task types to the existing delegation trust levels and kept tracked
+  mutation, GitHub mutation, release work, and parent phase closeout
+  supervisor-owned by default.
+- Linked the taxonomy from the real-project deployment and CLI workflow
+  playbooks so supervisors classify candidate tasks before scaffolding worker
+  tickets.

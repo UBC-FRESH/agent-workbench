@@ -40,7 +40,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P29 Repeat-run and model comparison | #210 | `feature/p29-repeat-run-model-comparison` | Complete |
 | P30 Real-project deployment playbook | #216 | `feature/p30-real-project-deployment-playbook` | Complete |
 | P31 Delegation economics model | #222 | `feature/p31-delegation-economics-model` | Complete |
-| P32 Task taxonomy and delegation suitability | TBD | TBD | Planned |
+| P32 Task taxonomy and delegation suitability | #228 | `feature/p32-task-taxonomy-delegation-suitability` | Complete |
 | P33 Worker model capability profiles | TBD | TBD | Planned |
 | P34 Delegation decision engine v0 | TBD | TBD | Planned |
 | P35 Real-project pilot accounting | TBD | TBD | Planned |
@@ -1498,34 +1498,34 @@ Phase 31 acceptance criteria:
 
 ## Phase 32: Task Taxonomy And Delegation Suitability
 
-Parent issue: TBD
+Parent issue: #228
 
-Branch: TBD
+Branch: `feature/p32-task-taxonomy-delegation-suitability`
 
-Status: planned
+Status: complete
 
 Goal: classify UBC-FRESH development work types by delegation suitability,
 expected worker value, and risk.
 
 Planned tasks:
 
-- [ ] P32.1 Task-type taxonomy
-  - [ ] Classify evidence intake, roadmap review, docs proposal, issue triage,
+- [x] P32.1 Task-type taxonomy (#229)
+  - [x] Classify evidence intake, roadmap review, docs proposal, issue triage,
     test design, patch proposal, mechanical edits, GitHub hygiene, and release
     closeout.
-  - [ ] Map each task type to the phase/task/subtask planning hierarchy.
-- [ ] P32.2 Suitability criteria
-  - [ ] Define good delegation candidates.
-  - [ ] Define poor delegation candidates.
-  - [ ] Define split-or-supervise-more cases.
-- [ ] P32.3 Authority-level mapping
-  - [ ] Map task types to default worker authority levels.
-  - [ ] Identify nondelegable supervisor actions.
-  - [ ] Identify candidate restricted-tool experiments.
-- [ ] P32.4 Documentation and closeout
-  - [ ] Add task taxonomy planning notes.
-  - [ ] Link taxonomy from relevant playbooks.
-  - [ ] Run governance verification.
+  - [x] Map each task type to the phase/task/subtask planning hierarchy.
+- [x] P32.2 Suitability criteria (#230)
+  - [x] Define good delegation candidates.
+  - [x] Define poor delegation candidates.
+  - [x] Define split-or-supervise-more cases.
+- [x] P32.3 Authority-level mapping (#231)
+  - [x] Map task types to default worker authority levels.
+  - [x] Identify nondelegable supervisor actions.
+  - [x] Identify candidate restricted-tool experiments.
+- [x] P32.4 Documentation and closeout (#232)
+  - [x] Add task taxonomy planning notes.
+  - [x] Link taxonomy from relevant playbooks.
+  - [x] Run governance verification.
 
 Phase 32 acceptance criteria:
 
