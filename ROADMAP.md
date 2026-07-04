@@ -27,7 +27,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P16 Command surface stabilization | #122 | `feature/p16-command-surface-stabilization` | Complete |
 | P17 Evidence store and summary schema | #129 | `feature/p17-evidence-store-summary-schema` | Complete |
 | P18 Richer restricted tool trial | #136 | `feature/p18-richer-restricted-tool-trial` | Complete |
-| P19 Delegation policy and trust levels | TBD | TBD | Planned |
+| P19 Delegation policy and trust levels | #143 | `feature/p19-delegation-policy-trust-levels` | Complete |
 | P20 Packaging revisit and interface decision | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -932,22 +932,38 @@ Phase 18 acceptance criteria:
 
 ## Phase 19: Delegation Policy And Trust Levels
 
-Parent issue: TBD
+Parent issue: #143
 
-Branch: TBD
+Branch: `feature/p19-delegation-policy-trust-levels`
 
-Status: planned
+Status: complete
 
 Goal: convert P8-P18 evidence into a formal delegation policy and trust-level
 model for worker agents.
 
-Planned tasks:
+Completed tasks:
 
-- P19.1 Define trust levels.
-- P19.2 Map ticket families to allowed authority.
-- P19.3 Define nondelegable actions.
-- P19.4 Update AGENTS and playbooks.
-- P19.5 Closeout and governance decision.
+- [x] P19.1 Define trust levels (#144)
+  - [x] Add L0-L6 trust levels.
+  - [x] Distinguish response, proposal, sandbox, tracked, GitHub, and release
+        authority.
+- [x] P19.2 Map ticket families to allowed authority (#145)
+  - [x] Map P8-P18 ticket families to maximum levels.
+  - [x] Keep GitHub closeout supervisor-only.
+  - [x] Keep tracked-file mutation forbidden.
+- [x] P19.3 Define nondelegable actions (#146)
+  - [x] List supervisor-only workflow actions.
+  - [x] Define escalation triggers.
+  - [x] Preserve model/provider configuration authority.
+- [x] P19.4 Update AGENTS and playbooks (#147)
+  - [x] Add trust-level summary to `AGENTS.md`.
+  - [x] Add `planning/delegation_policy.md`.
+  - [x] Add `planning/phase19_delegation_policy_notes.md`.
+- [x] P19.5 Closeout and governance decision (#148)
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [x] Open and merge PR.
 
 Phase 19 acceptance criteria:
 
