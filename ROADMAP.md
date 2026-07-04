@@ -47,7 +47,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P36 Policy tuning loop | #256 | `feature/p36-policy-tuning-loop` | Complete |
 | P37 Artifact and workflow contract model | #262 | `feature/p37-artifact-workflow-contracts` | Complete |
 | P38 Role, capability, and implementation model | #268 | `feature/p38-role-capability-implementation` | Complete |
-| P39 Reusable scientific workbench templates | TBD | TBD | Planned |
+| P39 Reusable scientific workbench templates | #274 | `feature/p39-reusable-workbench-templates` | Complete |
 | P40 Observability and token-cost ingestion | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -1778,11 +1778,11 @@ Phase 38 acceptance criteria:
 
 ## Phase 39: Reusable Scientific Workbench Templates
 
-Parent issue: TBD
+Parent issue: #274
 
-Branch: TBD
+Branch: `feature/p39-reusable-workbench-templates`
 
-Status: planned
+Status: complete
 
 Goal: sketch reusable project workbench templates for common UBC-FRESH work
 without creating a heavyweight workflow engine or replacing FreshForge-style
@@ -1790,22 +1790,22 @@ project-native tools.
 
 Planned tasks:
 
-- [ ] P39.1 Template scope
-  - [ ] Define first template families for software, paper, proposal, and
+- [x] P39.1 Template scope (#275)
+  - [x] Define first template families for software, paper, proposal, and
     benchmark tasks.
-  - [ ] Keep templates as Markdown/JSON planning artifacts first.
-- [ ] P39.2 Artifact layout examples
-  - [ ] Show how tickets, evidence, decision packets, reports, and promoted
+  - [x] Keep templates as Markdown/JSON planning artifacts first.
+- [x] P39.2 Artifact layout examples (#276)
+  - [x] Show how tickets, evidence, decision packets, reports, and promoted
     outputs relate.
-  - [ ] Avoid project-specific private assumptions.
-- [ ] P39.3 Integration boundaries
-  - [ ] Identify where existing tools such as GitHub Actions, Quarto,
+  - [x] Avoid project-specific private assumptions.
+- [x] P39.3 Integration boundaries (#277)
+  - [x] Identify where existing tools such as GitHub Actions, Quarto,
     notebooks, Snakemake, FreshForge, or project CLIs should be reused rather
     than replaced.
-- [ ] P39.4 Documentation and closeout
-  - [ ] Add planning notes.
-  - [ ] Update roadmap and changelog.
-  - [ ] Run verification.
+- [x] P39.4 Documentation and closeout (#278)
+  - [x] Add planning notes.
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
 
 Phase 39 acceptance criteria:
 
@@ -1815,6 +1815,8 @@ Phase 39 acceptance criteria:
   implementation is secondary.
 - Templates are integration envelopes around existing project tools, not a new
   orchestration framework.
+- Templates reuse FreshForge's graph vocabulary for workflow, nodes, providers,
+  dependencies, artifacts, and diagnostics.
 
 ## Phase 40: Observability And Token-Cost Ingestion
 

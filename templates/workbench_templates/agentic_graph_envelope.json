@@ -1,0 +1,118 @@
+{
+  "workflow": {
+    "id": "example-agentic-workbench-graph",
+    "name": "Example Agentic Workbench Graph",
+    "description": "FreshForge-style graph envelope for supervised agent-assisted work.",
+    "execution_boundary": "Agent Workbench validates and records this envelope; project-native tools execute project work."
+  },
+  "nodes": [
+    {
+      "id": "select_task",
+      "provider": "supervisor.task_selection",
+      "node_type": "decision",
+      "needs": [],
+      "role": "supervisor",
+      "capability": "task selection",
+      "implementation": "human supervisor",
+      "inputs": {
+        "roadmap_or_issue": "project roadmap or issue reference"
+      },
+      "outputs": {
+        "task_bundle": "bounded task selected for delegation"
+      },
+      "artifacts": [
+        {
+          "artifact_id": "task_context",
+          "kind": "source",
+          "path_or_reference": "ignored runtime ticket context"
+        }
+      ],
+      "diagnostics": []
+    },
+    {
+      "id": "worker_proposal",
+      "provider": "agent_workbench.local_worker",
+      "node_type": "proposal",
+      "needs": [
+        "select_task"
+      ],
+      "role": "reviewer",
+      "capability": "evidence intake",
+      "implementation": "local worker model",
+      "inputs": {
+        "task_bundle": "${nodes.select_task.outputs.task_bundle}"
+      },
+      "outputs": {
+        "proposal": "worker generated proposal"
+      },
+      "artifacts": [
+        {
+          "artifact_id": "worker_output",
+          "kind": "generated",
+          "path_or_reference": "ignored runtime worker output"
+        }
+      ],
+      "diagnostics": [
+        "unsupported claims must be rejected before promotion"
+      ]
+    },
+    {
+      "id": "project_native_verification",
+      "provider": "freshforge_or_project_cli",
+      "node_type": "verification",
+      "needs": [
+        "worker_proposal"
+      ],
+      "role": "programmer",
+      "capability": "project-native verification",
+      "implementation": "FreshForge, project CLI, notebook, CI, or script",
+      "inputs": {
+        "proposal": "${nodes.worker_proposal.outputs.proposal}"
+      },
+      "outputs": {
+        "verification_evidence": "project-native command or report output"
+      },
+      "artifacts": [
+        {
+          "artifact_id": "verification_report",
+          "kind": "generated",
+          "path_or_reference": "ignored runtime verification report"
+        }
+      ],
+      "diagnostics": []
+    },
+    {
+      "id": "supervisor_promotion",
+      "provider": "supervisor.promotion",
+      "node_type": "decision",
+      "needs": [
+        "worker_proposal",
+        "project_native_verification"
+      ],
+      "role": "supervisor",
+      "capability": "promotion decision",
+      "implementation": "human or paid supervisor",
+      "inputs": {
+        "proposal": "${nodes.worker_proposal.outputs.proposal}",
+        "verification_evidence": "${nodes.project_native_verification.outputs.verification_evidence}"
+      },
+      "outputs": {
+        "promotion_decision": "promote, revise, reject, or defer"
+      },
+      "artifacts": [
+        {
+          "artifact_id": "decision_packet",
+          "kind": "promoted",
+          "path_or_reference": "tracked sanitized note or issue comment"
+        }
+      ],
+      "diagnostics": [
+        "GitHub mutation and tracked-file mutation remain supervisor-owned"
+      ]
+    }
+  ],
+  "token_accounting": {
+    "accounting_record": "ignored runtime accounting record",
+    "policy_tuning_report": "ignored runtime or promoted sanitized report"
+  }
+}
