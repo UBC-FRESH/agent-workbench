@@ -50,6 +50,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout-seconds", type=int, default=240, help="Session polling timeout.")
     parser.add_argument("--poll-seconds", type=float, default=3.0, help="Polling interval.")
     parser.add_argument("--code-command", default="code", help="VS Code command executable.")
+    parser.add_argument("--mode", default="agent", help="VS Code chat mode or custom agent identifier.")
     parser.add_argument("--prompt", default=DEFAULT_PROMPT, help="One-line prompt for code chat.")
     parser.add_argument("--no-launch", action="store_true", help="Skip launch and only parse existing sessions.")
     return parser.parse_args()
@@ -70,7 +71,7 @@ def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
         "--reuse-window",
         "--maximize",
         "--mode",
-        "agent",
+        args.mode,
         args.prompt,
         "-",
     ]
