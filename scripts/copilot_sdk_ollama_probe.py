@@ -340,7 +340,7 @@ def write_result(config: ProbeConfig, result: dict[str, Any]) -> None:
         f"- blocker: `{result.get('blocker', '')}`",
         f"- error: `{result.get('error', '')}`",
         f"- model: `{config.model}`",
-        f"- provider_type: `openai`",
+        "- provider_type: `openai`",
         f"- provider_base_url: `{scrub_base_url(config.base_url)}`",
         f"- wire_api: `{config.wire_api}`",
         f"- client_mode: `{config.mode}`",

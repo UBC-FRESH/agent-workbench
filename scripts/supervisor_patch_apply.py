@@ -135,7 +135,7 @@ def write_report(config: ApplyConfig, result: dict[str, str]) -> None:
         f"- error: `{result.get('error', '')}`",
         f"- result_file: `{config.result_file}`",
         f"- allowed_file: `{config.allowed_file}`",
-        f"- sandbox_root: `<ignored-supervisor-sandbox>`",
+        "- sandbox_root: `<ignored-supervisor-sandbox>`",
         f"- target: `{result.get('target', '')}`",
         "",
     ]

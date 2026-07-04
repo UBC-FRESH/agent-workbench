@@ -1,0 +1,85 @@
+{
+  "benchmark_id": "freshforge-p16-phase-scale-ab-token-economics",
+  "target": {
+    "repo": "UBC-FRESH/freshforge",
+    "phase_id": "P16",
+    "phase_title": "Provider result and validation evidence conventions",
+    "roadmap_reference": "FreshForge ROADMAP.md Phase 16"
+  },
+  "start_state": {
+    "base_branch": "main",
+    "start_commit": "5bce95b56146613c7c01950403fb717d3af886d7",
+    "isolation_strategy": "Create two disposable worktrees from the same start commit instead of using stash-based rollback."
+  },
+  "lanes": [
+    {
+      "lane_id": "direct_supervisor",
+      "status": "planned",
+      "branch": "benchmark/p16-direct-supervisor",
+      "worktree": "../freshforge-benchmark-p16-direct",
+      "method": "Paid supervisor implements the full FreshForge P16 phase directly, including issue planning, implementation, verification, PR, and closeout.",
+      "rollback_plan": "Delete the disposable worktree and branch after recording token/cost and verification evidence.",
+      "usage": {
+        "supervisor_input_tokens": 0,
+        "supervisor_output_tokens": 0,
+        "worker_input_tokens": 0,
+        "worker_output_tokens": 0
+      },
+      "evidence_to_capture": [
+        "Codex goal token report for the full direct lane",
+        "FreshForge branch commit hash",
+        "verification command results",
+        "PR or local diff summary if promoted"
+      ]
+    },
+    {
+      "lane_id": "delegated_graph",
+      "status": "planned",
+      "branch": "benchmark/p16-agent-workbench-delegated",
+      "worktree": "../freshforge-benchmark-p16-delegated",
+      "method": "Supervisor uses Agent Workbench P47 P16 graph packet to delegate proposal-only worker nodes, then performs all FreshForge mutations, verification, PR, and closeout directly.",
+      "rollback_plan": "Delete the disposable worktree and branch after recording token/cost and verification evidence.",
+      "graph_packet": "templates/deployment_tests/freshforge/p16_provider_evidence_conventions_graph.json",
+      "usage": {
+        "supervisor_input_tokens": 0,
+        "supervisor_output_tokens": 0,
+        "worker_input_tokens": 0,
+        "worker_output_tokens": 0
+      },
+      "evidence_to_capture": [
+        "Codex goal token report for delegated supervisor lane",
+        "worker token counts from provider usage or local estimate",
+        "Agent Workbench graph decision report",
+        "Agent Workbench token/cost records by graph node",
+        "FreshForge branch commit hash",
+        "verification command results",
+        "PR or local diff summary if promoted"
+      ]
+    }
+  ],
+  "token_accounting": {
+    "supervisor_input_price_per_1m_usd": 2.0,
+    "supervisor_output_price_per_1m_usd": 8.0,
+    "worker_input_price_per_1m_usd": 0.0,
+    "worker_output_price_per_1m_usd": 0.0,
+    "pricing_note": "Replace placeholder supervisor prices with the active paid supervisor model prices before final scoring."
+  },
+  "validation": {
+    "commands": [
+      "python -m ruff check .",
+      "python -m pytest",
+      "sphinx-build -b html docs _build/html -W",
+      "python -m build",
+      "python -m twine check dist/*"
+    ],
+    "freshforge_mutation_allowed": false,
+    "promotion_requires_supervisor": true
+  },
+  "decision_rules": [
+    "The delegated lane wins only if it reaches equivalent or better FreshForge verification with lower paid supervisor token cost.",
+    "The delegated lane loses if supervisor cleanup or verification effort erases paid-token savings.",
+    "A partial win is allowed when delegated worker outputs are useful but the current protocol needs adjustment.",
+    "No conclusion is allowed until both lanes start from the same commit and record actual token usage.",
+    "Release, tag, publish, PR merge, and issue closeout remain supervisor-owned in both lanes."
+  ]
+}

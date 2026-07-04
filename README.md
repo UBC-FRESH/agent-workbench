@@ -62,6 +62,8 @@ agent-workbench workflow validate --input templates/workflow_step_record.json
 agent-workbench roles validate --input templates/role_capability_implementation.json
 agent-workbench tokens validate --input templates/token_cost_record.json
 agent-workbench tokens graph-synthesize --input-dir templates/token_examples --output runtime/token_graph/example_graph_synthesis.md
+agent-workbench benchmark validate --input templates/benchmarks/freshforge_p16_phase_ab_benchmark.json
+agent-workbench benchmark render --input templates/benchmarks/freshforge_p16_phase_ab_benchmark.json --output runtime/benchmarks/freshforge_p16_phase_ab_benchmark.md
 agent-workbench graph validate --input templates/workbench_templates/agentic_workflow_graph.json --agent-metadata
 agent-workbench graph render --input templates/workbench_templates/freshforge_proposal_assist_graph.json --output runtime/graph_render/freshforge_proposal_assist.md --agent-metadata
 agent-workbench graph decide --input templates/workbench_templates/freshforge_proposal_assist_graph.json --output runtime/graph_decisions/freshforge_proposal_assist.md --agent-metadata
