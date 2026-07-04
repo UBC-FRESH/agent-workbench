@@ -245,3 +245,26 @@ issues, pull requests, and closeout comments.
   posting closeout comments.
 - Recorded the next direction as continuing with the Copilot SDK bridge path in
   a repeated same-ticket model evaluation harness.
+
+## 2026-07-04 - Launched Phase 8 SDK same-ticket evaluation harness
+
+- Created the Phase 8 repeated SDK/Ollama evaluation lane on
+  `feature/p8-sdk-same-ticket-evaluation-harness`, with parent issue #55 and
+  child task issues #56 through #60.
+- Added a public-safe SDK evaluation manifest template and a local-only runner
+  that reuses the Phase 7 Copilot SDK probe helper for repeated model/repeat
+  trials.
+- Scoped Phase 8 to no-tool or tiny bounded same-ticket stability checks, with
+  package scaffolding, CI, VS Code extension work, MCP servers, hosted services,
+  tool-enabled trials, and production benchmark claims deferred.
+
+## 2026-07-04 - Ran first P8 same-ticket SDK model trial
+
+- Added `scripts/sdk_same_ticket_eval.py`, a local-only manifest runner and
+  summarizer that reuses the Phase 7 SDK probe helper for repeated model/repeat
+  trials.
+- Ran two no-tool marker repeats each for `qwen3-coder:latest` and
+  `qwen3-coder-next:latest` through the configured remote Ollama provider path.
+- Verified that all four runs classified as `exact-marker` in the ignored P8
+  summary, showing the harness is ready for a slightly richer bounded
+  documentation-ticket trial.

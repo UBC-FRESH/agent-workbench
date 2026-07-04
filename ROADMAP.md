@@ -16,6 +16,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P5 Custom agent model switching spike | #35 | `feature/p5-custom-agent-model-switching` | Complete |
 | P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Complete |
 | P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Complete |
+| P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | PR-ready |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -377,7 +378,7 @@ and provider configuration.
         prerequisites are available.
   - [x] Record exact blocker text if prerequisites are missing.
   - [x] Promote only sanitized findings into tracked planning notes.
-- [ ] P7.4 Feasibility decision, closeout, and PR (#52)
+- [x] P7.4 Feasibility decision, closeout, and PR (#52)
   - [x] Update `ROADMAP.md`.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Finalize P7 planning notes.
@@ -393,4 +394,65 @@ Phase 7 acceptance criteria:
   install/use the SDK source checkout or published SDK wheel.
 - The no-tool probe is attempted with explicit model and provider inputs, or a
   concrete blocker is recorded with exact error text.
+- `ROADMAP.md`, `CHANGE_LOG.md`, planning notes, issues, and PR body agree.
+
+## Phase 8: SDK Same-Ticket Evaluation Harness
+
+Parent issue: #55
+
+Branch: `feature/p8-sdk-same-ticket-evaluation-harness`
+
+Status: PR-ready
+
+Goal: turn the successful P7 one-off Copilot SDK/Ollama probe into a
+repeatable, public-safe local evaluation harness that can run the same bounded
+ticket multiple times against configured Ollama worker models and summarize
+stability signals without trusting worker prose.
+
+- [x] P8.1 Probe run manifest (#56)
+  - [x] Document manifest fields for ticket, models, repeats, timeout, expected
+        marker, output directory, and provider input references.
+  - [x] Add a public-safe example manifest template under `templates/`.
+  - [x] Keep real provider endpoint/header references in ignored runtime files.
+  - [x] Document how the manifest relates to the existing SDK probe helper.
+- [x] P8.2 Repeated same-ticket runner (#57)
+  - [x] Add a local runner script under `scripts/`.
+  - [x] Reuse `scripts/copilot_sdk_ollama_probe.py` rather than duplicating SDK
+        session logic.
+  - [x] Write raw per-run outputs under ignored runtime paths.
+  - [x] Support a dry-run mode that prints planned runs without contacting the
+        model provider.
+- [x] P8.3 Result summarizer (#58)
+  - [x] Add parser logic for the P7 probe Markdown result format.
+  - [x] Classify exact marker match, duplicate output, missing marker, timeout,
+        SDK/runtime failure, model-call failure, and simple loop-like
+        repetition.
+  - [x] Emit a sanitized Markdown summary under ignored runtime paths.
+  - [x] Avoid copying raw event records into tracked files.
+- [x] P8.4 First A/B consistency trial (#59)
+  - [x] Create an ignored local manifest for the no-tool marker ticket.
+  - [x] Run at least two repeats per model when local provider inputs are
+        available.
+  - [x] Inspect ignored per-run results and generated summary.
+  - [x] Promote only sanitized findings into tracked P8 planning notes.
+- [ ] P8.5 Closeout, verification, and PR (#60)
+  - [x] Update `ROADMAP.md`.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Finalize P8 planning notes.
+  - [x] Run verification.
+  - [x] Comment on and close child issues.
+  - [ ] Open, merge, and verify PR closeout.
+
+Phase 8 acceptance criteria:
+
+- A maintainer can define a repeated model trial in an ignored manifest without
+  embedding private endpoint/header details in tracked files.
+- The harness can run the same ticket N times per configured model through the
+  Copilot SDK probe path.
+- The summarizer can classify exact marker matches, duplicate output, missing
+  marker, timeouts, SDK/runtime failures, model-call failures, and simple
+  loop-like repetition signals from ignored result files.
+- The first A/B trial either records sanitized model-comparison findings for
+  `qwen3-coder:latest` and `qwen3-coder-next:latest`, or records an exact
+  blocker.
 - `ROADMAP.md`, `CHANGE_LOG.md`, planning notes, issues, and PR body agree.
