@@ -23,6 +23,12 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Complete |
 | P13 GitHub workflow microtrial | #97 | `feature/p13-github-workflow-microtrial` | Complete |
 | P14 Model matrix and packaging decision | #105 | `feature/p14-model-matrix-packaging-decision` | Complete |
+| P15 Model-family expansion trial | TBD | TBD | Planned |
+| P16 Command surface stabilization | TBD | TBD | Planned |
+| P17 Evidence store and summary schema | TBD | TBD | Planned |
+| P18 Richer restricted tool trial | TBD | TBD | Planned |
+| P19 Delegation policy and trust levels | TBD | TBD | Planned |
+| P20 Packaging revisit and interface decision | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -745,3 +751,166 @@ Phase 14 acceptance criteria:
   interface preference alone.
 - Any decision to add package, CLI, extension, MCP, or hosted-agent structure is
   deferred until this evidence exists.
+
+## Forward Plan: P15-P20
+
+Planning note: `planning/p15_p20_next_tranche_plan.md`
+
+The next tranche broadens evidence before broadening authority. It expands
+model coverage, stabilizes local commands, normalizes evidence, runs richer
+sandbox-only tool trials, writes delegation policy, and only then revisits
+packaging.
+
+## Phase 15: Model-Family Expansion Trial
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: run the stable P8-P10 ticket families across selected configured Ollama
+models beyond the initial qwen pair.
+
+Planned tasks:
+
+- P15.1 Select model subset from configured inventory.
+- P15.2 Prepare repeated manifests for marker, structured-output, and
+  patch-proposal ticket families.
+- P15.3 Run small-repeat SDK trials.
+- P15.4 Produce sanitized cross-model summary.
+- P15.5 Closeout and model-shortlist decision.
+
+Phase 15 acceptance criteria:
+
+- At least three non-qwen configured coding models are evaluated on repeated
+  no-tool ticket families.
+- Results distinguish marker, structured-output, and patch-proposal behavior.
+- Large-model inclusion or deferral is explicit.
+
+## Phase 16: Command Surface Stabilization
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: stabilize the local script command surfaces that are now reused across
+multiple phases without converting the repo into a package.
+
+Planned tasks:
+
+- P16.1 Inventory script options and manifest fields.
+- P16.2 Normalize redaction and report metadata.
+- P16.3 Add lightweight smoke fixtures or dry-run checks.
+- P16.4 Update playbooks and templates.
+- P16.5 Closeout and package-readiness checkpoint.
+
+Phase 16 acceptance criteria:
+
+- Script help, manifest fields, and report metadata are internally consistent.
+- Dry-run/smoke checks cover the major local scripts.
+- Packaging remains deferred unless command surfaces are stable enough to wrap.
+
+## Phase 17: Evidence Store And Summary Schema
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: define an ignored evidence layout and sanitized summary schema for model
+runs, bridge runs, patch trials, and GitHub microtasks.
+
+Planned tasks:
+
+- P17.1 Evidence directory convention.
+- P17.2 Summary JSON/Markdown field schema.
+- P17.3 Sanitized promotion rules.
+- P17.4 Backfill one summary from P15/P16 style outputs.
+- P17.5 Closeout and evidence-retention decision.
+
+Phase 17 acceptance criteria:
+
+- Raw evidence and sanitized summaries have distinct locations and purposes.
+- Summary fields are sufficient for model comparison and supervisor audit.
+- No private endpoint, header, transcript, or workstation path is tracked.
+
+## Phase 18: Richer Restricted Tool Trial
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: run a richer VS Code Chat bridge tool trial in an ignored sandbox with one
+read, one allowed ignored-file mutation, and supervisor verification.
+
+Planned tasks:
+
+- P18.1 Rich restricted-tool ticket contract.
+- P18.2 Sandbox target setup.
+- P18.3 VS Code Chat bridge run.
+- P18.4 Supervisor evidence report and deviation analysis.
+- P18.5 Closeout and mutation-boundary decision.
+
+Phase 18 acceptance criteria:
+
+- Worker tool use remains limited to ignored sandbox paths.
+- Observed tool evidence supports or rejects the worker result.
+- The phase explicitly states whether tracked-file mutation remains forbidden.
+
+## Phase 19: Delegation Policy And Trust Levels
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: convert P8-P18 evidence into a formal delegation policy and trust-level
+model for worker agents.
+
+Planned tasks:
+
+- P19.1 Define trust levels.
+- P19.2 Map ticket families to allowed authority.
+- P19.3 Define nondelegable actions.
+- P19.4 Update AGENTS and playbooks.
+- P19.5 Closeout and governance decision.
+
+Phase 19 acceptance criteria:
+
+- The policy distinguishes no-tool output, proposal-only work,
+  supervisor-applied mutation, sandbox mutation, tracked mutation, and GitHub
+  workflow authority.
+- Issue closure, PR merge, and release actions remain supervisor-only unless
+  evidence supports a future exception.
+
+## Phase 20: Packaging Revisit And Interface Decision
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: revisit package, CLI, VS Code extension, MCP, and hosted-agent options
+using P15-P19 evidence.
+
+Planned tasks:
+
+- P20.1 Review command-surface stability.
+- P20.2 Review evidence schema stability.
+- P20.3 Compare interface options and costs.
+- P20.4 Decide next architecture move.
+- P20.5 Closeout and next-roadmap tranche.
+
+Phase 20 acceptance criteria:
+
+- The architecture decision cites concrete evidence from P15-P19.
+- If packaging is still deferred, the reason is explicit.
+- If packaging starts, the chosen surface has a narrow first slice.

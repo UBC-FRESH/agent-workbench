@@ -435,3 +435,13 @@ issues, pull requests, and closeout comments.
 - Merged PR #111 for the Phase 14 model matrix and architecture decision and verified merge commit `36f3fb9095f27cc19770121e00d55dd8eadeb2ed`.
 - Closed P14 implementation child issues after posting closeout comments.
 - Accepted ADR 0001: keep Agent Workbench as Markdown protocols plus local scripts for the next tranche.
+
+## 2026-07-04 - Planned P15-P20 next tranche
+
+- Added a forward roadmap from model-family expansion through command-surface
+  stabilization, evidence schema, richer sandbox tool trials, delegation
+  policy, and packaging revisit.
+- Added `planning/p15_p20_next_tranche_plan.md` to ground the next tranche in
+  P9-P14 evidence.
+- Kept future P15-P20 issue numbers and branches as `TBD` so issue trees are
+  created only when each phase starts.
