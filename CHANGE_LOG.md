@@ -885,3 +885,15 @@ issues, pull requests, and closeout comments.
   separate graph decision policy.
 - Added `planning/phase44_graph_aware_decision_engine.md` and updated README,
   roadmap, changelog, and smoke coverage.
+
+## 2026-07-04 - Added P45 per-node token economics
+
+- Opened P45 GitHub issue #310 with child issues #311 through #314 for
+  node-level token/cost records, graph economics synthesis, policy feedback,
+  and closeout.
+- Extended sanitized token/cost records with graph-node scope fields and an
+  optional direct-supervisor counterfactual block.
+- Added `agent-workbench tokens graph-synthesize` to summarize token/cash
+  economics by graph node.
+- Added sanitized token example records and
+  `planning/phase45_per_node_token_economics.md`.

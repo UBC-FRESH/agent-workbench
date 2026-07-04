@@ -6,6 +6,9 @@
     "project": "example-project",
     "phase": "example-phase",
     "task_id": "example-task",
+    "graph_id": "example_agentic_workbench_graph",
+    "node_id": "worker_proposal",
+    "node_kind": "worker_proposal",
     "model_or_worker": "qwen3-coder-next:latest",
     "protocol": "proposal-assist/no-tool"
   },
@@ -20,6 +23,10 @@
     "supervisor_output_price_per_1m_usd": 14.0,
     "worker_input_price_per_1m_usd": 0.0,
     "worker_output_price_per_1m_usd": 0.0
+  },
+  "counterfactual": {
+    "direct_supervisor_input_tokens": 60000,
+    "direct_supervisor_output_tokens": 12000
   },
   "public_safety": {
     "raw_prompts_excluded": true,
