@@ -51,3 +51,23 @@ issues, pull requests, and closeout comments.
   run and sanitized findings.
 - Updated `ROADMAP.md` and `CHANGE_LOG.md` so Phase 1 can close through the
   normal issue, PR, and verification ritual.
+
+## 2026-07-04 - Launched Phase 2 VS Code Chat bridge playbook
+
+- Created the Phase 2 bridge-playbook lane on
+  `feature/p2-vscode-chat-bridge-playbook`, with parent issue #13 and child task
+  issues #14 through #17.
+- Scoped Phase 2 to documenting `code chat --mode agent` launch patterns,
+  file-based ticket/result conventions, and supervisor verification boundaries.
+- Kept response parsing, VS Code extension work, CLI helpers, schemas, CI, and
+  live model evaluation deferred.
+
+## 2026-07-04 - Added VS Code Chat bridge playbook
+
+- Added `playbooks/vscode_chat_bridge.md` with stdin launch patterns,
+  `--add-file` context examples, ignored job-file conventions, and supervisor
+  verification rules.
+- Added `planning/phase2_vscode_chat_bridge_notes.md` with the local
+  `code chat --help` command-surface dry run and sanitized findings.
+- Updated `ROADMAP.md` and `CHANGE_LOG.md` so Phase 2 can close through the
+  normal issue, PR, and verification ritual.
