@@ -327,11 +327,11 @@ launch path tested in Phases 3 through 5.
   - [x] Record blockers exactly if the SDK or endpoint is unavailable.
 - [ ] P6.4 Feasibility notes, closeout, and PR (#45)
   - [x] Synchronize roadmap and changelog.
-  - [ ] Run `git diff --check`.
-  - [ ] Inspect changed Markdown and script files.
-  - [ ] Search for credentials, private paths, raw transcript leakage, endpoint
+  - [x] Run `git diff --check`.
+  - [x] Inspect changed Markdown and script files.
+  - [x] Search for credentials, private paths, raw transcript leakage, endpoint
         details, and unrelated project contamination.
-  - [ ] Comment on and close child issues.
+  - [x] Comment on and close implementation child issues.
   - [ ] Open PR and complete parent closeout after merge.
 
 Phase 6 acceptance criteria:
