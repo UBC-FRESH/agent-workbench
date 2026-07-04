@@ -655,3 +655,21 @@ issues, pull requests, and closeout comments.
 - Closed the P27-P30 tranche with Agent Workbench ready for cautious
   real-project proposal-assist use, not autonomous implementation or delegated
   GitHub closeout.
+
+## 2026-07-04 - Launched Phase 31 delegation economics model
+
+- Reframed the post-P30 roadmap around whether supervised self-hosted worker
+  delegation can reduce paid supervisor-token effort on real UBC-FRESH project
+  work after setup, verification, retry, and cleanup costs are counted.
+- Created the Phase 31 delegation-economics lane on
+  `feature/p31-delegation-economics-model`, with parent issue #222 and child
+  task issues #223 through #226.
+- Preserved the raw developer framing in
+  `planning/notes-gp-20260704-raw.md`, promoted the concise strategy into
+  `planning/notes.md`, and added `planning/delegation_economics_vision.md` as
+  a structured vision note.
+- Added planned roadmap phases P31 through P36 covering the delegation economics
+  model, task taxonomy, worker model capability profiles, a rules-based
+  delegation decision engine, real-project pilot accounting, and policy tuning.
+- Kept P32-P36 planned only so the next development environment can activate
+  the FreshForge or CLEWS pilot lane deliberately.
