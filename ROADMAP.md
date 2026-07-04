@@ -22,7 +22,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P11 Supervisor-applied patch harness | #81 | `feature/p11-supervisor-applied-patch-harness` | Complete |
 | P12 Restricted tool-enabled worker trial | #89 | `feature/p12-restricted-tool-worker-trial` | Complete |
 | P13 GitHub workflow microtrial | #97 | `feature/p13-github-workflow-microtrial` | Complete |
-| P14 Model matrix and packaging decision | #105 | `feature/p14-model-matrix-packaging-decision` | PR-ready |
+| P14 Model matrix and packaging decision | #105 | `feature/p14-model-matrix-packaging-decision` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -707,7 +707,7 @@ Parent issue: #105
 
 Branch: `feature/p14-model-matrix-packaging-decision`
 
-Status: PR-ready
+Status: complete
 
 Goal: compare configured Ollama worker models across the stable P9-P13 ticket
 families, then decide whether Agent Workbench should remain scripts/Markdown or
@@ -731,12 +731,12 @@ become a package, CLI, VS Code extension, hosted agent, or other tool surface.
         agent.
   - [x] Cite observed workflow friction.
   - [x] Recommend next architecture step.
-- [ ] P14.5 Architecture decision record and closeout (#110)
+- [x] P14.5 Architecture decision record and closeout (#110)
   - [x] Add architecture decision note.
   - [x] Update roadmap and changelog.
   - [x] Run verification.
   - [x] Close child issues.
-  - [ ] Open and merge PR.
+  - [x] Open and merge PR.
 
 Phase 14 acceptance criteria:
 
