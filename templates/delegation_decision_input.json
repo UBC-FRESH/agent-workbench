@@ -14,11 +14,19 @@
   "requires_release_or_closeout": false,
   "requires_private_context": false,
   "economics": {
-    "avoided_supervisor_minutes": 45,
-    "setup_minutes": 10,
-    "verification_minutes": 15,
-    "retry_minutes": 5,
+    "direct_supervisor_input_tokens": 120000,
+    "direct_supervisor_output_tokens": 25000,
+    "delegated_supervisor_input_tokens": 45000,
+    "delegated_supervisor_output_tokens": 9000,
+    "worker_input_tokens": 150000,
+    "worker_output_tokens": 35000,
+    "cleanup_supervisor_input_tokens": 30000,
+    "cleanup_supervisor_output_tokens": 6000,
+    "supervisor_input_price_per_1m_usd": 1.75,
+    "supervisor_output_price_per_1m_usd": 14.0,
+    "worker_input_price_per_1m_usd": 0.0,
+    "worker_output_price_per_1m_usd": 0.0,
     "failure_probability": 0.2,
-    "cleanup_minutes": 10
+    "latency_friction_minutes": 10
   }
 }

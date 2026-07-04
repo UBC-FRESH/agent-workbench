@@ -8,7 +8,8 @@ judgment.
 ## Boundary
 
 P34 is a supervisor-side decision aid. It does not run workers, install models,
-mutate target projects, or optimize policy with machine learning.
+mutate target projects, instrument observability, or optimize policy with
+machine learning.
 
 The command evaluates one JSON input file and renders a Markdown report:
 
@@ -47,22 +48,49 @@ Optional safety fields:
 
 Optional economics fields live under `economics`:
 
-- `avoided_supervisor_minutes`
-- `setup_minutes`
-- `verification_minutes`
-- `retry_minutes`
+- `direct_supervisor_input_tokens`
+- `direct_supervisor_output_tokens`
+- `delegated_supervisor_input_tokens`
+- `delegated_supervisor_output_tokens`
+- `worker_input_tokens`
+- `worker_output_tokens`
+- `cleanup_supervisor_input_tokens`
+- `cleanup_supervisor_output_tokens`
+- `supervisor_input_price_per_1m_usd`
+- `supervisor_output_price_per_1m_usd`
+- `worker_input_price_per_1m_usd`
+- `worker_output_price_per_1m_usd`
 - `failure_probability`
-- `cleanup_minutes`
+- `latency_friction_minutes`
+
+The primary unit is token-priced USD, not wall-clock time. Minutes are retained
+only as optional friction metadata because paid supervisor cost is driven by
+token usage while the supervisor is thinking, prompting, verifying, and fixing.
+Self-hosted worker models usually have zero marginal API-token price in this
+model, but they still have verification and cleanup risk.
+
+Token counts should come from real run usage when available. PostHog-style AI
+observability can capture model, latency, input tokens, output tokens, total
+cost, and multi-agent/tool trace structure for OpenAI Agents SDK workflows.
+OpenAI model pricing is published as input, cached-input, and output prices per
+1M tokens, so the price fields in a decision input should be supplied from the
+current provider price matrix instead of hard-coded in Agent Workbench.
 
 The command computes:
 
 ```text
-expected net minutes =
-  avoided supervisor minutes
-  - setup minutes
-  - verification minutes
-  - retry minutes
-  - failure_probability * cleanup minutes
+direct supervisor cost =
+  direct input tokens * supervisor input price
+  + direct output tokens * supervisor output price
+
+expected delegated cost =
+  delegated supervisor token cost
+  + worker token cost
+  + failure_probability * cleanup supervisor token cost
+
+expected net savings USD =
+  direct supervisor cost
+  - expected delegated cost
 ```
 
 ## Recommendation Set
@@ -88,7 +116,7 @@ The rules are intentionally conservative:
 - planned or missing model profiles produce `defer`;
 - project and phase-level bundles produce `split-smaller`;
 - critical-risk tasks produce `do-directly`;
-- negative expected economics produce `do-directly`; and
+- negative expected net savings USD produces `do-directly`; and
 - observed-profile, low/medium-risk, high/medium-suitability L0/L1 tasks with
   positive economics can produce `delegate`.
 
@@ -104,9 +132,9 @@ P34 dogfood used ignored runtime inputs for three representative cases:
 | Phase-level roadmap review | `split-smaller` | Shows broad work should be decomposed first. |
 | GitHub closeout task | `do-directly` | Shows nondelegable workflow state stays supervisor-owned. |
 
-The reports exposed the expected economics and rule reasons. The output is good
-enough to paste into a planning discussion, but it is deliberately not a worker
-launcher.
+The reports exposed the expected token-priced USD economics and rule reasons.
+The output is good enough to paste into a planning discussion, but it is
+deliberately not a worker launcher.
 
 ## P35 Implication
 

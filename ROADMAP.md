@@ -1464,7 +1464,7 @@ Status: complete
 
 Goal: define the cost/benefit model that determines whether self-hosted worker
 delegation produces positive net value compared with direct paid-supervisor
-work.
+token spend.
 
 Planned tasks:
 
@@ -1490,9 +1490,10 @@ Planned tasks:
 
 Phase 31 acceptance criteria:
 
-- Agent Workbench has a public-safe economics model for delegation decisions.
-- The model accounts for overhead, verification, retry, cleanup, and direct-work
-  counterfactuals.
+- Agent Workbench has a public-safe token/cash economics model for delegation
+  decisions.
+- The model accounts for paid supervisor tokens, worker tokens, overhead,
+  verification, retry, cleanup, and direct-work counterfactuals.
 - The model identifies why too-small and too-large task bundles can both be
   net-negative.
 
@@ -1608,7 +1609,8 @@ Phase 34 acceptance criteria:
 
 - Agent Workbench can produce a transparent delegation recommendation for a
   candidate task bundle.
-- Recommendations expose the economics and risk assumptions behind them.
+- Recommendations expose token-priced economics and risk assumptions behind
+  them.
 - The first decision engine is rules-based rather than ML-based.
 - Planned or missing model profiles are handled conservatively.
 
@@ -1630,7 +1632,8 @@ Planned tasks:
   - [ ] Include varied task sizes and task types.
   - [ ] Avoid project-critical-path tasks for early experiments.
 - [ ] P35.2 Delegation accounting record
-  - [ ] Record setup, worker, verification, retry, cleanup, and direct-work
+  - [ ] Record paid supervisor input/output tokens, worker input/output tokens,
+    token price assumptions, verification, retry, cleanup, and direct-work
     counterfactual estimates.
   - [ ] Record accepted, rejected, and needs-evidence claims.
   - [ ] Record whether the worker changed the supervisor decision.
@@ -1645,7 +1648,8 @@ Planned tasks:
 
 Phase 35 acceptance criteria:
 
-- Agent Workbench has real-project delegation records with cost/benefit fields.
+- Agent Workbench has real-project delegation records with token/cash
+  cost-benefit fields.
 - The pilot accounting distinguishes useful imperfect proposals from costly
   failures.
 - The synthesis identifies at least one promising and one poor delegation class,

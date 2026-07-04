@@ -43,27 +43,72 @@ REQUIRED_FIELDS = (
 
 @dataclass(frozen=True)
 class Economics:
-    avoided_supervisor_minutes: float = 0.0
-    setup_minutes: float = 0.0
-    verification_minutes: float = 0.0
-    retry_minutes: float = 0.0
+    direct_supervisor_input_tokens: float = 0.0
+    direct_supervisor_output_tokens: float = 0.0
+    delegated_supervisor_input_tokens: float = 0.0
+    delegated_supervisor_output_tokens: float = 0.0
+    worker_input_tokens: float = 0.0
+    worker_output_tokens: float = 0.0
+    cleanup_supervisor_input_tokens: float = 0.0
+    cleanup_supervisor_output_tokens: float = 0.0
+    supervisor_input_price_per_1m_usd: float = 0.0
+    supervisor_output_price_per_1m_usd: float = 0.0
+    worker_input_price_per_1m_usd: float = 0.0
+    worker_output_price_per_1m_usd: float = 0.0
     failure_probability: float = 0.0
-    cleanup_minutes: float = 0.0
+    latency_friction_minutes: float = 0.0
 
     @property
-    def expected_cleanup_minutes(self) -> float:
-        return self.failure_probability * self.cleanup_minutes
-
-    @property
-    def expected_net_minutes(self) -> float:
-        return (
-            self.avoided_supervisor_minutes
-            - self.setup_minutes
-            - self.verification_minutes
-            - self.retry_minutes
-            - self.expected_cleanup_minutes
+    def direct_supervisor_cost_usd(self) -> float:
+        return token_cost_usd(
+            self.direct_supervisor_input_tokens,
+            self.direct_supervisor_output_tokens,
+            self.supervisor_input_price_per_1m_usd,
+            self.supervisor_output_price_per_1m_usd,
         )
 
+    @property
+    def delegated_supervisor_cost_usd(self) -> float:
+        return token_cost_usd(
+            self.delegated_supervisor_input_tokens,
+            self.delegated_supervisor_output_tokens,
+            self.supervisor_input_price_per_1m_usd,
+            self.supervisor_output_price_per_1m_usd,
+        )
+
+    @property
+    def worker_cost_usd(self) -> float:
+        return token_cost_usd(
+            self.worker_input_tokens,
+            self.worker_output_tokens,
+            self.worker_input_price_per_1m_usd,
+            self.worker_output_price_per_1m_usd,
+        )
+
+    @property
+    def cleanup_cost_usd(self) -> float:
+        return token_cost_usd(
+            self.cleanup_supervisor_input_tokens,
+            self.cleanup_supervisor_output_tokens,
+            self.supervisor_input_price_per_1m_usd,
+            self.supervisor_output_price_per_1m_usd,
+        )
+
+    @property
+    def expected_cleanup_cost_usd(self) -> float:
+        return self.failure_probability * self.cleanup_cost_usd
+
+    @property
+    def expected_delegated_cost_usd(self) -> float:
+        return (
+            self.delegated_supervisor_cost_usd
+            + self.worker_cost_usd
+            + self.expected_cleanup_cost_usd
+        )
+
+    @property
+    def expected_net_savings_usd(self) -> float:
+        return self.direct_supervisor_cost_usd - self.expected_delegated_cost_usd
 
 @dataclass(frozen=True)
 class DecisionResult:
@@ -236,10 +281,10 @@ def decide_task(data: dict[str, Any]) -> DecisionResult:
             "Reduce risk and authority before delegation.",
         )
 
-    if economics.expected_net_minutes < 0:
+    if economics.expected_net_savings_usd < 0:
         reasons.append(
             "Expected delegation economics are negative "
-            f"({format_minutes(economics.expected_net_minutes)} net minutes)."
+            f"({format_usd(economics.expected_net_savings_usd)} expected net USD)."
         )
         return build_result(
             "do-directly",
@@ -346,11 +391,19 @@ def validate_decision_input(data: dict[str, Any]) -> list[str]:
         if probability is None or probability < 0 or probability > 1:
             errors.append("`economics.failure_probability` must be between 0 and 1")
         for field in (
-            "avoided_supervisor_minutes",
-            "setup_minutes",
-            "verification_minutes",
-            "retry_minutes",
-            "cleanup_minutes",
+            "direct_supervisor_input_tokens",
+            "direct_supervisor_output_tokens",
+            "delegated_supervisor_input_tokens",
+            "delegated_supervisor_output_tokens",
+            "worker_input_tokens",
+            "worker_output_tokens",
+            "cleanup_supervisor_input_tokens",
+            "cleanup_supervisor_output_tokens",
+            "supervisor_input_price_per_1m_usd",
+            "supervisor_output_price_per_1m_usd",
+            "worker_input_price_per_1m_usd",
+            "worker_output_price_per_1m_usd",
+            "latency_friction_minutes",
         ):
             value = float_or_none(economics.get(field, 0.0))
             if value is None or value < 0:
@@ -378,14 +431,26 @@ def render_markdown_report(result: DecisionResult) -> str:
         "",
         "## Economics",
         "",
-        f"- avoided_supervisor_minutes: {format_minutes(economics.avoided_supervisor_minutes)}",
-        f"- setup_minutes: {format_minutes(economics.setup_minutes)}",
-        f"- verification_minutes: {format_minutes(economics.verification_minutes)}",
-        f"- retry_minutes: {format_minutes(economics.retry_minutes)}",
+        f"- direct_supervisor_input_tokens: {format_count(economics.direct_supervisor_input_tokens)}",
+        f"- direct_supervisor_output_tokens: {format_count(economics.direct_supervisor_output_tokens)}",
+        f"- delegated_supervisor_input_tokens: {format_count(economics.delegated_supervisor_input_tokens)}",
+        f"- delegated_supervisor_output_tokens: {format_count(economics.delegated_supervisor_output_tokens)}",
+        f"- worker_input_tokens: {format_count(economics.worker_input_tokens)}",
+        f"- worker_output_tokens: {format_count(economics.worker_output_tokens)}",
+        f"- cleanup_supervisor_input_tokens: {format_count(economics.cleanup_supervisor_input_tokens)}",
+        f"- cleanup_supervisor_output_tokens: {format_count(economics.cleanup_supervisor_output_tokens)}",
+        f"- supervisor_input_price_per_1m_usd: {format_usd(economics.supervisor_input_price_per_1m_usd)}",
+        f"- supervisor_output_price_per_1m_usd: {format_usd(economics.supervisor_output_price_per_1m_usd)}",
+        f"- worker_input_price_per_1m_usd: {format_usd(economics.worker_input_price_per_1m_usd)}",
+        f"- worker_output_price_per_1m_usd: {format_usd(economics.worker_output_price_per_1m_usd)}",
         f"- failure_probability: {economics.failure_probability:.2f}",
-        f"- cleanup_minutes: {format_minutes(economics.cleanup_minutes)}",
-        f"- expected_cleanup_minutes: {format_minutes(economics.expected_cleanup_minutes)}",
-        f"- expected_net_minutes: {format_minutes(economics.expected_net_minutes)}",
+        f"- latency_friction_minutes: {format_minutes(economics.latency_friction_minutes)}",
+        f"- direct_supervisor_cost_usd: {format_usd(economics.direct_supervisor_cost_usd)}",
+        f"- delegated_supervisor_cost_usd: {format_usd(economics.delegated_supervisor_cost_usd)}",
+        f"- worker_cost_usd: {format_usd(economics.worker_cost_usd)}",
+        f"- expected_cleanup_cost_usd: {format_usd(economics.expected_cleanup_cost_usd)}",
+        f"- expected_delegated_cost_usd: {format_usd(economics.expected_delegated_cost_usd)}",
+        f"- expected_net_savings_usd: {format_usd(economics.expected_net_savings_usd)}",
         "",
         "## Reasons",
         "",
@@ -411,14 +476,40 @@ def result_to_jsonable(result: DecisionResult) -> dict[str, Any]:
         "suitability": result.suitability,
         "risk": result.risk,
         "economics": {
-            "avoided_supervisor_minutes": result.economics.avoided_supervisor_minutes,
-            "setup_minutes": result.economics.setup_minutes,
-            "verification_minutes": result.economics.verification_minutes,
-            "retry_minutes": result.economics.retry_minutes,
+            "direct_supervisor_input_tokens": result.economics.direct_supervisor_input_tokens,
+            "direct_supervisor_output_tokens": result.economics.direct_supervisor_output_tokens,
+            "delegated_supervisor_input_tokens": (
+                result.economics.delegated_supervisor_input_tokens
+            ),
+            "delegated_supervisor_output_tokens": (
+                result.economics.delegated_supervisor_output_tokens
+            ),
+            "worker_input_tokens": result.economics.worker_input_tokens,
+            "worker_output_tokens": result.economics.worker_output_tokens,
+            "cleanup_supervisor_input_tokens": (
+                result.economics.cleanup_supervisor_input_tokens
+            ),
+            "cleanup_supervisor_output_tokens": (
+                result.economics.cleanup_supervisor_output_tokens
+            ),
+            "supervisor_input_price_per_1m_usd": (
+                result.economics.supervisor_input_price_per_1m_usd
+            ),
+            "supervisor_output_price_per_1m_usd": (
+                result.economics.supervisor_output_price_per_1m_usd
+            ),
+            "worker_input_price_per_1m_usd": result.economics.worker_input_price_per_1m_usd,
+            "worker_output_price_per_1m_usd": (
+                result.economics.worker_output_price_per_1m_usd
+            ),
             "failure_probability": result.economics.failure_probability,
-            "cleanup_minutes": result.economics.cleanup_minutes,
-            "expected_cleanup_minutes": result.economics.expected_cleanup_minutes,
-            "expected_net_minutes": result.economics.expected_net_minutes,
+            "latency_friction_minutes": result.economics.latency_friction_minutes,
+            "direct_supervisor_cost_usd": result.economics.direct_supervisor_cost_usd,
+            "delegated_supervisor_cost_usd": result.economics.delegated_supervisor_cost_usd,
+            "worker_cost_usd": result.economics.worker_cost_usd,
+            "expected_cleanup_cost_usd": result.economics.expected_cleanup_cost_usd,
+            "expected_delegated_cost_usd": result.economics.expected_delegated_cost_usd,
+            "expected_net_savings_usd": result.economics.expected_net_savings_usd,
         },
         "reasons": list(result.reasons),
         "cautions": list(result.cautions),
@@ -466,12 +557,34 @@ def parse_economics(data: Any) -> Economics:
     if not isinstance(data, dict):
         data = {}
     return Economics(
-        avoided_supervisor_minutes=float(data.get("avoided_supervisor_minutes", 0.0)),
-        setup_minutes=float(data.get("setup_minutes", 0.0)),
-        verification_minutes=float(data.get("verification_minutes", 0.0)),
-        retry_minutes=float(data.get("retry_minutes", 0.0)),
+        direct_supervisor_input_tokens=float(data.get("direct_supervisor_input_tokens", 0.0)),
+        direct_supervisor_output_tokens=float(data.get("direct_supervisor_output_tokens", 0.0)),
+        delegated_supervisor_input_tokens=float(
+            data.get("delegated_supervisor_input_tokens", 0.0)
+        ),
+        delegated_supervisor_output_tokens=float(
+            data.get("delegated_supervisor_output_tokens", 0.0)
+        ),
+        worker_input_tokens=float(data.get("worker_input_tokens", 0.0)),
+        worker_output_tokens=float(data.get("worker_output_tokens", 0.0)),
+        cleanup_supervisor_input_tokens=float(
+            data.get("cleanup_supervisor_input_tokens", 0.0)
+        ),
+        cleanup_supervisor_output_tokens=float(
+            data.get("cleanup_supervisor_output_tokens", 0.0)
+        ),
+        supervisor_input_price_per_1m_usd=float(
+            data.get("supervisor_input_price_per_1m_usd", 0.0)
+        ),
+        supervisor_output_price_per_1m_usd=float(
+            data.get("supervisor_output_price_per_1m_usd", 0.0)
+        ),
+        worker_input_price_per_1m_usd=float(data.get("worker_input_price_per_1m_usd", 0.0)),
+        worker_output_price_per_1m_usd=float(
+            data.get("worker_output_price_per_1m_usd", 0.0)
+        ),
         failure_probability=float(data.get("failure_probability", 0.0)),
-        cleanup_minutes=float(data.get("cleanup_minutes", 0.0)),
+        latency_friction_minutes=float(data.get("latency_friction_minutes", 0.0)),
     )
 
 
@@ -511,3 +624,23 @@ def float_or_none(value: Any) -> float | None:
 
 def format_minutes(value: float) -> str:
     return f"{value:.1f}"
+
+
+def format_count(value: float) -> str:
+    return f"{value:.0f}"
+
+
+def format_usd(value: float) -> str:
+    return f"{value:.6f}"
+
+
+def token_cost_usd(
+    input_tokens: float,
+    output_tokens: float,
+    input_price_per_1m_usd: float,
+    output_price_per_1m_usd: float,
+) -> float:
+    return (
+        input_tokens / 1_000_000 * input_price_per_1m_usd
+        + output_tokens / 1_000_000 * output_price_per_1m_usd
+    )
