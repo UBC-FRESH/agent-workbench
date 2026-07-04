@@ -348,3 +348,22 @@ issues, pull requests, and closeout comments.
   posting closeout comments.
 - Confirmed the next phase should proceed to supervisor-applied patch harness
   work while keeping mutation under supervisor control.
+
+## 2026-07-04 - Launched Phase 11 supervisor-applied patch harness
+
+- Created the Phase 11 supervisor-applied patch lane on
+  `feature/p11-supervisor-applied-patch-harness`, with parent issue #81 and
+  child task issues #82 through #86.
+- Added `scripts/supervisor_patch_apply.py`, a guarded supervisor-side helper
+  that extracts one proposed diff block and writes only under an ignored
+  sandbox root.
+- Preserved the safety boundary that workers do not mutate files directly.
+
+## 2026-07-04 - Ran Phase 11 supervisor-applied patch trial
+
+- Reused a successful ignored P10 patch proposal result and applied it under an
+  ignored supervisor sandbox with `scripts/supervisor_patch_apply.py`.
+- Verified that the proposed target matched the allowed file and the expected
+  text was present after sandbox application.
+- Confirmed no tracked file was mutated by the apply harness, supporting a
+  narrow P12 restricted tool-enabled worker trial in an ignored sandbox.
