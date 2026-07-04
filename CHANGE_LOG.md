@@ -367,3 +367,11 @@ issues, pull requests, and closeout comments.
   text was present after sandbox application.
 - Confirmed no tracked file was mutated by the apply harness, supporting a
   narrow P12 restricted tool-enabled worker trial in an ignored sandbox.
+
+## 2026-07-04 - Closed Phase 11 supervisor-applied patch harness
+
+- Merged PR #87 for the Phase 11 supervisor-applied patch harness and verified
+  merge commit `f4757187db3b2927f70a739594763d4b391e9400`.
+- Closed P11 implementation child issues after posting closeout comments.
+- Confirmed the next phase can test a restricted tool-enabled worker path only
+  against ignored sandbox targets.
