@@ -26,7 +26,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P15 Model-family expansion trial | #115 | `feature/p15-model-family-expansion-trial` | Complete |
 | P16 Command surface stabilization | #122 | `feature/p16-command-surface-stabilization` | Complete |
 | P17 Evidence store and summary schema | #129 | `feature/p17-evidence-store-summary-schema` | Complete |
-| P18 Richer restricted tool trial | TBD | TBD | Planned |
+| P18 Richer restricted tool trial | #136 | `feature/p18-richer-restricted-tool-trial` | Complete |
 | P19 Delegation policy and trust levels | TBD | TBD | Planned |
 | P20 Packaging revisit and interface decision | TBD | TBD | Planned |
 
@@ -891,22 +891,38 @@ Phase 17 acceptance criteria:
 
 ## Phase 18: Richer Restricted Tool Trial
 
-Parent issue: TBD
+Parent issue: #136
 
-Branch: TBD
+Branch: `feature/p18-richer-restricted-tool-trial`
 
-Status: planned
+Status: complete
 
 Goal: run a richer VS Code Chat bridge tool trial in an ignored sandbox with one
 read, one allowed ignored-file mutation, and supervisor verification.
 
-Planned tasks:
+Completed tasks:
 
-- P18.1 Rich restricted-tool ticket contract.
-- P18.2 Sandbox target setup.
-- P18.3 VS Code Chat bridge run.
-- P18.4 Supervisor evidence report and deviation analysis.
-- P18.5 Closeout and mutation-boundary decision.
+- [x] P18.1 Rich restricted-tool ticket contract (#137)
+  - [x] Update restricted-tool template for explicit required reads.
+  - [x] Preserve one allowed ignored output boundary.
+  - [x] Keep terminal commands forbidden unless explicitly listed.
+- [x] P18.2 Sandbox target setup (#138)
+  - [x] Prepare ignored input file.
+  - [x] Prepare ignored worker ticket.
+  - [x] Remove stale output before run.
+- [x] P18.3 VS Code Chat bridge run (#139)
+  - [x] Launch one visible bridge run.
+  - [x] Observe read-plus-create tool use.
+  - [x] Keep raw report ignored.
+- [x] P18.4 Supervisor evidence report and deviation analysis (#140)
+  - [x] Inspect supervisor report.
+  - [x] Inspect output file content.
+  - [x] Record sanitized evidence.
+- [x] P18.5 Closeout and mutation-boundary decision (#141)
+  - [x] Update roadmap and changelog.
+  - [x] Run verification.
+  - [x] Close child issues.
+  - [x] Open and merge PR.
 
 Phase 18 acceptance criteria:
 
