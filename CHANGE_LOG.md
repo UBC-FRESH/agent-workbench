@@ -165,3 +165,16 @@ issues, pull requests, and closeout comments.
 - Recorded the qwen3-coder-next comparison as blocked by observed model
   mismatch, which confirms the rubric's rule that model-comparison claims need
   persisted `resolvedModel` evidence.
+
+## 2026-07-04 - Closed Phase 5 custom agent model switching spike
+
+- Added experimental VS Code workspace custom agents under `.github/agents/`
+  for qwen3-coder and qwen3-coder-next strict-worker probes.
+- Updated the bridge helper with a `--mode` option and model evidence fallback
+  from `resolvedModel` to `modelId`.
+- Probed custom-agent no-tool runs and found that the custom agent file loads,
+  but the `model` frontmatter does not reliably switch Ollama models in this
+  VS Code setup.
+- Recorded the next tranche decision: use custom agents for instructions/tool
+  restriction only, and move repeatable model comparisons toward a direct
+  Ollama API worker harness.

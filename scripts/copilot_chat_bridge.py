@@ -156,7 +156,9 @@ def load_evidence(marker: str, session_path: Path | None, transcript_path: Path 
     text = session_path.read_text(encoding="utf-8", errors="replace")
     evidence.raw_excerpt = text[:2000]
     resolved = re.findall(r'"resolvedModel":"([^"]+)"', text)
-    evidence.resolved_model = resolved[-1] if resolved else None
+    model_ids = re.findall(r'"modelId":"([^"]+)"', text)
+    model_values = resolved or model_ids
+    evidence.resolved_model = normalize_model_id(model_values[-1]) if model_values else None
     evidence.permission_levels = sorted(set(re.findall(r'"permissionLevel":"([^"]+)"', text)))
     evidence.completed = '"modelState":{"value":1' in text or f"{marker} done" in text
     evidence.final_marker_present = f"{marker} done" in text
@@ -175,6 +177,10 @@ def unescape_json_text(value: str) -> str:
         return json.loads(f'"{value}"')
     except json.JSONDecodeError:
         return value.replace("\\\\", "\\")
+
+
+def normalize_model_id(model_id: str) -> str:
+    return model_id.removeprefix("ollama-models/Ollama/")
 
 
 def extract_file_edit_paths(text: str) -> list[str]:
