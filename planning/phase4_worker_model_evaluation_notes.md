@@ -95,5 +95,11 @@ For the A/B comparison:
   complete the requested file output while still violating command discipline.
 - Model-comparison claims require observed `resolvedModel` evidence from the
   session artifact.
-- P4 should stop at one scored A/B pair. Repeated runs across and within models
-  belong in a later phase.
+- The P4 scoring dry run is recorded in
+  `planning/phase4_ab_scoring_results.md`.
+- The attempted `qwen3-coder-next:latest` run resolved to
+  `qwen3-coder:latest`, so the qwen3-coder-next comparison is blocked until a
+  reliable model-switching procedure is verified.
+- The same observed `qwen3-coder:latest` model produced different command
+  discipline outcomes across tiny runs, which supports repeated-run evaluation
+  in a later phase.

@@ -131,3 +131,16 @@ issues, pull requests, and closeout comments.
   bounded qwen3-coder versus qwen3-coder-next A/B scoring dry run.
 - Kept benchmark harnesses, schemas, CI, VS Code extensions, Foundry
   integration, and broad multi-model leaderboards deferred.
+
+## 2026-07-04 - Scored Phase 4 bridge dry run
+
+- Ran a bounded bridge ticket with observed model `qwen3-coder:latest`; the
+  worker created the expected ignored result file but ran the required terminal
+  command twice, so the rubric classified the result as `retry` with the
+  `duplicate-command` failure mode.
+- Attempted the matching `qwen3-coder-next:latest` ticket after changing the
+  local VS Code panel model state, but persisted session evidence still
+  resolved to `qwen3-coder:latest`, so the candidate comparison is recorded as
+  blocked by `missing-model-evidence`.
+- Added `planning/phase4_ab_scoring_results.md` with sanitized scoring results
+  and left raw tickets, reports, and transcripts ignored under runtime paths.
