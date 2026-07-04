@@ -81,3 +81,14 @@ issues, pull requests, and closeout comments.
   requiring explicit post-install verification.
 - Kept public wording generic around the configured Ollama/GPU worker host rather
   than publishing personal server details.
+
+## 2026-07-04 - Launched Phase 3 Copilot Chat bridge v0 prototype
+
+- Created the Phase 3 bridge-prototype lane on
+  `feature/p3-copilot-chat-bridge-v0`, with parent issue #21 and child task
+  issues #22 through #26.
+- Promoted the Copilot Chat bridge from playbook-only guidance to a local-only
+  script-level harness that can launch stdin worker tickets, parse persisted VS
+  Code chat session evidence, and write supervisor verification reports.
+- Moved the worker model evaluation rubric to Phase 4 so scoring work can build
+  on automated bridge evidence rather than manual transcript inspection.
