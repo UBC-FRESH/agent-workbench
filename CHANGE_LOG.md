@@ -277,3 +277,14 @@ issues, pull requests, and closeout comments.
   closeout comments.
 - Recorded the next direction as using the harness on a tiny documentation-only
   worker ticket before attempting tool-enabled repo-editing trials.
+
+## 2026-07-04 - Planned P9-P14 forward roadmap
+
+- Added a forward roadmap from structured assistant output through patch
+  proposal, supervisor-applied mutation, restricted worker mutation, GitHub
+  workflow microtrials, and model/packaging decisions.
+- Added `planning/p9_p14_forward_plan.md` to explain the sequencing principle:
+  move one risk boundary at a time instead of mixing model behavior, tool
+  safety, GitHub permissions, and interface decisions in one experiment.
+- Left future P9-P14 issue numbers and branches as `TBD` so issue trees are
+  created only when each phase actually starts.

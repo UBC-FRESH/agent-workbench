@@ -17,6 +17,12 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P6 Copilot SDK Ollama feasibility spike | #41 | `feature/p6-copilot-sdk-ollama-spike` | Complete |
 | P7 Copilot SDK local probe environment | #48 | `feature/p7-copilot-sdk-local-probe-env` | Complete |
 | P8 SDK same-ticket evaluation harness | #55 | `feature/p8-sdk-same-ticket-evaluation-harness` | Complete |
+| P9 SDK structured documentation-output trial | TBD | TBD | Planned |
+| P10 Patch proposal protocol trial | TBD | TBD | Planned |
+| P11 Supervisor-applied patch harness | TBD | TBD | Planned |
+| P12 Restricted tool-enabled worker trial | TBD | TBD | Planned |
+| P13 GitHub workflow microtrial | TBD | TBD | Planned |
+| P14 Model matrix and packaging decision | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -456,3 +462,175 @@ Phase 8 acceptance criteria:
   `qwen3-coder:latest` and `qwen3-coder-next:latest`, or records an exact
   blocker.
 - `ROADMAP.md`, `CHANGE_LOG.md`, planning notes, issues, and PR body agree.
+
+## Forward Plan: P9-P14
+
+Planning note: `planning/p9_p14_forward_plan.md`
+
+The next several phases move one risk boundary at a time: structured assistant
+output, patch proposal, supervisor-applied mutation, restricted worker mutation,
+GitHub workflow participation, and then broader model/packaging decisions.
+
+## Phase 9: SDK Structured Documentation-Output Trial
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: use the P8 harness on a tiny documentation-style ticket where the worker
+returns a structured Markdown result in the assistant response, with no tools
+and no file mutation.
+
+Planned tasks:
+
+- P9.1 Structured documentation-ticket template.
+- P9.2 Assistant-result section parser.
+- P9.3 Repeated same-ticket qwen A/B trial.
+- P9.4 Rubric mapping for structured-output behavior.
+- P9.5 Closeout and next decision.
+
+Phase 9 acceptance criteria:
+
+- The harness can classify required sections present, missing section, malformed
+  result, extra prose, refusal, and loop-like repetition.
+- The same structured ticket is repeated against the configured qwen worker
+  models.
+- Tracked notes promote only sanitized counts and findings.
+
+## Phase 10: Patch Proposal Protocol Trial
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: ask workers to produce a small, parseable patch proposal without applying
+it, so the supervisor can validate candidate edits before any file mutation.
+
+Planned tasks:
+
+- P10.1 Patch-proposal ticket template.
+- P10.2 Patch block parser and classifier.
+- P10.3 Repeated patch-proposal model trial.
+- P10.4 Supervisor acceptance checklist for proposed patches.
+- P10.5 Closeout and mutation-readiness decision.
+
+Phase 10 acceptance criteria:
+
+- Workers can be evaluated on whether they produce a valid, bounded patch
+  proposal.
+- No worker-applied file mutation is required.
+- Failure classifications distinguish malformed patch, wrong file, extra prose,
+  missing rationale, and unsafe scope expansion.
+
+## Phase 11: Supervisor-Applied Patch Harness
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: add a supervisor-side harness that can parse a worker patch proposal,
+apply it to an explicitly allowed target, run checks, and classify the result.
+
+Planned tasks:
+
+- P11.1 Allowed-target patch application protocol.
+- P11.2 Temporary-worktree or guarded-apply harness.
+- P11.3 Check runner and rollback behavior.
+- P11.4 Repeated supervisor-applied patch trial.
+- P11.5 Closeout and tool-readiness decision.
+
+Phase 11 acceptance criteria:
+
+- Mutation is performed by supervisor-controlled code, not unrestricted worker
+  autonomy.
+- The harness records exact apply/check failures.
+- Raw worker outputs remain ignored; tracked notes record only sanitized
+  findings.
+
+## Phase 12: Restricted Tool-Enabled Worker Trial
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: test the narrowest available tool-enabled worker path with explicit
+allowed paths, commands, and stop conditions, then verify observed tool evidence
+against the ticket.
+
+Planned tasks:
+
+- P12.1 Tool-enabled ticket safety contract.
+- P12.2 Bridge capability audit for restricted mutation.
+- P12.3 Tiny allowed-file mutation trial.
+- P12.4 Supervisor verification report update.
+- P12.5 Closeout and delegation boundary decision.
+
+Phase 12 acceptance criteria:
+
+- Tool-enabled worker behavior is observed from bridge evidence, not worker
+  prose.
+- The trial uses a deliberately tiny mutation target.
+- The phase states whether controlled mutation should continue, narrow, or
+  revert to proposal-only mode.
+
+## Phase 13: GitHub Workflow Microtrial
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: test small, bounded GitHub workflow participation without delegating broad
+phase closeout.
+
+Planned tasks:
+
+- P13.1 GitHub-task ticket safety contract.
+- P13.2 Read-only issue inspection trial.
+- P13.3 File-backed comment or PR-body preparation trial.
+- P13.4 Supervisor-applied GitHub mutation protocol.
+- P13.5 Closeout and GitHub delegation boundary decision.
+
+Phase 13 acceptance criteria:
+
+- Workers do not fake GitHub actions or substitute "would have" reports.
+- Read-only and mutation-capable GitHub actions are separated.
+- The supervisor retains final authority for issue closure, PR merge, and phase
+  closeout.
+
+## Phase 14: Model Matrix And Packaging Decision
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: compare configured Ollama worker models across the stable P9-P13 ticket
+families, then decide whether Agent Workbench should remain scripts/Markdown or
+become a package, CLI, VS Code extension, hosted agent, or other tool surface.
+
+Planned tasks:
+
+- P14.1 Configured Ollama model inventory refresh.
+- P14.2 Ticket-family scoring matrix.
+- P14.3 Cross-model consistency and failure-mode summary.
+- P14.4 Packaging/interface options analysis.
+- P14.5 Architecture decision record and closeout.
+
+Phase 14 acceptance criteria:
+
+- Model comparisons use repeated evidence across more than one ticket family.
+- The packaging decision cites observed workflow friction and reliability, not
+  interface preference alone.
+- Any decision to add package, CLI, extension, MCP, or hosted-agent structure is
+  deferred until this evidence exists.
