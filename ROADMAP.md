@@ -53,8 +53,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P42 Agent metadata convention | #292 | `feature/p42-agent-metadata-convention` | Complete |
 | P43 Graph-backed pilot workflow | #298 | `feature/p43-graph-backed-pilot-workflow` | Complete |
 | P44 Graph-aware delegation decision engine | #304 | `feature/p44-graph-aware-decision-engine` | Complete |
-| P45 Per-node token economics | #310 | `feature/p45-per-node-token-economics` | Active |
-| P46 FreshForge dependency decision | TBD | `feature/p46-freshforge-dependency-decision` | Planned |
+| P45 Per-node token economics | #310 | `feature/p45-per-node-token-economics` | Complete |
+| P46 FreshForge dependency decision | #316 | `feature/p46-freshforge-dependency-decision` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2003,7 +2003,7 @@ Parent issue: #310
 
 Branch: `feature/p45-per-node-token-economics`
 
-Status: active
+Status: complete
 
 Goal: attribute paid supervisor tokens, local worker tokens, verification cost,
 cleanup, and net benefit to graph nodes.
@@ -2027,27 +2027,27 @@ Phase 45 acceptance criteria:
 
 ## Phase 46: FreshForge Dependency Decision
 
-Parent issue: TBD
+Parent issue: #316
 
 Branch: `feature/p46-freshforge-dependency-decision`
 
-Status: planned
+Status: active
 
 Goal: decide whether FreshForge becomes a required Agent Workbench dependency,
 stays optional, or remains behind a compatibility adapter.
 
 Planned tasks:
 
-- [ ] P46.1 Evidence review
-  - [ ] Review P41-P45 implementation friction, validation coverage, and
+- [x] P46.1 Evidence review (#317)
+  - [x] Review P41-P45 implementation friction, validation coverage, and
     pilot usefulness.
-- [ ] P46.2 Dependency options
-  - [ ] Compare required dependency, optional dependency, and adapter-only
+- [x] P46.2 Dependency options (#318)
+  - [x] Compare required dependency, optional dependency, and adapter-only
     strategies.
-- [ ] P46.3 Recommendation
-  - [ ] Record a decision with concrete package and maintenance implications.
-- [ ] P46.4 Closeout
-  - [ ] Update roadmap, README, package metadata, and planning notes according
+- [x] P46.3 Recommendation (#319)
+  - [x] Record a decision with concrete package and maintenance implications.
+- [x] P46.4 Closeout (#320)
+  - [x] Update roadmap, README, package metadata, and planning notes according
     to the decision.
 
 Phase 46 acceptance criteria:
