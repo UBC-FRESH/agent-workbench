@@ -10,7 +10,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | --- | --- | --- | --- |
 | P0 Governance and workflow scaffold | #1 | `feature/p0-governance-scaffold` | Complete |
 | P1 Worker protocol templates | #7 | `feature/p1-worker-protocol-templates` | Complete |
-| P2 VS Code Chat bridge playbook | TBD | TBD | Planned |
+| P2 VS Code Chat bridge playbook | #13 | `feature/p2-vscode-chat-bridge-playbook` | Complete |
 | P3 Worker model evaluation rubric | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -101,19 +101,47 @@ Phase 1 acceptance criteria:
 
 ## Phase 2: VS Code Chat Bridge Playbook
 
-Parent issue: TBD
+Parent issue: #13
 
-Branch: TBD
+Branch: `feature/p2-vscode-chat-bridge-playbook`
 
-Status: planned
+Status: complete
 
 Goal: document the file-based workflow for launching bounded worker jobs through
 VS Code chat using `code chat --mode agent`, without automating response parsing.
 
-- [ ] P2.1 Record `code chat` invocation patterns.
-- [ ] P2.2 Define worker ticket and result-file directory conventions.
-- [ ] P2.3 Document supervisor verification after a chat-run candidate.
-- [ ] P2.4 Run one public-safe bridge dry run and close the phase.
+- [x] P2.1 Record `code chat` invocation patterns (#14)
+  - [x] Add command-surface section to the bridge playbook.
+  - [x] Include stdin-based launch pattern.
+  - [x] Include file-context launch pattern.
+  - [x] Include caveats about UI dispatch and response capture.
+- [x] P2.2 Define worker ticket and result-file directory conventions (#15)
+  - [x] Document `runtime/agent_jobs/` ticket and result paths.
+  - [x] Document `tmp/transcripts/` transcript paths.
+  - [x] Document sanitized promotion path into `planning/`.
+  - [x] Include filename examples that avoid private or machine-specific paths.
+- [x] P2.3 Document supervisor verification after a chat-run candidate (#16)
+  - [x] Add supervisor verification section to the bridge playbook.
+  - [x] Reference `templates/acceptance_checklist.md`.
+  - [x] Define retry/reject/blocked/accepted outcomes.
+  - [x] State that worker prose is never sufficient evidence.
+- [x] P2.4 Run public-safe bridge dry run and closeout (#17)
+  - [x] Add `planning/phase2_vscode_chat_bridge_notes.md`.
+  - [x] Record the dry-run command surface and outcome.
+  - [x] Run governance checks.
+  - [x] Close P2 through PR.
+
+Phase 2 acceptance criteria:
+
+- The playbook explains how to launch a bounded worker prompt through
+  `code chat --mode agent --reuse-window` using stdin and optional `--add-file`
+  context.
+- The playbook explains where ignored worker tickets, worker results, and
+  transcripts belong.
+- Supervisor verification happens outside Copilot chat and does not trust worker
+  prose by itself.
+- The dry run proves the command surface and file protocol are usable without
+  introducing raw private transcripts or project-specific content.
 
 ## Phase 3: Worker Model Evaluation Rubric
 
