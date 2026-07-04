@@ -17,6 +17,30 @@ can ask for `claim-review`; the implementation can be a local qwen worker, a
 paid supervisor model, a deterministic script, or a human reviewer depending on
 policy and evidence.
 
+## FreshForge And Project-Native Tools
+
+The implementation layer is where FreshForge and other project-native tools
+belong. If a project already has a package command, CLI, notebook, Snakemake
+pipeline, CI job, or release workflow, Agent Workbench should treat that tool as
+an implementation candidate rather than recreating it.
+
+The correct pattern is:
+
+```text
+role + capability + project-native implementation + artifact evidence
+```
+
+The incorrect pattern is:
+
+```text
+Agent Workbench replaces the project workflow engine
+```
+
+For FreshForge-style projects, Agent Workbench should record the task context,
+worker proposal, FreshForge command or project CLI used by the supervisor,
+verification evidence, and token/cash accounting. It should not own the
+FreshForge execution semantics.
+
 ## Record Shape
 
 `templates/role_capability_implementation.json` records:

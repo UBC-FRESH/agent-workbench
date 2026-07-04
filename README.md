@@ -19,6 +19,12 @@ renders artifact-first workflow step records. A `roles` command validates and
 renders role/capability/implementation records so model swaps do not rewrite
 the workflow contract.
 
+Agent Workbench is not a workflow orchestration framework. Real project work
+should continue to run through project-native tools such as FreshForge,
+Snakemake, notebooks, GitHub Actions, or project CLIs. Agent Workbench records
+delegation decisions, artifacts, claims, verification, and token/cash economics
+around those tools.
+
 ## Local CLI
 
 Install from a checkout:
@@ -51,7 +57,9 @@ notes.
 
 Current boundary: the package is a local supervisor tool. It is not a VS Code
 extension, MCP server, hosted agent, dashboard, autonomous closeout system, or
-permission to delegate tracked-file or GitHub mutation to workers.
+permission to delegate tracked-file or GitHub mutation to workers. It is also
+not a replacement workflow engine for FreshForge or other project-native
+execution systems.
 
 See:
 

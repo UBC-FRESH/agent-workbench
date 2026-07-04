@@ -40,6 +40,14 @@
       "fit_notes": "Useful for proposal review when source evidence is explicit."
     },
     {
+      "id": "project-native-review-tool",
+      "type": "workflow-tool",
+      "name": "FreshForge or project-native CLI",
+      "authority_level": "supervisor-owned",
+      "model_profile_path": "",
+      "fit_notes": "Use when the project already has a deterministic command, report, or validation surface."
+    },
+    {
       "id": "paid-supervisor-reviewer",
       "type": "paid-agent",
       "name": "paid supervisor model",
@@ -57,7 +65,7 @@
     }
   ],
   "selection_policy": {
-    "model_swap_rule": "A workflow may swap implementations only when the role and capability stay unchanged and the implementation authority ceiling satisfies the capability.",
+    "model_swap_rule": "A workflow may swap implementations only when the role and capability stay unchanged, project-native tools remain authoritative for execution, and the implementation authority ceiling satisfies the capability.",
     "decision_inputs": [
       "model profile status",
       "delegation decision report",

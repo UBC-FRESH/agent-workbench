@@ -15,10 +15,10 @@
   ],
   "transformation": "Worker or script summarizes source evidence into a bounded proposal artifact.",
   "implementation": {
-    "type": "local-worker",
-    "name": "qwen3-coder-next:latest",
-    "authority_level": "L1",
-    "notes": "No tracked mutation or GitHub mutation."
+    "type": "workflow-tool",
+    "name": "FreshForge or project-native CLI",
+    "authority_level": "supervisor-owned",
+    "notes": "Project-native tool performs deterministic work; Agent Workbench records evidence and economics."
   },
   "output_artifacts": [
     {

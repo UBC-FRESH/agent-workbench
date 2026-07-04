@@ -36,6 +36,14 @@
       "fit_notes": "Preferred deterministic implementation for cost summaries."
     },
     {
+      "id": "freshforge-report-command",
+      "type": "workflow-tool",
+      "name": "FreshForge or project-native reporting command",
+      "authority_level": "supervisor-owned",
+      "model_profile_path": "",
+      "fit_notes": "Use project-native reports as authoritative evidence when available."
+    },
+    {
       "id": "local-worker-analyst",
       "type": "local-worker",
       "name": "qwen3-coder-next:latest",

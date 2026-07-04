@@ -800,3 +800,6 @@ issues, pull requests, and closeout comments.
   documentation proposals.
 - Added `planning/phase38_role_capability_implementation.md` and updated
   README, roadmap, changelog, and command-surface smoke coverage.
+- Clarified the non-orchestration boundary: FreshForge and other project-native
+  tools are implementation candidates that Agent Workbench records around, not
+  systems that Agent Workbench replaces.

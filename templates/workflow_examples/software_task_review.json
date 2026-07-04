@@ -15,9 +15,9 @@
   ],
   "transformation": "Summarize friction and propose a small CLI improvement.",
   "implementation": {
-    "type": "local-worker",
-    "name": "qwen3-coder-next:latest",
-    "authority_level": "L1"
+    "type": "workflow-tool",
+    "name": "FreshForge or project-native CLI",
+    "authority_level": "supervisor-owned"
   },
   "output_artifacts": [
     {
@@ -43,6 +43,6 @@
   },
   "supervisor_decision": {
     "decision": "use-as-proposal",
-    "rationale": "Proposal informs supervisor-owned implementation."
+    "rationale": "Proposal informs supervisor-owned implementation through project-native tools."
   }
 }

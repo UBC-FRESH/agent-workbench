@@ -1735,7 +1735,7 @@ Phase 37 acceptance criteria:
 - Workflow records can explain what was transformed, by whom or what, with what
   evidence, and at what token/cash cost.
 - The contract does not require replacing existing tools such as Git, CI,
-  notebooks, Snakemake, or project-specific CLIs.
+  notebooks, Snakemake, FreshForge, or project-specific CLIs.
 
 ## Phase 38: Role, Capability, And Implementation Model
 
@@ -1773,6 +1773,8 @@ Phase 38 acceptance criteria:
   conflating them.
 - Model swaps do not change the abstract workflow contract.
 - The model remains compatible with conservative worker authority levels.
+- FreshForge and project-native tools are treated as implementation candidates,
+  not systems to replace.
 
 ## Phase 39: Reusable Scientific Workbench Templates
 
@@ -1783,7 +1785,8 @@ Branch: TBD
 Status: planned
 
 Goal: sketch reusable project workbench templates for common UBC-FRESH work
-without creating a heavyweight workflow engine.
+without creating a heavyweight workflow engine or replacing FreshForge-style
+project-native tools.
 
 Planned tasks:
 
@@ -1797,8 +1800,8 @@ Planned tasks:
   - [ ] Avoid project-specific private assumptions.
 - [ ] P39.3 Integration boundaries
   - [ ] Identify where existing tools such as GitHub Actions, Quarto,
-    notebooks, Snakemake, or project CLIs should be reused rather than
-    replaced.
+    notebooks, Snakemake, FreshForge, or project CLIs should be reused rather
+    than replaced.
 - [ ] P39.4 Documentation and closeout
   - [ ] Add planning notes.
   - [ ] Update roadmap and changelog.
@@ -1810,6 +1813,8 @@ Phase 39 acceptance criteria:
   AI-assisted scientific/software workbench tasks.
 - Templates make agents boring: roles and artifacts are primary; model/runtime
   implementation is secondary.
+- Templates are integration envelopes around existing project tools, not a new
+  orchestration framework.
 
 ## Phase 40: Observability And Token-Cost Ingestion
 
