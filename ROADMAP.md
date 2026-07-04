@@ -35,6 +35,10 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P24 CLI dogfood workflow | #178 | `feature/p24-cli-dogfood-workflow` | Complete |
 | P25 Real-project pilot scaffold | #185 | `feature/p25-real-project-pilot-scaffold` | Complete |
 | P26 Cross-project eval support | #192 | `feature/p26-cross-project-eval` | Complete |
+| P27 Supervisor decision packets | #198 | `feature/p27-supervisor-decision-packets` | Complete |
+| P28 Claim review aids | TBD | TBD | Planned |
+| P29 Repeat-run and model comparison | TBD | TBD | Planned |
+| P30 Real-project deployment playbook | TBD | TBD | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1286,3 +1290,96 @@ Phase 26 acceptance criteria:
 - Existing `agent-workbench eval --manifest <manifest> --dry-run` behavior still
   works.
 - `agent-workbench smoke` still passes.
+
+## Phase 27: Supervisor Decision Packets
+
+Parent issue: #198
+
+Branch: `feature/p27-supervisor-decision-packets`
+
+Status: complete
+
+Goal: make Agent Workbench usable for repeatable supervisor review after
+multiple worker proposal runs by adding isolated pilot-pack scaffolding and a
+sanitized supervisor decision-packet command.
+
+Completed tasks:
+
+- [x] P27.1 Forward roadmap tranche (#199)
+  - [x] Add `planning/p27_p30_forward_plan.md`.
+  - [x] Add P27-P30 to the issue tracker map.
+  - [x] Keep P28-P30 planned rather than active.
+- [x] P27.2 Isolated pilot pack scaffold (#200)
+  - [x] Add `agent-workbench pilot pack-scaffold`.
+  - [x] Support repeated `--task task-id=Title` inputs.
+  - [x] Isolate eval output and SDK scratch directories by task ID.
+- [x] P27.3 Supervisor decision packet synthesis (#201)
+  - [x] Add `agent-workbench evidence synthesize`.
+  - [x] Validate each evidence summary before packet rendering.
+  - [x] Render decision counts, classification counts, evidence table, notes,
+    and promotion boundaries.
+- [x] P27.4 Dogfood and closeout (#202)
+  - [x] Dogfood pack scaffolding under ignored runtime paths.
+  - [x] Validate, render, and synthesize dogfood evidence.
+  - [x] Update playbook, planning notes, roadmap, and changelog.
+
+Phase 27 acceptance criteria:
+
+- `agent-workbench pilot pack-scaffold` creates multiple isolated ticket,
+  manifest, and evidence files under a chosen ignored target-project directory.
+- Generated manifests do not overwrite each other's eval outputs.
+- `agent-workbench evidence synthesize` validates evidence JSON files and
+  renders one sanitized Markdown decision packet.
+- CLI workflow docs explain how to use the packet workflow for real projects.
+
+## Phase 28: Claim Review Aids
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: make unsupported worker claims easier to identify before supervisor
+promotion.
+
+Planned scope:
+
+- Add claim disposition fields or templates for accepted, rejected, and
+  needs-evidence claims.
+- Extend decision packets with claim-review prompts.
+- Dogfood against prior real-project worker outputs.
+
+## Phase 29: Repeat-Run And Model Comparison
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: compare consistency across repeated runs and installed Ollama worker
+models for identical ticket families.
+
+Planned scope:
+
+- Add repeat-run packet examples.
+- Summarize model/repeat variability from evidence summaries.
+- Recommend which ticket families are safe for each tested worker model.
+
+## Phase 30: Real-Project Deployment Playbook
+
+Parent issue: TBD
+
+Branch: TBD
+
+Status: planned
+
+Goal: turn the P26-P29 workflow into a reusable deployment playbook for
+UBC-FRESH projects.
+
+Planned scope:
+
+- Add real-project deployment checklist.
+- Document supervisor decision gates.
+- Document cleanup, promotion, and stop conditions for target projects.

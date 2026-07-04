@@ -6,8 +6,8 @@ multi-agent development workflows across lab software projects.
 The repository focuses on reusable workflow contracts: supervisor/worker agent
 roles, prompt handoffs, evidence-based verification, issue discipline, and
 public-safe planning notes. It now also includes a small local Python package
-and CLI for supervisor-side smoke checks, same-ticket evaluation, and sanitized
-evidence summaries.
+and CLI for supervisor-side smoke checks, same-ticket evaluation, pilot
+scaffolding, sanitized evidence summaries, and supervisor decision packets.
 
 ## Local CLI
 
@@ -23,8 +23,10 @@ Useful first commands:
 ```powershell
 agent-workbench smoke
 agent-workbench eval --manifest runtime/agent_jobs/example_manifest.json --dry-run
+agent-workbench pilot pack-scaffold --project-root <target-project> --task evidence-intake="Summarize evidence"
 agent-workbench evidence validate --input runtime/agent_jobs/example_evidence.json
 agent-workbench evidence render --input runtime/agent_jobs/example_evidence.json --output runtime/agent_jobs/example_evidence.md
+agent-workbench evidence synthesize --input-dir runtime/agent_jobs --output runtime/agent_jobs/decision_packet.md
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in

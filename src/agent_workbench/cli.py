@@ -9,8 +9,19 @@ import sys
 from pathlib import Path
 
 from . import __version__
-from .evidence import load_summary, render_markdown, validate_summary
-from .pilot import PilotScaffoldConfig, scaffold_pilot
+from .evidence import (
+    load_summary,
+    render_markdown,
+    synthesize_markdown,
+    validate_summary,
+)
+from .pilot import (
+    PilotPackScaffoldConfig,
+    PilotPackTask,
+    PilotScaffoldConfig,
+    scaffold_pilot,
+    scaffold_pilot_pack,
+)
 
 
 def default_repo_root() -> Path:
@@ -94,6 +105,20 @@ def build_parser() -> argparse.ArgumentParser:
     render_parser.add_argument("--output", type=Path, required=True)
     render_parser.set_defaults(func=run_evidence_render)
 
+    synthesize_parser = evidence_subparsers.add_parser(
+        "synthesize",
+        help="Render multiple evidence summaries into one supervisor decision packet.",
+    )
+    synthesize_parser.add_argument("--input", type=Path, action="append", default=[])
+    synthesize_parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=None,
+        help="Directory containing *.evidence.json files.",
+    )
+    synthesize_parser.add_argument("--output", type=Path, required=True)
+    synthesize_parser.set_defaults(func=run_evidence_synthesize)
+
     pilot_parser = subparsers.add_parser(
         "pilot",
         help="Create real-project pilot scaffolds.",
@@ -131,6 +156,41 @@ def build_parser() -> argparse.ArgumentParser:
     )
     scaffold_parser.add_argument("--force", action="store_true")
     scaffold_parser.set_defaults(func=run_pilot_scaffold)
+
+    pack_parser = pilot_subparsers.add_parser(
+        "pack-scaffold",
+        help="Create multiple isolated pilot tickets, manifests, and evidence stubs.",
+    )
+    pack_parser.add_argument("--project-root", type=Path, required=True)
+    pack_parser.add_argument(
+        "--task",
+        action="append",
+        required=True,
+        help="Task spec as task-id=Title text. Repeat once per worker ticket.",
+    )
+    pack_parser.add_argument(
+        "--mode",
+        choices=("marker", "proposal"),
+        default="proposal",
+    )
+    pack_parser.add_argument("--model", default="qwen3-coder:latest")
+    pack_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("runtime/agent_workbench/pilots"),
+    )
+    pack_parser.add_argument("--repeats", type=int, default=1)
+    pack_parser.add_argument("--timeout-seconds", type=int, default=120)
+    pack_parser.add_argument(
+        "--base-url-file",
+        default="runtime/ollama_openai_base_url.txt",
+    )
+    pack_parser.add_argument(
+        "--provider-headers-file",
+        default="runtime/local_provider_headers.json",
+    )
+    pack_parser.add_argument("--force", action="store_true")
+    pack_parser.set_defaults(func=run_pilot_pack_scaffold)
 
     parser.set_defaults(func=run_overview)
     return parser
@@ -212,6 +272,24 @@ def run_evidence_render(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_evidence_synthesize(args: argparse.Namespace) -> int:
+    paths = list(args.input)
+    if args.input_dir is not None:
+        paths.extend(sorted(args.input_dir.glob("*.evidence.json")))
+    if not paths:
+        print("error: provide --input or --input-dir", file=sys.stderr)
+        return 1
+    try:
+        packet = synthesize_markdown(paths)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(packet, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
 def run_pilot_scaffold(args: argparse.Namespace) -> int:
     marker = args.marker.strip() or f"{args.task_id.upper().replace('-', '_')} done"
     config = PilotScaffoldConfig(
@@ -233,6 +311,39 @@ def run_pilot_scaffold(args: argparse.Namespace) -> int:
     print(f"manifest: {result.manifest_path}")
     print(f"evidence: {result.evidence_path}")
     return 0
+
+
+def run_pilot_pack_scaffold(args: argparse.Namespace) -> int:
+    tasks = tuple(parse_pack_task(task) for task in args.task)
+    config = PilotPackScaffoldConfig(
+        project_root=args.project_root,
+        tasks=tasks,
+        mode=args.mode,
+        model=args.model,
+        output_dir=args.output_dir,
+        repeats=args.repeats,
+        timeout_seconds=args.timeout_seconds,
+        base_url_file=args.base_url_file,
+        provider_headers_file=args.provider_headers_file,
+        force=args.force,
+    )
+    result = scaffold_pilot_pack(config)
+    for item in result.results:
+        print(f"ticket: {item.ticket_path}")
+        print(f"manifest: {item.manifest_path}")
+        print(f"evidence: {item.evidence_path}")
+    return 0
+
+
+def parse_pack_task(value: str) -> PilotPackTask:
+    if "=" not in value:
+        raise SystemExit("pack task must use task-id=Title text")
+    task_id, title = value.split("=", 1)
+    task_id = task_id.strip()
+    title = title.strip()
+    if not task_id or not title:
+        raise SystemExit("pack task must include both task id and title")
+    return PilotPackTask(task_id=task_id, title=title)
 
 
 def script_path(repo_root: Path, script_name: str) -> Path:

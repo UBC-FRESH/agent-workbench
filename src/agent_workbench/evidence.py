@@ -158,6 +158,127 @@ def render_markdown(data: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def synthesize_markdown(paths: list[Path]) -> str:
+    summaries: list[tuple[Path, dict[str, Any]]] = []
+    errors: list[str] = []
+    for path in paths:
+        try:
+            data = load_summary(path)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"{path}: {exc}")
+            continue
+        result = validate_summary(data)
+        if not result.ok:
+            errors.extend(f"{path}: {error}" for error in result.errors)
+            continue
+        summaries.append((path, data))
+
+    if errors:
+        joined = "\n".join(f"- {error}" for error in errors)
+        raise ValueError(f"cannot synthesize invalid evidence summaries:\n{joined}")
+
+    lines = [
+        "# Supervisor Decision Packet",
+        "",
+        "This packet is synthesized from sanitized evidence summaries. Raw worker",
+        "outputs remain in ignored runtime paths and must not be treated as",
+        "verified facts without supervisor review.",
+        "",
+        "## Evidence Inputs",
+        "",
+    ]
+    for path, data in summaries:
+        lines.append(f"- `{path.as_posix()}`: `{data.get('evidence_id', '')}`")
+
+    decision_counts: dict[str, int] = {}
+    classification_counts: dict[str, int] = {}
+    lines.extend(["", "## Decision Summary", ""])
+    for _path, data in summaries:
+        decision = data.get("supervisor_decision", {})
+        if isinstance(decision, dict):
+            value = str(decision.get("decision", ""))
+        else:
+            value = str(decision)
+        decision_counts[value] = decision_counts.get(value, 0) + 1
+
+        outcomes = data.get("outcomes", [])
+        if isinstance(outcomes, list):
+            for outcome in outcomes:
+                if isinstance(outcome, dict):
+                    classification = str(outcome.get("classification", ""))
+                    count = outcome.get("count", 1)
+                    if isinstance(count, int):
+                        classification_counts[classification] = (
+                            classification_counts.get(classification, 0) + count
+                        )
+
+    lines.append("### Supervisor Decisions")
+    lines.append("")
+    for decision, count in sorted(decision_counts.items()):
+        lines.append(f"- `{decision}`: {count}")
+
+    lines.extend(["", "### Outcome Classifications", ""])
+    for classification, count in sorted(classification_counts.items()):
+        lines.append(f"- `{classification}`: {count}")
+
+    lines.extend(
+        [
+            "",
+            "## Evidence Table",
+            "",
+            "| Evidence | Task | Decision | Rationale |",
+            "| --- | --- | --- | --- |",
+        ]
+    )
+    for _path, data in summaries:
+        decision = data.get("supervisor_decision", {})
+        decision_value = ""
+        rationale = ""
+        if isinstance(decision, dict):
+            decision_value = str(decision.get("decision", ""))
+            rationale = str(decision.get("rationale", ""))
+        lines.append(
+            "| {evidence} | {task} | `{decision}` | {rationale} |".format(
+                evidence=data.get("evidence_id", ""),
+                task=data.get("task", ""),
+                decision=decision_value,
+                rationale=rationale.replace("|", "\\|"),
+            )
+        )
+
+    lines.extend(["", "## Claims And Notes", ""])
+    for _path, data in summaries:
+        lines.append(f"### {data.get('evidence_id', '')}")
+        lines.append("")
+        outcomes = data.get("outcomes", [])
+        if isinstance(outcomes, list):
+            for outcome in outcomes:
+                if isinstance(outcome, dict):
+                    note = outcome.get("note", outcome.get("notes", ""))
+                    lines.append(
+                        "- `{classification}` x{count}: {note}".format(
+                            classification=outcome.get("classification", ""),
+                            count=outcome.get("count", ""),
+                            note=str(note),
+                        )
+                    )
+        lines.append("")
+
+    lines.extend(["## Promotion Boundary", ""])
+    for _path, data in summaries:
+        boundary = data.get("promotion_boundary", {})
+        if isinstance(boundary, dict):
+            raw_path = boundary.get("raw_evidence_retained_under", "")
+            private_excluded = boundary.get("private_values_excluded", "")
+            lines.append(
+                f"- `{data.get('evidence_id', '')}` raw evidence: `{raw_path}`; "
+                f"private values excluded: `{private_excluded}`"
+            )
+
+    lines.append("")
+    return "\n".join(lines)
+
+
 def format_value(value: Any) -> str:
     if isinstance(value, list):
         return ", ".join(f"`{item}`" for item in value)
