@@ -64,6 +64,19 @@ Also check the selected worker model's capability profile under
 recommended authority ceiling. Treat planned or partial profiles as a reason to
 run a small probe first.
 
+For candidate tasks that are not obvious, render a delegation recommendation
+before scaffolding:
+
+```powershell
+agent-workbench decide task `
+  --input tmp/agent_workbench/<phase>/<task>.decision.json `
+  --output tmp/agent_workbench/<phase>/<task>.decision.md
+```
+
+Use `templates/delegation_decision_input.json` as the starting point. Treat the
+report as supervisor decision support, not as permission for autonomous worker
+execution.
+
 ```powershell
 agent-workbench pilot scaffold `
   --project-root <target-project> `
@@ -185,9 +198,10 @@ on the raw comparison output alone.
 
 The CLI currently supports supervisor-side smoke checks, SDK same-ticket
 evaluation, pilot scaffolding, evidence validation/rendering, and supervisor
-decision-packet synthesis, and local comparison of existing eval summaries. It
-is ready for small real-project trials where the supervisor prepares bounded
-worker tickets and keeps raw evidence ignored.
+decision-packet synthesis, local comparison of existing eval summaries, and
+transparent rules-based delegation recommendations. It is ready for small
+real-project trials where the supervisor prepares bounded worker tickets and
+keeps raw evidence ignored.
 
 It is not a VS Code extension, MCP server, hosted agent, dashboard, benchmark
 service, or autonomous closeout system.

@@ -42,7 +42,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P31 Delegation economics model | #222 | `feature/p31-delegation-economics-model` | Complete |
 | P32 Task taxonomy and delegation suitability | #228 | `feature/p32-task-taxonomy-delegation-suitability` | Complete |
 | P33 Worker model capability profiles | #234 | `feature/p33-worker-model-capability-profiles` | Complete |
-| P34 Delegation decision engine v0 | TBD | TBD | Planned |
+| P34 Delegation decision engine v0 | #240 | `feature/p34-delegation-decision-engine-v0` | Complete |
 | P35 Real-project pilot accounting | TBD | TBD | Planned |
 | P36 Policy tuning loop | TBD | TBD | Planned |
 
@@ -1575,34 +1575,34 @@ Phase 33 acceptance criteria:
 
 ## Phase 34: Delegation Decision Engine V0
 
-Parent issue: TBD
+Parent issue: #240
 
-Branch: TBD
+Branch: `feature/p34-delegation-decision-engine-v0`
 
-Status: planned
+Status: complete
 
 Goal: implement a transparent rules-based recommender that helps the supervisor
 decide whether to delegate, split, retry, or do a task directly.
 
 Planned tasks:
 
-- [ ] P34.1 Decision input contract
-  - [ ] Define task bundle, task type, roadmap level, risk, model, authority,
+- [x] P34.1 Decision input contract (#241)
+  - [x] Define task bundle, task type, roadmap level, risk, model, authority,
     and expected verification fields.
-  - [ ] Keep the first input format simple and inspectable.
-- [ ] P34.2 Rules-based recommendation logic
-  - [ ] Recommend `delegate`, `do-directly`, `split-smaller`,
+  - [x] Keep the first input format simple and inspectable.
+- [x] P34.2 Rules-based recommendation logic (#242)
+  - [x] Recommend `delegate`, `do-directly`, `split-smaller`,
     `needs-human-decision`, or `defer`.
-  - [ ] Include reason strings for every recommendation.
-  - [ ] Avoid hidden scoring that the supervisor cannot audit.
-- [ ] P34.3 CLI/report surface
-  - [ ] Add a command or report helper for evaluating candidate task bundles.
-  - [ ] Render the economics terms that drove the recommendation.
-  - [ ] Keep outputs public-safe and easy to paste into planning notes.
-- [ ] P34.4 Dogfood and closeout
-  - [ ] Evaluate candidate tasks from a real project roadmap.
-  - [ ] Compare recommendations with supervisor judgment.
-  - [ ] Run package verification.
+  - [x] Include reason strings for every recommendation.
+  - [x] Avoid hidden scoring that the supervisor cannot audit.
+- [x] P34.3 CLI/report surface (#243)
+  - [x] Add a command or report helper for evaluating candidate task bundles.
+  - [x] Render the economics terms that drove the recommendation.
+  - [x] Keep outputs public-safe and easy to paste into planning notes.
+- [x] P34.4 Dogfood and closeout (#244)
+  - [x] Evaluate candidate tasks from a real project roadmap.
+  - [x] Compare recommendations with supervisor judgment.
+  - [x] Run package verification.
 
 Phase 34 acceptance criteria:
 
@@ -1610,6 +1610,7 @@ Phase 34 acceptance criteria:
   candidate task bundle.
 - Recommendations expose the economics and risk assumptions behind them.
 - The first decision engine is rules-based rather than ML-based.
+- Planned or missing model profiles are handled conservatively.
 
 ## Phase 35: Real-Project Pilot Accounting
 

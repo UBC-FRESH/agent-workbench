@@ -18,12 +18,25 @@ profile is usable only for the task families, harnesses, and authority levels it
 actually covers. If the selected model profile is planned, partial, or missing,
 run a marker or no-tool proposal probe before using it on project work.
 
+For non-obvious cases, render a supervisor-side decision report before
+scaffolding tickets:
+
+```powershell
+agent-workbench decide task `
+  --input tmp/agent_workbench/<phase>/<task>.decision.json `
+  --output tmp/agent_workbench/<phase>/<task>.decision.md
+```
+
+Use the result to decide whether to delegate, split the task, defer until model
+evidence exists, or keep the work in the supervisor lane.
+
 Supervisor checks:
 
 - target project is clean on the intended base branch;
 - governing issue or roadmap phase is identified;
 - task type, planning level, and default worker authority are identified;
 - selected model profile supports the proposed task shape;
+- any decision report recommendation has been reviewed by the supervisor;
 - target project has an ignored local work area such as `tmp/`;
 - provider credentials and endpoints are already configured outside tracked
   files; and
