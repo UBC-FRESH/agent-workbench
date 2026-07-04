@@ -187,3 +187,82 @@ def render_graph_validation(result: GraphValidation) -> str:
         )
     lines.append("")
     return "\n".join(lines)
+
+
+def render_graph_markdown(data: dict[str, Any]) -> str:
+    workflow = data.get("workflow", {})
+    if not isinstance(workflow, dict):
+        workflow = {}
+    nodes = data.get("nodes", [])
+    if not isinstance(nodes, list):
+        nodes = []
+
+    lines = [
+        "# Agent Workbench Graph",
+        "",
+        "## Workflow",
+        "",
+        f"- id: `{workflow.get('id', '')}`",
+        f"- name: {workflow.get('name', '')}",
+        f"- description: {workflow.get('description', '')}",
+        "",
+        "## Nodes",
+        "",
+    ]
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        provenance = node.get("provenance", {})
+        if not isinstance(provenance, dict):
+            provenance = {}
+        parameters = node.get("parameters", {})
+        agent_parameters = (
+            parameters.get("agent_workbench", {}) if isinstance(parameters, dict) else {}
+        )
+        if not isinstance(agent_parameters, dict):
+            agent_parameters = {}
+        needs = node.get("needs", [])
+        if not isinstance(needs, list):
+            needs = []
+        lines.extend(
+            [
+                f"### `{node.get('id', '')}`",
+                "",
+                f"- provider: `{node.get('provider', '')}`",
+                f"- needs: {format_list(needs)}",
+                f"- node_kind: `{agent_parameters.get('node_kind', '')}`",
+                f"- role: `{provenance.get('role', '')}`",
+                f"- capability: `{provenance.get('capability', '')}`",
+                f"- authority_level: `{provenance.get('authority_level', '')}`",
+                f"- implementation: {provenance.get('implementation', '')}",
+                f"- execution_boundary: {agent_parameters.get('execution_boundary', '')}",
+            ]
+        )
+        for key in (
+            "evidence_reference",
+            "claim_review",
+            "supervisor_decision",
+            "token_accounting",
+        ):
+            if key in agent_parameters:
+                lines.append(f"- {key}: {agent_parameters[key]}")
+        lines.extend(["", "#### Artifacts", ""])
+        artifacts = node.get("artifacts", [])
+        if not isinstance(artifacts, list) or not artifacts:
+            lines.append("- none")
+        else:
+            for artifact in artifacts:
+                if not isinstance(artifact, dict):
+                    continue
+                lines.append(
+                    f"- `{artifact.get('artifact_id', '')}` "
+                    f"({artifact.get('kind', '')}): {artifact.get('path_or_reference', '')}"
+                )
+        lines.append("")
+    return "\n".join(lines)
+
+
+def format_list(values: list[Any]) -> str:
+    if not values:
+        return "`none`"
+    return ", ".join(f"`{value}`" for value in values)

@@ -1,0 +1,197 @@
+{
+  "workflow": {
+    "id": "freshforge_proposal_assist_pilot",
+    "name": "FreshForge Proposal Assist Pilot",
+    "description": "Graph-backed representation of a proposal-assist Agent Workbench pilot for a FreshForge development task. This graph is non-executing: Agent Workbench records evidence and accounting around project-native work."
+  },
+  "nodes": [
+    {
+      "id": "select_freshforge_task",
+      "provider": "agent_workbench_supervisor.task_selection",
+      "name": "Select FreshForge task",
+      "description": "Supervisor selects a bounded FreshForge roadmap issue for proposal-only worker assistance.",
+      "inputs": {
+        "roadmap": "FreshForge roadmap or GitHub issue reference"
+      },
+      "outputs": {
+        "task_bundle": "bounded FreshForge proposal-assist task"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_decision",
+          "execution_boundary": "supervisor selects and scopes the pilot task",
+          "evidence_reference": "tracked planning note or GitHub issue",
+          "supervisor_decision": "accept task, split task, or defer"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "freshforge_task_context",
+          "kind": "source",
+          "path_or_reference": "target project roadmap or issue reference"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "pilot_selection",
+        "authority_level": "supervisor-owned",
+        "implementation": "human or paid supervisor"
+      }
+    },
+    {
+      "id": "worker_evidence_intake",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Worker evidence intake",
+      "description": "Local worker summarizes issue, roadmap, docs, and relevant generated evidence without mutating tracked files.",
+      "needs": [
+        "select_freshforge_task"
+      ],
+      "inputs": {
+        "task_bundle": "${nodes.select_freshforge_task.outputs.task_bundle}"
+      },
+      "outputs": {
+        "evidence_summary": "proposal-only worker evidence summary"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_proposal",
+          "execution_boundary": "proposal-only local worker output",
+          "allowed_authority": "L1",
+          "evidence_reference": "runtime/agent_workbench/<pilot>/evidence_intake.evidence.json",
+          "claim_review": "supervisor must verify cited files and issue state",
+          "token_accounting": "runtime/agent_workbench/<pilot>/evidence_intake.tokens.json"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "worker_evidence_output",
+          "kind": "generated",
+          "path_or_reference": "ignored runtime worker output"
+        }
+      ],
+      "provenance": {
+        "role": "analyst",
+        "capability": "evidence_intake",
+        "authority_level": "L1",
+        "implementation": "configured Ollama worker model",
+        "model_profile": "model_profiles/qwen3-coder-next.md"
+      }
+    },
+    {
+      "id": "worker_cli_proposal",
+      "provider": "agent_workbench_worker.proposal",
+      "name": "Worker CLI ergonomics proposal",
+      "description": "Local worker proposes small generic CLI/API improvements based on selected evidence.",
+      "needs": [
+        "worker_evidence_intake"
+      ],
+      "inputs": {
+        "evidence_summary": "${nodes.worker_evidence_intake.outputs.evidence_summary}"
+      },
+      "outputs": {
+        "proposal": "bounded CLI/API ergonomics proposal"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_proposal",
+          "execution_boundary": "proposal-only local worker output",
+          "allowed_authority": "L1",
+          "evidence_reference": "runtime/agent_workbench/<pilot>/cli_proposal.evidence.json",
+          "claim_review": "supervisor accepts, rejects, or rewrites proposal before mutation",
+          "token_accounting": "runtime/agent_workbench/<pilot>/cli_proposal.tokens.json"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "cli_proposal_output",
+          "kind": "generated",
+          "path_or_reference": "ignored runtime proposal output"
+        }
+      ],
+      "provenance": {
+        "role": "programmer",
+        "capability": "patch_proposal",
+        "authority_level": "L1",
+        "implementation": "configured Ollama worker model",
+        "model_profile": "model_profiles/qwen3-coder-next.md"
+      }
+    },
+    {
+      "id": "project_native_verification",
+      "provider": "project_native.verify",
+      "name": "Verify selected proposal",
+      "description": "Supervisor runs project-native checks after applying or rejecting proposal content.",
+      "needs": [
+        "worker_cli_proposal"
+      ],
+      "inputs": {
+        "proposal": "${nodes.worker_cli_proposal.outputs.proposal}"
+      },
+      "outputs": {
+        "verification_evidence": "project-native verification result"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "verification",
+          "execution_boundary": "supervisor-owned project-native verification",
+          "evidence_reference": "runtime/agent_workbench/<pilot>/verification.evidence.json",
+          "claim_review": "verification commands and changed files are inspected by supervisor"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "verification_report",
+          "kind": "generated",
+          "path_or_reference": "ignored runtime verification report"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "project_native_verification",
+        "authority_level": "supervisor-owned",
+        "implementation": "FreshForge CLI, project tests, docs build, or review"
+      }
+    },
+    {
+      "id": "supervisor_promotion",
+      "provider": "agent_workbench_supervisor.promotion",
+      "name": "Promote or reject outcome",
+      "description": "Supervisor records final decision and links evidence/accounting.",
+      "needs": [
+        "worker_evidence_intake",
+        "worker_cli_proposal",
+        "project_native_verification"
+      ],
+      "inputs": {
+        "evidence_summary": "${nodes.worker_evidence_intake.outputs.evidence_summary}",
+        "proposal": "${nodes.worker_cli_proposal.outputs.proposal}",
+        "verification_evidence": "${nodes.project_native_verification.outputs.verification_evidence}"
+      },
+      "outputs": {
+        "decision_packet": "supervisor promotion decision"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_promotion",
+          "execution_boundary": "supervisor-owned promotion decision",
+          "evidence_reference": "runtime/agent_workbench/<pilot>/decision_packet.md",
+          "supervisor_decision": "promote, revise, reject, or defer",
+          "token_accounting": "runtime/agent_workbench/<pilot>/pilot_accounting.accounting.json"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "decision_packet",
+          "kind": "promoted",
+          "path_or_reference": "tracked sanitized note, PR body, or issue comment"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "promotion_decision",
+        "authority_level": "supervisor-owned",
+        "implementation": "human or paid supervisor"
+      }
+    }
+  ]
+}

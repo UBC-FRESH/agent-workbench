@@ -50,8 +50,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P39 Reusable scientific workbench templates | #274 | `feature/p39-reusable-workbench-templates` | Complete |
 | P40 Observability and token-cost ingestion | #280 | `feature/p40-token-cost-ingestion` | Complete |
 | P41 FreshForge graph integration spike | #286 | `feature/p41-freshforge-graph-integration` | Complete |
-| P42 Agent metadata convention | #292 | `feature/p42-agent-metadata-convention` | Active |
-| P43 Graph-backed pilot workflow | TBD | `feature/p43-graph-backed-pilot-workflow` | Planned |
+| P42 Agent metadata convention | #292 | `feature/p42-agent-metadata-convention` | Complete |
+| P43 Graph-backed pilot workflow | #298 | `feature/p43-graph-backed-pilot-workflow` | Active |
 | P44 Graph-aware delegation decision engine | TBD | `feature/p44-graph-aware-decision-engine` | Planned |
 | P45 Per-node token economics | TBD | `feature/p45-per-node-token-economics` | Planned |
 | P46 FreshForge dependency decision | TBD | `feature/p46-freshforge-dependency-decision` | Planned |
@@ -1909,7 +1909,7 @@ Parent issue: #292
 
 Branch: `feature/p42-agent-metadata-convention`
 
-Status: active
+Status: complete
 
 Goal: define the stable Agent Workbench metadata convention inside
 FreshForge-compatible graph documents.
@@ -1938,11 +1938,11 @@ Phase 42 acceptance criteria:
 
 ## Phase 43: Graph-Backed Pilot Workflow
 
-Parent issue: TBD
+Parent issue: #298
 
 Branch: `feature/p43-graph-backed-pilot-workflow`
 
-Status: planned
+Status: active
 
 Goal: represent one real Agent Workbench deployment pilot as a
 FreshForge-compatible graph and use Agent Workbench evidence/accounting around
@@ -1950,16 +1950,16 @@ that graph.
 
 Planned tasks:
 
-- [ ] P43.1 Pilot selection
-  - [ ] Choose one bounded real-project pilot that is not on a project critical
+- [x] P43.1 Pilot selection (#299)
+  - [x] Choose one bounded real-project pilot that is not on a project critical
     path.
-- [ ] P43.2 Graph representation
-  - [ ] Encode supervisor selection, worker proposal, project-native
+- [x] P43.2 Graph representation (#300)
+  - [x] Encode supervisor selection, worker proposal, project-native
     verification, and supervisor promotion as graph nodes.
-- [ ] P43.3 Evidence and accounting linkage
-  - [ ] Link evidence summaries and token/cost records to graph nodes.
-- [ ] P43.4 Pilot synthesis and closeout
-  - [ ] Record what graph structure helped or hindered.
+- [x] P43.3 Evidence and accounting linkage (#301)
+  - [x] Link evidence summaries and token/cost records to graph nodes.
+- [x] P43.4 Pilot synthesis and closeout (#302)
+  - [x] Record what graph structure helped or hindered.
 
 Phase 43 acceptance criteria:
 

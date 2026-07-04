@@ -860,3 +860,15 @@ issues, pull requests, and closeout comments.
 - Updated the FreshForge-compatible graph template to use
   `parameters.agent_workbench` and node `provenance` as the canonical metadata
   locations.
+
+## 2026-07-04 - Added P43 graph-backed pilot workflow
+
+- Opened P43 GitHub issue #298 with child issues #299 through #302 for pilot
+  selection, graph representation, evidence/accounting linkage, and closeout.
+- Added `templates/workbench_templates/freshforge_proposal_assist_graph.json`
+  as a real proposal-assist pilot graph pattern.
+- Added `agent-workbench graph render` to produce supervisor-readable Markdown
+  summaries of graph nodes, roles, authority levels, evidence links, accounting
+  links, and artifacts.
+- Added `planning/phase43_graph_backed_pilot_workflow.md` and updated README,
+  roadmap, changelog, and smoke coverage.
