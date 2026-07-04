@@ -168,3 +168,72 @@ Token accounting note:
   can currently observe the goal-level total, but it cannot yet attribute paid
   supervisor tokens cleanly to direct implementation versus delegated
   orchestration and cleanup.
+
+## Iteration 1 A/B Comparison
+
+Both lanes started from FreshForge commit `5bce95b`, produced substantive P16
+code/docs/tests, and passed the same standard verification gates. This makes the
+first comparison about design quality and delegation economics, not about
+whether one lane failed basic validation.
+
+Implementation footprint:
+
+| Measure | Direct lane | Delegated lane |
+| --- | ---: | ---: |
+| Files changed | 10 | 9 |
+| Insertions | 211 | 140 |
+| Deletions | 4 | 4 |
+| New public record class | yes | no |
+| New public package export | yes | no |
+| Full verification | passed | passed |
+
+Design assessment:
+
+- Direct lane strength: the `ProviderEvidence` dataclass gives downstream users
+  an obvious typed affordance and makes common evidence fields discoverable.
+- Direct lane weakness: it expands the public FreshForge API before there is
+  enough downstream evidence that the chosen fields are stable. This may create
+  migration pressure if P17/P18 or downstream packages need a different shape.
+- Delegated lane strength: the opaque JSON-compatible mapping is smaller,
+  preserves provider autonomy, and better fits the current FreshForge boundary:
+  core should serialize provider evidence, not interpret scientific or domain
+  meaning.
+- Delegated lane weakness: the mapping is less self-documenting for provider
+  authors and may lead to inconsistent keys unless follow-on docs or examples
+  define a recommended convention.
+
+Worker usefulness:
+
+- The first worker output materially influenced the delegated design. It
+  recommended a provider-owned evidence mapping rather than a typed FreshForge
+  object, and that recommendation survived supervisor review and full
+  verification.
+- The second worker output was partially useful but protocol-imperfect: it
+  suggested tests and documentation angles but missed the required verification
+  section. This is useful evidence for Agent Workbench scoring because the
+  output was not a total failure, but it was not fully compliant.
+
+Token economics signal:
+
+- Local worker usage was measured: 4465 input tokens and 632 output tokens at
+  zero cash cost.
+- Paid supervisor token attribution is still too coarse. The goal counter gives
+  useful total progress evidence, but not a clean direct-lane versus
+  delegated-lane split.
+- P50 is therefore not yet a clean "we won" or "we lost" economics result. It
+  is a partial methodological win: worker outputs influenced a viable design,
+  but the current instrumentation cannot yet prove paid-token savings.
+
+Recommendation for the next iteration:
+
+- Treat the delegated mapping design as the current favored FreshForge P16
+  promotion candidate because it is smaller, less committal, and better aligned
+  with FreshForge's generic orchestration boundary.
+- Do not discard the direct lane. Use its typed `ProviderEvidence` design as a
+  pressure test for docs and examples: the mapping convention should remain
+  easy enough to use that provider authors do not need a new public record class
+  immediately.
+- Run one more narrow P50 iteration before choosing a final FreshForge branch:
+  ask workers to review the two concrete diffs and propose either "mapping",
+  "typed record", or "hybrid", then have the supervisor choose and apply the
+  final branch direction.

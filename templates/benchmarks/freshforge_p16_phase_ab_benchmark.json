@@ -81,6 +81,28 @@
     "freshforge_mutation_allowed": false,
     "promotion_requires_supervisor": true
   },
+  "iteration_1_comparison": {
+    "direct_supervisor": {
+      "commit": "0ebf8a2",
+      "files_changed": 10,
+      "insertions": 211,
+      "deletions": 4,
+      "design": "Typed ProviderEvidence dataclass exported from the public package surface.",
+      "verification": "passed"
+    },
+    "delegated_graph": {
+      "commit": "c781775",
+      "files_changed": 9,
+      "insertions": 140,
+      "deletions": 4,
+      "worker_input_tokens": 4465,
+      "worker_output_tokens": 632,
+      "design": "Opaque provider-owned JSON-compatible evidence mapping.",
+      "verification": "passed"
+    },
+    "current_recommendation": "Favor the delegated mapping design for the next FreshForge P16 promotion candidate, while using the direct typed-record design as a documentation and ergonomics pressure test.",
+    "economics_status": "Worker tokens are measured, but paid supervisor-token attribution is still too coarse for a final win/loss conclusion."
+  },
   "decision_rules": [
     "The delegated lane wins only if it reaches equivalent or better FreshForge verification with lower paid supervisor token cost.",
     "The delegated lane loses if supervisor cleanup or verification effort erases paid-token savings.",

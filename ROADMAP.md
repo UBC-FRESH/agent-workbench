@@ -2196,7 +2196,7 @@ Active tasks:
   - [x] Run delegated-lane work from the same start commit.
   - [x] Preserve worker and supervisor token evidence.
 - [ ] P50.4 A/B comparison and benchmark record update (#344)
-  - [ ] Compare direct and delegated lanes after both have evidence.
+  - [x] Compare direct and delegated lanes after both have evidence.
   - [ ] Update benchmark records with actual token economics.
 - [ ] P50.5 Maintainer-reviewed phase closeout (#345)
   - [ ] Close only after the maintainer explicitly says P50 is done.

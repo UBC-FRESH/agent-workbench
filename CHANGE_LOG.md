@@ -969,3 +969,16 @@ issues, pull requests, and closeout comments.
 - Recorded the main P50 gap: goal-level supervisor token totals are visible, but
   supervisor-token attribution is not yet segmented cleanly by direct lane,
   delegated orchestration, implementation cleanup, and reporting.
+
+## 2026-07-04 - Added P50 direct-versus-delegated comparison
+
+- Compared the two FreshForge P16 benchmark lanes from their actual diffs and
+  verification results.
+- Recorded that the direct lane produced a typed `ProviderEvidence` public API,
+  while the delegated lane produced a smaller opaque provider-owned evidence
+  mapping.
+- Identified the delegated mapping as the current favored promotion candidate
+  because it keeps FreshForge core generic and avoids premature public API
+  commitment.
+- Kept P50.4 open for actual token-economics record completion because paid
+  supervisor-token attribution is still goal-level rather than lane-segmented.
