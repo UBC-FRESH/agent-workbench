@@ -561,3 +561,17 @@ issues, pull requests, and closeout comments.
   `agent-workbench evidence render`.
 - Added `planning/phase23_evidence_validation_rendering_notes.md` and kept the
   validator local, conservative, and dependency-free.
+
+## 2026-07-04 - Dogfooded Phase 24 CLI workflow
+
+- Created the Phase 24 CLI-dogfood lane on
+  `feature/p24-cli-dogfood-workflow`, with parent issue #178 and child task
+  issues #179 through #183.
+- Ran `agent-workbench smoke`, `agent-workbench eval --dry-run`, and a
+  provider-backed no-tool `agent-workbench eval` against `qwen3-coder:latest`.
+- Verified the provider-backed run classified as `exact-marker` and rendered a
+  sanitized evidence summary through `agent-workbench evidence validate` and
+  `agent-workbench evidence render`.
+- Added `playbooks/cli_workflow.md`,
+  `planning/phase24_cli_dogfood_workflow_notes.md`, and README quickstart
+  guidance for small real-project trials.

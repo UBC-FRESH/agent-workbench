@@ -32,7 +32,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P21 Minimal local package and CLI skeleton | #157 | `feature/p21-minimal-local-package-cli` | Complete |
 | P22 CLI wrappers for existing commands | #164 | `feature/p22-cli-wrappers-existing-commands` | Complete |
 | P23 Evidence summary validation and rendering | #171 | `feature/p23-evidence-summary-validation-rendering` | Complete |
-| P24 CLI dogfood workflow | TBD | TBD | Planned |
+| P24 CLI dogfood workflow | #178 | `feature/p24-cli-dogfood-workflow` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -1156,11 +1156,47 @@ Phase 23 acceptance criteria:
 
 ## Phase 24: CLI Dogfood Workflow
 
-Parent issue: TBD
+Parent issue: #178
 
-Branch: TBD
+Branch: `feature/p24-cli-dogfood-workflow`
 
-Status: planned
+Status: complete
 
 Goal: dogfood the new CLI on one no-tool evaluation workflow from ticket through
 sanitized summary.
+
+Completed tasks:
+
+- [x] P24.1 Dogfood runtime ticket and manifest (#179)
+  - [x] Prepare ignored ticket.
+  - [x] Prepare ignored manifest.
+  - [x] Keep provider inputs ignored.
+- [x] P24.2 CLI smoke and dry-run dogfood (#180)
+  - [x] Run editable install.
+  - [x] Run `agent-workbench smoke`.
+  - [x] Run `agent-workbench eval --dry-run`.
+- [x] P24.3 Provider-backed no-tool CLI trial (#181)
+  - [x] Run provider-backed `agent-workbench eval`.
+  - [x] Inspect ignored evaluation summary.
+  - [x] Confirm `exact-marker` classification.
+- [x] P24.4 Evidence summary validation and rendering (#182)
+  - [x] Create ignored sanitized evidence summary JSON.
+  - [x] Run `agent-workbench evidence validate`.
+  - [x] Run `agent-workbench evidence render`.
+- [x] P24.5 Closeout and deployment-readiness decision (#183)
+  - [x] Add `playbooks/cli_workflow.md`.
+  - [x] Add `planning/phase24_cli_dogfood_workflow_notes.md`.
+  - [x] Update README, roadmap, and changelog.
+  - [x] Open and merge PR.
+
+Phase 24 acceptance criteria:
+
+- `agent-workbench smoke` succeeds.
+- `agent-workbench eval --manifest <manifest> --dry-run` succeeds without
+  provider contact.
+- Provider-backed `agent-workbench eval --manifest <manifest>` succeeds with
+  configured inputs.
+- `agent-workbench evidence validate` and `agent-workbench evidence render`
+  succeed on the dogfood summary.
+- README and playbook explain the minimal package workflow for real dev-project
+  trials.

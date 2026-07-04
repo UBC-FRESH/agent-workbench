@@ -5,9 +5,35 @@ multi-agent development workflows across lab software projects.
 
 The repository focuses on reusable workflow contracts: supervisor/worker agent
 roles, prompt handoffs, evidence-based verification, issue discipline, and
-public-safe planning notes. It intentionally starts as a governance-only
-repository, not as a Python package, VS Code extension, benchmark harness, or
-agent runtime.
+public-safe planning notes. It now also includes a small local Python package
+and CLI for supervisor-side smoke checks, same-ticket evaluation, and sanitized
+evidence summaries.
+
+## Local CLI
+
+Install from a checkout:
+
+```powershell
+python -m pip install -e .
+agent-workbench --help
+```
+
+Useful first commands:
+
+```powershell
+agent-workbench smoke
+agent-workbench eval --manifest runtime/agent_jobs/example_manifest.json --dry-run
+agent-workbench evidence validate --input runtime/agent_jobs/example_evidence.json
+agent-workbench evidence render --input runtime/agent_jobs/example_evidence.json --output runtime/agent_jobs/example_evidence.md
+```
+
+Raw tickets, manifests, model outputs, and provider inputs should stay in
+ignored runtime paths. Promote only sanitized findings into tracked planning
+notes.
+
+Current boundary: the package is a local supervisor tool. It is not a VS Code
+extension, MCP server, hosted agent, dashboard, autonomous closeout system, or
+permission to delegate tracked-file or GitHub mutation to workers.
 
 See:
 
@@ -15,3 +41,4 @@ See:
 - `CONTRIBUTING.md` for contributor workflow rules.
 - `ROADMAP.md` for the active phase/task plan.
 - `CHANGE_LOG.md` for the append-only project narrative.
+- `playbooks/cli_workflow.md` for the current CLI workflow.
