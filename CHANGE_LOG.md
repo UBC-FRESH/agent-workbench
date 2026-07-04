@@ -549,3 +549,15 @@ issues, pull requests, and closeout comments.
   `--summary-only` support for the SDK same-ticket evaluation harness.
 - Added `planning/phase22_cli_wrappers_notes.md` and preserved direct script
   compatibility.
+
+## 2026-07-04 - Added Phase 23 evidence commands
+
+- Created the Phase 23 evidence-validation lane on
+  `feature/p23-evidence-summary-validation-rendering`, with parent issue #171
+  and child task issues #172 through #176.
+- Added `src/agent_workbench/evidence.py` with lightweight evidence summary
+  validation and Markdown rendering.
+- Added `agent-workbench evidence validate` and
+  `agent-workbench evidence render`.
+- Added `planning/phase23_evidence_validation_rendering_notes.md` and kept the
+  validator local, conservative, and dependency-free.
