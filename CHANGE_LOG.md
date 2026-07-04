@@ -1077,3 +1077,6 @@ issues, pull requests, and closeout comments.
   guardrail calibration.
 - Kept experiment records sanitized by excluding raw inputs, raw outputs, raw
   traces, provider URLs, headers, and personal paths.
+- Rendered benefit-cost ratio as undefined when a record has no audited
+  delegated supervisor cost, so worker-only scale signals are not mistaken for
+  final economics claims.

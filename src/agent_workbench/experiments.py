@@ -184,7 +184,7 @@ def render_experiment_markdown(data: dict[str, Any]) -> str:
         f"- supervisor_cost_usd: {format_float(economics.get('supervisor_cost_usd', 0))}",
         f"- direct_baseline_cost_usd: {format_float(economics.get('direct_baseline_cost_usd', 0))}",
         f"- net_savings_usd: {format_float(economics.get('net_savings_usd', 0))}",
-        f"- benefit_cost_ratio: {format_float(benefit_cost_ratio(economics))}",
+        f"- benefit_cost_ratio: {benefit_cost_ratio_label(economics)}",
         "",
         "## Links",
         "",
@@ -228,7 +228,7 @@ def synthesize_experiment_markdown(paths: list[Path]) -> str:
         "## Observation Table",
         "",
         "| Record | Series | Task | Scale | Model | Status | Worker In | Worker Out | Supervisor USD | Direct USD | Net USD | BCR |",
-        "| --- | --- | --- | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| --- | --- | --- | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for _path, data in records:
         experiment = safe_mapping(data.get("experiment"))
@@ -250,7 +250,7 @@ def synthesize_experiment_markdown(paths: list[Path]) -> str:
                 supervisor=format_float(economics.get("supervisor_cost_usd", 0)),
                 direct=format_float(economics.get("direct_baseline_cost_usd", 0)),
                 net=format_float(economics.get("net_savings_usd", 0)),
-                bcr=format_float(benefit_cost_ratio(economics)),
+                bcr=benefit_cost_ratio_label(economics),
             )
         )
     lines.append("")
@@ -314,6 +314,15 @@ def benefit_cost_ratio(economics: dict[str, Any]) -> float:
     if delegated <= 0:
         return 0.0
     return direct / delegated
+
+
+def benefit_cost_ratio_label(economics: dict[str, Any]) -> str:
+    delegated = number(economics.get("supervisor_cost_usd", 0)) + number(
+        economics.get("worker_cost_usd", 0)
+    )
+    if delegated <= 0:
+        return "`undefined-no-audited-delegated-cost`"
+    return format_float(benefit_cost_ratio(economics))
 
 
 def number(value: Any) -> float:
