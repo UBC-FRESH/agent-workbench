@@ -1188,3 +1188,5 @@ issues, pull requests, and closeout comments.
   repaired zero records.
 - Recorded measured supervisor delta-review cost of `$0.434535` against the
   existing direct source-audit baseline of `$0.288374`.
+- Closed P52 with the decision not to scale this loop shape until P54 adds
+  stricter identifier-preservation and calibration-miss bailout rules.

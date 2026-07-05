@@ -52,6 +52,14 @@ produced parseable JSONL, but it inherited the bad self-audit state:
 - 0 records were repaired;
 - 0 records were marked ready for supervisor delta-review.
 
+The failed repair attempt also confirms that the SDK path is not inherently
+no-tool. The session reported tool execution events before failing with
+`invalid tool call arguments`. That means SDK-based workers can encounter a
+tool-capable surface, but Agent Workbench should not rely on it for benchmark
+work until a later phase explicitly defines allowed tools, disables unwanted
+tools, and records tool-call evidence. For P52, unrestricted tool behavior is a
+confounder, not a feature.
+
 ## Economics Result
 
 P52 did not improve the economics margin. The measured supervisor
@@ -65,6 +73,7 @@ particular ticket/model/protocol combination is not yet useful:
 - it failed to preserve primary identifiers;
 - it missed known repairable cases;
 - repair mode reinforced the flawed self-audit result;
+- one SDK repair attempt hit uncontrolled tool-call behavior; and
 - supervisor cost went up because the supervisor had to diagnose the loop
   failure.
 

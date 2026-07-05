@@ -46,6 +46,8 @@
       "status": "blocked",
       "classification": "model-call-failure",
       "quality_evidence": "not_applicable_invalid_tool_call",
+      "tool_surface_observed": true,
+      "tool_surface_note": "SDK repair attempt emitted tool execution events and failed with invalid tool call arguments before assistant output.",
       "assistant_output_captured": false
     },
     {
@@ -76,7 +78,7 @@
   "decision": {
     "scale_this_loop_shape": false,
     "reason": "Self-audit preserved zero sample identifiers and detected zero of nine known repairable records; repair inherited the bad self-audit state.",
-    "p54_policy_update": "Stop local repair loops when self-audit fails primary identifier preservation or misses known repairable calibration cases."
+    "p54_policy_update": "Stop local repair loops when self-audit fails primary identifier preservation or misses known repairable calibration cases. Treat uncontrolled SDK tool-call behavior as a benchmark confounder until allowed-tool policy is explicit."
   },
   "public_safety": {
     "raw_source_excerpt_tracked": false,

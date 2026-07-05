@@ -60,7 +60,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P49 Benchmark worktree preparation | #334 | `feature/p49-benchmark-worktree-prep` | Complete |
 | P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Complete |
 | P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Complete |
-| P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Active |
+| P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Complete |
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Planned |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Planned |
 
@@ -2290,7 +2290,7 @@ Parent issue: #348
 
 Branch: `feature/p52-local-self-audit-repair-loop`
 
-Status: active
+Status: complete
 
 Goal: dogfood a bounded local self-audit plus repair loop on the MP11 audit
 sample and measure whether zero-cash worker iterations reduce paid supervisor
