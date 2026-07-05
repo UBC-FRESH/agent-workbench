@@ -1246,3 +1246,19 @@ issues, pull requests, and closeout comments.
 - Recorded Wave 0 findings in `planning/phase55_wave0_chunking_results.md`:
   the 1995 PDF has sparse `pypdf` text extraction, while the 2006 and 2012 PDFs
   need smaller chunks before a clean x2/x4/x8 worker comparison.
+
+## 2026-07-04 - Ran P55 Wave 1 single-model smoke
+
+- Refocused P55 on the three most recent TSA23 TSR documents from 2012: data
+  package, public discussion paper, and rationale.
+- Regenerated chunk manifests and ignored eval packets with 8-page windows and
+  1-page overlap, then committed the refocus checkpoint.
+- Ran `qwen3-coder-next:latest` on all three `structure_x2` Wave 1 tickets
+  through the Copilot SDK/Ollama eval path.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave1_smoke_summary.json`
+  and `planning/phase55_wave1_smoke_results.md` with sanitized aggregate
+  metrics only.
+- Recorded that all three worker calls completed with parseable JSONL and no
+  malformed lines, but scaling unchanged is not recommended because the outputs
+  exposed record-ID uniqueness, page-anchor type, and data-package coverage
+  defects.

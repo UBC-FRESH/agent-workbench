@@ -2387,7 +2387,7 @@ Planned tasks:
   - [x] Dry-run all generated eval manifests without provider contact.
   - [ ] Decide whether to revise chunk size/OCR before worker contact.
 - [ ] P55.2 No-tool local-worker extraction run (#369)
-  - [ ] Run Wave 1 single-model smoke across three documents.
+  - [x] Run Wave 1 single-model smoke across three documents.
   - [ ] Run Wave 2 model A/B on identical document/chunk tickets.
   - [ ] Run Wave 3 ticket-size scale tests if Wave 1/2 gates pass.
   - [ ] Run Wave 4 repeatability and Wave 5 content probe if earlier waves
