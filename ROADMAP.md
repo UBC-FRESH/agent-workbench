@@ -61,7 +61,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Complete |
 | P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Complete |
 | P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Complete |
-| P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Active |
+| P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Complete |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -2315,7 +2315,7 @@ Parent issue: #349
 
 Branch: `feature/p53-document-library-index-pilot`
 
-Status: active
+Status: complete
 
 Goal: apply the document-library indexing workflow to all public TSA 23 TSR PDF
 documents from 1995 onward so MP11-derived settings can later be tested for
