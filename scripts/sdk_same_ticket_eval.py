@@ -466,7 +466,10 @@ def markdown_headings(text: str) -> list[str]:
 
 
 def normalize_heading(heading: str) -> str:
-    return re.sub(r"\s+", " ", heading.strip()).casefold()
+    text = heading.strip()
+    text = re.sub(r"^#{1,6}\s+", "", text)
+    text = re.sub(r"\s+#+\s*$", "", text)
+    return re.sub(r"\s+", " ", text.strip()).casefold()
 
 
 def looks_loop_like(text: str) -> bool:

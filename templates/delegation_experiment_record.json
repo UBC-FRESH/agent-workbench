@@ -1,0 +1,63 @@
+{
+  "record_id": "example-delegation-experiment-record",
+  "schema_version": 1,
+  "generated_utc": "2026-07-04T00:00:00Z",
+  "experiment": {
+    "experiment_id": "mp11-scale-x2-run01",
+    "series_id": "mp11-document-structure-scale-sequence",
+    "project": "agent-delegation-lab",
+    "phase": "p1"
+  },
+  "task": {
+    "task_id": "mp11-scale-x2",
+    "task_family": "long-document-structure-pass",
+    "scale_factor": 2,
+    "input_pages": 24,
+    "input_words": 5000,
+    "input_characters": 34000
+  },
+  "model": {
+    "model_id": "qwen3-coder-next:latest",
+    "provider": "local-ollama",
+    "cash_cost_per_token_usd": 0
+  },
+  "protocol": {
+    "authority_level": "L0",
+    "timeout_seconds": 7200,
+    "audit_strategy": "stratified-sample-plus-schema-checks",
+    "ticket_template": "mp11-structure-pass-jsonl"
+  },
+  "outcome": {
+    "status": "completed-parseable",
+    "records_produced": 25,
+    "accepted_records": 15,
+    "repairable_records": 6,
+    "rejected_records": 4,
+    "needs_review_records": 0
+  },
+  "economics": {
+    "worker_input_tokens": 20708,
+    "worker_output_tokens": 5463,
+    "worker_cost_usd": 0,
+    "supervisor_cost_usd": 0.171488,
+    "direct_baseline_cost_usd": 0.153581,
+    "net_savings_usd": -0.017907
+  },
+  "links": {
+    "token_record": "runtime/supervisor_tokens/<benchmark_id>/<span>.tokens.json",
+    "source_summary": "benchmarks/mp11_document_metadata_index/economics_iteration_02_summary.json",
+    "planning_note": "planning/phase1_mp11_economics_iteration_02.md"
+  },
+  "public_safety": {
+    "raw_inputs_excluded": true,
+    "raw_outputs_excluded": true,
+    "raw_traces_excluded": true,
+    "provider_urls_excluded": true,
+    "headers_excluded": true,
+    "personal_paths_excluded": true
+  },
+  "notes": [
+    "Use one record per model/protocol/task-scale observation.",
+    "Do not store raw prompts, raw source text, raw worker output, provider URLs, headers, or personal paths."
+  ]
+}

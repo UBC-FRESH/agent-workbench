@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "document_id": "corpus/document-id",
+  "corpus_id": "corpus-name",
+  "title": "",
+  "document_type": "",
+  "jurisdiction": "",
+  "management_unit": "",
+  "publication_date": "",
+  "source_url": "",
+  "source_provenance": "",
+  "source_sha256": "",
+  "byte_size": 0,
+  "page_count": 0,
+  "language": "en",
+  "public_access": {
+    "is_public": true,
+    "license_or_terms": "",
+    "redistribution_notes": ""
+  },
+  "extraction": {
+    "status": "not_started",
+    "tool": "",
+    "extracted_text_runtime_root": "runtime/document_library/<document_id>/chunks",
+    "tracked_chunk_manifest": "benchmarks/document_library/<document_id>/chunk_manifest.json",
+    "text_extraction_notes": ""
+  },
+  "indexing": {
+    "structure_pass_status": "not_started",
+    "content_metadata_status": "not_started",
+    "audit_status": "not_started",
+    "promoted_index_status": "not_started"
+  },
+  "public_safety": {
+    "raw_document_tracked": false,
+    "raw_text_tracked": false,
+    "raw_worker_outputs_tracked": false,
+    "provider_urls_tracked": false,
+    "provider_headers_tracked": false,
+    "personal_paths_tracked": false
+  }
+}

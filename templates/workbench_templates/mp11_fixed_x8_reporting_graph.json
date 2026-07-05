@@ -1,0 +1,157 @@
+{
+  "workflow": {
+    "id": "mp11_fixed_x8_reporting_delegation",
+    "name": "MP11 Fixed-X8 Reporting Delegation",
+    "description": "FreshForge-shaped non-executing graph for reducing paid supervisor reporting overhead in the MP11 fixed-x8 benchmark."
+  },
+  "nodes": [
+    {
+      "id": "collect_sanitized_inputs",
+      "provider": "agent_workbench.script.collect_inputs",
+      "name": "Collect sanitized inputs",
+      "description": "Collect tracked summary JSON, experiment records, token rollups, and prior reference rows without loading raw PDF text or provider traces.",
+      "inputs": {
+        "summary_json": "benchmarks/mp11_document_metadata_index/x8_bundle_sequence_02/summary.json",
+        "experiment_records": "benchmarks/mp11_document_metadata_index/x8_bundle_sequence_02/*.experiment.json"
+      },
+      "outputs": {
+        "reporting_packet": "ignored sanitized packet for reporting worker"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "script_prepare",
+          "execution_boundary": "deterministic collection of sanitized benchmark inputs",
+          "evidence_reference": "runtime/agent_workbench/mp11/reporting_packet.json",
+          "token_accounting": "none"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "reporting_packet",
+          "kind": "generated",
+          "path_or_reference": "runtime/agent_workbench/mp11/reporting_packet.json"
+        }
+      ],
+      "provenance": {
+        "role": "script",
+        "capability": "sanitized_input_collection",
+        "authority_level": "deterministic",
+        "implementation": "Agent Workbench script"
+      }
+    },
+    {
+      "id": "draft_reporting_summary",
+      "provider": "agent_workbench.local_worker.reporting",
+      "name": "Draft reporting summary",
+      "description": "Local gpt-oss worker drafts a compact reporting packet from sanitized experiment summaries.",
+      "needs": [
+        "collect_sanitized_inputs"
+      ],
+      "inputs": {
+        "reporting_packet": "${nodes.collect_sanitized_inputs.outputs.reporting_packet}"
+      },
+      "outputs": {
+        "draft_report": "local-worker draft for supervisor review"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_reporting_draft",
+          "execution_boundary": "bounded local worker draft; no tracked mutation",
+          "allowed_authority": "L0",
+          "evidence_reference": "runtime/agent_workbench/mp11/reporting_worker_draft.md",
+          "claim_review": "supervisor must approve or rewrite every economics claim",
+          "token_accounting": "runtime/agent_workbench/mp11/reporting_worker.tokens.json"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "reporting_worker_draft",
+          "kind": "generated",
+          "path_or_reference": "runtime/agent_workbench/mp11/reporting_worker_draft.md"
+        }
+      ],
+      "provenance": {
+        "role": "reporter",
+        "capability": "sanitized_experiment_summarization",
+        "authority_level": "L0",
+        "implementation": "gpt-oss:20b",
+        "model_profile": "model_profiles/gpt-oss-family-planned.md"
+      }
+    },
+    {
+      "id": "supervisor_review",
+      "provider": "agent_workbench.supervisor.review",
+      "name": "Supervisor review",
+      "description": "Paid supervisor reviews the draft for correctness, claim boundaries, and next-action implications.",
+      "needs": [
+        "draft_reporting_summary"
+      ],
+      "inputs": {
+        "draft_report": "${nodes.draft_reporting_summary.outputs.draft_report}"
+      },
+      "outputs": {
+        "approved_interpretation": "supervisor-approved interpretation or rejection"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_review",
+          "execution_boundary": "paid supervisor owns final interpretation",
+          "evidence_reference": "tracked planning note or benchmark summary",
+          "supervisor_decision": "accept draft, revise draft, reject draft, or request source audit",
+          "token_accounting": "runtime/supervisor_tokens/<benchmark>/reporting_review.tokens.json"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "approved_interpretation",
+          "kind": "promoted",
+          "path_or_reference": "tracked sanitized planning note"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "claim_review_and_economics_boundary",
+        "authority_level": "supervisor-owned",
+        "implementation": "paid supervisor"
+      }
+    },
+    {
+      "id": "source_level_audit",
+      "provider": "agent_workbench.supervisor.audit",
+      "name": "Source-level audit",
+      "description": "Optional paid supervisor audit of selected candidate records against source chunks before any final benefit-cost claim.",
+      "needs": [
+        "supervisor_review"
+      ],
+      "inputs": {
+        "approved_interpretation": "${nodes.supervisor_review.outputs.approved_interpretation}"
+      },
+      "outputs": {
+        "audit_result": "accepted, repairable, rejected, and needs-review counts"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_source_audit",
+          "execution_boundary": "paid supervisor verifies selected records against source evidence",
+          "evidence_reference": "tracked sanitized audit summary",
+          "claim_review": "required before final benefit-cost claim",
+          "token_accounting": "runtime/supervisor_tokens/<benchmark>/source_audit.tokens.json"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "audit_result",
+          "kind": "generated",
+          "path_or_reference": "tracked sanitized audit summary"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "source_level_audit",
+        "authority_level": "supervisor-owned",
+        "implementation": "paid supervisor"
+      }
+    }
+  ]
+}
+

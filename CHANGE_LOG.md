@@ -944,3 +944,216 @@ issues, pull requests, and closeout comments.
   setup protocol.
 - Prepared the first direct-supervisor and delegated-graph FreshForge P16
   benchmark lane worktrees from the same recorded start commit.
+
+## 2026-07-04 - Opened P50 FreshForge P16 A/B benchmark run
+
+- Opened P50 GitHub issue #340 with child issues #341 through #345 for the
+  direct lane, evidence capture, delegated lane, A/B comparison, and
+  maintainer-reviewed closeout.
+- Added `planning/phase50_freshforge_p16_ab_benchmark_run.md`.
+- Kept P50 explicitly open for iterative benchmark work rather than a
+  setup-only closeout.
+
+## 2026-07-04 - Recorded P50 FreshForge P16 delegated iteration
+
+- Ran the delegated Agent Workbench FreshForge P16 lane from the same FreshForge
+  start commit used by the direct baseline.
+- Executed two proposal-only `qwen3-coder-next:latest` worker tickets with 4465
+  input tokens and 632 output tokens in the zero-cash local Ollama lane.
+- Implemented the delegated FreshForge P16 branch at commit `c781775` with
+  optional provider-owned evidence mappings threaded through provider run
+  results, node results, compact summaries, evidence manifests, tests, and docs.
+- Verified the delegated branch with targeted tests, full pytest, Ruff,
+  warning-clean Sphinx docs, package build, `twine check`, `git diff --check`,
+  and a public-safety scan.
+- Recorded the main P50 gap: goal-level supervisor token totals are visible, but
+  supervisor-token attribution is not yet segmented cleanly by direct lane,
+  delegated orchestration, implementation cleanup, and reporting.
+
+## 2026-07-04 - Added P50 direct-versus-delegated comparison
+
+- Compared the two FreshForge P16 benchmark lanes from their actual diffs and
+  verification results.
+- Recorded that the direct lane produced a typed `ProviderEvidence` public API,
+  while the delegated lane produced a smaller opaque provider-owned evidence
+  mapping.
+- Identified the delegated mapping as the current favored promotion candidate
+  because it keeps FreshForge core generic and avoids premature public API
+  commitment.
+- Kept P50.4 open for actual token-economics record completion because paid
+  supervisor-token attribution is still goal-level rather than lane-segmented.
+
+## 2026-07-04 - Ran P50 worker diff-review iteration
+
+- Ran a proposal-only P16 diff-review ticket against both `qwen3-coder:latest`
+  and `qwen3-coder-next:latest`.
+- Both workers returned valid structured output and independently selected the
+  `mapping` design over `typed record` or `hybrid`.
+- Recorded 5564 local worker input tokens and 542 local worker output tokens at
+  zero cash cost.
+- Strengthened the P50 recommendation to promote the delegated mapping branch as
+  the current FreshForge P16 candidate, while reserving typed evidence records
+  for later downstream-driven evidence.
+
+## 2026-07-04 - Refined P50 delegated FreshForge P16 candidate
+
+- Updated the delegated FreshForge P16 branch to commit `a4975a8`.
+- Strengthened provider evidence mapping docs with recommended keys and fields
+  while keeping FreshForge core schema-neutral.
+- Added test coverage proving provider-owned `uri` and `metadata` values are
+  preserved in workflow evidence manifests.
+- Verified the delegated candidate with targeted tests, full pytest, Ruff,
+  warning-clean Sphinx docs, package build, `twine check`, `git diff --check`,
+  and a public-safety scan.
+
+## 2026-07-04 - Opened FreshForge P16 delegated draft PR
+
+- Opened UBC-FRESH/freshforge#118 as a draft PR from
+  `benchmark/p16-agent-workbench-delegated` to `main`.
+- Used `Refs #113` rather than auto-close wording so the PR is a review surface
+  while Agent Workbench P50 remains open.
+- Verified PR checks passed on Python 3.11 and Python 3.12.
+- Recorded the draft PR as the active P50 promotion candidate for maintainer
+  review, not as phase closeout.
+
+## 2026-07-04 - Added P50 token-economics checkpoint ledger
+
+- Recorded the measured local-worker usage for P50 so far: 10029 input tokens
+  and 1174 output tokens at zero cash cost.
+- Recorded cumulative Codex goal-token checkpoints at 129063, 278526, and
+  584722 total tokens.
+- Marked the supervisor-token checkpoints as low-confidence attribution evidence
+  because they lack input/output split and lane-local segmentation.
+- Preserved the honest current conclusion: workers produced useful design signal
+  cheaply, but P50 has not yet proven paid-supervisor token savings.
+
+## 2026-07-04 - Opened Agent Workbench P50 draft PR
+
+- Opened UBC-FRESH/agent-workbench#346 as a draft PR from
+  `feature/p50-freshforge-p16-ab-benchmark-run` to `main`.
+- Used `Refs #340` rather than auto-close wording so the PR is a review surface
+  while P50 remains open.
+- Recorded that the PR is open, draft, clean, and has no configured checks.
+- Preserved the separation between FreshForge PR #118 for the package candidate
+  and Agent Workbench PR #346 for benchmark evidence.
+
+## 2026-07-04 - Reassessed P50 benchmark target class
+
+- Recorded the maintainer decision that broad FreshForge API-design work is a
+  low-yield benchmark class for current local Ollama workers.
+- Identified high-volume document metadata indexing as a stronger near-term
+  delegation target because the work is input-heavy, chunkable, evidence-rich,
+  and expensive for a paid supervisor to perform directly.
+- Created `UBC-FRESH/agent-delegation-lab` as the public-safe sandbox for
+  synthetic and real-document delegation benchmark tasks.
+- Seeded the new lab with an MP11 475-page PDF metadata-indexing benchmark plan
+  and left Agent Workbench P50 open rather than treating this reassessment as
+  phase closeout.
+
+## 2026-07-04 - Added mandatory supervisor-token checkpoints
+
+- Added `agent-workbench supervisor-tokens latest|checkpoint|span|synthesize`
+  so paid supervisor token usage can be captured from local Codex
+  `token_count` session events at named subtask boundaries.
+- Extended token/cost records to distinguish fresh supervisor input, cached
+  supervisor input, supervisor output, supervisor reasoning output, and local
+  worker input/output tokens.
+- Updated the token pricing calculation so cached input is priced separately
+  and reasoning output is priced as output.
+- Added fixture tests for Codex session parsing, start/end token deltas,
+  fail-closed negative deltas, and supervisor cost calculation.
+- Recorded the new benchmark rule: future economics claims require start/end
+  supervisor-token checkpoints for every supervisor-owned subtask.
+
+## 2026-07-04 - Added delegation experiment observation records
+
+- Added `src/agent_workbench/experiments.py` and the `agent-workbench
+  experiments validate|render|synthesize` command group.
+- Added `templates/delegation_experiment_record.json` as the reusable
+  observation fixture for task-scale, model, protocol, outcome, token, and
+  economics data.
+- Added `planning/phase50_experiment_observation_records.md` to define how
+  MP11 scale-series records should be collected for later policy tuning and
+  guardrail calibration.
+- Kept experiment records sanitized by excluding raw inputs, raw outputs, raw
+  traces, provider URLs, headers, and personal paths.
+- Rendered benefit-cost ratio as undefined when a record has no audited
+  delegated supervisor cost, so worker-only scale signals are not mistaken for
+  final economics claims.
+
+## 2026-07-04 - Planned supervisor overhead delegation strategy
+
+- Added `planning/supervisor_overhead_delegation_strategy.md`.
+- Separated task-economics overhead from GitHub/repository governance overhead.
+- Identified worker-output summarization as a good candidate for delegation to
+  a local `gpt-oss:*` reporting worker.
+- Proposed representing recurring orchestration rituals as FreshForge-shaped
+  workflow graphs so the paid supervisor does not repeatedly reinvent the same
+  process structure.
+
+## 2026-07-04 - Added overhead-reduction scaffolds
+
+- Added `agent-workbench eval-batch` for quiet directory-level eval manifest
+  orchestration with compact JSON and Markdown summaries.
+- Added `templates/reporting_worker_ticket.md` as the reusable local-worker
+  reporting mission template.
+- Added `templates/workbench_templates/mp11_fixed_x8_reporting_graph.json` as
+  a FreshForge-shaped graph for script-owned collection, local `gpt-oss`
+  reporting draft, paid supervisor review, and source-level audit.
+
+## 2026-07-04 - Dogfooded local reporting-worker delegation
+
+- Added `planning/reporting_orchestration_overhead_followup.md` to separate
+  task economics from governance hygiene and record the next orchestration
+  strategy.
+- Ran a local `gpt-oss:20b` reporting-worker draft over sanitized MP11 fixed-x8
+  benchmark summaries, with raw prompts and outputs kept under ignored runtime
+  paths.
+- Fixed structured-section validation so manifest-required bare section names
+  match Markdown headings such as `## Factual Summary`.
+
+## 2026-07-04 - Recorded reporting A/B measurement lesson
+
+- Added `planning/phase50_reporting_ab_iteration_01.md` with the first
+  reporting A/B findings.
+- Recorded that the `gpt-oss:20b` reporting worker used 5746 input tokens and
+  1240 output tokens at zero cash cost.
+- Recorded the combined paid-supervisor reporting comparison interval as
+  `$0.111223`, while preserving the caveat that the first direct/review spans
+  overlapped and cannot be summed independently.
+- Tightened token synthesis so duplicate token `record_id` values and duplicate
+  Codex checkpoint intervals fail closed instead of being silently added into
+  an invalid ledger total.
+- Ran a corrected non-overlapping reporting A/B: direct supervisor reporting
+  cost `$0.059842`; delegated `gpt-oss:20b` report review cost `$0.055943`;
+  isolated reporting delta `$0.003899` before source-level audit/repair.
+
+## 2026-07-04 - Added document-library indexing workflow direction
+
+- Added `planning/document_library_index_workflow_direction.md` to define public
+  technical-document library indexing as a high-potential Agent Workbench
+  delegation lane.
+- Added `templates/document_library_corpus_record.json` for source provenance,
+  extraction status, and public-safety metadata.
+- Added `templates/document_index_worker_ticket.md` for local-worker
+  structure/content metadata extraction from bounded chunks.
+- Added `templates/source_anchored_repair_prepass_ticket.md` for local-worker
+  repair labels before paid supervisor audit.
+- Added `templates/workbench_templates/document_library_index_graph.json` as a
+  FreshForge-shaped workflow graph for corpus registration, chunk extraction,
+  worker passes, repair prepass, supervisor audit calibration, and promoted
+  index assembly.
+- Kept the workflow generic while recording the BC forest-management public
+  document archive and MP11 benchmark as the motivating case study.
+
+## 2026-07-04 - Planned P51-P54 managed-delegation roadmap tranche
+
+- Added `planning/p51_p54_managed_delegation_roadmap.md`.
+- Created planned parent issues #347 through #350 for managed delegation
+  workflow lanes, local self-audit and repair loops, document-library index
+  pilots, and delegation-loop policy tuning.
+- Marked P50 complete in the roadmap after maintainer direction that P50 is
+  now enough.
+- Recorded the P50 closeout position: FreshForge P16 produced useful process
+  evidence, but the next high-return path is managed local-worker workflows for
+  high-volume public technical-document indexing.

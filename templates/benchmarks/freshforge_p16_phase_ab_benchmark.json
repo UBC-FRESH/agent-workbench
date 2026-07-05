@@ -14,16 +14,19 @@
   "lanes": [
     {
       "lane_id": "direct_supervisor",
-      "status": "planned",
+      "status": "complete",
       "branch": "benchmark/p16-direct-supervisor",
       "worktree": "../freshforge-benchmark-p16-direct",
+      "commit": "0ebf8a2",
       "method": "Paid supervisor implements the full FreshForge P16 phase directly, including issue planning, implementation, verification, PR, and closeout.",
       "rollback_plan": "Delete the disposable worktree and branch after recording token/cost and verification evidence.",
       "usage": {
         "supervisor_input_tokens": 0,
         "supervisor_output_tokens": 0,
         "worker_input_tokens": 0,
-        "worker_output_tokens": 0
+        "worker_output_tokens": 0,
+        "goal_total_tokens_observed_after_lane": 129063,
+        "attribution_note": "Goal total includes P50 setup plus the first direct implementation pass; input/output split was not available."
       },
       "evidence_to_capture": [
         "Codex goal token report for the full direct lane",
@@ -34,17 +37,20 @@
     },
     {
       "lane_id": "delegated_graph",
-      "status": "planned",
+      "status": "complete",
       "branch": "benchmark/p16-agent-workbench-delegated",
       "worktree": "../freshforge-benchmark-p16-delegated",
+      "commit": "a4975a8",
       "method": "Supervisor uses Agent Workbench P47 P16 graph packet to delegate proposal-only worker nodes, then performs all FreshForge mutations, verification, PR, and closeout directly.",
       "rollback_plan": "Delete the disposable worktree and branch after recording token/cost and verification evidence.",
       "graph_packet": "templates/deployment_tests/freshforge/p16_provider_evidence_conventions_graph.json",
       "usage": {
         "supervisor_input_tokens": 0,
         "supervisor_output_tokens": 0,
-        "worker_input_tokens": 0,
-        "worker_output_tokens": 0
+        "worker_input_tokens": 4465,
+        "worker_output_tokens": 632,
+        "goal_total_tokens_observed_after_lane": 278526,
+        "attribution_note": "Goal total includes P50 setup, direct lane, delegated worker orchestration, delegated implementation, and evidence reporting; lane-local supervisor attribution remains unresolved."
       },
       "evidence_to_capture": [
         "Codex goal token report for delegated supervisor lane",
@@ -74,6 +80,110 @@
     ],
     "freshforge_mutation_allowed": false,
     "promotion_requires_supervisor": true
+  },
+  "iteration_1_comparison": {
+    "direct_supervisor": {
+      "commit": "0ebf8a2",
+      "files_changed": 10,
+      "insertions": 211,
+      "deletions": 4,
+      "design": "Typed ProviderEvidence dataclass exported from the public package surface.",
+      "verification": "passed"
+    },
+    "delegated_graph": {
+      "commit": "c781775",
+      "files_changed": 9,
+      "insertions": 140,
+      "deletions": 4,
+      "worker_input_tokens": 4465,
+      "worker_output_tokens": 632,
+      "design": "Opaque provider-owned JSON-compatible evidence mapping.",
+      "verification": "passed"
+    },
+    "current_recommendation": "Favor the delegated mapping design for the next FreshForge P16 promotion candidate, while using the direct typed-record design as a documentation and ergonomics pressure test.",
+    "economics_status": "Worker tokens are measured, but paid supervisor-token attribution is still too coarse for a final win/loss conclusion."
+  },
+  "iteration_2_worker_diff_review": {
+    "evaluation_id": "p16-diff-design-review",
+    "ticket_path": "tmp/agent_workbench/p16/p16-diff-design-review.ticket.md",
+    "runs": [
+      {
+        "model": "qwen3-coder:latest",
+        "classification": "structured-output",
+        "decision": "mapping",
+        "input_tokens": 2779,
+        "output_tokens": 267
+      },
+      {
+        "model": "qwen3-coder-next:latest",
+        "classification": "structured-output",
+        "decision": "mapping",
+        "input_tokens": 2785,
+        "output_tokens": 275
+      }
+    ],
+    "worker_input_tokens": 5564,
+    "worker_output_tokens": 542,
+    "worker_cost_usd": 0.0,
+    "consensus": "Both workers selected mapping and identified the same primary tradeoff: flexibility and low migration risk versus weaker typing and consistency.",
+    "supervisor_interpretation": "Promote the delegated mapping branch as the current FreshForge P16 candidate, then strengthen docs and examples instead of adding a public ProviderEvidence dataclass now."
+  },
+  "current_promotion_candidate": {
+    "lane_id": "delegated_graph",
+    "branch": "benchmark/p16-agent-workbench-delegated",
+    "commit": "a4975a8",
+    "draft_pr": "https://github.com/UBC-FRESH/freshforge/pull/118",
+    "draft_pr_number": 118,
+    "draft_pr_checks": {
+      "Python 3.11": "passed",
+      "Python 3.12": "passed"
+    },
+    "design": "Opaque provider-owned JSON-compatible evidence mapping with recommended documentation fields.",
+    "verification": "Targeted tests, full pytest, Ruff, Sphinx -W, build, twine check, git diff --check, and public-safety scan passed.",
+    "remaining_decision": "Maintainer review should decide whether to promote this delegated branch into the actual FreshForge P16 PR or request another P50 iteration."
+  },
+  "token_economics_checkpoint_ledger": {
+    "worker_usage": {
+      "measured_worker_input_tokens": 10029,
+      "measured_worker_output_tokens": 1174,
+      "worker_cash_cost_usd": 0.0,
+      "measurement_confidence": "high"
+    },
+    "supervisor_goal_checkpoints": [
+      {
+        "checkpoint": "after_direct_lane_implementation",
+        "cumulative_goal_tokens": 129063,
+        "delta_since_previous": 129063,
+        "attribution_confidence": "low",
+        "note": "Includes P50 setup plus direct lane implementation."
+      },
+      {
+        "checkpoint": "after_delegated_lane_implementation",
+        "cumulative_goal_tokens": 278526,
+        "delta_since_previous": 149463,
+        "attribution_confidence": "low",
+        "note": "Includes delegated worker orchestration, implementation, and reporting."
+      },
+      {
+        "checkpoint": "before_token_ledger_update",
+        "cumulative_goal_tokens": 584722,
+        "delta_since_previous": 306196,
+        "attribution_confidence": "low",
+        "note": "Includes comparison, worker review, candidate refinement, draft PR, GitHub comments, and reporting."
+      }
+    ],
+    "cash_cost_status": "not_final",
+    "reason_not_final": "Supervisor totals are cumulative goal tokens without input/output split or lane-local segmentation.",
+    "current_conclusion": "Delegated workers produced useful design signal at negligible cash cost, but P50 has not yet proven paid-supervisor token savings."
+  },
+  "agent_workbench_review_surface": {
+    "draft_pr": "https://github.com/UBC-FRESH/agent-workbench/pull/346",
+    "draft_pr_number": 346,
+    "draft_pr_state": "open",
+    "draft_pr_is_draft": true,
+    "merge_state": "clean",
+    "checks": "no checks reported",
+    "purpose": "Review Agent Workbench P50 benchmark evidence while keeping P50 open."
   },
   "decision_rules": [
     "The delegated lane wins only if it reaches equivalent or better FreshForge verification with lower paid supervisor token cost.",
