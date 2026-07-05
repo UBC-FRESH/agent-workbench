@@ -2400,7 +2400,7 @@ Planned tasks:
   - [x] Run Wave 7 dual-model typed fact ensemble candidate extraction.
   - [x] Run Wave 8 disagreement-only verification if Wave 7 candidate JSON
         parses.
-  - [ ] Test DeepSeek-R1 as validation critic and Qwen3-Coder-Next as strict
+  - [x] Test DeepSeek-R1 as validation critic and Qwen3-Coder-Next as strict
         JSON repair executor.
   - [ ] Run Wave 4 repeatability and Wave 5 content probe if earlier waves
         justify it.

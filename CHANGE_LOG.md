@@ -1420,3 +1420,30 @@ issues, pull requests, and closeout comments.
   validation critic, and repair executor roles. DeepSeek-R1 remains a plausible
   validation-critic candidate, while Qwen3-Coder-Next is the next repair
   executor candidate for strict JSON repair.
+
+## 2026-07-05 - Ran P55 Wave 9 critic and repair rescue lane
+
+- Added `scripts/build_p55_critic_repair_packets.py` to generate ignored Wave 9
+  critic and repair tickets from the failed Wave 8 DeepSeek verifier output.
+- Added `scripts/summarize_p55_critic_output.py` to track sanitized critic
+  metrics without publishing raw repair instructions.
+- Ran `deepseek-r1:latest` as a validation critic; it produced parseable repair
+  instructions with two issue records and two repair-strategy steps, but the
+  harness still classified the output as loop-like.
+- Ran `qwen3-coder-next:latest` as a strict JSON repair executor. The first
+  repair pass parsed and covered all fields but invented an invalid
+  `supervisor_review_required` verdict label and invalid `final_chunk_id`
+  values, so the repair ticket was tightened and rerun.
+- The final repair pass parsed, preserved all required top-level keys and all
+  nine field keys, used valid verdict labels, and produced no quote-length or
+  chunk-ID defects. It resolved one field and marked eight fields as
+  `needs_supervisor`.
+- Recorded the result in
+  `benchmarks/document_library/tsa23_tsr/p55_wave9_validation_critic_summary.json`,
+  `benchmarks/document_library/tsa23_tsr/p55_wave9_json_repair_summary.json`,
+  `planning/phase55_wave9_validation_critic_results.md`, and
+  `planning/phase55_wave9_json_repair_results.md`.
+- Interpretation: the critic/repair lane is a safe fallback for producing
+  schema-shaped JSON from failed output, but on this test it is less useful
+  than direct Qwen3.6 disagreement verification because it punts most fields to
+  supervisor audit.

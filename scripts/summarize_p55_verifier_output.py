@@ -13,6 +13,14 @@ from typing import Any
 
 
 QUOTE_WORD_LIMIT = 25
+ALLOWED_VERDICTS = {
+    "left_correct",
+    "right_correct",
+    "both_correct_equivalent",
+    "both_wrong",
+    "insufficient_evidence",
+    "needs_supervisor",
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -35,16 +43,26 @@ def main() -> int:
     parsed, parse_error = parse_json_object(assistant_message)
     verdicts = parsed.get("verdicts", {}) if isinstance(parsed, dict) else {}
     field_rows = summarize_verdicts(verdicts, packet)
+    missing_top_level_keys = sorted(
+        {
+            "verifier_model",
+            "review_status",
+            "document_id",
+            "source_packet_id",
+            "verdicts",
+        }
+        - set(parsed or {})
+    )
     usage = parse_usage(args.eval_root, packet["packet_id"], Path(str(row.get("result_file", ""))))
     report = {
-        "summary_id": "p55_wave8_disagreement_verification",
+        "summary_id": f"p55_{packet['wave_id']}",
         "generated_utc": now_utc(),
         "phase": "P55",
         "wave_id": packet["wave_id"],
         "packet_id": packet["packet_id"],
         "source_packet_id": packet["source_packet_id"],
         "document_id": packet["document_id"],
-        "verifier_model": packet["verifier_model"],
+        "verifier_model": packet.get("verifier_model", packet.get("repair_model", "")),
         "raw_output_policy": "Raw verifier output, final values, and source quotes remain ignored under runtime/.",
         "status": row.get("status", "missing-summary"),
         "harness_classification": row.get("classification", ""),
@@ -54,9 +72,10 @@ def main() -> int:
         "verdict_field_count": len(field_rows),
         "missing_fields": sorted(set(packet["fields"]) - {field["field"] for field in field_rows}),
         "extra_fields": sorted({field["field"] for field in field_rows} - set(packet["fields"])),
+        "missing_top_level_keys": missing_top_level_keys,
         "field_verdicts": field_rows,
         "totals": summarize_totals(field_rows, usage),
-        "gate_result": gate_result(packet, parsed, field_rows),
+        "gate_result": gate_result(packet, parsed, field_rows, missing_top_level_keys),
         "recommended_next_move": recommendation(packet, parsed, field_rows),
     }
     args.output_json.parent.mkdir(parents=True, exist_ok=True)
@@ -130,9 +149,8 @@ def summarize_totals(field_rows: list[dict[str, Any]], usage: dict[str, int]) ->
             if row["verdict"]
             in {"left_correct", "right_correct", "both_correct_equivalent", "both_wrong"}
         ),
-        "needs_supervisor_fields": sum(
-            1 for row in field_rows if row["verdict"] in {"needs_supervisor", "insufficient_evidence"}
-        ),
+        "needs_supervisor_fields": sum(1 for row in field_rows if needs_supervisor(row)),
+        "invalid_verdict_fields": sum(1 for row in field_rows if row["verdict"] not in ALLOWED_VERDICTS),
         "quote_over_limit_fields": sum(1 for row in field_rows if row["source_quote_over_limit"]),
         "invalid_chunk_id_fields": sum(
             1
@@ -149,11 +167,16 @@ def gate_result(
     packet: dict[str, Any],
     parsed: dict[str, Any] | None,
     field_rows: list[dict[str, Any]],
+    missing_top_level_keys: list[str],
 ) -> str:
     if parsed is None:
         return "wave8-verifier-parse-failed"
+    if missing_top_level_keys:
+        return "wave8-missing-top-level-keys"
     if set(packet["fields"]) != {field["field"] for field in field_rows}:
         return "wave8-field-set-mismatch"
+    if any(row["verdict"] not in ALLOWED_VERDICTS for row in field_rows):
+        return "wave8-invalid-verdict-label"
     if any(row["source_quote_over_limit"] for row in field_rows):
         return "wave8-quote-repair-needed"
     if any(row["final_chunk_id_present"] and not row["final_chunk_id_valid"] for row in field_rows):
@@ -168,22 +191,22 @@ def recommendation(
 ) -> str:
     if parsed is None:
         return "Repair verifier ticket or switch verifier model before supervisor audit."
-    needs_supervisor = [
+    supervisor_fields = [
         row["field"]
         for row in field_rows
-        if row["verdict"] in {"needs_supervisor", "insufficient_evidence"}
+        if needs_supervisor(row)
     ]
-    if needs_supervisor:
+    if supervisor_fields:
         return (
             "Send only unresolved verifier fields to paid supervisor audit: "
-            + ", ".join(needs_supervisor)
+            + ", ".join(supervisor_fields)
         )
     return "Use supervisor audit sampling to check verifier correctness before final JSON normalization."
 
 
 def render_markdown(report: dict[str, Any]) -> str:
     lines = [
-        "# Phase 55 Wave 8 Disagreement Verification Results",
+        f"# Phase 55 {report['wave_id']} Results",
         "",
         "Raw verifier values and source quotes remain ignored under runtime paths.",
         "",
@@ -240,6 +263,12 @@ def resolve_result_file(eval_root: Path, packet_id: str, result_file: Path) -> P
     if result_file.exists():
         return result_file
     return eval_root / packet_id / result_file.name
+
+
+def needs_supervisor(row: dict[str, Any]) -> bool:
+    return row["verdict"] in {"needs_supervisor", "insufficient_evidence"} or (
+        row["verdict"] not in ALLOWED_VERDICTS
+    )
 
 
 def chunk_id_valid(value: Any) -> bool:

@@ -76,6 +76,16 @@ Current verifier/repair candidates:
   generation;
 - `qwen3-coder-next:latest`: repair executor candidate for strict JSON repair.
 
+Wave 9 tested the critic/repair split on the failed DeepSeek-R1 verifier
+artifact. DeepSeek-R1 produced a parseable critic report with repair
+instructions, and Qwen3-Coder-Next eventually produced parseable schema-shaped
+JSON after the repair ticket was tightened with full top-level keys, allowed
+verdict labels, and explicit allowed chunk IDs. However, the final repaired
+artifact marked eight of nine fields as `needs_supervisor`, so the rescue lane
+was safe but not high-yield. For this document-extraction node, direct Qwen3.6
+verification is currently more useful than DeepSeek-R1 critic plus
+Qwen3-Coder-Next repair.
+
 ## First Typed Field Set
 
 The first typed candidate schema is deliberately small. It is not the final TSR
