@@ -62,7 +62,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Complete |
 | P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Complete |
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Complete |
-| P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Planned |
+| P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2344,7 +2344,7 @@ Parent issue: #350
 
 Branch: `feature/p54-delegation-loop-policy-tuning`
 
-Status: planned
+Status: complete
 
 Goal: convert managed-loop observations into conservative, explainable policy
 guidance for splitting, iterating, self-auditing, repairing, escalating, or
@@ -2352,13 +2352,13 @@ stopping delegated work.
 
 Planned tasks:
 
-- [ ] P54.1 Managed-loop decision rules
-  - [ ] Define task-shape thresholds and bailout rules.
-  - [ ] Define when to run self-audit, repair, supervisor audit, or direct
+- [x] P54.1 Managed-loop decision rules (#363)
+  - [x] Define task-shape thresholds and bailout rules.
+  - [x] Define when to run self-audit, repair, supervisor audit, or direct
         supervisor completion.
-- [ ] P54.2 Evidence mining and policy update
-  - [ ] Mine experiment registry fields for cost/quality signals.
-  - [ ] Update delegation decision guidance with managed-loop recommendations.
-- [ ] P54.3 Missing-evidence reporting
-  - [ ] Make missing evidence explicit rather than inferred.
-  - [ ] Keep model-specific guidance scoped to observed task classes.
+- [x] P54.2 Evidence mining and policy update (#364)
+  - [x] Mine experiment registry fields for cost/quality signals.
+  - [x] Update delegation decision guidance with managed-loop recommendations.
+- [x] P54.3 Missing-evidence reporting (#365)
+  - [x] Make missing evidence explicit rather than inferred.
+  - [x] Keep model-specific guidance scoped to observed task classes.
