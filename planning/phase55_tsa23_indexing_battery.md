@@ -61,6 +61,15 @@ Run `qwen3-coder-next:latest` on `structure_x2` for each selected document.
 Stop gate: continue only if outputs are parseable and preserve required
 document/record IDs.
 
+### Wave 1.1: Full-Document Single-Model Smoke
+
+Run `qwen3-coder-next:latest` on `structure_full` for each selected document so
+the first indexing signal covers the full extracted page range instead of only
+the opening chunks.
+
+Stop gate: continue only if full-document outputs remain parseable and do not
+show worse looping or format drift than Wave 1.
+
 ### Wave 2: Model A/B
 
 Run `qwen3-coder:latest`, `qwen3-coder-next:latest`, and `gpt-oss:120b` on
@@ -109,7 +118,7 @@ Minimum useful evidence before considering phase closeout:
 - at least one supervisor audit calibration slice;
 - missing evidence recorded explicitly.
 
-The full battery is 16 planned worker runs plus supervisor audit calibration.
+The full battery is 19 planned worker runs plus supervisor audit calibration.
 
 ## Metrics
 

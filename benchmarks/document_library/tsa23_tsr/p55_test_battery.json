@@ -61,6 +61,12 @@
       "purpose": "larger structure extraction test"
     },
     {
+      "shape_id": "structure_full",
+      "record_type": "structure",
+      "page_windows": "all",
+      "purpose": "full-document structure extraction test across all generated chunks"
+    },
+    {
       "shape_id": "content_x4",
       "record_type": "content_metadata",
       "page_windows": 4,
@@ -81,6 +87,13 @@
       "runs": 3,
       "worker_contact": true,
       "stop_gate": "Continue only if outputs are parseable and preserve required document/record IDs."
+    },
+    {
+      "wave_id": "wave1_full_document_smoke",
+      "goal": "Run qwen3-coder-next on structure_full for each selected document so every generated page-window chunk is represented before model A/B.",
+      "runs": 3,
+      "worker_contact": true,
+      "stop_gate": "Continue only if full-document outputs remain parseable and do not show worse looping or format drift than Wave 1."
     },
     {
       "wave_id": "wave2_model_ab",
@@ -125,7 +138,7 @@
     "requires_supervisor_audit": true
   },
   "full_battery": {
-    "planned_worker_runs": 16,
+    "planned_worker_runs": 19,
     "documents_touched": 3,
     "models_touched": 3,
     "requires_supervisor_audit": true

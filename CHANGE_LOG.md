@@ -1262,3 +1262,23 @@ issues, pull requests, and closeout comments.
   malformed lines, but scaling unchanged is not recommended because the outputs
   exposed record-ID uniqueness, page-anchor type, and data-package coverage
   defects.
+
+## 2026-07-04 - Reran P55 Wave 1 with full-document coverage
+
+- Added a `structure_full` ticket shape and Wave 1.1 full-document smoke lane
+  so P55 does not skip useful later pages before model A/B testing.
+- Tightened the structure-ticket contract to require unique `record_id` values,
+  string `page_anchor` values, bare JSONL, and at least one strong record per
+  metadata-bearing chunk.
+- Regenerated Wave 0 artifacts: 12 eval packets total, including full-document
+  packets covering 41 data-package pages, 17 public-discussion-paper pages, and
+  48 rationale pages.
+- Reran the three `structure_x2` tickets and ran three full-document tickets
+  with `qwen3-coder-next:latest`.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave1_full_document_rerun_summary.json`
+  and `planning/phase55_wave1_full_document_rerun_results.md` with sanitized
+  aggregate metrics.
+- Recorded the main result: later pages do contain useful indexable material,
+  but one huge ticket per document is format-fragile and should be replaced by
+  deterministic per-chunk or small-bundle orchestration plus delegated format
+  repair before Wave 2.

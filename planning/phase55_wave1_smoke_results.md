@@ -54,6 +54,7 @@ ticket/eval contract should be tightened so that:
 
 ## Recommendation
 
-Pause before Wave 2. The next best move is a small contract-tightening patch,
-then rerun Wave 1 or run a narrow Wave 1.1 on the data package and rationale to
-confirm the fixes before paying the overhead of a three-model A/B run.
+Pause before Wave 2. The next best move is a small contract-tightening patch
+plus a Wave 1.1 full-document smoke run across all three selected documents, so
+the first indexing signal does not skip useful later sections before paying the
+overhead of a three-model A/B run.

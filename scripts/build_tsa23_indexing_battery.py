@@ -58,7 +58,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-ticket-chars",
         type=int,
-        default=120_000,
+        default=220_000,
         help="Hard cap on source text characters embedded in one worker ticket.",
     )
     return parser.parse_args()
@@ -168,8 +168,10 @@ def extract_document_chunks(
     return manifest
 
 
-def selected_chunks(manifest: dict[str, Any], page_windows: int) -> list[dict[str, Any]]:
-    return list(manifest["chunks"][:page_windows])
+def selected_chunks(manifest: dict[str, Any], page_windows: Any) -> list[dict[str, Any]]:
+    if str(page_windows).lower() == "all":
+        return list(manifest["chunks"])
+    return list(manifest["chunks"][: int(page_windows)])
 
 
 def build_ticket(
@@ -269,9 +271,15 @@ Allowed `object_type` values for this ticket:
 - Use only the supplied source chunks.
 - Preserve `document_id`, `source_sha256`, and `chunk_id` exactly.
 - Every `record_id` must start with `{document['document_id']}::`.
+- Every `record_id` must be unique within this response.
+- `page_anchor` must be a string, such as `PDF page 12` or `PDF pages 12-14`.
 - Include a short `source_quote` copied from the supplied chunks.
+- Return bare JSONL only. Do not wrap the response in markdown fences.
 - Do not invent pages, sections, titles, values, definitions, or citations.
 - Prefer fewer, stronger records over many vague records.
+- For each supplied chunk, extract at least one strong record when the chunk
+  contains a section heading, table, figure, map, appendix, acronym,
+  definition, cross-reference, assumption, or major claim.
 - If a chunk has no useful metadata, output no records for that chunk.
 
 ## Source Chunks
@@ -353,7 +361,8 @@ def build_eval_packets(
         shape = ticket_shapes[shape_id]
         document = documents[document_id]
         chunk_manifest = chunk_manifests[document_id]
-        chunks = selected_chunks(chunk_manifest, int(shape["page_windows"]))
+        page_windows = shape["page_windows"]
+        chunks = selected_chunks(chunk_manifest, page_windows)
         chunk_manifest_path = benchmark_root / "chunk_manifests" / f"{document_id}.json"
         packet_id = f"{wave_id}__{document_id}__{shape_id}__{'-'.join(slug(m) for m in model_names)}"
         ticket_path = runtime_root / "p55" / "tickets" / f"{packet_id}.ticket.md"
@@ -393,7 +402,10 @@ def build_eval_packets(
                 "manifest_path": repo_relative(manifest_path),
                 "output_dir": repo_relative(output_dir),
                 "included_chunk_count": len(included),
-                "requested_chunk_count": int(shape["page_windows"]),
+                "requested_page_windows": page_windows,
+                "requested_chunk_count": len(chunk_manifest["chunks"])
+                if str(page_windows).lower() == "all"
+                else int(page_windows),
                 "ticket_text_truncated_by_char_cap": truncated,
                 "ticket_char_count": len(ticket),
                 "source_text_char_count": sum(int(chunk["text_char_count"]) for chunk in included),
@@ -407,6 +419,13 @@ def build_eval_packets(
             wave_id="wave1_single_model_smoke",
             document_id=document_id,
             shape_id="structure_x2",
+            model_names=[primary_model],
+        )
+    for document_id in pilot_docs:
+        add_packet(
+            wave_id="wave1_full_document_smoke",
+            document_id=document_id,
+            shape_id="structure_full",
             model_names=[primary_model],
         )
 
