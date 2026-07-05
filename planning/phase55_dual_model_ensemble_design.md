@@ -72,6 +72,9 @@ The battery records both:
 Current verifier/repair candidates:
 
 - `qwen3.6:35b-a3b-bf16`: best current strict verifier candidate from Wave 8;
+- `qwen3.6:35b-a3b-q8_0`: lower-output-token Qwen3.6 verifier variant, but
+  current Wave 8 A/B showed more quote repair and one unresolved field than
+  BF16;
 - `deepseek-r1:latest`: validation critic candidate for repair-instruction
   generation;
 - `qwen3-coder-next:latest`: repair executor candidate for strict JSON repair.
@@ -85,6 +88,13 @@ artifact marked eight of nine fields as `needs_supervisor`, so the rescue lane
 was safe but not high-yield. For this document-extraction node, direct Qwen3.6
 verification is currently more useful than DeepSeek-R1 critic plus
 Qwen3-Coder-Next repair.
+
+The Qwen3.6 Q8_0 verifier rerun used the same Wave 8 disagreement packet as
+BF16. It parsed successfully and used fewer output tokens than BF16, but it
+introduced three quote-length defects and left one field as
+`insufficient_evidence`. BF16 remains the preferred strict verifier for this
+node until Q8_0 shows better quality on a repeat run or a different ticket
+shape.
 
 ## First Typed Field Set
 

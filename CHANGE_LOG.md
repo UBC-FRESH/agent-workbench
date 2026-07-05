@@ -1447,3 +1447,17 @@ issues, pull requests, and closeout comments.
   schema-shaped JSON from failed output, but on this test it is less useful
   than direct Qwen3.6 disagreement verification because it punts most fields to
   supervisor audit.
+
+## 2026-07-05 - Ran P55 Wave 8 Qwen3.6 Q8 verifier A/B
+
+- Added a Qwen3.6 Q8_0 verifier packet for the same nine-field Wave 8
+  disagreement surface used by the BF16 strict-verifier baseline.
+- Ran `qwen3.6:35b-a3b-q8_0` through the no-tool SDK eval path and summarized
+  the output with the existing verifier summarizer.
+- Recorded the result in
+  `benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_q8_summary.json`
+  and `planning/phase55_wave8_disagreement_verification_qwen36_q8_results.md`.
+- Compared with BF16: Q8_0 parsed successfully and used fewer output tokens
+  than BF16, but it had three quote-length defects and left one field as
+  `insufficient_evidence`; BF16 remains the stronger strict verifier candidate
+  for this node.
