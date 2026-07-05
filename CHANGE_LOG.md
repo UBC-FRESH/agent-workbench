@@ -1233,3 +1233,16 @@ issues, pull requests, and closeout comments.
   successful worker run.
 - Recorded a phase pause policy: report wave results to the maintainer and wait
   for direction before advancing waves or closing P55.
+
+## 2026-07-04 - Ran P55 Wave 0 chunking and dry-run setup
+
+- Added `scripts/build_tsa23_indexing_battery.py` to extract ignored source
+  chunks from the three P55 TSA23 pilot PDFs and generate ignored worker tickets
+  and eval manifests.
+- Added tracked sanitized chunk manifests for the 1995, 2006, and 2012 pilot
+  PDFs plus `benchmarks/document_library/tsa23_tsr/p55_eval_packet_index.json`.
+- Dry-ran all 9 generated P55 eval manifests through `agent-workbench
+  eval-batch` without contacting the model provider.
+- Recorded Wave 0 findings in `planning/phase55_wave0_chunking_results.md`:
+  the 1995 PDF has sparse `pypdf` text extraction, while the 2006 and 2012 PDFs
+  need smaller chunks before a clean x2/x4/x8 worker comparison.

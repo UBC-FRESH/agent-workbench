@@ -2379,11 +2379,13 @@ delegation evidence rather than a one-off anecdote.
 Planned tasks:
 
 - [ ] P55.1 PDF chunk extraction and worker-ticket generation (#368)
-  - [ ] Build reproducible chunk/ticket generation from the P53 corpus
+  - [x] Build reproducible chunk/ticket generation from the P53 corpus
         registry.
-  - [ ] Extract ignored page-window chunks for the three selected TSA23 pilot
+  - [x] Extract ignored page-window chunks for the three selected TSA23 pilot
         PDFs.
-  - [ ] Track sanitized chunk manifests and runtime/eval manifests.
+  - [x] Track sanitized chunk manifests and runtime/eval manifests.
+  - [x] Dry-run all generated eval manifests without provider contact.
+  - [ ] Decide whether to revise chunk size/OCR before worker contact.
 - [ ] P55.2 No-tool local-worker extraction run (#369)
   - [ ] Run Wave 1 single-model smoke across three documents.
   - [ ] Run Wave 2 model A/B on identical document/chunk tickets.

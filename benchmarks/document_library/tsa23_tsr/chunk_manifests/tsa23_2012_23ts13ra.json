@@ -1,0 +1,47 @@
+{
+  "chunk_count": 3,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_001_024",
+      "empty_pages": [],
+      "page_end": 24,
+      "page_start": 1,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_001_024.txt",
+      "text_char_count": 80231,
+      "text_sha256": "243a8d5bfed00c2b699600e9e20b35f8d39785481f4d6943f1faaf15797bb668"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_023_046",
+      "empty_pages": [],
+      "page_end": 46,
+      "page_start": 23,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_023_046.txt",
+      "text_char_count": 75699,
+      "text_sha256": "546dbd9fc251f53bb486343d8eef7961b74fb38061901094718052dda1704cf4"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_045_048",
+      "empty_pages": [],
+      "page_end": 48,
+      "page_start": 45,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_045_048.txt",
+      "text_char_count": 411,
+      "text_sha256": "04dde3d31103dade79610a5c363f841218154c7b5f6ff00ca80461550df7b920"
+    }
+  ],
+  "corpus_id": "bc_tsr_tsa23_public_1995_present",
+  "cycle_year": 2012,
+  "document_id": "tsa23_2012_23ts13ra",
+  "document_type": "rationale",
+  "generated_utc": "2026-07-05T02:12:32.940426+00:00",
+  "overlap_pages": 2,
+  "pdf_page_count": 48,
+  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
+  "schema_version": 1,
+  "source_sha256": "2391ac605494a3e3b1cc302c9aa83a25d3ed98c07c5690c1e9a7d9d3dc77a299",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2012/Rationale/23ts13ra.pdf",
+  "window_pages": 24
+}
