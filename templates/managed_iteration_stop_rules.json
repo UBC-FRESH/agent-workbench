@@ -5,9 +5,12 @@
     "max_iterations": 3,
     "max_consecutive_format_failures": 1,
     "min_record_retention_rate": 0.5,
+    "min_primary_identifier_preservation_rate": 0.95,
     "min_repairable_or_accepted_rate": 0.6,
+    "min_known_repairable_detection_rate": 0.5,
     "min_delta_improvement_rate": 0.05,
-    "supervisor_checkpoint_required_before_scale": true
+    "supervisor_checkpoint_required_before_scale": true,
+    "no_tool_lane_allows_tool_calls": false
   },
   "stop_rules": [
     {
@@ -33,6 +36,30 @@
       "trigger": "candidate_retention_rate < min_record_retention_rate",
       "action": "abandon",
       "rationale": "The extractor or ticket shape is probably poor for this task bundle."
+    },
+    {
+      "rule_id": "primary_identifier_loss",
+      "trigger": "primary_identifier_preservation_rate < min_primary_identifier_preservation_rate",
+      "action": "stop_and_rewrite_ticket",
+      "rationale": "Local audit or repair that loses source IDs creates expensive supervisor recovery work."
+    },
+    {
+      "rule_id": "known_repairable_miss",
+      "trigger": "known_repairable_detection_rate < min_known_repairable_detection_rate",
+      "action": "stop_and_change_ticket_or_model",
+      "rationale": "A self-auditor that misses known calibration repairables should not drive a repair iteration."
+    },
+    {
+      "rule_id": "tool_call_in_no_tool_lane",
+      "trigger": "observed_tool_call and no_tool_lane_allows_tool_calls == false",
+      "action": "mark_confounded_and_stop",
+      "rationale": "Unexpected tool behavior changes the benchmark authority level and invalidates no-tool comparisons."
+    },
+    {
+      "rule_id": "missing_economics_evidence",
+      "trigger": "economics_claim_requested and supervisor_token_span_missing",
+      "action": "report_missing_evidence",
+      "rationale": "Token economics claims require measured paid supervisor token deltas."
     },
     {
       "rule_id": "scale_gate",
@@ -80,6 +107,18 @@
         "ticket size",
         "model profile",
         "chunk metadata"
+      ]
+    },
+    {
+      "path_id": "restricted_tool_lane",
+      "use_when": "a worker needs tools and the supervisor has explicitly configured allowed tools and ignored runtime roots",
+      "owner": "supervisor_configured_worker",
+      "required_evidence": [
+        "allowed tool list",
+        "permission handler policy",
+        "tool event log",
+        "ignored filesystem boundary",
+        "discard or rollback plan"
       ]
     }
   ]

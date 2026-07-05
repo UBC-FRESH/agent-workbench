@@ -1,0 +1,139 @@
+{
+  "schema_version": "0.1",
+  "policy_id": "delegation_loop_policy_v0",
+  "purpose": "Explainable first-pass policy for routing managed local-worker loops after P50-P53.",
+  "defaults": {
+    "default_worker_authority": "L0_or_L1_no_tool",
+    "restricted_tool_authority": "L3_only_when_explicitly_configured",
+    "max_local_iterations_before_supervisor_checkpoint": 3,
+    "max_consecutive_format_failures": 1,
+    "min_primary_identifier_preservation_rate": 0.95,
+    "min_known_repairable_detection_rate": 0.5,
+    "supervisor_token_checkpoints_required_for_economics_claim": true,
+    "worker_token_records_required_for_model_comparison": true
+  },
+  "lane_policy": [
+    {
+      "lane_id": "no_tool_extraction_or_reporting",
+      "authority": "L0_or_L1",
+      "default": true,
+      "allowed_outputs": [
+        "structured text",
+        "JSON",
+        "JSONL",
+        "Markdown draft"
+      ],
+      "disallowed_events": [
+        "tool_call",
+        "file_edit",
+        "shell_command",
+        "github_mutation"
+      ],
+      "required_evidence": [
+        "ticket",
+        "model identity",
+        "worker output",
+        "parseability check",
+        "worker token counts when available"
+      ]
+    },
+    {
+      "lane_id": "restricted_tool_worker",
+      "authority": "L3",
+      "default": false,
+      "allowed_outputs": [
+        "ignored runtime artifacts",
+        "tool event evidence",
+        "structured result record"
+      ],
+      "required_configuration": [
+        "explicit allowed tool list",
+        "explicit allowed filesystem roots",
+        "permission handler policy",
+        "tool-call event capture",
+        "rollback or discard boundary"
+      ],
+      "stop_if_missing": [
+        "allowed tool list",
+        "tool event evidence",
+        "ignored runtime boundary"
+      ]
+    }
+  ],
+  "decision_rules": [
+    {
+      "rule_id": "missing_supervisor_token_spans",
+      "applies_to": "economics_claim",
+      "trigger": "any supervisor-owned subtask lacks start/end token checkpoints",
+      "action": "report_missing_evidence",
+      "rationale": "Delegation economics are token-cost economics, not wall-clock timing."
+    },
+    {
+      "rule_id": "missing_worker_token_record",
+      "applies_to": "model_comparison",
+      "trigger": "worker input/output token counts are unavailable for a provider-backed run",
+      "action": "hold_model_comparison",
+      "rationale": "Quality-only evidence cannot support token-economics tuning."
+    },
+    {
+      "rule_id": "primary_identifier_loss",
+      "applies_to": "self_audit_or_repair",
+      "trigger": "primary_identifier_preservation_rate < min_primary_identifier_preservation_rate",
+      "action": "stop_and_rewrite_ticket",
+      "rationale": "Self-audit and repair outputs that cannot preserve source IDs are not auditable cheaply."
+    },
+    {
+      "rule_id": "known_repairable_miss",
+      "applies_to": "self_audit",
+      "trigger": "known_repairable_detection_rate < min_known_repairable_detection_rate",
+      "action": "stop_and_change_ticket_or_model",
+      "rationale": "A local self-auditor that misses known calibration defects should not drive repair."
+    },
+    {
+      "rule_id": "tool_call_in_no_tool_lane",
+      "applies_to": "no_tool_worker_run",
+      "trigger": "tool call, invalid tool call, or tool execution event is observed",
+      "action": "mark_confounded_and_stop",
+      "rationale": "Tool behavior changes the authority and risk class of the benchmark."
+    },
+    {
+      "rule_id": "raw_source_absent",
+      "applies_to": "source_anchored_audit",
+      "trigger": "source chunk, page anchor, document ID, or SHA evidence is missing",
+      "action": "report_missing_evidence",
+      "rationale": "Source-level audit cannot be inferred from worker prose."
+    },
+    {
+      "rule_id": "reporting_summary_delegation_candidate",
+      "applies_to": "sanitized_reporting",
+      "trigger": "inputs are sanitized summaries and source-level audit is not requested",
+      "action": "delegate_to_local_reporting_worker",
+      "rationale": "P50 showed this task shape can reduce paid reporting-review cost, though margins were small."
+    },
+    {
+      "rule_id": "document_library_extraction_candidate",
+      "applies_to": "public_document_indexing",
+      "trigger": "corpus registry, chunk manifest, source SHA, and runtime chunk roots exist",
+      "action": "run_bounded_no_tool_extraction_then_supervisor_calibration",
+      "rationale": "P53 prepared the next high-volume task lane; quality and economics remain unmeasured at corpus scale."
+    }
+  ],
+  "model_scope_guidance": [
+    {
+      "model_group": "qwen3-coder-family",
+      "observed_task_shapes": [
+        "document structure extraction"
+      ],
+      "guidance": "Use as candidate extractor on bounded source chunks; require record ID preservation and supervisor calibration before scaling."
+    },
+    {
+      "model_group": "gpt-oss-family",
+      "observed_task_shapes": [
+        "sanitized reporting",
+        "self-audit attempt",
+        "repair attempt"
+      ],
+      "guidance": "Promising for reporting; not yet proven for self-audit or repair. Treat SDK tool behavior as explicit lane evidence."
+    }
+  ]
+}

@@ -64,6 +64,68 @@ supervisor-owned scripts and ignored sandbox targets, and L3 work only for
 explicitly bounded VS Code Chat sandbox trials. L4-L6 remain forbidden for
 worker agents.
 
+## Managed Loop Policy V0
+
+The managed-loop policy is recorded in
+`templates/delegation_loop_policy_v0.json` and
+`templates/managed_iteration_stop_rules.json`.
+
+Default rule: extraction, reporting, self-audit, and repair experiments start in
+a no-tool L0/L1 lane unless the supervisor explicitly configures a restricted
+tool lane. If an SDK or chat session emits a tool call during a no-tool run, the
+run is confounded and should be stopped or reclassified rather than treated as a
+clean no-tool comparison.
+
+Required bailout rules:
+
+- stop self-audit or repair when primary document/candidate identifiers are not
+  preserved;
+- stop self-audit when a calibration sample contains known repairable records
+  and the local auditor misses them;
+- stop or rewrite after repeated malformed JSON/JSONL;
+- report missing evidence instead of estimating when token ledgers, source
+  anchors, model identity, or worker output records are absent; and
+- require a paid supervisor checkpoint before scaling a local-worker result
+  beyond the calibrated task shape.
+
+Promising current task lanes:
+
+- sanitized reporting from already-validated experiment summaries;
+- public technical-document structure/content extraction from bounded chunks;
+- deterministic orchestration and scaffold generation by scripts; and
+- restricted local-worker repair only after identifier preservation and
+  calibration detection are proven.
+
+Blocked or unproven current task lanes:
+
+- broad high-level planning by local workers;
+- local self-audit that lacks stable source/candidate IDs;
+- repair loops driven by bad self-audit labels; and
+- worker tool use without an explicit allowlist, permission policy, event log,
+  and ignored runtime boundary.
+
+## SDK Tool Boundary
+
+The Copilot SDK path can expose tool-capable behavior, but Agent Workbench does
+not treat tool access as the default worker authority. The no-tool SDK probe
+passes `available_tools=[]`; that remains the default for economic and model
+comparison benchmarks.
+
+Restricted SDK tool use is a separate L3 lane. A valid L3 experiment must name
+the allowed tools, allowed filesystem roots, permission-handler behavior,
+expected tool-event evidence, and rollback or discard boundary before the worker
+starts. Tool calls observed outside that lane are evidence of a confounded run,
+not evidence that a no-tool delegation protocol succeeded.
+
+## Missing Evidence Rules
+
+Future benchmark reports may not claim delegation economics unless every
+supervisor-owned subtask has measured start/end supervisor-token checkpoints.
+They may not claim model comparison evidence unless worker input/output token
+counts, model identity, and parseability status are recorded. They may not claim
+source-level quality unless source chunks, page anchors, document IDs, and
+source hashes are available to the supervisor audit.
+
 ## Policy Tuning Loop
 
 Real-project pilots may update delegation guidance only through sanitized P35

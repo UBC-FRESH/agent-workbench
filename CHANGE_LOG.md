@@ -1205,3 +1205,18 @@ issues, pull requests, and closeout comments.
   scaffold, and audit calibration scaffold.
 - Added `planning/phase53_document_library_index_pilot.md` to record the corpus
   shape, reproducibility command, public-safety boundary, and P54 policy inputs.
+
+## 2026-07-04 - Tuned P54 managed delegation loop policy
+
+- Added `templates/delegation_loop_policy_v0.json` as the first explicit
+  machine-readable policy surface for managed local-worker loops.
+- Updated `templates/managed_iteration_stop_rules.json` with bailout rules for
+  primary identifier loss, missed known repairables, missing economics evidence,
+  and tool calls observed in no-tool lanes.
+- Updated `planning/delegation_policy.md` to separate default no-tool SDK
+  delegation from explicitly configured restricted-tool lanes.
+- Added `planning/phase54_delegation_loop_policy_tuning.md` to map P50-P53
+  evidence into conservative next-run recommendations.
+- Recorded that future economics claims require measured paid-supervisor token
+  spans and that model comparisons require worker token records, model identity,
+  parseability status, and source anchors.
