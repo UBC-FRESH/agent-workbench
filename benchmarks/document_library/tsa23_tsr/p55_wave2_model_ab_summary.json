@@ -1,0 +1,103 @@
+{
+  "summary_id": "p55_wave2_model_ab",
+  "generated_utc": "2026-07-05T02:59:00Z",
+  "phase": "P55",
+  "github_parent_issue": 367,
+  "github_child_issue": 369,
+  "battery_definition": "benchmarks/document_library/tsa23_tsr/p55_test_battery.json",
+  "runtime_output_root": "runtime/document_library/tsa23_tsr/p55/eval",
+  "raw_output_policy": "Raw worker outputs and source quotes remain ignored under runtime/.",
+  "wave": "wave2_model_ab",
+  "document_id": "tsa23_2012_23ts13ra",
+  "document_role": "most recent rationale",
+  "ticket_shape": "structure_x4",
+  "included_chunks": [
+    "tsa23_2012_23ts13ra::pages_001_008",
+    "tsa23_2012_23ts13ra::pages_008_015",
+    "tsa23_2012_23ts13ra::pages_015_022",
+    "tsa23_2012_23ts13ra::pages_022_029"
+  ],
+  "valid_chunk_count": 4,
+  "models": [
+    {
+      "model": "qwen3-coder:latest",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "parseable_json_records": 24,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 0,
+      "worker_model_field_match_count": 0,
+      "source_quote_over_25_words": 24,
+      "object_type_counts": {
+        "heading": 21,
+        "table": 3
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_001_008": 8,
+        "tsa23_2012_23ts13ra::pages_008_015": 8,
+        "tsa23_2012_23ts13ra::pages_015_022": 7,
+        "tsa23_2012_23ts13ra::pages_022_029": 1
+      },
+      "worker_input_tokens": 26579,
+      "worker_output_tokens": 8999,
+      "quality_signal": "Best chunk coverage and record count, but copied the example worker_model value and ignored the 25-word source_quote limit."
+    },
+    {
+      "model": "qwen3-coder-next:latest",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "parseable_json_records": 9,
+      "duplicate_record_ids": 1,
+      "invalid_chunk_id_records": 0,
+      "worker_model_field_match_count": 9,
+      "source_quote_over_25_words": 6,
+      "object_type_counts": {
+        "component_boundary": 1,
+        "heading": 5,
+        "table": 2,
+        "other": 1
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_001_008": 9
+      },
+      "worker_input_tokens": 26585,
+      "worker_output_tokens": 2741,
+      "quality_signal": "Parseable and correctly self-identified, but under-covered the ticket and repeated one record ID."
+    },
+    {
+      "model": "gpt-oss:120b",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "parseable_json_records": 13,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 2,
+      "worker_model_field_match_count": 0,
+      "source_quote_over_25_words": 0,
+      "object_type_counts": {
+        "heading": 7,
+        "table": 2,
+        "appendix": 4
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_001_008": 11,
+        "tsa23_2012_23ts13ra::pages_009_016": 1,
+        "tsa23_2012_23ts13ra::pages_018_025": 1
+      },
+      "worker_input_tokens": 27094,
+      "worker_output_tokens": 3451,
+      "quality_signal": "Concise and obeyed quote length, but invented chunk IDs and copied the example worker_model value."
+    }
+  ],
+  "totals": {
+    "worker_runs": 3,
+    "completed_runs": 3,
+    "blocked_runs": 0,
+    "parseable_json_records": 46,
+    "worker_input_tokens": 80258,
+    "worker_output_tokens": 15191,
+    "worker_total_tokens_counted": 95449,
+    "worker_cash_cost_usd": 0.0
+  },
+  "gate_result": "wave2-complete-do-not-scale-unchanged",
+  "recommended_next_move": "Fix the ticket framework again so worker_model cannot be copied from an example and chunk_id must be selected from an explicit allowed list. For Wave 3, prefer qwen3-coder:latest for coverage experiments, but add deterministic validator/repair before supervisor audit."
+}

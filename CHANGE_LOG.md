@@ -1282,3 +1282,19 @@ issues, pull requests, and closeout comments.
   but one huge ticket per document is format-fragile and should be replaced by
   deterministic per-chunk or small-bundle orchestration plus delegated format
   repair before Wave 2.
+
+## 2026-07-04 - Ran P55 Wave 2 model A/B
+
+- Fixed the SDK eval classifier so empty-marker JSONL runs report
+  `freeform-output` instead of a misleading `duplicate-marker`.
+- Tightened the generated structure-ticket wording with stricter JSONL rules,
+  uniqueness requirements, string page anchors, quote-length guidance, and a
+  maximum-record cap.
+- Ran the Wave 2 `structure_x4` rationale ticket across
+  `qwen3-coder:latest`, `qwen3-coder-next:latest`, and `gpt-oss:120b`.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave2_model_ab_summary.json`
+  and `planning/phase55_wave2_model_ab_results.md` with sanitized aggregate
+  metrics.
+- Recorded that `qwen3-coder:latest` produced the best coverage signal, while
+  `qwen3-coder-next:latest` under-covered and `gpt-oss:120b` invented chunk
+  IDs; no model is ready for unaudited scaling without validator/repair.
