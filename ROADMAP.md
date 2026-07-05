@@ -2395,6 +2395,8 @@ Planned tasks:
         extraction tests.
   - [x] Run Wave 3.1 chunk-orchestrated coverage after regenerating uncapped
         tickets.
+  - [x] Run Wave 3.2 Qwen3.6 BF16 chunk A/B against the Wave 3.1
+        `qwen3-coder:latest` baseline.
   - [ ] Run Wave 4 repeatability and Wave 5 content probe if earlier waves
         justify it.
 - [ ] P55.3 Supervisor spot-check and scale/stop decision (#370)

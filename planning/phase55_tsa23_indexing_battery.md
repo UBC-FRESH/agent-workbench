@@ -42,6 +42,7 @@ but it should not dominate the first local-worker indexing signal.
 
 Initial local-worker model lanes:
 
+- `qwen3.6:35b-a3b-bf16`: primary document-understanding extractor candidate;
 - `qwen3-coder-next:latest`: primary extractor candidate;
 - `qwen3-coder:latest`: within-family baseline;
 - `gpt-oss:120b`: large local comparison candidate.
@@ -99,6 +100,16 @@ rather than dependent on one broad ticket reaching later chunks.
 Stop gate: continue only if every chunk returns parseable records with valid
 chunk IDs and repairable quote-length defects.
 
+### Wave 3.2: Qwen3.6 BF16 Chunk A/B
+
+Run `qwen3.6:35b-a3b-bf16` once per rationale chunk on the same seven chunk
+inputs used by Wave 3.1, then compare document-understanding extraction
+behavior against the `qwen3-coder:latest` baseline.
+
+Stop gate: continue only if BF16 outputs are parseable and improve or clearly
+characterize chunk-ID fidelity, quote discipline, and repair burden relative to
+Wave 3.1.
+
 ### Wave 4: Repeatability
 
 Repeat the best current Wave 3 cell, `qwen3-coder:latest` on `structure_x4`,
@@ -131,7 +142,20 @@ Minimum useful evidence before considering phase closeout:
 - at least one supervisor audit calibration slice;
 - missing evidence recorded explicitly.
 
-The full battery is 26 planned worker runs plus supervisor audit calibration.
+The full battery is 33 planned worker runs plus supervisor audit calibration.
+
+## Workflow Pivot
+
+P55 should move away from one generic "structure metadata" pass as the main
+indexing workflow. The next design target is a document-intelligence pipeline:
+
+1. section-map extraction for headings, page spans, tables, appendices, and
+   acronym/definition zones;
+2. typed TSR fact extraction for AAC, THLB/land-base, inventory,
+   growth/yield, management assumptions, harvest flow, sensitivity/scenario,
+   and non-timber constraints;
+3. repair/normalization for chunk IDs, quote length, units, and schema shape;
+4. verification against page/quote evidence before paid supervisor audit.
 
 ## Metrics
 

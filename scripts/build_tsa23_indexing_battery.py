@@ -516,6 +516,7 @@ def build_eval_packets(
     pilot_docs = [item["document_id"] for item in battery["documents"]]
     primary_model = "qwen3-coder-next:latest"
     size_scale_model = "qwen3-coder:latest"
+    document_extractor_model = "qwen3.6:35b-a3b-bf16"
     repeatability_model = size_scale_model
     for document_id in pilot_docs:
         add_packet(
@@ -561,6 +562,14 @@ def build_eval_packets(
             document_id=comparison_doc,
             chunk_index=chunk_index,
             model_names=[size_scale_model],
+        )
+
+    for chunk_index, _chunk in enumerate(chunk_manifests[comparison_doc]["chunks"]):
+        add_chunk_packet(
+            wave_id="wave3_qwen36_bf16_chunk_ab",
+            document_id=comparison_doc,
+            chunk_index=chunk_index,
+            model_names=[document_extractor_model],
         )
 
     add_packet(

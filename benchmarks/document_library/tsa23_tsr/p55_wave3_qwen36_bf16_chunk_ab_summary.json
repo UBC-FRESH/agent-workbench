@@ -1,0 +1,290 @@
+{
+  "summary_id": "p55_wave3_qwen36_bf16_chunk_ab",
+  "generated_utc": "2026-07-05T07:05:23Z",
+  "phase": "P55",
+  "github_parent_issue": 367,
+  "github_child_issue": 369,
+  "packet_index": "benchmarks/document_library/tsa23_tsr/p55_eval_packet_index.json",
+  "runtime_output_root": "runtime/document_library/tsa23_tsr/p55/eval",
+  "raw_output_policy": "Raw worker outputs and source quotes remain ignored under runtime/.",
+  "wave": "wave3_qwen36_bf16_chunk_ab",
+  "runs": [
+    {
+      "packet_id": "wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk01__qwen3-6-35b-a3b-bf16",
+      "wave_id": "wave3_qwen36_bf16_chunk_ab",
+      "document_id": "tsa23_2012_23ts13ra",
+      "shape_id": "structure_chunk",
+      "record_type": "structure",
+      "model": "qwen3.6:35b-a3b-bf16",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "requested_chunks": 1,
+      "expected_chunk_ids": [
+        "tsa23_2012_23ts13ra::pages_001_008"
+      ],
+      "covered_valid_chunks": 1,
+      "missing_expected_chunks": [],
+      "parseable_json_records": 29,
+      "malformed_lines": 0,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 0,
+      "invalid_chunk_id_counts": {},
+      "worker_model_field_match_count": 29,
+      "records_with_source_quote": 29,
+      "source_quote_over_25_words": 0,
+      "object_type_counts": {
+        "appendix": 4,
+        "component_boundary": 2,
+        "cross_reference": 3,
+        "heading": 20
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_001_008": 29
+      },
+      "worker_input_tokens": 7847,
+      "worker_output_tokens": 9078,
+      "runtime_summary_path": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk01__qwen3-6-35b-a3b-bf16/summary.json",
+      "runtime_result_file": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk01__qwen3-6-35b-a3b-bf16/qwen3_6_35b_a3b_bf16_run01.md"
+    },
+    {
+      "packet_id": "wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk02__qwen3-6-35b-a3b-bf16",
+      "wave_id": "wave3_qwen36_bf16_chunk_ab",
+      "document_id": "tsa23_2012_23ts13ra",
+      "shape_id": "structure_chunk",
+      "record_type": "structure",
+      "model": "qwen3.6:35b-a3b-bf16",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "requested_chunks": 1,
+      "expected_chunk_ids": [
+        "tsa23_2012_23ts13ra::pages_008_015"
+      ],
+      "covered_valid_chunks": 1,
+      "missing_expected_chunks": [],
+      "parseable_json_records": 20,
+      "malformed_lines": 0,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 0,
+      "invalid_chunk_id_counts": {},
+      "worker_model_field_match_count": 20,
+      "records_with_source_quote": 20,
+      "source_quote_over_25_words": 0,
+      "object_type_counts": {
+        "cross_reference": 3,
+        "definition": 3,
+        "heading": 11,
+        "other": 2,
+        "table": 1
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_008_015": 20
+      },
+      "worker_input_tokens": 8918,
+      "worker_output_tokens": 6616,
+      "runtime_summary_path": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk02__qwen3-6-35b-a3b-bf16/summary.json",
+      "runtime_result_file": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk02__qwen3-6-35b-a3b-bf16/qwen3_6_35b_a3b_bf16_run01.md"
+    },
+    {
+      "packet_id": "wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk03__qwen3-6-35b-a3b-bf16",
+      "wave_id": "wave3_qwen36_bf16_chunk_ab",
+      "document_id": "tsa23_2012_23ts13ra",
+      "shape_id": "structure_chunk",
+      "record_type": "structure",
+      "model": "qwen3.6:35b-a3b-bf16",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "requested_chunks": 1,
+      "expected_chunk_ids": [
+        "tsa23_2012_23ts13ra::pages_015_022"
+      ],
+      "covered_valid_chunks": 1,
+      "missing_expected_chunks": [],
+      "parseable_json_records": 17,
+      "malformed_lines": 0,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 0,
+      "invalid_chunk_id_counts": {},
+      "worker_model_field_match_count": 17,
+      "records_with_source_quote": 17,
+      "source_quote_over_25_words": 6,
+      "object_type_counts": {
+        "cross_reference": 1,
+        "definition": 1,
+        "heading": 14,
+        "other": 1
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_015_022": 17
+      },
+      "worker_input_tokens": 9495,
+      "worker_output_tokens": 5707,
+      "runtime_summary_path": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk03__qwen3-6-35b-a3b-bf16/summary.json",
+      "runtime_result_file": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk03__qwen3-6-35b-a3b-bf16/qwen3_6_35b_a3b_bf16_run01.md"
+    },
+    {
+      "packet_id": "wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk04__qwen3-6-35b-a3b-bf16",
+      "wave_id": "wave3_qwen36_bf16_chunk_ab",
+      "document_id": "tsa23_2012_23ts13ra",
+      "shape_id": "structure_chunk",
+      "record_type": "structure",
+      "model": "qwen3.6:35b-a3b-bf16",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "requested_chunks": 1,
+      "expected_chunk_ids": [
+        "tsa23_2012_23ts13ra::pages_022_029"
+      ],
+      "covered_valid_chunks": 1,
+      "missing_expected_chunks": [],
+      "parseable_json_records": 16,
+      "malformed_lines": 1,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 14,
+      "invalid_chunk_id_counts": {
+        "tsa23_2012_23ts13ra::pages_023_024": 1,
+        "tsa23_2012_23ts13ra::pages_024_025": 3,
+        "tsa23_2012_23ts13ra::pages_025": 3,
+        "tsa23_2012_23ts13ra::pages_026": 1,
+        "tsa23_2012_23ts13ra::pages_027": 3,
+        "tsa23_2012_23ts13ra::pages_028": 3
+      },
+      "worker_model_field_match_count": 16,
+      "records_with_source_quote": 16,
+      "source_quote_over_25_words": 6,
+      "object_type_counts": {
+        "heading": 2
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_022_029": 2
+      },
+      "worker_input_tokens": 10117,
+      "worker_output_tokens": 5523,
+      "runtime_summary_path": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk04__qwen3-6-35b-a3b-bf16/summary.json",
+      "runtime_result_file": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk04__qwen3-6-35b-a3b-bf16/qwen3_6_35b_a3b_bf16_run01.md"
+    },
+    {
+      "packet_id": "wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk05__qwen3-6-35b-a3b-bf16",
+      "wave_id": "wave3_qwen36_bf16_chunk_ab",
+      "document_id": "tsa23_2012_23ts13ra",
+      "shape_id": "structure_chunk",
+      "record_type": "structure",
+      "model": "qwen3.6:35b-a3b-bf16",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "requested_chunks": 1,
+      "expected_chunk_ids": [
+        "tsa23_2012_23ts13ra::pages_029_036"
+      ],
+      "covered_valid_chunks": 1,
+      "missing_expected_chunks": [],
+      "parseable_json_records": 27,
+      "malformed_lines": 0,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 0,
+      "invalid_chunk_id_counts": {},
+      "worker_model_field_match_count": 27,
+      "records_with_source_quote": 27,
+      "source_quote_over_25_words": 2,
+      "object_type_counts": {
+        "appendix": 1,
+        "cross_reference": 14,
+        "definition": 2,
+        "heading": 10
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_029_036": 27
+      },
+      "worker_input_tokens": 9772,
+      "worker_output_tokens": 8506,
+      "runtime_summary_path": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk05__qwen3-6-35b-a3b-bf16/summary.json",
+      "runtime_result_file": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk05__qwen3-6-35b-a3b-bf16/qwen3_6_35b_a3b_bf16_run01.md"
+    },
+    {
+      "packet_id": "wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk06__qwen3-6-35b-a3b-bf16",
+      "wave_id": "wave3_qwen36_bf16_chunk_ab",
+      "document_id": "tsa23_2012_23ts13ra",
+      "shape_id": "structure_chunk",
+      "record_type": "structure",
+      "model": "qwen3.6:35b-a3b-bf16",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "requested_chunks": 1,
+      "expected_chunk_ids": [
+        "tsa23_2012_23ts13ra::pages_036_043"
+      ],
+      "covered_valid_chunks": 1,
+      "missing_expected_chunks": [],
+      "parseable_json_records": 11,
+      "malformed_lines": 0,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 0,
+      "invalid_chunk_id_counts": {},
+      "worker_model_field_match_count": 11,
+      "records_with_source_quote": 11,
+      "source_quote_over_25_words": 8,
+      "object_type_counts": {
+        "acronym": 1,
+        "appendix": 2,
+        "cross_reference": 4,
+        "heading": 3,
+        "other": 1
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_036_043": 11
+      },
+      "worker_input_tokens": 8691,
+      "worker_output_tokens": 3897,
+      "runtime_summary_path": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk06__qwen3-6-35b-a3b-bf16/summary.json",
+      "runtime_result_file": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk06__qwen3-6-35b-a3b-bf16/qwen3_6_35b_a3b_bf16_run01.md"
+    },
+    {
+      "packet_id": "wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk07__qwen3-6-35b-a3b-bf16",
+      "wave_id": "wave3_qwen36_bf16_chunk_ab",
+      "document_id": "tsa23_2012_23ts13ra",
+      "shape_id": "structure_chunk",
+      "record_type": "structure",
+      "model": "qwen3.6:35b-a3b-bf16",
+      "status": "completed",
+      "harness_classification": "freeform-output",
+      "requested_chunks": 1,
+      "expected_chunk_ids": [
+        "tsa23_2012_23ts13ra::pages_043_048"
+      ],
+      "covered_valid_chunks": 1,
+      "missing_expected_chunks": [],
+      "parseable_json_records": 3,
+      "malformed_lines": 0,
+      "duplicate_record_ids": 0,
+      "invalid_chunk_id_records": 0,
+      "invalid_chunk_id_counts": {},
+      "worker_model_field_match_count": 3,
+      "records_with_source_quote": 3,
+      "source_quote_over_25_words": 0,
+      "object_type_counts": {
+        "appendix": 3
+      },
+      "chunk_record_counts": {
+        "tsa23_2012_23ts13ra::pages_043_048": 3
+      },
+      "worker_input_tokens": 4105,
+      "worker_output_tokens": 1095,
+      "runtime_summary_path": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk07__qwen3-6-35b-a3b-bf16/summary.json",
+      "runtime_result_file": "runtime/document_library/tsa23_tsr/p55/eval/wave3_qwen36_bf16_chunk_ab__tsa23_2012_23ts13ra__chunk07__qwen3-6-35b-a3b-bf16/qwen3_6_35b_a3b_bf16_run01.md"
+    }
+  ],
+  "totals": {
+    "worker_runs": 7,
+    "completed_runs": 7,
+    "parseable_json_records": 123,
+    "malformed_lines": 1,
+    "requested_chunks": 7,
+    "covered_valid_chunks": 7,
+    "invalid_chunk_id_records": 14,
+    "source_quote_over_25_words": 22,
+    "worker_input_tokens": 58945,
+    "worker_output_tokens": 40422,
+    "worker_cash_cost_usd": 0.0
+  },
+  "gate_result": "wave3_qwen36_bf16_chunk_ab-needs-repair-before-scaling",
+  "recommended_next_move": "Review aggregate defects before selecting the next worker ticket shape."
+}

@@ -1341,3 +1341,22 @@ issues, pull requests, and closeout comments.
   and `planning/phase55_wave3_chunk_orchestration_results.md`: all seven chunks
   were covered, 95 parseable records were produced, and remaining defects are
   mainly repairable chunk-ID copy errors plus source-quote length violations.
+
+## 2026-07-04 - Ran P55 Wave 3.2 Qwen3.6 BF16 chunk A/B
+
+- Added `qwen3.6:35b-a3b-bf16` to the P55 model catalog as the primary
+  document-understanding extraction candidate.
+- Added seven `wave3_qwen36_bf16_chunk_ab` single-chunk eval packets over the
+  same 2012 TSA23 rationale chunks used by the Wave 3.1
+  `qwen3-coder:latest` baseline.
+- Verified the BF16 model was available from the configured local Ollama
+  provider before running worker calls.
+- Ran all seven BF16 no-tool worker calls through `agent-workbench eval-batch`;
+  all completed without provider failures.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave3_qwen36_bf16_chunk_ab_summary.json`
+  and `planning/phase55_wave3_qwen36_bf16_chunk_ab_results.md` with sanitized
+  aggregate metrics.
+- Recorded the Wave 3.2 result as comparable but not a clean win: BF16
+  produced 123 parseable records versus 95 for the coding baseline, but still
+  needs validator/repair because it produced one malformed line, 14 invalid
+  chunk-ID records, and the same total count of quote-length violations.

@@ -32,6 +32,10 @@
   "wave4_repeatability_model": "qwen3-coder:latest",
   "models": [
     {
+      "model": "qwen3.6:35b-a3b-bf16",
+      "role": "primary document-understanding extractor candidate"
+    },
+    {
       "model": "qwen3-coder-next:latest",
       "role": "primary extractor candidate"
     },
@@ -126,6 +130,13 @@
       "stop_gate": "Continue only if every chunk returns parseable records with valid chunk IDs and repairable quote-length defects."
     },
     {
+      "wave_id": "wave3_qwen36_bf16_chunk_ab",
+      "goal": "Run qwen3.6:35b-a3b-bf16 once per rationale chunk on the same seven chunk inputs used by Wave 3.1, then compare document-understanding extraction behavior against qwen3-coder:latest.",
+      "runs": 7,
+      "worker_contact": true,
+      "stop_gate": "Continue only if BF16 outputs are parseable and improve or clearly characterize chunk-ID fidelity, quote discipline, and repair burden relative to Wave 3.1."
+    },
+    {
       "wave_id": "wave4_repeatability",
       "goal": "Repeat the best current Wave 3 cell, qwen3-coder:latest on structure_x4, three times to measure within-model consistency.",
       "runs": 3,
@@ -154,7 +165,7 @@
     "requires_supervisor_audit": true
   },
   "full_battery": {
-    "planned_worker_runs": 26,
+    "planned_worker_runs": 33,
     "documents_touched": 3,
     "models_touched": 3,
     "requires_supervisor_audit": true
