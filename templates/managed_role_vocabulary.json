@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.1",
+  "purpose": "Shared role vocabulary for managed local-worker workflow lanes.",
+  "roles": [
+    {
+      "role_id": "extractor",
+      "owner": "local_worker",
+      "default_authority_level": "L0",
+      "mission": "Produce source-anchored candidate records from bounded inputs.",
+      "allowed_outputs": [
+        "raw candidate records",
+        "source anchors",
+        "confidence values",
+        "format or missing-input failure reports"
+      ],
+      "forbidden_actions": [
+        "tracked-file mutation",
+        "GitHub mutation",
+        "final acceptance claims",
+        "facts outside supplied inputs"
+      ],
+      "supervisor_boundary": "Supervisor defines inputs, schema, stop rules, and final acceptance."
+    },
+    {
+      "role_id": "self_auditor",
+      "owner": "local_worker",
+      "default_authority_level": "L0",
+      "mission": "Review candidate outputs against supplied source excerpts and identify defects.",
+      "allowed_outputs": [
+        "candidate-level audit labels",
+        "defect categories",
+        "source-support judgments",
+        "repair suggestions"
+      ],
+      "forbidden_actions": [
+        "approval language",
+        "promotion to tracked outputs",
+        "unsupported corrections",
+        "changing source anchors without evidence"
+      ],
+      "supervisor_boundary": "Self-audit is cheap defect reduction, not validation."
+    },
+    {
+      "role_id": "repairer",
+      "owner": "local_worker",
+      "default_authority_level": "L0",
+      "mission": "Repair candidate records using only explicit audit findings and source excerpts.",
+      "allowed_outputs": [
+        "repaired candidate records",
+        "unchanged records with rationale",
+        "unrepairable records with reason"
+      ],
+      "forbidden_actions": [
+        "inventing missing evidence",
+        "broad rewriting beyond defect scope",
+        "discarding audit evidence",
+        "final acceptance claims"
+      ],
+      "supervisor_boundary": "Repairs remain candidates until supervisor audit or deterministic promotion rules accept them."
+    },
+    {
+      "role_id": "convergence_checker",
+      "owner": "script_or_deterministic_policy",
+      "default_authority_level": "deterministic",
+      "mission": "Compare iteration metrics and decide whether to continue, stop, escalate, or abandon.",
+      "allowed_outputs": [
+        "continue",
+        "stop_converged",
+        "stop_no_improvement",
+        "stop_budget",
+        "stop_format_failure",
+        "escalate_to_supervisor",
+        "abandon"
+      ],
+      "forbidden_actions": [
+        "semantic approval",
+        "source-level validation",
+        "tracked-file promotion without supervisor boundary"
+      ],
+      "supervisor_boundary": "Policy may stop or route work, but supervisor owns final acceptance and scale decisions."
+    },
+    {
+      "role_id": "supervisor_auditor",
+      "owner": "paid_supervisor",
+      "default_authority_level": "supervisor-owned",
+      "mission": "Perform source-level audit, economics interpretation, and final accept/reject/scale decisions.",
+      "allowed_outputs": [
+        "accepted count",
+        "repair count",
+        "rejected count",
+        "audit calibration",
+        "policy update recommendation",
+        "promotion decision"
+      ],
+      "forbidden_actions": [
+        "counting local self-audit as independent validation",
+        "claiming economics without measured token spans",
+        "closing GitHub workflow based only on worker prose"
+      ],
+      "supervisor_boundary": "This is the nondelegable acceptance and accountability role."
+    }
+  ]
+}

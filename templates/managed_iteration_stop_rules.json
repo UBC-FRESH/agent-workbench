@@ -1,0 +1,86 @@
+{
+  "schema_version": "0.1",
+  "purpose": "Reusable stop and escalation rules for managed local-worker loops.",
+  "default_policy": {
+    "max_iterations": 3,
+    "max_consecutive_format_failures": 1,
+    "min_record_retention_rate": 0.5,
+    "min_repairable_or_accepted_rate": 0.6,
+    "min_delta_improvement_rate": 0.05,
+    "supervisor_checkpoint_required_before_scale": true
+  },
+  "stop_rules": [
+    {
+      "rule_id": "max_iterations",
+      "trigger": "iteration_index >= max_iterations",
+      "action": "stop_budget",
+      "rationale": "Zero-cash local tokens are cheap, but unbounded loops are not useful evidence."
+    },
+    {
+      "rule_id": "format_failure",
+      "trigger": "format_failure_count > max_consecutive_format_failures",
+      "action": "escalate_to_supervisor",
+      "rationale": "Malformed output blocks deterministic parsing and policy comparison."
+    },
+    {
+      "rule_id": "no_improvement",
+      "trigger": "accepted_or_repairable_rate_delta < min_delta_improvement_rate for two consecutive iterations",
+      "action": "stop_no_improvement",
+      "rationale": "Further local repair is unlikely to reduce paid supervisor audit cost."
+    },
+    {
+      "rule_id": "low_retention",
+      "trigger": "candidate_retention_rate < min_record_retention_rate",
+      "action": "abandon",
+      "rationale": "The extractor or ticket shape is probably poor for this task bundle."
+    },
+    {
+      "rule_id": "scale_gate",
+      "trigger": "candidate batch passes local convergence and no supervisor checkpoint exists",
+      "action": "escalate_to_supervisor",
+      "rationale": "Scaling requires paid supervisor calibration against source evidence."
+    },
+    {
+      "rule_id": "converged",
+      "trigger": "format_valid and accepted_or_repairable_rate >= min_repairable_or_accepted_rate and no critical defects remain",
+      "action": "stop_converged",
+      "rationale": "The batch is ready for supervisor delta-review, not automatic approval."
+    }
+  ],
+  "escalation_paths": [
+    {
+      "path_id": "supervisor_delta_review",
+      "use_when": "local loop converged or scale gate is reached",
+      "owner": "paid_supervisor",
+      "required_evidence": [
+        "source excerpts",
+        "raw candidates",
+        "self-audit labels",
+        "repair deltas",
+        "worker token records",
+        "iteration metrics"
+      ]
+    },
+    {
+      "path_id": "supervisor_repair_completion",
+      "use_when": "remaining defects are small and paid repair is cheaper than another local loop",
+      "owner": "paid_supervisor",
+      "required_evidence": [
+        "defect list",
+        "unrepairable records",
+        "estimated remaining repair burden"
+      ]
+    },
+    {
+      "path_id": "abandon_or_rechunk",
+      "use_when": "format failures, low retention, or low source support persist",
+      "owner": "supervisor_or_script",
+      "required_evidence": [
+        "failure records",
+        "ticket size",
+        "model profile",
+        "chunk metadata"
+      ]
+    }
+  ]
+}

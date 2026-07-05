@@ -16,6 +16,7 @@
       "parameters": {
         "agent_workbench": {
           "node_kind": "script_prepare",
+          "execution_boundary": "Script may register sanitized document metadata only; raw documents and extracted text stay outside tracked Agent Workbench files.",
           "owner": "script_or_supervisor",
           "token_accounting": "none",
           "public_safety": "raw documents and extracted text stay outside tracked Agent Workbench files"
@@ -50,6 +51,7 @@
       "parameters": {
         "agent_workbench": {
           "node_kind": "project_native_extraction",
+          "execution_boundary": "Target-project tooling extracts text and writes ignored raw chunks plus a sanitized manifest.",
           "owner": "target_project_tooling",
           "token_accounting": "none",
           "raw_text_policy": "ignored or data-managed outside Agent Workbench"
@@ -83,6 +85,7 @@
       "parameters": {
         "agent_workbench": {
           "node_kind": "worker_extraction",
+          "execution_boundary": "Local worker may produce structure candidates only; no tracked mutation or acceptance.",
           "owner": "local_worker",
           "allowed_authority": "L0",
           "ticket_template": "templates/document_index_worker_ticket.md",
@@ -118,6 +121,7 @@
       "parameters": {
         "agent_workbench": {
           "node_kind": "worker_extraction",
+          "execution_boundary": "Local worker may produce content metadata candidates only; no tracked mutation or acceptance.",
           "owner": "local_worker",
           "allowed_authority": "L0",
           "ticket_template": "templates/document_index_worker_ticket.md",
@@ -140,23 +144,60 @@
       }
     },
     {
-      "id": "source_anchored_repair_prepass",
-      "provider": "agent_workbench.local_worker.repair_prepass",
-      "name": "Source-anchored repair prepass",
-      "description": "Local worker reviews candidate records plus source excerpts and proposes accept/repair/reject labels and concise repairs.",
+      "id": "local_self_audit",
+      "provider": "agent_workbench.local_worker.self_auditor",
+      "name": "Local self-audit",
+      "description": "Local worker reviews candidate records plus source excerpts and labels likely defects before any paid supervisor audit.",
       "needs": [
         "structure_pass",
         "content_metadata_pass"
+      ],
+      "outputs": {
+        "self_audit_labels": "ignored local-worker defect labels"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_self_audit",
+          "execution_boundary": "Local self-audit is defect reduction only and does not validate or approve records.",
+          "owner": "local_worker",
+          "allowed_authority": "L0",
+          "role_vocabulary": "templates/managed_role_vocabulary.json#self_auditor",
+          "token_accounting": "local worker input/output tokens at zero cash cost"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "self_audit_labels",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/document_library/<document_id>/self_audit_labels.jsonl"
+        }
+      ],
+      "provenance": {
+        "role": "self_auditor",
+        "capability": "source_anchored_candidate_defect_detection",
+        "authority_level": "L0",
+        "implementation": "configured Ollama worker model in audit mode"
+      }
+    },
+    {
+      "id": "delegated_repair_iteration",
+      "provider": "agent_workbench.local_worker.repairer",
+      "name": "Delegated repair iteration",
+      "description": "Local worker repairs candidate records using only self-audit labels and source excerpts.",
+      "needs": [
+        "local_self_audit"
       ],
       "outputs": {
         "repair_draft": "ignored local-worker repair draft"
       },
       "parameters": {
         "agent_workbench": {
-          "node_kind": "worker_repair_prepass",
+          "node_kind": "worker_repair",
+          "execution_boundary": "Local repair produces revised candidates only and cannot approve or promote records.",
           "owner": "local_worker",
           "allowed_authority": "L0",
           "ticket_template": "templates/source_anchored_repair_prepass_ticket.md",
+          "role_vocabulary": "templates/managed_role_vocabulary.json#repairer",
           "token_accounting": "local worker input/output tokens at zero cash cost"
         }
       },
@@ -164,14 +205,48 @@
         {
           "artifact_id": "repair_draft",
           "kind": "generated",
-          "path_or_reference": "target_project/runtime/document_library/<document_id>/repair_prepass.jsonl"
+          "path_or_reference": "target_project/runtime/document_library/<document_id>/repair_iteration.jsonl"
         }
       ],
       "provenance": {
-        "role": "reviewer",
+        "role": "repairer",
         "capability": "source_anchored_candidate_repair",
         "authority_level": "L0",
-        "implementation": "configured Ollama worker model"
+        "implementation": "configured Ollama worker model in repair mode"
+      }
+    },
+    {
+      "id": "convergence_check",
+      "provider": "agent_workbench.script.convergence_checker",
+      "name": "Convergence check",
+      "description": "Deterministic policy checks format validity, repair yield, stop rules, and escalation conditions.",
+      "needs": [
+        "delegated_repair_iteration"
+      ],
+      "outputs": {
+        "loop_decision": "continue, stop_converged, stop_no_improvement, stop_budget, escalate_to_supervisor, or abandon"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "script_convergence_check",
+          "execution_boundary": "Script may route the loop but cannot make semantic acceptance claims.",
+          "owner": "script_or_deterministic_policy",
+          "stop_rules": "templates/managed_iteration_stop_rules.json",
+          "token_accounting": "none unless supervisor interprets the decision"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "loop_decision",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/document_library/<document_id>/convergence_decision.json"
+        }
+      ],
+      "provenance": {
+        "role": "convergence_checker",
+        "capability": "loop_policy_routing",
+        "authority_level": "deterministic",
+        "implementation": "Agent Workbench policy script"
       }
     },
     {
@@ -180,7 +255,7 @@
       "name": "Supervisor audit calibration",
       "description": "Paid supervisor audits a stratified sample against source excerpts, measures token cost, and estimates accepted/repairable/rejected rates.",
       "needs": [
-        "source_anchored_repair_prepass"
+        "convergence_check"
       ],
       "outputs": {
         "audit_calibration": "tracked sanitized audit and economics summary"
@@ -188,6 +263,7 @@
       "parameters": {
         "agent_workbench": {
           "node_kind": "supervisor_source_audit",
+          "execution_boundary": "Paid supervisor owns source-level audit, economics interpretation, and scale or stop decision.",
           "owner": "paid_supervisor",
           "token_accounting": "required supervisor-token start/end checkpoint",
           "decision_boundary": "supervisor owns final labels and scale/stop decision"
@@ -221,6 +297,7 @@
       "parameters": {
         "agent_workbench": {
           "node_kind": "script_promote",
+          "execution_boundary": "Script may assemble only supervisor-accepted or explicitly repaired records into promoted outputs.",
           "owner": "script_with_supervisor_approval",
           "token_accounting": "tracked update span if paid supervisor edits or approves",
           "promotion_boundary": "only accepted/repaired records with source anchors enter the index"

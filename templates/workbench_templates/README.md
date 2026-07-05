@@ -33,6 +33,7 @@ human review.
 Template families:
 
 - `agentic_graph_envelope.json`
+- `managed_delegate_loop_graph.json`
 - `software_task_template.md`
 - `paper_task_template.md`
 - `proposal_task_template.md`
@@ -44,5 +45,11 @@ Promote only sanitized findings into tracked project files.
 
 `document_library_index_graph.json` is the starter graph for public technical
 document library indexing workflows. It covers corpus registration, text
-chunking, local-worker structure/content extraction, source-anchored repair
-prepass, paid supervisor audit calibration, and promoted index assembly.
+chunking, local-worker structure/content extraction, local self-audit,
+delegated repair iteration, deterministic convergence checking, paid supervisor
+audit calibration, and promoted index assembly.
+
+`managed_delegate_loop_graph.json` is the generic loop shape behind that
+document workflow. It separates extractor, self-auditor, repairer,
+convergence-checker, and supervisor-auditor roles so recurring orchestration can
+be reused instead of reauthored for every benchmark or deployment job.
