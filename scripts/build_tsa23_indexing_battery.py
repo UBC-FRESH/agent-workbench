@@ -225,8 +225,9 @@ def build_ticket(
 ## Mission
 
 Extract `{record_type}` metadata records from the supplied source chunks only.
-Return JSONL only. Do not summarize the task in prose. Do not use tools,
-commands, files, browsing, or GitHub. Stop after the JSONL records.
+Return newline-delimited JSON records only. Do not summarize the task in prose.
+Do not use tools, commands, files, browsing, or GitHub. Stop after the JSONL
+records.
 
 ## Current State
 
@@ -242,7 +243,16 @@ commands, files, browsing, or GitHub. Stop after the JSONL records.
 
 ## Output Format
 
-Return JSONL only. Each line must be one JSON object with these fields:
+Return strict JSONL only:
+
+- one record per physical line;
+- each line must begin with `{{` and end with `}}`;
+- no markdown fences;
+- no JSON arrays;
+- no pretty-printed multi-line JSON;
+- no TSV, CSV, bullets, tables, headings, or explanatory prose.
+
+Each JSON object must contain these fields:
 
 - `record_id`
 - `corpus_id`
@@ -266,6 +276,10 @@ Allowed `object_type` values for this ticket:
 
 {object_types}
 
+Example output shape, with placeholder values:
+
+{{"record_id":"{document['document_id']}::example_001","corpus_id":"{document['corpus_id']}","document_id":"{document['document_id']}","source_sha256":"{document['source_sha256']}","chunk_id":"{document['document_id']}::pages_001_008","page_anchor":"PDF page 1","document_component":"example component","section_path":"example section","object_type":"heading","title":"Example title","summary":"One-sentence summary.","source_quote":"Short quote from the supplied chunk.","confidence":0.80,"worker_model":"qwen3-coder-next:latest","review_status":"raw_worker_candidate"}}
+
 ## Rules
 
 - Use only the supplied source chunks.
@@ -274,7 +288,10 @@ Allowed `object_type` values for this ticket:
 - Every `record_id` must be unique within this response.
 - `page_anchor` must be a string, such as `PDF page 12` or `PDF pages 12-14`.
 - Include a short `source_quote` copied from the supplied chunks.
+- Keep `source_quote` to 25 words or fewer.
 - Return bare JSONL only. Do not wrap the response in markdown fences.
+- Do not output tab-separated or comma-separated records.
+- Output at most 24 records for this ticket. Choose the strongest records.
 - Do not invent pages, sections, titles, values, definitions, or citations.
 - Prefer fewer, stronger records over many vague records.
 - For each supplied chunk, extract at least one strong record when the chunk

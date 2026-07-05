@@ -36,6 +36,25 @@ def test_structured_section_report_matches_markdown_required_names_to_bare_norma
     assert report["unexpected_sections"] == []
 
 
+def test_empty_expected_marker_classifies_nonempty_message_as_freeform_output() -> None:
+    evaluator = load_evaluator()
+    classification = evaluator.classify_result(
+        status="completed",
+        blocker="",
+        error="",
+        assistant_message='{"record_id":"x"}',
+        expected_marker="",
+        required_sections=[],
+        forbidden_phrases=[],
+        allow_unexpected_sections=True,
+        allow_preamble=True,
+        require_patch=False,
+        allowed_patch_files=[],
+    )
+
+    assert classification == "freeform-output"
+
+
 def load_evaluator() -> ModuleType:
     script_path = Path(__file__).resolve().parents[1] / "scripts" / "sdk_same_ticket_eval.py"
     spec = importlib.util.spec_from_file_location("sdk_same_ticket_eval", script_path)

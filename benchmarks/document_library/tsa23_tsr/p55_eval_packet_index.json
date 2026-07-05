@@ -1,7 +1,7 @@
 {
   "battery_id": "p55_tsa23_first_indexing_battery",
   "corpus_id": "bc_tsr_tsa23_public_1995_present",
-  "generated_utc": "2026-07-05T02:34:37.697914+00:00",
+  "generated_utc": "2026-07-05T02:53:22.709848+00:00",
   "model_catalog": [
     "qwen3-coder-next:latest",
     "qwen3-coder:latest",
@@ -23,7 +23,7 @@
       "requested_page_windows": 2,
       "shape_id": "structure_x2",
       "source_text_char_count": 39934,
-      "ticket_char_count": 42375,
+      "ticket_char_count": 43447,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_single_model_smoke__tsa23_2012_23tsdp12__structure_x2__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_single_model_smoke"
@@ -43,7 +43,7 @@
       "requested_page_windows": 2,
       "shape_id": "structure_x2",
       "source_text_char_count": 33182,
-      "ticket_char_count": 35636,
+      "ticket_char_count": 36711,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_single_model_smoke__tsa23_2012_23ts13pdp__structure_x2__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_single_model_smoke"
@@ -63,7 +63,7 @@
       "requested_page_windows": 2,
       "shape_id": "structure_x2",
       "source_text_char_count": 50004,
-      "ticket_char_count": 52442,
+      "ticket_char_count": 53514,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_single_model_smoke__tsa23_2012_23ts13ra__structure_x2__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_single_model_smoke"
@@ -83,7 +83,7 @@
       "requested_page_windows": "all",
       "shape_id": "structure_full",
       "source_text_char_count": 106859,
-      "ticket_char_count": 109920,
+      "ticket_char_count": 110992,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_full_document_smoke__tsa23_2012_23tsdp12__structure_full__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_full_document_smoke"
@@ -103,7 +103,7 @@
       "requested_page_windows": "all",
       "shape_id": "structure_full",
       "source_text_char_count": 41343,
-      "ticket_char_count": 43953,
+      "ticket_char_count": 45028,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_full_document_smoke__tsa23_2012_23ts13pdp__structure_full__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_full_document_smoke"
@@ -123,7 +123,7 @@
       "requested_page_windows": "all",
       "shape_id": "structure_full",
       "source_text_char_count": 167655,
-      "ticket_char_count": 170868,
+      "ticket_char_count": 171940,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_full_document_smoke__tsa23_2012_23ts13ra__structure_full__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_full_document_smoke"
@@ -145,7 +145,7 @@
       "requested_page_windows": 4,
       "shape_id": "structure_x4",
       "source_text_char_count": 110780,
-      "ticket_char_count": 113528,
+      "ticket_char_count": 114600,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave2_model_ab__tsa23_2012_23ts13ra__structure_x4__qwen3-coder-latest-qwen3-coder-next-latest-gpt-oss-120b.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave2_model_ab"
@@ -165,7 +165,7 @@
       "requested_page_windows": 2,
       "shape_id": "structure_x2",
       "source_text_char_count": 50004,
-      "ticket_char_count": 52442,
+      "ticket_char_count": 53514,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_size_scale__tsa23_2012_23ts13ra__structure_x2__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave3_size_scale"
@@ -185,7 +185,7 @@
       "requested_page_windows": 4,
       "shape_id": "structure_x4",
       "source_text_char_count": 110780,
-      "ticket_char_count": 113528,
+      "ticket_char_count": 114600,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_size_scale__tsa23_2012_23ts13ra__structure_x4__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave3_size_scale"
@@ -205,7 +205,7 @@
       "requested_page_windows": 8,
       "shape_id": "structure_x8",
       "source_text_char_count": 167655,
-      "ticket_char_count": 170868,
+      "ticket_char_count": 171940,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_size_scale__tsa23_2012_23ts13ra__structure_x8__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave3_size_scale"
@@ -225,7 +225,7 @@
       "requested_page_windows": 4,
       "shape_id": "structure_x4",
       "source_text_char_count": 110780,
-      "ticket_char_count": 113528,
+      "ticket_char_count": 114600,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave4_repeatability__tsa23_2012_23ts13ra__structure_x4__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave4_repeatability"
@@ -245,7 +245,7 @@
       "requested_page_windows": 4,
       "shape_id": "content_x4",
       "source_text_char_count": 110780,
-      "ticket_char_count": 113570,
+      "ticket_char_count": 114642,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave5_content_metadata_probe__tsa23_2012_23ts13ra__content_x4__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave5_content_metadata_probe"
