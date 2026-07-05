@@ -1,12 +1,13 @@
 {
   "battery_id": "p55_tsa23_first_indexing_battery",
   "corpus_id": "bc_tsr_tsa23_public_1995_present",
-  "generated_utc": "2026-07-05T06:57:29.426017+00:00",
+  "generated_utc": "2026-07-05T07:22:17.755957+00:00",
   "model_catalog": [
     "qwen3.6:35b-a3b-bf16",
     "qwen3-coder-next:latest",
     "qwen3-coder:latest",
-    "gpt-oss:120b"
+    "gpt-oss:120b",
+    "glm-5.2"
   ],
   "packets": [
     {
@@ -558,6 +559,27 @@
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave5_content_metadata_probe__tsa23_2012_23ts13ra__content_x4__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave5_content_metadata_probe"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "included_chunk_count": 2,
+      "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b.manifest.json",
+      "models": [
+        "qwen3.6:35b-a3b-bf16",
+        "gpt-oss:120b"
+      ],
+      "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b",
+      "packet_id": "wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b",
+      "record_type": "typed_tsr_fact_candidate",
+      "repeats": 1,
+      "requested_chunk_count": 2,
+      "requested_page_windows": 2,
+      "shape_id": "typed_fact_x2",
+      "source_text_char_count": 50004,
+      "ticket_char_count": 55333,
+      "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b.ticket.md",
+      "ticket_text_truncated_by_char_cap": false,
+      "wave_id": "wave7_dual_model_typed_fact_ensemble"
     }
   ],
   "raw_ticket_policy": "Tickets contain source text and remain ignored under runtime/.",

@@ -29,6 +29,9 @@
   ],
   "primary_comparison_document_id": "tsa23_2012_23ts13ra",
   "wave3_size_scale_model": "qwen3-coder:latest",
+  "wave7_ensemble_primary_model": "qwen3.6:35b-a3b-bf16",
+  "wave7_ensemble_secondary_model": "gpt-oss:120b",
+  "wave7_planned_secondary_model": "glm-5.2",
   "wave4_repeatability_model": "qwen3-coder:latest",
   "models": [
     {
@@ -46,6 +49,10 @@
     {
       "model": "gpt-oss:120b",
       "role": "large local comparison candidate"
+    },
+    {
+      "model": "glm-5.2",
+      "role": "planned document-understanding ensemble candidate; not available in the current local Ollama catalog at wave definition time"
     }
   ],
   "ticket_shapes": [
@@ -84,6 +91,12 @@
       "record_type": "content_metadata",
       "page_windows": 4,
       "purpose": "first content metadata extraction test"
+    },
+    {
+      "shape_id": "typed_fact_x2",
+      "record_type": "typed_tsr_fact_candidate",
+      "page_windows": 2,
+      "purpose": "strict candidate JSON extraction for field-by-field ensemble comparison"
     }
   ],
   "waves": [
@@ -156,6 +169,20 @@
       "runs": 1,
       "worker_contact": false,
       "stop_gate": "Do not claim economics unless supervisor-token spans and worker token records are present."
+    },
+    {
+      "wave_id": "wave7_dual_model_typed_fact_ensemble",
+      "goal": "Run two local models on the same typed TSR fact extraction ticket, produce candidate JSON from each model, then compare fields before verification.",
+      "runs": 2,
+      "worker_contact": true,
+      "stop_gate": "Continue only if both candidate JSON objects parse and the comparison surface identifies agreements, missing fields, and disagreements without tracking raw source quotes."
+    },
+    {
+      "wave_id": "wave8_disagreement_verification",
+      "goal": "Verify only the fields where the dual-model candidates disagree, are missing, or have weak provenance.",
+      "runs": 1,
+      "worker_contact": true,
+      "stop_gate": "Continue only if disagreement verification reduces paid supervisor audit burden without hiding unresolved uncertainty."
     }
   ],
   "minimum_useful_battery": {
@@ -165,7 +192,7 @@
     "requires_supervisor_audit": true
   },
   "full_battery": {
-    "planned_worker_runs": 33,
+    "planned_worker_runs": 36,
     "documents_touched": 3,
     "models_touched": 3,
     "requires_supervisor_audit": true

@@ -45,7 +45,9 @@ Initial local-worker model lanes:
 - `qwen3.6:35b-a3b-bf16`: primary document-understanding extractor candidate;
 - `qwen3-coder-next:latest`: primary extractor candidate;
 - `qwen3-coder:latest`: within-family baseline;
-- `gpt-oss:120b`: large local comparison candidate.
+- `gpt-oss:120b`: large local comparison candidate;
+- `glm-5.2`: planned document-understanding ensemble candidate once it is
+  available in the local Ollama catalog.
 
 Model identity must be recorded from runtime/eval evidence. A configured model
 name alone is not enough.
@@ -132,6 +134,30 @@ Supervisor audits a stratified sample of records with token checkpoints.
 Stop gate: do not claim economics unless supervisor-token spans and worker token
 records are present.
 
+### Wave 7: Dual-Model Typed Fact Ensemble
+
+Run two local models on the same typed TSR fact extraction ticket. The current
+runnable pair is `qwen3.6:35b-a3b-bf16` plus `gpt-oss:120b`; the intended
+document-understanding pair is Qwen3.6 plus a GLM 5.2-family model after GLM is
+installed on the local Ollama service.
+
+Each model returns one strict JSON object with the same typed field set. A
+deterministic comparison step then classifies field-level agreement,
+disagreement, missing evidence, and malformed output before any verifier or
+paid supervisor audit.
+
+Stop gate: continue only if both candidate JSON objects parse and the
+comparison surface identifies agreements, missing fields, and disagreements
+without tracking raw source quotes.
+
+### Wave 8: Disagreement Verification
+
+Send only fields with candidate disagreement, missing high-priority values, or
+weak provenance to a verifier model.
+
+Stop gate: continue only if disagreement verification reduces paid supervisor
+audit burden without hiding unresolved uncertainty.
+
 ## Minimum Useful Battery
 
 Minimum useful evidence before considering phase closeout:
@@ -142,7 +168,7 @@ Minimum useful evidence before considering phase closeout:
 - at least one supervisor audit calibration slice;
 - missing evidence recorded explicitly.
 
-The full battery is 33 planned worker runs plus supervisor audit calibration.
+The full battery is 36 planned worker runs plus supervisor audit calibration.
 
 ## Workflow Pivot
 
@@ -156,6 +182,11 @@ indexing workflow. The next design target is a document-intelligence pipeline:
    and non-timber constraints;
 3. repair/normalization for chunk IDs, quote length, units, and schema shape;
 4. verification against page/quote evidence before paid supervisor audit.
+
+The dual-model ensemble lane is the first concrete implementation of this
+pivot. Instead of asking one model to produce open-ended structure records, it
+asks two models to independently populate the same typed fact schema and uses
+field-level disagreement as the next verifier/audit target.
 
 ## Metrics
 

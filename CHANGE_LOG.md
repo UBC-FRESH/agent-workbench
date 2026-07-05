@@ -1360,3 +1360,37 @@ issues, pull requests, and closeout comments.
   produced 123 parseable records versus 95 for the coding baseline, but still
   needs validator/repair because it produced one malformed line, 14 invalid
   chunk-ID records, and the same total count of quote-length violations.
+
+## 2026-07-05 - Planned P55 dual-model typed fact ensemble lane
+
+- Added `planning/phase55_dual_model_ensemble_design.md` to capture the next
+  extraction architecture: independent typed JSON candidates, deterministic
+  field-by-field comparison, disagreement-only verification, and compact
+  supervisor audit.
+- Added the `typed_fact_x2` ticket shape to the P55 battery so the next run
+  tests schema population rather than open-ended structure-record discovery.
+- Added Wave 7 dual-model candidate extraction and Wave 8 disagreement
+  verification to the P55 battery and roadmap.
+- Recorded the current model reality: `qwen3.6:35b-a3b-bf16` is available, GLM
+  is planned but not currently exposed by the local Ollama catalog, and
+  `gpt-oss:120b` is the installed large-model stand-in for the first runnable
+  ensemble test.
+
+## 2026-07-05 - Ran P55 Wave 7 dual-model typed fact ensemble
+
+- Generated the new Wave 7 typed fact candidate packet over the first two
+  chunks of the 2012 TSA23 rationale.
+- Dry-ran the Wave 7 eval manifest, then ran the live no-tool local-worker
+  packet with `qwen3.6:35b-a3b-bf16` and `gpt-oss:120b`.
+- Added `scripts/compare_p55_typed_candidates.py` to compare candidate JSON
+  outputs without tracking raw candidate values or source quotes.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave7_dual_model_typed_fact_ensemble_comparison.json`
+  and `planning/phase55_wave7_dual_model_typed_fact_ensemble_results.md` with
+  sanitized comparison metrics.
+- Recorded that both candidate JSON objects parsed, all 15 fields were
+  compared, five fields had value agreement, two fields were both not found,
+  and nine fields require verifier attention because of disagreement or schema
+  issues.
+- Preserved the GLM direction for a later rerun: GLM is still the intended
+  document-model comparison target, but it was not available from the local
+  Ollama catalog for this first Wave 7 run.

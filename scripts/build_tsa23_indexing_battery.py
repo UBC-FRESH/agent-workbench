@@ -328,6 +328,163 @@ replace it with the model name from your runtime identity:
     return ticket, included, truncated
 
 
+def build_typed_fact_ticket(
+    *,
+    document: dict[str, Any],
+    chunk_manifest_path: Path,
+    chunks: list[dict[str, Any]],
+    max_ticket_chars: int,
+) -> tuple[str, list[dict[str, Any]], bool]:
+    included: list[dict[str, Any]] = []
+    source_blocks: list[str] = []
+    total_chars = 0
+    truncated = False
+    for chunk in chunks:
+        text = Path(chunk["runtime_text_path"]).read_text(encoding="utf-8-sig")
+        if total_chars + len(text) > max_ticket_chars and included:
+            truncated = True
+            break
+        included.append(chunk)
+        total_chars += len(text)
+        source_blocks.append(
+            "\n".join(
+                [
+                    "```text",
+                    f"chunk_id: {chunk['chunk_id']}",
+                    f"page_range: {chunk['page_start']}-{chunk['page_end']}",
+                    f"text_sha256: {chunk['text_sha256']}",
+                    "",
+                    text.strip(),
+                    "```",
+                ]
+            )
+        )
+        if total_chars >= max_ticket_chars:
+            truncated = len(included) < len(chunks)
+            break
+
+    if not included:
+        raise ValueError("ticket would contain zero chunks after max character cap")
+
+    allowed_chunk_ids = "\n".join(f"- `{chunk['chunk_id']}`" for chunk in included)
+    fields = [
+        "tsa_name",
+        "tsa_number",
+        "document_title",
+        "determination_year",
+        "aac_value",
+        "aac_units",
+        "aac_effective_date",
+        "thlb_area",
+        "total_area",
+        "inventory_reference_year",
+        "base_case_harvest_forecast",
+        "sensitivity_cases",
+        "major_land_base_constraints",
+        "major_management_assumptions",
+        "decision_rationale",
+    ]
+    default_field = {
+        "status": "not_found",
+        "value": None,
+        "units": None,
+        "page_anchor": None,
+        "chunk_id": None,
+        "source_quote": None,
+        "confidence": 0.0,
+    }
+    field_template = ",\n".join(
+        f'    "{field}": {json.dumps(default_field, separators=(",", ":"))}'
+        for field in fields
+    )
+    ticket = f"""# P55 TSA23 Typed Fact Candidate Worker Ticket
+
+## Mission
+
+Read the supplied source chunks and return one strict JSON object containing
+typed TSR fact candidates. Do not use tools, commands, files, browsing, or
+GitHub. Do not return prose. Stop after the JSON object.
+
+This is one candidate in a dual-model ensemble. Another model will receive the
+same source chunks. A later comparison step will inspect field-level
+agreements, missing fields, and disagreements.
+
+## Current State
+
+- corpus_id: `{document['corpus_id']}`
+- document_id: `{document['document_id']}`
+- source_sha256: `{document['source_sha256']}`
+- cycle_year: `{document['cycle_year']}`
+- document_type: `{document['document_type']}`
+- chunk_manifest: `{repo_relative(chunk_manifest_path)}`
+- requested_record_type: `typed_tsr_fact_candidate`
+- raw_text_tracked: `false`
+
+## Output Format
+
+Return a single strict JSON object only:
+
+- no markdown fences;
+- no JSONL;
+- no array wrapper;
+- no explanatory prose;
+- null for unavailable values;
+- every field must use the same object shape.
+
+Top-level object shape:
+
+{{
+  "candidate_id": "{document['document_id']}::typed_fact_candidate",
+  "corpus_id": "{document['corpus_id']}",
+  "document_id": "{document['document_id']}",
+  "source_sha256": "{document['source_sha256']}",
+  "worker_model": "<ACTIVE_MODEL_NAME>",
+  "review_status": "raw_worker_candidate",
+  "allowed_chunk_ids_used": [],
+  "fields": {{
+{field_template}
+  }}
+}}
+
+Each field object must contain exactly:
+
+- `status`: one of `found`, `not_found`, or `uncertain`;
+- `value`: string, number, array, object, or null;
+- `units`: string or null;
+- `page_anchor`: string or null;
+- `chunk_id`: one allowed chunk ID or null;
+- `source_quote`: string or null;
+- `confidence`: number from 0.0 to 1.0.
+
+Allowed `chunk_id` values for this ticket:
+
+{allowed_chunk_ids}
+
+## Rules
+
+- Use only the supplied source chunks.
+- Preserve `document_id`, `source_sha256`, and `chunk_id` exactly.
+- If a field is not directly supported by the supplied chunks, set
+  `status` to `not_found`, `value` to null, `source_quote` to null, and
+  `confidence` to 0.0.
+- If a field is partially supported or ambiguous, set `status` to `uncertain`
+  and explain only through the structured `value`, `page_anchor`,
+  `source_quote`, and `confidence` fields.
+- Keep every `source_quote` to 25 words or fewer.
+- Do not infer values from outside knowledge.
+- Do not invent pages, units, dates, chunk IDs, or document facts.
+- For arrays such as `sensitivity_cases`, include compact objects only when
+  they are directly supported by the supplied text.
+- Set `worker_model` to the model name from your runtime identity. Do not copy
+  the placeholder.
+
+## Source Chunks
+
+{chr(10).join(source_blocks)}
+"""
+    return ticket, included, truncated
+
+
 def manifest_payload(
     *,
     evaluation_id: str,
@@ -405,13 +562,21 @@ def build_eval_packets(
         chunk_manifest_path = benchmark_root / "chunk_manifests" / f"{document_id}.json"
         packet_id = f"{wave_id}__{document_id}__{shape_id}__{'-'.join(slug(m) for m in model_names)}"
         ticket_path = runtime_root / "p55" / "tickets" / f"{packet_id}.ticket.md"
-        ticket, included, truncated = build_ticket(
-            record_type=str(shape["record_type"]),
-            document=document,
-            chunk_manifest_path=chunk_manifest_path,
-            chunks=chunks,
-            max_ticket_chars=max_ticket_chars,
-        )
+        if shape["record_type"] == "typed_tsr_fact_candidate":
+            ticket, included, truncated = build_typed_fact_ticket(
+                document=document,
+                chunk_manifest_path=chunk_manifest_path,
+                chunks=chunks,
+                max_ticket_chars=max_ticket_chars,
+            )
+        else:
+            ticket, included, truncated = build_ticket(
+                record_type=str(shape["record_type"]),
+                document=document,
+                chunk_manifest_path=chunk_manifest_path,
+                chunks=chunks,
+                max_ticket_chars=max_ticket_chars,
+            )
         write_text(ticket_path, ticket)
         manifest_path = runtime_root / "p55" / "manifests" / f"{packet_id}.manifest.json"
         output_dir = runtime_root / "p55" / "eval" / packet_id
@@ -517,6 +682,7 @@ def build_eval_packets(
     primary_model = "qwen3-coder-next:latest"
     size_scale_model = "qwen3-coder:latest"
     document_extractor_model = "qwen3.6:35b-a3b-bf16"
+    ensemble_secondary_model = str(battery.get("wave7_ensemble_secondary_model", "gpt-oss:120b"))
     repeatability_model = size_scale_model
     for document_id in pilot_docs:
         add_packet(
@@ -584,6 +750,12 @@ def build_eval_packets(
         document_id=comparison_doc,
         shape_id="content_x4",
         model_names=[primary_model],
+    )
+    add_packet(
+        wave_id="wave7_dual_model_typed_fact_ensemble",
+        document_id=comparison_doc,
+        shape_id="typed_fact_x2",
+        model_names=[document_extractor_model, ensemble_secondary_model],
     )
 
     return {
