@@ -6,6 +6,7 @@
   "default_authority": "no_tool_local_worker",
   "raw_data_policy": "Raw PDF text, prompts with source chunks, worker outputs, provider details, and transcripts remain under runtime/.",
   "tracked_output_policy": "Track only sanitized manifests, aggregate metrics, and supervisor conclusions.",
+  "record_budget_policy": "Generated extraction tickets must not impose a hidden maximum record count. Verbose, malformed, repetitive, or low-value outputs are measured by validators and summarized as experiment results.",
   "documents": [
     {
       "document_id": "tsa23_2012_23tsdp12",
@@ -69,6 +70,12 @@
       "purpose": "full-document structure extraction test across all generated chunks"
     },
     {
+      "shape_id": "structure_chunk",
+      "record_type": "structure",
+      "page_windows": 1,
+      "purpose": "deterministic single-chunk structure extraction unit for orchestrated full-document coverage"
+    },
+    {
       "shape_id": "content_x4",
       "record_type": "content_metadata",
       "page_windows": 4,
@@ -112,6 +119,13 @@
       "stop_gate": "Compare marginal record yield, malformed-output risk, and worker token growth before scaling further."
     },
     {
+      "wave_id": "wave3_chunk_orchestration",
+      "goal": "Run qwen3-coder:latest once per rationale chunk so coverage is deterministic rather than dependent on one broad ticket reaching later chunks.",
+      "runs": 7,
+      "worker_contact": true,
+      "stop_gate": "Continue only if every chunk returns parseable records with valid chunk IDs and repairable quote-length defects."
+    },
+    {
       "wave_id": "wave4_repeatability",
       "goal": "Repeat the best current Wave 3 cell, qwen3-coder:latest on structure_x4, three times to measure within-model consistency.",
       "runs": 3,
@@ -140,7 +154,7 @@
     "requires_supervisor_audit": true
   },
   "full_battery": {
-    "planned_worker_runs": 19,
+    "planned_worker_runs": 26,
     "documents_touched": 3,
     "models_touched": 3,
     "requires_supervisor_audit": true

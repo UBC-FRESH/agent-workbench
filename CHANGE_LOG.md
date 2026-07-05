@@ -1312,3 +1312,32 @@ issues, pull requests, and closeout comments.
 - Recorded that `structure_x4` is the best current ticket size: `structure_x8`
   consumed more input tokens but still covered only four of seven chunks under
   the 24-record cap.
+
+## 2026-07-04 - Removed P55 hidden record cap
+
+- Removed the hard-coded maximum-record rule from generated P55 worker tickets
+  after maintainer review identified it as an artificial guardrail that
+  distorted coverage results.
+- Updated the P55 battery definition and planning note to make verbosity,
+  malformed JSONL, repetitive records, quote-length defects, and low-value
+  filler measured validator outcomes rather than hidden ticket constraints.
+- Kept the earlier Wave 2 and Wave 3 summaries unchanged as historical evidence
+  because those worker runs really did execute under the old capped ticket
+  contract.
+
+## 2026-07-04 - Ran P55 Wave 3.1 chunk-orchestrated extraction
+
+- Regenerated P55 worker tickets without the hidden maximum-record rule and
+  added seven single-chunk `wave3_chunk_orchestration` eval packets for the
+  2012 TSA23 rationale.
+- Ran all seven no-tool `qwen3-coder:latest` worker calls through
+  `agent-workbench eval-batch`; all completed without provider failures or
+  malformed JSONL lines.
+- Added `scripts/summarize_p55_worker_outputs.py` to reproduce sanitized
+  aggregate quality metrics from ignored runtime outputs without tracking raw
+  source text or source quotes.
+- Recorded the Wave 3.1 result in
+  `benchmarks/document_library/tsa23_tsr/p55_wave3_chunk_orchestration_summary.json`
+  and `planning/phase55_wave3_chunk_orchestration_results.md`: all seven chunks
+  were covered, 95 parseable records were produced, and remaining defects are
+  mainly repairable chunk-ID copy errors plus source-quote length violations.

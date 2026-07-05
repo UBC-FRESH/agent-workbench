@@ -2385,12 +2385,16 @@ Planned tasks:
         PDFs.
   - [x] Track sanitized chunk manifests and runtime/eval manifests.
   - [x] Dry-run all generated eval manifests without provider contact.
-  - [ ] Decide whether to revise chunk size/OCR before worker contact.
+  - [x] Decide whether to revise chunk size/OCR before worker contact.
 - [ ] P55.2 No-tool local-worker extraction run (#369)
   - [x] Run Wave 1 single-model smoke across three documents.
   - [x] Run Wave 1.1 full-document smoke across the three 2012 documents.
   - [x] Run Wave 2 model A/B on identical document/chunk tickets.
   - [x] Run Wave 3 ticket-size scale tests if Wave 1/2 gates pass.
+  - [x] Remove the hidden max-record ticket guardrail before further
+        extraction tests.
+  - [x] Run Wave 3.1 chunk-orchestrated coverage after regenerating uncapped
+        tickets.
   - [ ] Run Wave 4 repeatability and Wave 5 content probe if earlier waves
         justify it.
 - [ ] P55.3 Supervisor spot-check and scale/stop decision (#370)

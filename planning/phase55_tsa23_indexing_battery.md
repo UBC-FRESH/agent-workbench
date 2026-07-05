@@ -20,6 +20,11 @@ document-library delegation behaves across:
 The tracked battery definition is
 `benchmarks/document_library/tsa23_tsr/p55_test_battery.json`.
 
+Generated extraction tickets must not impose a hidden maximum record count.
+Output verbosity, malformed JSONL, repetitive records, quote-length defects,
+and low-value filler are validator/audit outcomes to measure, not invisible
+ticket-generation guardrails that distort coverage.
+
 ## Test Documents
 
 Use the three most recent public TSA23 TSR documents from the P53 corpus:
@@ -86,6 +91,14 @@ Run `qwen3-coder:latest`, the best Wave 2 coverage candidate, on
 Stop gate: compare marginal record yield, malformed-output risk, and worker
 token growth before scaling further.
 
+### Wave 3.1: Chunk-Orchestrated Coverage
+
+Run `qwen3-coder:latest` once per rationale chunk so coverage is deterministic
+rather than dependent on one broad ticket reaching later chunks.
+
+Stop gate: continue only if every chunk returns parseable records with valid
+chunk IDs and repairable quote-length defects.
+
 ### Wave 4: Repeatability
 
 Repeat the best current Wave 3 cell, `qwen3-coder:latest` on `structure_x4`,
@@ -118,7 +131,7 @@ Minimum useful evidence before considering phase closeout:
 - at least one supervisor audit calibration slice;
 - missing evidence recorded explicitly.
 
-The full battery is 19 planned worker runs plus supervisor audit calibration.
+The full battery is 26 planned worker runs plus supervisor audit calibration.
 
 ## Metrics
 

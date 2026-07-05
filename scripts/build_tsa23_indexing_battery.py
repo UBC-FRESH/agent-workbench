@@ -221,6 +221,17 @@ def build_ticket(
         "numeric_value, scenario, sensitivity_test, decision_rationale, other"
     )
     allowed_chunk_ids = "\n".join(f"- `{chunk['chunk_id']}`" for chunk in included)
+    per_chunk_guidance = (
+        "Because this ticket contains one chunk, cover that chunk directly. "
+        "Extract every high-value structure record that is supported by the "
+        "supplied text."
+        if len(included) == 1
+        else (
+            "Scan every listed chunk in order and extract all high-value "
+            "structure records supported by the supplied text. Do not stop "
+            "after the early chunks if later chunks contain metadata."
+        )
+    )
     ticket = f"""# P55 TSA23 Document Index Worker Ticket
 
 ## Mission
@@ -299,11 +310,12 @@ replace it with the model name from your runtime identity:
 - Keep `source_quote` to 25 words or fewer.
 - Return bare JSONL only. Do not wrap the response in markdown fences.
 - Do not output tab-separated or comma-separated records.
-- Output at most 24 records for this ticket. Choose the strongest records.
+- {per_chunk_guidance}
 - Set `worker_model` to the model name from your runtime identity. Do not copy
   the placeholder from the example.
 - Do not invent pages, sections, titles, values, definitions, or citations.
-- Prefer fewer, stronger records over many vague records.
+- Extract all high-value records supported by the supplied chunks. Do not add
+  vague filler records just to increase the count.
 - For each supplied chunk, extract at least one strong record when the chunk
   contains a section heading, table, figure, map, appendix, acronym,
   definition, cross-reference, assumption, or major claim.
@@ -439,6 +451,68 @@ def build_eval_packets(
             }
         )
 
+    def add_chunk_packet(
+        *,
+        wave_id: str,
+        document_id: str,
+        chunk_index: int,
+        model_names: list[str],
+    ) -> None:
+        document = documents[document_id]
+        chunk_manifest = chunk_manifests[document_id]
+        chunk = chunk_manifest["chunks"][chunk_index]
+        chunk_manifest_path = benchmark_root / "chunk_manifests" / f"{document_id}.json"
+        chunk_label = f"chunk{chunk_index + 1:02d}"
+        packet_id = f"{wave_id}__{document_id}__{chunk_label}__{'-'.join(slug(m) for m in model_names)}"
+        ticket_path = runtime_root / "p55" / "tickets" / f"{packet_id}.ticket.md"
+        ticket, included, truncated = build_ticket(
+            record_type="structure",
+            document=document,
+            chunk_manifest_path=chunk_manifest_path,
+            chunks=[chunk],
+            max_ticket_chars=max_ticket_chars,
+        )
+        write_text(ticket_path, ticket)
+        manifest_path = runtime_root / "p55" / "manifests" / f"{packet_id}.manifest.json"
+        output_dir = runtime_root / "p55" / "eval" / packet_id
+        write_json(
+            manifest_path,
+            manifest_payload(
+                evaluation_id=packet_id,
+                ticket_path=ticket_path,
+                output_dir=output_dir,
+                models=model_names,
+                repeats=1,
+                timeout_seconds=timeout_seconds,
+                base_url_file=base_url_file,
+                provider_headers_file=provider_headers_file,
+            ),
+        )
+        packets.append(
+            {
+                "packet_id": packet_id,
+                "wave_id": wave_id,
+                "document_id": document_id,
+                "shape_id": "structure_chunk",
+                "record_type": "structure",
+                "models": model_names,
+                "repeats": 1,
+                "ticket_path": repo_relative(ticket_path),
+                "manifest_path": repo_relative(manifest_path),
+                "output_dir": repo_relative(output_dir),
+                "included_chunk_count": len(included),
+                "requested_page_windows": 1,
+                "requested_chunk_count": 1,
+                "selected_chunk_index": chunk_index,
+                "selected_chunk_id": chunk["chunk_id"],
+                "ticket_text_truncated_by_char_cap": truncated,
+                "ticket_char_count": len(ticket),
+                "source_text_char_count": sum(
+                    int(included_chunk["text_char_count"]) for included_chunk in included
+                ),
+            }
+        )
+
     pilot_docs = [item["document_id"] for item in battery["documents"]]
     primary_model = "qwen3-coder-next:latest"
     size_scale_model = "qwen3-coder:latest"
@@ -478,6 +552,14 @@ def build_eval_packets(
             wave_id="wave3_size_scale",
             document_id=comparison_doc,
             shape_id=shape_id,
+            model_names=[size_scale_model],
+        )
+
+    for chunk_index, _chunk in enumerate(chunk_manifests[comparison_doc]["chunks"]):
+        add_chunk_packet(
+            wave_id="wave3_chunk_orchestration",
+            document_id=comparison_doc,
+            chunk_index=chunk_index,
             model_names=[size_scale_model],
         )
 

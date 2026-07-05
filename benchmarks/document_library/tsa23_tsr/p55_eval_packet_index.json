@@ -1,7 +1,7 @@
 {
   "battery_id": "p55_tsa23_first_indexing_battery",
   "corpus_id": "bc_tsr_tsa23_public_1995_present",
-  "generated_utc": "2026-07-05T03:39:48.830746+00:00",
+  "generated_utc": "2026-07-05T04:00:42.873887+00:00",
   "model_catalog": [
     "qwen3-coder-next:latest",
     "qwen3-coder:latest",
@@ -23,7 +23,7 @@
       "requested_page_windows": 2,
       "shape_id": "structure_x2",
       "source_text_char_count": 39934,
-      "ticket_char_count": 43894,
+      "ticket_char_count": 44071,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_single_model_smoke__tsa23_2012_23tsdp12__structure_x2__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_single_model_smoke"
@@ -43,7 +43,7 @@
       "requested_page_windows": 2,
       "shape_id": "structure_x2",
       "source_text_char_count": 33182,
-      "ticket_char_count": 37160,
+      "ticket_char_count": 37337,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_single_model_smoke__tsa23_2012_23ts13pdp__structure_x2__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_single_model_smoke"
@@ -63,7 +63,7 @@
       "requested_page_windows": 2,
       "shape_id": "structure_x2",
       "source_text_char_count": 50004,
-      "ticket_char_count": 53961,
+      "ticket_char_count": 54138,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_single_model_smoke__tsa23_2012_23ts13ra__structure_x2__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_single_model_smoke"
@@ -83,7 +83,7 @@
       "requested_page_windows": "all",
       "shape_id": "structure_full",
       "source_text_char_count": 106859,
-      "ticket_char_count": 111595,
+      "ticket_char_count": 111772,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_full_document_smoke__tsa23_2012_23tsdp12__structure_full__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_full_document_smoke"
@@ -103,7 +103,7 @@
       "requested_page_windows": "all",
       "shape_id": "structure_full",
       "source_text_char_count": 41343,
-      "ticket_char_count": 45517,
+      "ticket_char_count": 45694,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_full_document_smoke__tsa23_2012_23ts13pdp__structure_full__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_full_document_smoke"
@@ -123,7 +123,7 @@
       "requested_page_windows": "all",
       "shape_id": "structure_full",
       "source_text_char_count": 167655,
-      "ticket_char_count": 172582,
+      "ticket_char_count": 172759,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave1_full_document_smoke__tsa23_2012_23ts13ra__structure_full__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave1_full_document_smoke"
@@ -145,7 +145,7 @@
       "requested_page_windows": 4,
       "shape_id": "structure_x4",
       "source_text_char_count": 110780,
-      "ticket_char_count": 115125,
+      "ticket_char_count": 115302,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave2_model_ab__tsa23_2012_23ts13ra__structure_x4__qwen3-coder-latest-qwen3-coder-next-latest-gpt-oss-120b.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave2_model_ab"
@@ -165,7 +165,7 @@
       "requested_page_windows": 2,
       "shape_id": "structure_x2",
       "source_text_char_count": 50004,
-      "ticket_char_count": 53961,
+      "ticket_char_count": 54138,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_size_scale__tsa23_2012_23ts13ra__structure_x2__qwen3-coder-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave3_size_scale"
@@ -185,7 +185,7 @@
       "requested_page_windows": 4,
       "shape_id": "structure_x4",
       "source_text_char_count": 110780,
-      "ticket_char_count": 115125,
+      "ticket_char_count": 115302,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_size_scale__tsa23_2012_23ts13ra__structure_x4__qwen3-coder-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave3_size_scale"
@@ -205,10 +205,164 @@
       "requested_page_windows": 8,
       "shape_id": "structure_x8",
       "source_text_char_count": 167655,
-      "ticket_char_count": 172582,
+      "ticket_char_count": 172759,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_size_scale__tsa23_2012_23ts13ra__structure_x8__qwen3-coder-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave3_size_scale"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "included_chunk_count": 1,
+      "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk01__qwen3-coder-latest.manifest.json",
+      "models": [
+        "qwen3-coder:latest"
+      ],
+      "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk01__qwen3-coder-latest",
+      "packet_id": "wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk01__qwen3-coder-latest",
+      "record_type": "structure",
+      "repeats": 1,
+      "requested_chunk_count": 1,
+      "requested_page_windows": 1,
+      "selected_chunk_id": "tsa23_2012_23ts13ra::pages_001_008",
+      "selected_chunk_index": 0,
+      "shape_id": "structure_chunk",
+      "source_text_char_count": 22864,
+      "ticket_char_count": 26775,
+      "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk01__qwen3-coder-latest.ticket.md",
+      "ticket_text_truncated_by_char_cap": false,
+      "wave_id": "wave3_chunk_orchestration"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "included_chunk_count": 1,
+      "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk02__qwen3-coder-latest.manifest.json",
+      "models": [
+        "qwen3-coder:latest"
+      ],
+      "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk02__qwen3-coder-latest",
+      "packet_id": "wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk02__qwen3-coder-latest",
+      "record_type": "structure",
+      "repeats": 1,
+      "requested_chunk_count": 1,
+      "requested_page_windows": 1,
+      "selected_chunk_id": "tsa23_2012_23ts13ra::pages_008_015",
+      "selected_chunk_index": 1,
+      "shape_id": "structure_chunk",
+      "source_text_char_count": 27140,
+      "ticket_char_count": 31052,
+      "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk02__qwen3-coder-latest.ticket.md",
+      "ticket_text_truncated_by_char_cap": false,
+      "wave_id": "wave3_chunk_orchestration"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "included_chunk_count": 1,
+      "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk03__qwen3-coder-latest.manifest.json",
+      "models": [
+        "qwen3-coder:latest"
+      ],
+      "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk03__qwen3-coder-latest",
+      "packet_id": "wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk03__qwen3-coder-latest",
+      "record_type": "structure",
+      "repeats": 1,
+      "requested_chunk_count": 1,
+      "requested_page_windows": 1,
+      "selected_chunk_id": "tsa23_2012_23ts13ra::pages_015_022",
+      "selected_chunk_index": 2,
+      "shape_id": "structure_chunk",
+      "source_text_char_count": 29021,
+      "ticket_char_count": 32934,
+      "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk03__qwen3-coder-latest.ticket.md",
+      "ticket_text_truncated_by_char_cap": false,
+      "wave_id": "wave3_chunk_orchestration"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "included_chunk_count": 1,
+      "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk04__qwen3-coder-latest.manifest.json",
+      "models": [
+        "qwen3-coder:latest"
+      ],
+      "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk04__qwen3-coder-latest",
+      "packet_id": "wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk04__qwen3-coder-latest",
+      "record_type": "structure",
+      "repeats": 1,
+      "requested_chunk_count": 1,
+      "requested_page_windows": 1,
+      "selected_chunk_id": "tsa23_2012_23ts13ra::pages_022_029",
+      "selected_chunk_index": 3,
+      "shape_id": "structure_chunk",
+      "source_text_char_count": 31755,
+      "ticket_char_count": 35668,
+      "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk04__qwen3-coder-latest.ticket.md",
+      "ticket_text_truncated_by_char_cap": false,
+      "wave_id": "wave3_chunk_orchestration"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "included_chunk_count": 1,
+      "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk05__qwen3-coder-latest.manifest.json",
+      "models": [
+        "qwen3-coder:latest"
+      ],
+      "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk05__qwen3-coder-latest",
+      "packet_id": "wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk05__qwen3-coder-latest",
+      "record_type": "structure",
+      "repeats": 1,
+      "requested_chunk_count": 1,
+      "requested_page_windows": 1,
+      "selected_chunk_id": "tsa23_2012_23ts13ra::pages_029_036",
+      "selected_chunk_index": 4,
+      "shape_id": "structure_chunk",
+      "source_text_char_count": 29406,
+      "ticket_char_count": 33319,
+      "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk05__qwen3-coder-latest.ticket.md",
+      "ticket_text_truncated_by_char_cap": false,
+      "wave_id": "wave3_chunk_orchestration"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "included_chunk_count": 1,
+      "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk06__qwen3-coder-latest.manifest.json",
+      "models": [
+        "qwen3-coder:latest"
+      ],
+      "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk06__qwen3-coder-latest",
+      "packet_id": "wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk06__qwen3-coder-latest",
+      "record_type": "structure",
+      "repeats": 1,
+      "requested_chunk_count": 1,
+      "requested_page_windows": 1,
+      "selected_chunk_id": "tsa23_2012_23ts13ra::pages_036_043",
+      "selected_chunk_index": 5,
+      "shape_id": "structure_chunk",
+      "source_text_char_count": 24401,
+      "ticket_char_count": 28314,
+      "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk06__qwen3-coder-latest.ticket.md",
+      "ticket_text_truncated_by_char_cap": false,
+      "wave_id": "wave3_chunk_orchestration"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "included_chunk_count": 1,
+      "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk07__qwen3-coder-latest.manifest.json",
+      "models": [
+        "qwen3-coder:latest"
+      ],
+      "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk07__qwen3-coder-latest",
+      "packet_id": "wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk07__qwen3-coder-latest",
+      "record_type": "structure",
+      "repeats": 1,
+      "requested_chunk_count": 1,
+      "requested_page_windows": 1,
+      "selected_chunk_id": "tsa23_2012_23ts13ra::pages_043_048",
+      "selected_chunk_index": 6,
+      "shape_id": "structure_chunk",
+      "source_text_char_count": 3068,
+      "ticket_char_count": 6981,
+      "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave3_chunk_orchestration__tsa23_2012_23ts13ra__chunk07__qwen3-coder-latest.ticket.md",
+      "ticket_text_truncated_by_char_cap": false,
+      "wave_id": "wave3_chunk_orchestration"
     },
     {
       "document_id": "tsa23_2012_23ts13ra",
@@ -225,7 +379,7 @@
       "requested_page_windows": 4,
       "shape_id": "structure_x4",
       "source_text_char_count": 110780,
-      "ticket_char_count": 115125,
+      "ticket_char_count": 115302,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave4_repeatability__tsa23_2012_23ts13ra__structure_x4__qwen3-coder-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave4_repeatability"
@@ -245,7 +399,7 @@
       "requested_page_windows": 4,
       "shape_id": "content_x4",
       "source_text_char_count": 110780,
-      "ticket_char_count": 115167,
+      "ticket_char_count": 115344,
       "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave5_content_metadata_probe__tsa23_2012_23ts13ra__content_x4__qwen3-coder-next-latest.ticket.md",
       "ticket_text_truncated_by_char_cap": false,
       "wave_id": "wave5_content_metadata_probe"
