@@ -442,6 +442,7 @@ def build_eval_packets(
     pilot_docs = [item["document_id"] for item in battery["documents"]]
     primary_model = "qwen3-coder-next:latest"
     size_scale_model = "qwen3-coder:latest"
+    repeatability_model = size_scale_model
     for document_id in pilot_docs:
         add_packet(
             wave_id="wave1_single_model_smoke",
@@ -484,7 +485,7 @@ def build_eval_packets(
         wave_id="wave4_repeatability",
         document_id=comparison_doc,
         shape_id="structure_x4",
-        model_names=[primary_model],
+        model_names=[repeatability_model],
         repeats=3,
     )
     add_packet(

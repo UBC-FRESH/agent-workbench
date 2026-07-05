@@ -28,6 +28,7 @@
   ],
   "primary_comparison_document_id": "tsa23_2012_23ts13ra",
   "wave3_size_scale_model": "qwen3-coder:latest",
+  "wave4_repeatability_model": "qwen3-coder:latest",
   "models": [
     {
       "model": "qwen3-coder-next:latest",
@@ -112,7 +113,7 @@
     },
     {
       "wave_id": "wave4_repeatability",
-      "goal": "Repeat the best wave2 or wave3 cell three times to measure within-model consistency.",
+      "goal": "Repeat the best current Wave 3 cell, qwen3-coder:latest on structure_x4, three times to measure within-model consistency.",
       "runs": 3,
       "worker_contact": true,
       "stop_gate": "Continue only if record counts, ID preservation, and parseability are stable enough for audit."

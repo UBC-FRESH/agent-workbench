@@ -1298,3 +1298,17 @@ issues, pull requests, and closeout comments.
 - Recorded that `qwen3-coder:latest` produced the best coverage signal, while
   `qwen3-coder-next:latest` under-covered and `gpt-oss:120b` invented chunk
   IDs; no model is ready for unaudited scaling without validator/repair.
+
+## 2026-07-04 - Ran P55 Wave 3 size-scale test
+
+- Tightened the P55 worker-ticket framework again by removing the literal model
+  name from the example and adding explicit allowed chunk IDs.
+- Switched Wave 3 size-scale from `qwen3-coder-next:latest` to the Wave 2 best
+  coverage candidate, `qwen3-coder:latest`.
+- Ran `structure_x2`, `structure_x4`, and `structure_x8` on the 2012 rationale.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave3_size_scale_summary.json`
+  and `planning/phase55_wave3_size_scale_results.md` with sanitized aggregate
+  metrics.
+- Recorded that `structure_x4` is the best current ticket size: `structure_x8`
+  consumed more input tokens but still covered only four of seven chunks under
+  the 24-record cap.

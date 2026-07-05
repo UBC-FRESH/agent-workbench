@@ -2390,7 +2390,7 @@ Planned tasks:
   - [x] Run Wave 1 single-model smoke across three documents.
   - [x] Run Wave 1.1 full-document smoke across the three 2012 documents.
   - [x] Run Wave 2 model A/B on identical document/chunk tickets.
-  - [ ] Run Wave 3 ticket-size scale tests if Wave 1/2 gates pass.
+  - [x] Run Wave 3 ticket-size scale tests if Wave 1/2 gates pass.
   - [ ] Run Wave 4 repeatability and Wave 5 content probe if earlier waves
         justify it.
 - [ ] P55.3 Supervisor spot-check and scale/stop decision (#370)

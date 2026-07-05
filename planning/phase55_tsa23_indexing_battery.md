@@ -88,8 +88,8 @@ token growth before scaling further.
 
 ### Wave 4: Repeatability
 
-Repeat the best Wave 2 or Wave 3 cell three times to measure within-model
-consistency.
+Repeat the best current Wave 3 cell, `qwen3-coder:latest` on `structure_x4`,
+three times to measure within-model consistency.
 
 Stop gate: continue only if record counts, ID preservation, and parseability are
 stable enough for supervisor audit.
