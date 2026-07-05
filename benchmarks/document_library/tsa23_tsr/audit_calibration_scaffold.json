@@ -1,0 +1,35 @@
+{
+  "bailout_checks": [
+    "zero primary identifier preservation",
+    "known calibration repairables missed",
+    "malformed JSONL above threshold",
+    "uncontrolled tool-call behavior in a no-tool lane"
+  ],
+  "calibration_goal": "Test whether MP11-derived chunk size, record schema, and bailout rules generalize across older and newer TSA 23 public TSR documents.",
+  "corpus_id": "bc_tsr_tsa23_public_1995_present",
+  "sample_design": {
+    "document_count": 3,
+    "per_document_candidate_sample": 20,
+    "strata": [
+      "cycle_year",
+      "document_type",
+      "structure_records",
+      "content_metadata_records",
+      "repair_candidates"
+    ]
+  },
+  "schema_version": 1,
+  "status": "planned",
+  "supervisor_token_accounting": "required",
+  "tracked_metrics": [
+    "worker_input_tokens",
+    "worker_output_tokens",
+    "parseable_record_count",
+    "record_id_preservation_rate",
+    "accepted_rate",
+    "repairable_rate",
+    "rejected_rate",
+    "supervisor_audit_cost_usd",
+    "supervisor_cost_per_accepted_or_repairable_record"
+  ]
+}

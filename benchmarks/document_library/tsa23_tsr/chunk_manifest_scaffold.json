@@ -1,0 +1,64 @@
+{
+  "corpus_id": "bc_tsr_tsa23_public_1995_present",
+  "default_chunking_plan": {
+    "overlap_pages": 2,
+    "ticket_size_sequence": [
+      "x2",
+      "x4",
+      "x8",
+      "x16"
+    ],
+    "unit": "page_window",
+    "window_pages": 24
+  },
+  "document_scaffolds": [
+    {
+      "cycle_year": 1995,
+      "document_id": "tsa23_1995_23ts95ra",
+      "document_type": "supporting_document",
+      "planned_worker_passes": [
+        "structure",
+        "content_metadata",
+        "local_self_audit",
+        "delegated_repair_iteration",
+        "supervisor_audit_calibration"
+      ],
+      "required_record_id_prefix": "tsa23_1995_23ts95ra::",
+      "runtime_chunk_root": "runtime/document_library/tsa23_tsr/chunks/tsa23_1995_23ts95ra",
+      "tracked_chunk_manifest": "benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_1995_23ts95ra.json"
+    },
+    {
+      "cycle_year": 2006,
+      "document_id": "tsa23_2006_23ts06ra",
+      "document_type": "rationale",
+      "planned_worker_passes": [
+        "structure",
+        "content_metadata",
+        "local_self_audit",
+        "delegated_repair_iteration",
+        "supervisor_audit_calibration"
+      ],
+      "required_record_id_prefix": "tsa23_2006_23ts06ra::",
+      "runtime_chunk_root": "runtime/document_library/tsa23_tsr/chunks/tsa23_2006_23ts06ra",
+      "tracked_chunk_manifest": "benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2006_23ts06ra.json"
+    },
+    {
+      "cycle_year": 2012,
+      "document_id": "tsa23_2012_23ts13ra",
+      "document_type": "rationale",
+      "planned_worker_passes": [
+        "structure",
+        "content_metadata",
+        "local_self_audit",
+        "delegated_repair_iteration",
+        "supervisor_audit_calibration"
+      ],
+      "required_record_id_prefix": "tsa23_2012_23ts13ra::",
+      "runtime_chunk_root": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra",
+      "tracked_chunk_manifest": "benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23ts13ra.json"
+    }
+  ],
+  "raw_text_policy": "Raw extracted page/chunk text stays under runtime/.",
+  "schema_version": 1,
+  "status": "planned_no_raw_text_tracked"
+}

@@ -1190,3 +1190,18 @@ issues, pull requests, and closeout comments.
   existing direct source-audit baseline of `$0.288374`.
 - Closed P52 with the decision not to scale this loop shape until P54 adds
   stricter identifier-preservation and calibration-miss bailout rules.
+
+## 2026-07-04 - Built P53 TSA23 document-library pilot scaffold
+
+- Activated P53 as a document-library indexing pilot over all public TSA 23 TSR
+  PDF documents from 1995 onward.
+- Added `scripts/materialize_tsa23_tsr_corpus.py` as the reproducible bridge
+  from FEMIC's TSR registry and fetch commands into Agent Workbench's ignored
+  runtime corpus area.
+- Materialized the TSA 23 mini-corpus through FEMIC into ignored `runtime/`
+  storage: 18 selected documents, 18 cached documents, and 0 fetch failures.
+- Added sanitized tracked metadata under
+  `benchmarks/document_library/tsa23_tsr/` for the corpus registry, chunk
+  scaffold, and audit calibration scaffold.
+- Added `planning/phase53_document_library_index_pilot.md` to record the corpus
+  shape, reproducibility command, public-safety boundary, and P54 policy inputs.
