@@ -1172,3 +1172,5 @@ issues, pull requests, and closeout comments.
   deterministic convergence checking, and paid supervisor delta-review.
 - Added `planning/phase51_managed_delegation_workflow_lanes.md` to record the
   P51 contract and verification scope.
+- Closed P51 child issues after JSON validation, graph metadata validation,
+  pytest, and public-safety checks passed.

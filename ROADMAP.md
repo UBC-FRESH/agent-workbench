@@ -59,7 +59,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P48 Phase-scale A/B token economics benchmark | #328 | `feature/p48-phase-scale-ab-token-economics` | Complete |
 | P49 Benchmark worktree preparation | #334 | `feature/p49-benchmark-worktree-prep` | Complete |
 | P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Complete |
-| P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Active |
+| P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Complete |
 | P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Planned |
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Planned |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Planned |
@@ -2263,7 +2263,7 @@ Parent issue: #347
 
 Branch: `feature/p51-managed-delegation-workflows`
 
-Status: active
+Status: complete
 
 Goal: turn P50's managed-delegation lessons into reusable graph templates,
 ticket patterns, stop rules, and role boundaries for tightly guardrailed local
