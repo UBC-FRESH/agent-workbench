@@ -1157,3 +1157,18 @@ issues, pull requests, and closeout comments.
 - Recorded the P50 closeout position: FreshForge P16 produced useful process
   evidence, but the next high-return path is managed local-worker workflows for
   high-volume public technical-document indexing.
+
+## 2026-07-04 - Activated P51 managed delegation workflow lanes
+
+- Created P51 child issues #351 through #353.
+- Added `templates/managed_role_vocabulary.json` for extractor, self-auditor,
+  repairer, convergence-checker, and supervisor-auditor boundaries.
+- Added `templates/managed_iteration_stop_rules.json` for bounded local-worker
+  loop stops, escalation paths, and scale gates.
+- Added `templates/workbench_templates/managed_delegate_loop_graph.json` as the
+  generic FreshForge-shaped local-worker loop.
+- Updated `templates/workbench_templates/document_library_index_graph.json` so
+  document indexing now includes local self-audit, delegated repair iteration,
+  deterministic convergence checking, and paid supervisor delta-review.
+- Added `planning/phase51_managed_delegation_workflow_lanes.md` to record the
+  P51 contract and verification scope.

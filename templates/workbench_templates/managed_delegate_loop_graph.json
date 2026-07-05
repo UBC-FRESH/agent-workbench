@@ -1,0 +1,219 @@
+{
+  "workflow": {
+    "id": "managed_delegate_loop_workflow",
+    "name": "Managed Delegate Loop Workflow",
+    "description": "Generic FreshForge-shaped graph for bounded local-worker extraction, self-audit, repair, convergence checking, and paid supervisor delta-review."
+  },
+  "nodes": [
+    {
+      "id": "prepare_bounded_ticket",
+      "provider": "agent_workbench.supervisor.ticket_builder",
+      "name": "Prepare bounded ticket",
+      "description": "Supervisor or script selects source inputs, schema, allowed outputs, and iteration policy for a bounded worker loop.",
+      "outputs": {
+        "worker_ticket": "ignored bounded worker ticket",
+        "iteration_policy": "tracked or copied stop-rule policy"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_or_script_prepare",
+          "execution_boundary": "Supervisor defines source scope, schema, and stop rules before local workers run.",
+          "owner": "script_with_supervisor_approval",
+          "token_accounting": "supervisor checkpoint required when paid supervisor authors the ticket"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "worker_ticket",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/<job_id>/tickets/extractor.md"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "ticket_preparation",
+        "authority_level": "supervisor-owned",
+        "implementation": "paid supervisor or deterministic script"
+      }
+    },
+    {
+      "id": "extract_candidates",
+      "provider": "agent_workbench.local_worker.extractor",
+      "name": "Extract candidates",
+      "description": "Local worker produces source-anchored candidate records from the bounded ticket.",
+      "needs": [
+        "prepare_bounded_ticket"
+      ],
+      "outputs": {
+        "candidate_records": "ignored raw worker candidate records"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_extraction",
+          "execution_boundary": "Local worker may produce candidates only; no tracked mutation or acceptance.",
+          "owner": "local_worker",
+          "allowed_authority": "L0",
+          "role_vocabulary": "templates/managed_role_vocabulary.json#extractor",
+          "token_accounting": "local worker input/output tokens at zero cash cost"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "candidate_records",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/<job_id>/iterations/00_candidates.jsonl"
+        }
+      ],
+      "provenance": {
+        "role": "extractor",
+        "capability": "source_anchored_extraction",
+        "authority_level": "L0",
+        "implementation": "configured Ollama worker model"
+      }
+    },
+    {
+      "id": "self_audit_candidates",
+      "provider": "agent_workbench.local_worker.self_auditor",
+      "name": "Self-audit candidates",
+      "description": "Local worker audits candidates against supplied source excerpts and labels defects.",
+      "needs": [
+        "extract_candidates"
+      ],
+      "outputs": {
+        "audit_labels": "ignored local self-audit labels"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_self_audit",
+          "execution_boundary": "Local self-audit is defect detection only and is not validation.",
+          "owner": "local_worker",
+          "allowed_authority": "L0",
+          "role_vocabulary": "templates/managed_role_vocabulary.json#self_auditor",
+          "token_accounting": "local worker input/output tokens at zero cash cost"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "audit_labels",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/<job_id>/iterations/01_self_audit.jsonl"
+        }
+      ],
+      "provenance": {
+        "role": "self_auditor",
+        "capability": "candidate_defect_detection",
+        "authority_level": "L0",
+        "implementation": "configured Ollama worker model in audit mode"
+      }
+    },
+    {
+      "id": "repair_candidates",
+      "provider": "agent_workbench.local_worker.repairer",
+      "name": "Repair candidates",
+      "description": "Local worker repairs candidate records using only self-audit findings and supplied source excerpts.",
+      "needs": [
+        "self_audit_candidates"
+      ],
+      "outputs": {
+        "repaired_records": "ignored repaired candidate records"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_repair",
+          "execution_boundary": "Local worker may repair candidate records but cannot approve or promote them.",
+          "owner": "local_worker",
+          "allowed_authority": "L0",
+          "role_vocabulary": "templates/managed_role_vocabulary.json#repairer",
+          "token_accounting": "local worker input/output tokens at zero cash cost"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "repaired_records",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/<job_id>/iterations/01_repaired.jsonl"
+        }
+      ],
+      "provenance": {
+        "role": "repairer",
+        "capability": "source_anchored_candidate_repair",
+        "authority_level": "L0",
+        "implementation": "configured Ollama worker model in repair mode"
+      }
+    },
+    {
+      "id": "check_convergence",
+      "provider": "agent_workbench.script.convergence_checker",
+      "name": "Check convergence",
+      "description": "Deterministic policy compares iteration metrics and returns continue, stop, escalate, or abandon.",
+      "needs": [
+        "repair_candidates"
+      ],
+      "outputs": {
+        "loop_decision": "deterministic loop decision"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "script_convergence_check",
+          "execution_boundary": "Script may route the loop but cannot make semantic acceptance claims.",
+          "owner": "script_or_deterministic_policy",
+          "stop_rules": "templates/managed_iteration_stop_rules.json",
+          "token_accounting": "none unless supervisor interprets the decision"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "loop_decision",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/<job_id>/iterations/01_convergence.json"
+        }
+      ],
+      "provenance": {
+        "role": "convergence_checker",
+        "capability": "loop_policy_routing",
+        "authority_level": "deterministic",
+        "implementation": "Agent Workbench policy script"
+      }
+    },
+    {
+      "id": "supervisor_delta_review",
+      "provider": "agent_workbench.supervisor.audit",
+      "name": "Supervisor delta review",
+      "description": "Paid supervisor reviews final candidates, iteration evidence, and economics before accepting, repairing, scaling, or stopping.",
+      "needs": [
+        "check_convergence"
+      ],
+      "outputs": {
+        "supervisor_decision": "accepted, repair_needed, scale, abandon, or complete_directly"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_delta_review",
+          "execution_boundary": "Supervisor owns final acceptance, promotion, economics interpretation, and scale decisions.",
+          "owner": "paid_supervisor",
+          "role_vocabulary": "templates/managed_role_vocabulary.json#supervisor_auditor",
+          "token_accounting": "required supervisor-token start/end checkpoint",
+          "nondelegable_actions": [
+            "tracked-file promotion",
+            "GitHub mutation",
+            "phase closeout",
+            "scientific acceptance"
+          ]
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "supervisor_decision",
+          "kind": "promoted",
+          "path_or_reference": "tracked sanitized decision packet or planning note"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor_auditor",
+        "capability": "delta_review_and_acceptance",
+        "authority_level": "supervisor-owned",
+        "implementation": "paid supervisor"
+      }
+    }
+  ]
+}

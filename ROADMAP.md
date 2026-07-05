@@ -59,7 +59,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P48 Phase-scale A/B token economics benchmark | #328 | `feature/p48-phase-scale-ab-token-economics` | Complete |
 | P49 Benchmark worktree preparation | #334 | `feature/p49-benchmark-worktree-prep` | Complete |
 | P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Complete |
-| P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Planned |
+| P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Active |
 | P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Planned |
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Planned |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Planned |
@@ -2263,7 +2263,7 @@ Parent issue: #347
 
 Branch: `feature/p51-managed-delegation-workflows`
 
-Status: planned
+Status: active
 
 Goal: turn P50's managed-delegation lessons into reusable graph templates,
 ticket patterns, stop rules, and role boundaries for tightly guardrailed local
@@ -2271,18 +2271,18 @@ worker lanes.
 
 Planned tasks:
 
-- [ ] P51.1 Managed role graph vocabulary
-  - [ ] Define extractor, self-auditor, repairer, convergence-checker, and
+- [x] P51.1 Managed role graph vocabulary (#351)
+  - [x] Define extractor, self-auditor, repairer, convergence-checker, and
         supervisor-auditor node roles.
-  - [ ] Mark script-owned, local-worker-owned, and supervisor-owned boundaries.
-- [ ] P51.2 Iteration and stop-condition templates
-  - [ ] Define max-iteration, no-improvement, format-failure, and budget
+  - [x] Mark script-owned, local-worker-owned, and supervisor-owned boundaries.
+- [x] P51.2 Iteration and stop-condition templates (#352)
+  - [x] Define max-iteration, no-improvement, format-failure, and budget
         stop rules.
-  - [ ] Define escalation paths to supervisor repair, abandon, or scale.
-- [ ] P51.3 Document-library graph update
-  - [ ] Add local self-audit and delegated repair nodes to the document-library
+  - [x] Define escalation paths to supervisor repair, abandon, or scale.
+- [x] P51.3 Document-library graph update (#353)
+  - [x] Add local self-audit and delegated repair nodes to the document-library
         workflow graph.
-  - [ ] Keep local self-audit framed as defect reduction, not validation.
+  - [x] Keep local self-audit framed as defect reduction, not validation.
 
 ## Phase 52: Local Self-Audit And Repair Loop
 
