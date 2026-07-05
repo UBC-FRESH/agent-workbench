@@ -1127,3 +1127,21 @@ issues, pull requests, and closeout comments.
 - Ran a corrected non-overlapping reporting A/B: direct supervisor reporting
   cost `$0.059842`; delegated `gpt-oss:20b` report review cost `$0.055943`;
   isolated reporting delta `$0.003899` before source-level audit/repair.
+
+## 2026-07-04 - Added document-library indexing workflow direction
+
+- Added `planning/document_library_index_workflow_direction.md` to define public
+  technical-document library indexing as a high-potential Agent Workbench
+  delegation lane.
+- Added `templates/document_library_corpus_record.json` for source provenance,
+  extraction status, and public-safety metadata.
+- Added `templates/document_index_worker_ticket.md` for local-worker
+  structure/content metadata extraction from bounded chunks.
+- Added `templates/source_anchored_repair_prepass_ticket.md` for local-worker
+  repair labels before paid supervisor audit.
+- Added `templates/workbench_templates/document_library_index_graph.json` as a
+  FreshForge-shaped workflow graph for corpus registration, chunk extraction,
+  worker passes, repair prepass, supervisor audit calibration, and promoted
+  index assembly.
+- Kept the workflow generic while recording the BC forest-management public
+  document archive and MP11 benchmark as the motivating case study.

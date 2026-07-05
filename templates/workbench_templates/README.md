@@ -37,6 +37,12 @@ Template families:
 - `paper_task_template.md`
 - `proposal_task_template.md`
 - `benchmark_task_template.md`
+- `document_library_index_graph.json`
 
 Copy the relevant template into an ignored target-project runtime path first.
 Promote only sanitized findings into tracked project files.
+
+`document_library_index_graph.json` is the starter graph for public technical
+document library indexing workflows. It covers corpus registration, text
+chunking, local-worker structure/content extraction, source-anchored repair
+prepass, paid supervisor audit calibration, and promoted index assembly.

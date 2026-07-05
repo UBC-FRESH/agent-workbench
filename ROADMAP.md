@@ -2217,6 +2217,8 @@ Active tasks:
     lesson for non-overlapping span discipline.
   - [x] Run a corrected non-overlapping reporting A/B and record the small
     isolated reporting savings signal.
+  - [x] Promote the document-library indexing direction into generic workflow
+    templates after MP11 showed the task class is high-potential.
   - [ ] Update benchmark records with actual token economics.
 - [ ] P50.5 Maintainer-reviewed phase closeout (#345)
   - [ ] Close only after the maintainer explicitly says P50 is done.

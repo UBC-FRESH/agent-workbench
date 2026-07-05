@@ -1,0 +1,244 @@
+{
+  "workflow": {
+    "id": "document_library_index_workflow",
+    "name": "Document Library Metadata Index Workflow",
+    "description": "Generic FreshForge-shaped workflow for turning public technical-document corpora into source-anchored metadata indexes."
+  },
+  "nodes": [
+    {
+      "id": "register_corpus_documents",
+      "provider": "agent_workbench.script.registry",
+      "name": "Register corpus documents",
+      "description": "Create or update document-level corpus registry records with provenance, SHA256, document type, management unit, date, and extraction status.",
+      "outputs": {
+        "corpus_registry": "tracked sanitized corpus registry"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "script_prepare",
+          "owner": "script_or_supervisor",
+          "token_accounting": "none",
+          "public_safety": "raw documents and extracted text stay outside tracked Agent Workbench files"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "corpus_registry",
+          "kind": "promoted",
+          "path_or_reference": "target_project/benchmarks/document_library/corpus_registry.json"
+        }
+      ],
+      "provenance": {
+        "role": "script",
+        "capability": "corpus_registration",
+        "authority_level": "deterministic",
+        "implementation": "target project script"
+      }
+    },
+    {
+      "id": "extract_text_chunks",
+      "provider": "target_project.text_extraction",
+      "name": "Extract text chunks",
+      "description": "Extract document text into page or section chunks and write a tracked sanitized chunk manifest.",
+      "needs": [
+        "register_corpus_documents"
+      ],
+      "outputs": {
+        "chunk_manifest": "tracked chunk manifest",
+        "runtime_chunks": "ignored raw text chunks"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "project_native_extraction",
+          "owner": "target_project_tooling",
+          "token_accounting": "none",
+          "raw_text_policy": "ignored or data-managed outside Agent Workbench"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "chunk_manifest",
+          "kind": "promoted",
+          "path_or_reference": "target_project/benchmarks/document_library/<document_id>/chunk_manifest.json"
+        }
+      ],
+      "provenance": {
+        "role": "tool",
+        "capability": "text_extraction",
+        "authority_level": "deterministic",
+        "implementation": "target project extractor"
+      }
+    },
+    {
+      "id": "structure_pass",
+      "provider": "agent_workbench.local_worker.document_index",
+      "name": "Structure pass",
+      "description": "Local worker extracts headings, components, tables, figures, maps, appendices, definitions, acronyms, and cross-references from bounded chunks.",
+      "needs": [
+        "extract_text_chunks"
+      ],
+      "outputs": {
+        "structure_candidates": "ignored raw worker candidate records"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_extraction",
+          "owner": "local_worker",
+          "allowed_authority": "L0",
+          "ticket_template": "templates/document_index_worker_ticket.md",
+          "record_type": "structure",
+          "token_accounting": "worker input/output tokens plus supervisor orchestration span"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "structure_candidates",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/document_library/<document_id>/structure_candidates.jsonl"
+        }
+      ],
+      "provenance": {
+        "role": "extractor",
+        "capability": "document_structure_extraction",
+        "authority_level": "L0",
+        "implementation": "configured Ollama worker model"
+      }
+    },
+    {
+      "id": "content_metadata_pass",
+      "provider": "agent_workbench.local_worker.document_index",
+      "name": "Content metadata pass",
+      "description": "Local worker extracts claims, assumptions, constraints, policy references, model inputs, numeric values, scenarios, and sensitivity tests.",
+      "needs": [
+        "structure_pass"
+      ],
+      "outputs": {
+        "content_candidates": "ignored raw worker candidate records"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_extraction",
+          "owner": "local_worker",
+          "allowed_authority": "L0",
+          "ticket_template": "templates/document_index_worker_ticket.md",
+          "record_type": "content_metadata",
+          "token_accounting": "worker input/output tokens plus supervisor orchestration span"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "content_candidates",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/document_library/<document_id>/content_candidates.jsonl"
+        }
+      ],
+      "provenance": {
+        "role": "extractor",
+        "capability": "document_content_metadata_extraction",
+        "authority_level": "L0",
+        "implementation": "configured Ollama worker model"
+      }
+    },
+    {
+      "id": "source_anchored_repair_prepass",
+      "provider": "agent_workbench.local_worker.repair_prepass",
+      "name": "Source-anchored repair prepass",
+      "description": "Local worker reviews candidate records plus source excerpts and proposes accept/repair/reject labels and concise repairs.",
+      "needs": [
+        "structure_pass",
+        "content_metadata_pass"
+      ],
+      "outputs": {
+        "repair_draft": "ignored local-worker repair draft"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_repair_prepass",
+          "owner": "local_worker",
+          "allowed_authority": "L0",
+          "ticket_template": "templates/source_anchored_repair_prepass_ticket.md",
+          "token_accounting": "local worker input/output tokens at zero cash cost"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "repair_draft",
+          "kind": "generated",
+          "path_or_reference": "target_project/runtime/document_library/<document_id>/repair_prepass.jsonl"
+        }
+      ],
+      "provenance": {
+        "role": "reviewer",
+        "capability": "source_anchored_candidate_repair",
+        "authority_level": "L0",
+        "implementation": "configured Ollama worker model"
+      }
+    },
+    {
+      "id": "supervisor_audit_calibration",
+      "provider": "agent_workbench.supervisor.audit",
+      "name": "Supervisor audit calibration",
+      "description": "Paid supervisor audits a stratified sample against source excerpts, measures token cost, and estimates accepted/repairable/rejected rates.",
+      "needs": [
+        "source_anchored_repair_prepass"
+      ],
+      "outputs": {
+        "audit_calibration": "tracked sanitized audit and economics summary"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_source_audit",
+          "owner": "paid_supervisor",
+          "token_accounting": "required supervisor-token start/end checkpoint",
+          "decision_boundary": "supervisor owns final labels and scale/stop decision"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "audit_calibration",
+          "kind": "promoted",
+          "path_or_reference": "target_project/benchmarks/document_library/<document_id>/audit_calibration_summary.json"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "source_level_audit_and_economics_decision",
+        "authority_level": "supervisor-owned",
+        "implementation": "paid supervisor"
+      }
+    },
+    {
+      "id": "assemble_promoted_index",
+      "provider": "target_project.index_builder",
+      "name": "Assemble promoted index",
+      "description": "Promote accepted and repaired records into the target project's searchable document metadata index.",
+      "needs": [
+        "supervisor_audit_calibration"
+      ],
+      "outputs": {
+        "document_index": "tracked or data-managed searchable index"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "script_promote",
+          "owner": "script_with_supervisor_approval",
+          "token_accounting": "tracked update span if paid supervisor edits or approves",
+          "promotion_boundary": "only accepted/repaired records with source anchors enter the index"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "document_index",
+          "kind": "promoted",
+          "path_or_reference": "target_project/data_or_benchmarks/document_library/index"
+        }
+      ],
+      "provenance": {
+        "role": "script",
+        "capability": "index_assembly",
+        "authority_level": "supervisor-approved",
+        "implementation": "target project index builder"
+      }
+    }
+  ]
+}
