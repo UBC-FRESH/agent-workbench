@@ -1174,3 +1174,19 @@ issues, pull requests, and closeout comments.
   P51 contract and verification scope.
 - Closed P51 child issues after JSON validation, graph metadata validation,
   pytest, and public-safety checks passed.
+
+## 2026-07-04 - Ran P52 local self-audit and repair loop
+
+- Added local self-audit and delegated repair ticket templates.
+- Added `scripts/build_mp11_repair_loop_packet.py` to reproduce ignored MP11
+  repair-loop tickets and manifests from tracked sample metadata plus ignored
+  source excerpts.
+- Ran a bounded MP11 self-audit/repair loop against the existing qwen x16 audit
+  calibration sample.
+- Recorded a negative result: local self-audit preserved zero primary sample
+  identifiers, detected zero of nine known repairable records, and repair mode
+  repaired zero records.
+- Recorded measured supervisor delta-review cost of `$0.434535` against the
+  existing direct source-audit baseline of `$0.288374`.
+- Closed P52 with the decision not to scale this loop shape until P54 adds
+  stricter identifier-preservation and calibration-miss bailout rules.

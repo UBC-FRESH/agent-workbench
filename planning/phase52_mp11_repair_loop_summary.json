@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "summary_id": "p52_mp11_repair_loop_01",
+  "phase": "P52",
+  "source_project": "agent-delegation-lab",
+  "source_sample": {
+    "sample_id": "mp11-qwen-x16-audit-calibration-01",
+    "sample_size": 30,
+    "raw_source_excerpt_tracked": false,
+    "supervisor_calibration_label_counts": {
+      "accepted": 21,
+      "repairable": 9,
+      "rejected": 0
+    }
+  },
+  "worker_attempts": [
+    {
+      "node": "self_audit",
+      "model": "gpt-oss:120b",
+      "status": "blocked",
+      "classification": "model-call-failure",
+      "quality_evidence": "not_applicable_transport_failure",
+      "assistant_output_captured": false
+    },
+    {
+      "node": "self_audit",
+      "model": "gpt-oss:20b",
+      "status": "completed",
+      "classification": "duplicate-marker",
+      "parseable_records": 27,
+      "parse_errors": 0,
+      "label_counts": {
+        "accepted_candidate": 27,
+        "needs_repair": 0,
+        "likely_reject": 0
+      },
+      "unique_candidate_ids": 21,
+      "matched_sample_ids": 0,
+      "unknown_id_count": 27,
+      "known_repairable_records": 9,
+      "detected_repairable_records": 0
+    },
+    {
+      "node": "repair",
+      "model": "gpt-oss:20b",
+      "status": "blocked",
+      "classification": "model-call-failure",
+      "quality_evidence": "not_applicable_invalid_tool_call",
+      "tool_surface_observed": true,
+      "tool_surface_note": "SDK repair attempt emitted tool execution events and failed with invalid tool call arguments before assistant output.",
+      "assistant_output_captured": false
+    },
+    {
+      "node": "repair",
+      "model": "qwen3-coder-next:latest",
+      "status": "completed",
+      "classification": "duplicate-marker",
+      "parseable_records": 27,
+      "parse_errors": 0,
+      "repair_action_counts": {
+        "unchanged_supported": 27,
+        "repaired_candidate": 0,
+        "unrepairable": 0
+      },
+      "unique_candidate_ids": 21,
+      "matched_sample_ids": 0,
+      "unknown_id_count": 27,
+      "ready_for_supervisor_delta_review_count": 0
+    }
+  ],
+  "supervisor_accounting": {
+    "direct_source_audit_baseline_cost_usd": 0.288374,
+    "repair_loop_delta_review_cost_usd": 0.434535,
+    "net_delta_vs_direct_baseline_usd": -0.146161,
+    "delta_review_token_record": "runtime/supervisor_tokens/p52_delta_review_01/p52_delta_review_01.tokens.json",
+    "worker_cash_cost_usd": 0.0
+  },
+  "decision": {
+    "scale_this_loop_shape": false,
+    "reason": "Self-audit preserved zero sample identifiers and detected zero of nine known repairable records; repair inherited the bad self-audit state.",
+    "p54_policy_update": "Stop local repair loops when self-audit fails primary identifier preservation or misses known repairable calibration cases. Treat uncontrolled SDK tool-call behavior as a benchmark confounder until allowed-tool policy is explicit."
+  },
+  "public_safety": {
+    "raw_source_excerpt_tracked": false,
+    "raw_worker_outputs_tracked": false,
+    "provider_urls_tracked": false,
+    "provider_headers_tracked": false,
+    "personal_paths_tracked": false
+  }
+}
