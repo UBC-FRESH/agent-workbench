@@ -60,7 +60,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P49 Benchmark worktree preparation | #334 | `feature/p49-benchmark-worktree-prep` | Complete |
 | P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Complete |
 | P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Complete |
-| P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Planned |
+| P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Active |
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Planned |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Planned |
 
@@ -2290,7 +2290,7 @@ Parent issue: #348
 
 Branch: `feature/p52-local-self-audit-repair-loop`
 
-Status: planned
+Status: active
 
 Goal: dogfood a bounded local self-audit plus repair loop on the MP11 audit
 sample and measure whether zero-cash worker iterations reduce paid supervisor
@@ -2298,16 +2298,16 @@ audit/repair cost.
 
 Planned tasks:
 
-- [ ] P52.1 Self-audit and repair ticket templates
-  - [ ] Add local self-audit ticket template.
-  - [ ] Add delegated repair iteration ticket template.
-- [ ] P52.2 MP11 repair-loop experiment
-  - [ ] Run a local Ollama self-audit/repair loop on the qwen x16 audit sample.
-  - [ ] Record worker tokens, format errors, repair yield, and convergence
+- [x] P52.1 Self-audit and repair ticket templates (#355)
+  - [x] Add local self-audit ticket template.
+  - [x] Add delegated repair iteration ticket template.
+- [x] P52.2 MP11 repair-loop experiment (#356)
+  - [x] Run a local Ollama self-audit/repair loop on the qwen x16 audit sample.
+  - [x] Record worker tokens, format errors, repair yield, and convergence
         behavior.
-- [ ] P52.3 Supervisor delta-review economics
-  - [ ] Measure paid supervisor delta-review tokens.
-  - [ ] Compare direct audit cost against repair-assisted audit cost.
+- [x] P52.3 Supervisor delta-review economics (#357)
+  - [x] Measure paid supervisor delta-review tokens.
+  - [x] Compare direct audit cost against repair-assisted audit cost.
 
 ## Phase 53: Document Library Index Pilot
 
