@@ -63,6 +63,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Complete |
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Complete |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Complete |
+| P55 TSA23 first real indexing run | #367 | `feature/p55-tsa23-first-indexing-run` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2362,3 +2363,34 @@ Planned tasks:
 - [x] P54.3 Missing-evidence reporting (#365)
   - [x] Make missing evidence explicit rather than inferred.
   - [x] Keep model-specific guidance scoped to observed task classes.
+
+## Phase 55: TSA23 First Real Indexing Run
+
+Parent issue: #367
+
+Branch: `feature/p55-tsa23-first-indexing-run`
+
+Status: active
+
+Goal: run the first real multi-run document-indexing experiment over the P53
+TSA23 corpus, with enough model/chunk/document variation to produce useful
+delegation evidence rather than a one-off anecdote.
+
+Planned tasks:
+
+- [ ] P55.1 PDF chunk extraction and worker-ticket generation (#368)
+  - [ ] Build reproducible chunk/ticket generation from the P53 corpus
+        registry.
+  - [ ] Extract ignored page-window chunks for the three selected TSA23 pilot
+        PDFs.
+  - [ ] Track sanitized chunk manifests and runtime/eval manifests.
+- [ ] P55.2 No-tool local-worker extraction run (#369)
+  - [ ] Run Wave 1 single-model smoke across three documents.
+  - [ ] Run Wave 2 model A/B on identical document/chunk tickets.
+  - [ ] Run Wave 3 ticket-size scale tests if Wave 1/2 gates pass.
+  - [ ] Run Wave 4 repeatability and Wave 5 content probe if earlier waves
+        justify it.
+- [ ] P55.3 Supervisor spot-check and scale/stop decision (#370)
+  - [ ] Run a measured supervisor audit calibration slice.
+  - [ ] Record accepted, repairable, rejected, and missing-evidence counts.
+  - [ ] Report wave results and wait for maintainer direction before closeout.

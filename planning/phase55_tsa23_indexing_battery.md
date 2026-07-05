@@ -1,0 +1,132 @@
+# Phase 55 TSA23 Indexing Battery
+
+P55 is not a quick closeout phase. It is the first real multi-run
+document-indexing experiment over the TSA23 corpus prepared in P53. The phase
+should stay open until the maintainer decides that enough evidence has been
+collected.
+
+## Why This Needs A Battery
+
+P53 proved reproducible corpus materialization, not indexing performance. A
+single worker run would be too easy to misread. The useful question is how
+document-library delegation behaves across:
+
+- more than one document;
+- more than one chunk size;
+- more than one local model;
+- at least one repeatability check; and
+- at least one measured supervisor audit slice.
+
+The tracked battery definition is
+`benchmarks/document_library/tsa23_tsr/p55_test_battery.json`.
+
+## Test Documents
+
+Use the three P53 pilot documents:
+
+- `tsa23_1995_23ts95ra`: oldest rationale-style document;
+- `tsa23_2006_23ts06ra`: middle-period rationale;
+- `tsa23_2012_23ts13ra`: newest rationale.
+
+This gives us cross-year variation before touching the full 18-document corpus.
+
+## Model Lanes
+
+Initial local-worker model lanes:
+
+- `qwen3-coder-next:latest`: primary extractor candidate;
+- `qwen3-coder:latest`: within-family baseline;
+- `gpt-oss:120b`: large local comparison candidate.
+
+Model identity must be recorded from runtime/eval evidence. A configured model
+name alone is not enough.
+
+## Battery Waves
+
+### Wave 0: Materialization And Chunking
+
+Extract page-window text chunks for the three selected PDFs into ignored
+runtime storage and write sanitized tracked chunk manifests.
+
+Stop gate: do not contact worker models until manifests validate and no raw text
+is tracked.
+
+### Wave 1: Single-Model Smoke
+
+Run `qwen3-coder-next:latest` on `structure_x2` for each selected document.
+
+Stop gate: continue only if outputs are parseable and preserve required
+document/record IDs.
+
+### Wave 2: Model A/B
+
+Run `qwen3-coder:latest`, `qwen3-coder-next:latest`, and `gpt-oss:120b` on
+identical `structure_x4` tickets for one document.
+
+Stop gate: continue only if at least one model produces source-anchored
+parseable records without looping or tool confounds.
+
+### Wave 3: Size Scale
+
+Run the best available model on `structure_x2`, `structure_x4`, and
+`structure_x8` for one document.
+
+Stop gate: compare marginal record yield, malformed-output risk, and worker
+token growth before scaling further.
+
+### Wave 4: Repeatability
+
+Repeat the best Wave 2 or Wave 3 cell three times to measure within-model
+consistency.
+
+Stop gate: continue only if record counts, ID preservation, and parseability are
+stable enough for supervisor audit.
+
+### Wave 5: Content Metadata Probe
+
+Run one `content_x4` ticket after structure extraction succeeds.
+
+Stop gate: do not scale content metadata if source quotes, page anchors, or
+claim specificity are weak.
+
+### Wave 6: Supervisor Audit Calibration
+
+Supervisor audits a stratified sample of records with token checkpoints.
+
+Stop gate: do not claim economics unless supervisor-token spans and worker token
+records are present.
+
+## Minimum Useful Battery
+
+Minimum useful evidence before considering phase closeout:
+
+- at least 6 worker runs;
+- all 3 pilot documents touched;
+- at least 2 model lanes touched;
+- at least one supervisor audit calibration slice;
+- missing evidence recorded explicitly.
+
+The full battery is 16 planned worker runs plus supervisor audit calibration.
+
+## Metrics
+
+Each worker run should record:
+
+- worker status;
+- model identity;
+- ticket shape;
+- document ID;
+- chunk count;
+- input and output token counts when available;
+- parseable JSONL record count;
+- malformed record count;
+- record ID preservation rate;
+- source anchor and source quote presence;
+- loop or tool confounds;
+- supervisor accepted, repairable, and rejected counts when audited;
+- supervisor token cost when audited.
+
+## Pause Policy
+
+Do not close P55 after the first successful run. Report each wave result to the
+maintainer and wait for direction before moving to the next wave or closeout.

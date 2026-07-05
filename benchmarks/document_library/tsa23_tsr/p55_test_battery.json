@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "battery_id": "p55_tsa23_first_indexing_battery",
+  "corpus_id": "bc_tsr_tsa23_public_1995_present",
+  "purpose": "Run a non-trivial staged battery of TSA23 document-indexing delegation tests before deciding whether the document-library lane should scale.",
+  "default_authority": "no_tool_local_worker",
+  "raw_data_policy": "Raw PDF text, prompts with source chunks, worker outputs, provider details, and transcripts remain under runtime/.",
+  "tracked_output_policy": "Track only sanitized manifests, aggregate metrics, and supervisor conclusions.",
+  "documents": [
+    {
+      "document_id": "tsa23_1995_23ts95ra",
+      "cycle_year": 1995,
+      "document_type": "supporting_document",
+      "role": "oldest rationale-style document"
+    },
+    {
+      "document_id": "tsa23_2006_23ts06ra",
+      "cycle_year": 2006,
+      "document_type": "rationale",
+      "role": "middle-period rationale"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "cycle_year": 2012,
+      "document_type": "rationale",
+      "role": "newest rationale"
+    }
+  ],
+  "models": [
+    {
+      "model": "qwen3-coder-next:latest",
+      "role": "primary extractor candidate"
+    },
+    {
+      "model": "qwen3-coder:latest",
+      "role": "within-family baseline"
+    },
+    {
+      "model": "gpt-oss:120b",
+      "role": "large local comparison candidate"
+    }
+  ],
+  "ticket_shapes": [
+    {
+      "shape_id": "structure_x2",
+      "record_type": "structure",
+      "page_windows": 2,
+      "purpose": "lowest-cost structure smoke test"
+    },
+    {
+      "shape_id": "structure_x4",
+      "record_type": "structure",
+      "page_windows": 4,
+      "purpose": "medium structure extraction test"
+    },
+    {
+      "shape_id": "structure_x8",
+      "record_type": "structure",
+      "page_windows": 8,
+      "purpose": "larger structure extraction test"
+    },
+    {
+      "shape_id": "content_x4",
+      "record_type": "content_metadata",
+      "page_windows": 4,
+      "purpose": "first content metadata extraction test"
+    }
+  ],
+  "waves": [
+    {
+      "wave_id": "wave0_materialization_and_chunking",
+      "goal": "Extract text chunks and write sanitized chunk manifests for the three selected PDFs.",
+      "runs": 3,
+      "worker_contact": false,
+      "stop_gate": "Do not contact models until manifests validate and raw text stays ignored."
+    },
+    {
+      "wave_id": "wave1_single_model_smoke",
+      "goal": "Run qwen3-coder-next on structure_x2 for each selected document.",
+      "runs": 3,
+      "worker_contact": true,
+      "stop_gate": "Continue only if outputs are parseable and preserve required document/record IDs."
+    },
+    {
+      "wave_id": "wave2_model_ab",
+      "goal": "Run qwen3-coder, qwen3-coder-next, and gpt-oss:120b on identical structure_x4 tickets for one document.",
+      "runs": 3,
+      "worker_contact": true,
+      "stop_gate": "Continue only if at least one model produces source-anchored parseable records without looping/tool confounds."
+    },
+    {
+      "wave_id": "wave3_size_scale",
+      "goal": "Run the best available model on structure_x2, structure_x4, and structure_x8 for one document.",
+      "runs": 3,
+      "worker_contact": true,
+      "stop_gate": "Compare marginal record yield, malformed-output risk, and worker token growth before scaling further."
+    },
+    {
+      "wave_id": "wave4_repeatability",
+      "goal": "Repeat the best wave2 or wave3 cell three times to measure within-model consistency.",
+      "runs": 3,
+      "worker_contact": true,
+      "stop_gate": "Continue only if record counts, ID preservation, and parseability are stable enough for audit."
+    },
+    {
+      "wave_id": "wave5_content_metadata_probe",
+      "goal": "Run one content_x4 ticket after structure extraction succeeds.",
+      "runs": 1,
+      "worker_contact": true,
+      "stop_gate": "Do not scale content metadata if source quotes, page anchors, or claim specificity are weak."
+    },
+    {
+      "wave_id": "wave6_supervisor_audit_calibration",
+      "goal": "Supervisor audits a stratified sample of records with token checkpoints.",
+      "runs": 1,
+      "worker_contact": false,
+      "stop_gate": "Do not claim economics unless supervisor-token spans and worker token records are present."
+    }
+  ],
+  "minimum_useful_battery": {
+    "worker_runs": 6,
+    "documents_touched": 3,
+    "models_touched": 2,
+    "requires_supervisor_audit": true
+  },
+  "full_battery": {
+    "planned_worker_runs": 16,
+    "documents_touched": 3,
+    "models_touched": 3,
+    "requires_supervisor_audit": true
+  },
+  "required_metrics": [
+    "worker_status",
+    "model_identity",
+    "ticket_shape",
+    "document_id",
+    "chunk_count",
+    "input_token_count",
+    "output_token_count",
+    "parseable_jsonl_records",
+    "malformed_records",
+    "record_id_preservation_rate",
+    "source_anchor_presence_rate",
+    "source_quote_presence_rate",
+    "loop_or_tool_confound",
+    "supervisor_accept_count",
+    "supervisor_repairable_count",
+    "supervisor_reject_count",
+    "supervisor_token_cost_usd"
+  ],
+  "phase_pause_policy": "Do not close P55 after the first successful run. Report wave results and wait for maintainer direction before moving to the next wave or closeout."
+}

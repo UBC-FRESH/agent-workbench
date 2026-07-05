@@ -1220,3 +1220,16 @@ issues, pull requests, and closeout comments.
 - Recorded that future economics claims require measured paid-supervisor token
   spans and that model comparisons require worker token records, model identity,
   parseability status, and source anchors.
+
+## 2026-07-04 - Opened P55 TSA23 indexing battery
+
+- Opened P55 as the first real TSA23 document-indexing experiment after P53's
+  corpus scaffold and P54's policy rules.
+- Added `benchmarks/document_library/tsa23_tsr/p55_test_battery.json` with a
+  staged seven-wave battery across documents, chunk sizes, models,
+  repeatability, content metadata, and supervisor audit calibration.
+- Added `planning/phase55_tsa23_indexing_battery.md` to make the phase
+  explicitly non-trivial and to prevent premature closeout after a single
+  successful worker run.
+- Recorded a phase pause policy: report wave results to the maintainer and wait
+  for direction before advancing waves or closing P55.
