@@ -61,7 +61,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Complete |
 | P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Complete |
 | P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Complete |
-| P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Planned |
+| P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Complete |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -2315,23 +2315,28 @@ Parent issue: #349
 
 Branch: `feature/p53-document-library-index-pilot`
 
-Status: planned
+Status: complete
 
-Goal: apply the document-library indexing workflow to a small multi-document
-public technical-document corpus so MP11-derived settings can be tested for
-generalization.
+Goal: apply the document-library indexing workflow to all public TSA 23 TSR PDF
+documents from 1995 onward so MP11-derived settings can later be tested for
+cross-document generalization.
 
 Planned tasks:
 
-- [ ] P53.1 Corpus selection and registration
-  - [ ] Select a bounded public mini-corpus.
-  - [ ] Record corpus registry entries and chunk manifests.
-- [ ] P53.2 Multi-document structure/content extraction
-  - [ ] Run structure and content metadata passes on at least two documents.
-  - [ ] Preserve source, model, chunk, and token metadata.
-- [ ] P53.3 Cross-document audit calibration
-  - [ ] Audit a stratified sample across documents.
-  - [ ] Record whether task settings generalize or need retuning.
+- [x] P53.1 TSA23 corpus selection and FEMIC materialization script (#359)
+  - [x] Select all public TSA 23 TSR PDFs from 1995 onward.
+  - [x] Add a tracked script that resolves the corpus from FEMIC metadata.
+  - [x] Exercise FEMIC-backed materialization into ignored runtime storage.
+  - [x] Record sanitized corpus registry entries.
+- [x] P53.2 Multi-document extraction pilot scaffold (#360)
+  - [x] Select at least two pilot documents across the TSA 23 corpus.
+  - [x] Add comparable chunk, extraction, worker, and audit metadata scaffolds.
+  - [x] Preserve source, model, chunk, and token metadata fields without raw
+        PDFs, raw text, or worker outputs.
+- [x] P53.3 Cross-document audit calibration plan (#361)
+  - [x] Define cross-document audit strata and tracked metrics.
+  - [x] Record whether task settings generalize or need retuning as the next
+        worker-run question rather than claiming an unrun audit.
 
 ## Phase 54: Delegation Loop Policy Tuning
 
