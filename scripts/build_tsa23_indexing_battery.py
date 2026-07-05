@@ -22,8 +22,8 @@ DEFAULT_RUNTIME_ROOT = Path("runtime/document_library/tsa23_tsr")
 DEFAULT_REGISTRY = DEFAULT_BENCHMARK_ROOT / "corpus_registry.json"
 DEFAULT_BATTERY = DEFAULT_BENCHMARK_ROOT / "p55_test_battery.json"
 DEFAULT_MODEL_TIMEOUT_SECONDS = 1800
-DEFAULT_WINDOW_PAGES = 24
-DEFAULT_OVERLAP_PAGES = 2
+DEFAULT_WINDOW_PAGES = 8
+DEFAULT_OVERLAP_PAGES = 1
 
 
 def parse_args() -> argparse.Namespace:
@@ -410,10 +410,13 @@ def build_eval_packets(
             model_names=[primary_model],
         )
 
-    middle_doc = "tsa23_2006_23ts06ra"
+    comparison_doc = str(
+        battery.get("primary_comparison_document_id")
+        or battery["documents"][-1]["document_id"]
+    )
     add_packet(
         wave_id="wave2_model_ab",
-        document_id=middle_doc,
+        document_id=comparison_doc,
         shape_id="structure_x4",
         model_names=[
             "qwen3-coder:latest",
@@ -425,21 +428,21 @@ def build_eval_packets(
     for shape_id in ["structure_x2", "structure_x4", "structure_x8"]:
         add_packet(
             wave_id="wave3_size_scale",
-            document_id=middle_doc,
+            document_id=comparison_doc,
             shape_id=shape_id,
             model_names=[primary_model],
         )
 
     add_packet(
         wave_id="wave4_repeatability",
-        document_id=middle_doc,
+        document_id=comparison_doc,
         shape_id="structure_x4",
         model_names=[primary_model],
         repeats=3,
     )
     add_packet(
         wave_id="wave5_content_metadata_probe",
-        document_id=middle_doc,
+        document_id=comparison_doc,
         shape_id="content_x4",
         model_names=[primary_model],
     )

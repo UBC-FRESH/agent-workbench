@@ -22,13 +22,16 @@ The tracked battery definition is
 
 ## Test Documents
 
-Use the three P53 pilot documents:
+Use the three most recent public TSA23 TSR documents from the P53 corpus:
 
-- `tsa23_1995_23ts95ra`: oldest rationale-style document;
-- `tsa23_2006_23ts06ra`: middle-period rationale;
-- `tsa23_2012_23ts13ra`: newest rationale.
+- `tsa23_2012_23tsdp12`: most recent data package;
+- `tsa23_2012_23ts13pdp`: most recent public discussion paper;
+- `tsa23_2012_23ts13ra`: most recent rationale.
 
-This gives us cross-year variation before touching the full 18-document corpus.
+This gives us the most relevant and most text-extraction-friendly slice before
+touching older documents that are more likely to require OCR or special
+handling. The 1995 rationale remains useful as a later extractor/OCR test lane,
+but it should not dominate the first local-worker indexing signal.
 
 ## Model Lanes
 

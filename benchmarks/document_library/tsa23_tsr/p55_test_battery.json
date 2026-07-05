@@ -2,30 +2,31 @@
   "schema_version": 1,
   "battery_id": "p55_tsa23_first_indexing_battery",
   "corpus_id": "bc_tsr_tsa23_public_1995_present",
-  "purpose": "Run a non-trivial staged battery of TSA23 document-indexing delegation tests before deciding whether the document-library lane should scale.",
+  "purpose": "Run a non-trivial staged battery of TSA23 document-indexing delegation tests on the most recent TSA23 public TSR documents before deciding whether the document-library lane should scale.",
   "default_authority": "no_tool_local_worker",
   "raw_data_policy": "Raw PDF text, prompts with source chunks, worker outputs, provider details, and transcripts remain under runtime/.",
   "tracked_output_policy": "Track only sanitized manifests, aggregate metrics, and supervisor conclusions.",
   "documents": [
     {
-      "document_id": "tsa23_1995_23ts95ra",
-      "cycle_year": 1995,
-      "document_type": "supporting_document",
-      "role": "oldest rationale-style document"
+      "document_id": "tsa23_2012_23tsdp12",
+      "cycle_year": 2012,
+      "document_type": "data_package",
+      "role": "most recent data package"
     },
     {
-      "document_id": "tsa23_2006_23ts06ra",
-      "cycle_year": 2006,
-      "document_type": "rationale",
-      "role": "middle-period rationale"
+      "document_id": "tsa23_2012_23ts13pdp",
+      "cycle_year": 2012,
+      "document_type": "supporting_document",
+      "role": "most recent public discussion paper"
     },
     {
       "document_id": "tsa23_2012_23ts13ra",
       "cycle_year": 2012,
       "document_type": "rationale",
-      "role": "newest rationale"
+      "role": "most recent rationale"
     }
   ],
+  "primary_comparison_document_id": "tsa23_2012_23ts13ra",
   "models": [
     {
       "model": "qwen3-coder-next:latest",
@@ -69,7 +70,7 @@
   "waves": [
     {
       "wave_id": "wave0_materialization_and_chunking",
-      "goal": "Extract text chunks and write sanitized chunk manifests for the three selected PDFs.",
+      "goal": "Extract text chunks and write sanitized chunk manifests for the three most recent selected PDFs.",
       "runs": 3,
       "worker_contact": false,
       "stop_gate": "Do not contact models until manifests validate and raw text stays ignored."

@@ -22,8 +22,8 @@ python -m agent_workbench.cli eval-batch `
 ## Generated Tracked Artifacts
 
 - `scripts/build_tsa23_indexing_battery.py`
-- `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_1995_23ts95ra.json`
-- `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2006_23ts06ra.json`
+- `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23tsdp12.json`
+- `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23ts13pdp.json`
 - `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23ts13ra.json`
 - `benchmarks/document_library/tsa23_tsr/p55_eval_packet_index.json`
 
@@ -64,6 +64,43 @@ mini-corpus:
   would partly test the current chunking weakness rather than just model
   extraction quality.
 
-Recommended next move: revise the builder default to a smaller page window, or
-run a deliberately limited Wave 1 only on the 2006/2012 first chunk while
-recording the chunking caveat explicitly.
+Decision after maintainer review: refocus the active P55 worker battery on the
+most recent TSA23 documents. The 1995 sparse-extraction result remains useful
+evidence that older documents may need OCR or a different extractor, but it
+should not consume the first worker-evaluation signal.
+
+Refocused documents:
+
+- `tsa23_2012_23tsdp12`;
+- `tsa23_2012_23ts13pdp`;
+- `tsa23_2012_23ts13ra`.
+
+Recommended next move: regenerate Wave 0 with smaller page windows for the
+three 2012 PDFs before worker contact.
+
+## Refocused Wave 0 Results
+
+The active P55 battery now focuses on the three 2012 documents. The builder
+default changed to 8-page windows with 1-page overlap.
+
+| Document | PDF pages | Chunk count | Extracted text chars | Immediate implication |
+| --- | ---: | ---: | ---: | --- |
+| `tsa23_2012_23tsdp12` | 41 | 6 | 106859 | Good candidate for Wave 1 smoke. |
+| `tsa23_2012_23ts13pdp` | 17 | 3 | 41343 | Good candidate for Wave 1 smoke. |
+| `tsa23_2012_23ts13ra` | 48 | 7 | 167655 | Good primary comparison document. |
+
+The regenerated clean manifest directory contains 9 eval packets:
+
+- 3 Wave 1 smoke packets across the three 2012 documents;
+- 1 Wave 2 model A/B packet on `tsa23_2012_23ts13ra`;
+- 3 Wave 3 size-scale packets on `tsa23_2012_23ts13ra`;
+- 1 Wave 4 repeatability packet on `tsa23_2012_23ts13ra`;
+- 1 Wave 5 content-metadata probe on `tsa23_2012_23ts13ra`.
+
+All 9 recent-document manifests dry-ran successfully through
+`agent-workbench eval-batch`.
+
+Remaining caveat: `structure_x8` still truncates to 4 included chunks under the
+current ticket character cap for `tsa23_2012_23ts13ra`. The x2 and x4 shapes are
+now meaningful; x8 should be treated as a ticket-cap boundary test unless we
+raise the cap or use smaller chunk units.
