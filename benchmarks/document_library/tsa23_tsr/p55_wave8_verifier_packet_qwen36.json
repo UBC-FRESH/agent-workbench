@@ -1,0 +1,33 @@
+{
+  "agreement_classes": [
+    "both_not_found",
+    "status_disagreement",
+    "value_disagreement"
+  ],
+  "document_id": "tsa23_2012_23ts13ra",
+  "field_count": 9,
+  "fields": [
+    "aac_effective_date",
+    "aac_value",
+    "base_case_harvest_forecast",
+    "decision_rationale",
+    "document_title",
+    "inventory_reference_year",
+    "major_land_base_constraints",
+    "major_management_assumptions",
+    "sensitivity_cases"
+  ],
+  "generated_utc": "2026-07-05T07:36:21Z",
+  "manifest_path": "runtime/document_library/tsa23_tsr/p55/manifests/wave8_disagreement_verification__tsa23_2012_23ts13ra__qwen3-6-35b-a3b-bf16.manifest.json",
+  "output_dir": "runtime/document_library/tsa23_tsr/p55/eval/wave8_disagreement_verification__tsa23_2012_23ts13ra__qwen3-6-35b-a3b-bf16",
+  "packet_id": "wave8_disagreement_verification__tsa23_2012_23ts13ra__qwen3-6-35b-a3b-bf16",
+  "phase": "P55",
+  "raw_ticket_policy": "Verifier ticket includes source chunks and raw candidate values; keep ignored under runtime/.",
+  "schema_version": 1,
+  "source_packet_id": "wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b",
+  "source_wave_id": "wave7_dual_model_typed_fact_ensemble",
+  "ticket_path": "runtime/document_library/tsa23_tsr/p55/tickets/wave8_disagreement_verification__tsa23_2012_23ts13ra__qwen3-6-35b-a3b-bf16.ticket.md",
+  "tracked_output_policy": "Track only sanitized verifier metrics and verdict classes.",
+  "verifier_model": "qwen3.6:35b-a3b-bf16",
+  "wave_id": "wave8_disagreement_verification"
+}

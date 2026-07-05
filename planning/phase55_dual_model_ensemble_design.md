@@ -35,6 +35,28 @@ measurable.
 8. Supervisor audits a compact final packet instead of rereading every raw
    candidate field.
 
+## Verifier And Repair Role Split
+
+Wave 8 showed that the role name "verifier" is too broad. There are at least
+three different workflow nodes:
+
+- **Strict verifier:** returns machine-parseable verdict JSON for disputed
+  fields. This node is schema-sensitive and should be evaluated on exact field
+  coverage, parseability, quote discipline, and chunk-ID validity.
+- **Validation critic:** reviews a failed or suspicious candidate/verifier
+  output and prepares concise repair instructions. This node may benefit from
+  explicit reasoning ability, but its output should be treated as instructions,
+  not as the final machine artifact.
+- **Repair executor:** applies repair instructions to produce strict JSON. This
+  is closer to a coding/formatting task and may be better suited to a
+  coding-tuned model such as `qwen3-coder-next:latest`.
+
+The first DeepSeek-R1 Wave 8 test is evidence for this split. DeepSeek-R1 did
+not reliably emit the strict verifier schema: one attempt used verdict labels
+as field keys, and the stricter skeleton rerun produced malformed JSON. That
+does not rule it out as a validation critic; it argues against using it as the
+final strict JSON writer without a repair executor downstream.
+
 ## Current Model Reality
 
 The preferred target pairing is `qwen3.6:35b-a3b-bf16` plus a GLM 5.2-family
@@ -46,6 +68,13 @@ The battery records both:
 
 - `wave7_ensemble_secondary_model`: the currently runnable second model;
 - `wave7_planned_secondary_model`: the intended GLM-family swap-in.
+
+Current verifier/repair candidates:
+
+- `qwen3.6:35b-a3b-bf16`: best current strict verifier candidate from Wave 8;
+- `deepseek-r1:latest`: validation critic candidate for repair-instruction
+  generation;
+- `qwen3-coder-next:latest`: repair executor candidate for strict JSON repair.
 
 ## First Typed Field Set
 

@@ -2398,8 +2398,10 @@ Planned tasks:
   - [x] Run Wave 3.2 Qwen3.6 BF16 chunk A/B against the Wave 3.1
         `qwen3-coder:latest` baseline.
   - [x] Run Wave 7 dual-model typed fact ensemble candidate extraction.
-  - [ ] Run Wave 8 disagreement-only verification if Wave 7 candidate JSON
+  - [x] Run Wave 8 disagreement-only verification if Wave 7 candidate JSON
         parses.
+  - [ ] Test DeepSeek-R1 as validation critic and Qwen3-Coder-Next as strict
+        JSON repair executor.
   - [ ] Run Wave 4 repeatability and Wave 5 content probe if earlier waves
         justify it.
 - [ ] P55.3 Supervisor spot-check and scale/stop decision (#370)

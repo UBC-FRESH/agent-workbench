@@ -1394,3 +1394,29 @@ issues, pull requests, and closeout comments.
 - Preserved the GLM direction for a later rerun: GLM is still the intended
   document-model comparison target, but it was not available from the local
   Ollama catalog for this first Wave 7 run.
+
+## 2026-07-05 - Ran P55 Wave 8 disagreement verification
+
+- Added `scripts/build_p55_disagreement_verifier_packet.py` to build ignored
+  verifier tickets from the Wave 7 disagreement surface and tracked only a
+  sanitized verifier packet index.
+- Added `scripts/summarize_p55_verifier_output.py` to summarize verifier
+  outputs without tracking raw final values or source quotes.
+- Ran the first Wave 8 verifier packet with `deepseek-r1:latest`; the model
+  completed but failed the strict JSON verifier contract, first by using
+  verdict labels as field keys and then by returning malformed JSON after a
+  stricter field-key skeleton was added.
+- Preserved the DeepSeek-R1 result as negative verifier evidence in
+  `benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_deepseek_r1_summary.json`
+  and `planning/phase55_wave8_disagreement_verification_deepseek_r1_results.md`.
+- Reran the same disagreement verifier packet with `qwen3.6:35b-a3b-bf16`;
+  Qwen3.6 parsed successfully, covered all nine requested fields, produced no
+  quote-length or chunk-ID defects, and resolved the nine-field disagreement
+  surface into six `left_correct` and three `both_correct_equivalent` verdicts.
+- Recorded the Qwen3.6 verifier result in
+  `benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_summary.json`
+  and `planning/phase55_wave8_disagreement_verification_qwen36_results.md`.
+- Updated the ensemble design note to split "verifier" into strict verifier,
+  validation critic, and repair executor roles. DeepSeek-R1 remains a plausible
+  validation-critic candidate, while Qwen3-Coder-Next is the next repair
+  executor candidate for strict JSON repair.
