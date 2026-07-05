@@ -80,8 +80,8 @@ parseable records without looping or tool confounds.
 
 ### Wave 3: Size Scale
 
-Run the best available model on `structure_x2`, `structure_x4`, and
-`structure_x8` for one document.
+Run `qwen3-coder:latest`, the best Wave 2 coverage candidate, on
+`structure_x2`, `structure_x4`, and `structure_x8` for one document.
 
 Stop gate: compare marginal record yield, malformed-output risk, and worker
 token growth before scaling further.

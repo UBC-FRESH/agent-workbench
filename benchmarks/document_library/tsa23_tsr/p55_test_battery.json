@@ -27,6 +27,7 @@
     }
   ],
   "primary_comparison_document_id": "tsa23_2012_23ts13ra",
+  "wave3_size_scale_model": "qwen3-coder:latest",
   "models": [
     {
       "model": "qwen3-coder-next:latest",
@@ -104,7 +105,7 @@
     },
     {
       "wave_id": "wave3_size_scale",
-      "goal": "Run the best available model on structure_x2, structure_x4, and structure_x8 for one document.",
+      "goal": "Run qwen3-coder:latest, the best Wave 2 coverage candidate, on structure_x2, structure_x4, and structure_x8 for one document.",
       "runs": 3,
       "worker_contact": true,
       "stop_gate": "Compare marginal record yield, malformed-output risk, and worker token growth before scaling further."

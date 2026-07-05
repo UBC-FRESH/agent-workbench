@@ -220,6 +220,7 @@ def build_ticket(
         else "claim, assumption, constraint, policy_reference, model_input, "
         "numeric_value, scenario, sensitivity_test, decision_rationale, other"
     )
+    allowed_chunk_ids = "\n".join(f"- `{chunk['chunk_id']}`" for chunk in included)
     ticket = f"""# P55 TSA23 Document Index Worker Ticket
 
 ## Mission
@@ -276,14 +277,21 @@ Allowed `object_type` values for this ticket:
 
 {object_types}
 
-Example output shape, with placeholder values:
+Allowed `chunk_id` values for this ticket:
 
-{{"record_id":"{document['document_id']}::example_001","corpus_id":"{document['corpus_id']}","document_id":"{document['document_id']}","source_sha256":"{document['source_sha256']}","chunk_id":"{document['document_id']}::pages_001_008","page_anchor":"PDF page 1","document_component":"example component","section_path":"example section","object_type":"heading","title":"Example title","summary":"One-sentence summary.","source_quote":"Short quote from the supplied chunk.","confidence":0.80,"worker_model":"qwen3-coder-next:latest","review_status":"raw_worker_candidate"}}
+{allowed_chunk_ids}
+
+Example output shape, with placeholder values. Do not copy `<ACTIVE_MODEL_NAME>`;
+replace it with the model name from your runtime identity:
+
+{{"record_id":"{document['document_id']}::example_001","corpus_id":"{document['corpus_id']}","document_id":"{document['document_id']}","source_sha256":"{document['source_sha256']}","chunk_id":"{included[0]['chunk_id']}","page_anchor":"PDF page 1","document_component":"example component","section_path":"example section","object_type":"heading","title":"Example title","summary":"One-sentence summary.","source_quote":"Short quote from the supplied chunk.","confidence":0.80,"worker_model":"<ACTIVE_MODEL_NAME>","review_status":"raw_worker_candidate"}}
 
 ## Rules
 
 - Use only the supplied source chunks.
 - Preserve `document_id`, `source_sha256`, and `chunk_id` exactly.
+- Use only the allowed `chunk_id` values listed above. Do not invent,
+  normalize, renumber, or approximate chunk IDs.
 - Every `record_id` must start with `{document['document_id']}::`.
 - Every `record_id` must be unique within this response.
 - `page_anchor` must be a string, such as `PDF page 12` or `PDF pages 12-14`.
@@ -292,6 +300,8 @@ Example output shape, with placeholder values:
 - Return bare JSONL only. Do not wrap the response in markdown fences.
 - Do not output tab-separated or comma-separated records.
 - Output at most 24 records for this ticket. Choose the strongest records.
+- Set `worker_model` to the model name from your runtime identity. Do not copy
+  the placeholder from the example.
 - Do not invent pages, sections, titles, values, definitions, or citations.
 - Prefer fewer, stronger records over many vague records.
 - For each supplied chunk, extract at least one strong record when the chunk
@@ -431,6 +441,7 @@ def build_eval_packets(
 
     pilot_docs = [item["document_id"] for item in battery["documents"]]
     primary_model = "qwen3-coder-next:latest"
+    size_scale_model = "qwen3-coder:latest"
     for document_id in pilot_docs:
         add_packet(
             wave_id="wave1_single_model_smoke",
@@ -466,7 +477,7 @@ def build_eval_packets(
             wave_id="wave3_size_scale",
             document_id=comparison_doc,
             shape_id=shape_id,
-            model_names=[primary_model],
+            model_names=[size_scale_model],
         )
 
     add_packet(
