@@ -482,3 +482,30 @@ delegation experiments. P50 should preserve the FreshForge P16 evidence but
 should not keep spending paid supervisor tokens on broad API-design delegation
 unless there is a specific reason to compare against that known-difficult task
 class.
+
+## Closeout Position
+
+The maintainer has now said P50 is done. P50 should close as a benchmark
+learning phase rather than as a final proof that broad API-design delegation is
+profitable.
+
+Closeout conclusions:
+
+- FreshForge P16 produced useful benchmark evidence and a draft FreshForge PR
+  candidate, but broad API-design work is not the best near-term place to mine
+  for high-return local-worker delegation.
+- P50 materially improved Agent Workbench itself: supervisor-token
+  checkpoints, experiment records, quiet batch orchestration, reporting-worker
+  templates, overhead-analysis notes, and document-library workflow templates
+  are now in place.
+- The strongest next target is high-volume public technical-document indexing,
+  where local workers can process large input corpora at zero cash cost and the
+  paid supervisor can focus on audit, calibration, and acceptance decisions.
+- The next roadmap tranche is P51-P54:
+  - P51 managed delegation workflow lanes;
+  - P52 local self-audit and repair loop;
+  - P53 document library index pilot; and
+  - P54 delegation loop policy tuning.
+
+P50 should close after the final roadmap/changelog updates are merged through
+Agent Workbench PR #346.

@@ -58,7 +58,11 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P47 FreshForge deployment test batch | #322 | `feature/p47-freshforge-deployment-test-batch` | Complete |
 | P48 Phase-scale A/B token economics benchmark | #328 | `feature/p48-phase-scale-ab-token-economics` | Complete |
 | P49 Benchmark worktree preparation | #334 | `feature/p49-benchmark-worktree-prep` | Complete |
-| P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Active |
+| P50 FreshForge P16 A/B benchmark run | #340 | `feature/p50-freshforge-p16-ab-benchmark-run` | Complete |
+| P51 Managed delegation workflow lanes | #347 | `feature/p51-managed-delegation-workflows` | Planned |
+| P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Planned |
+| P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Planned |
+| P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2177,7 +2181,7 @@ Parent issue: #340
 
 Branch: `feature/p50-freshforge-p16-ab-benchmark-run`
 
-Status: active
+Status: complete
 
 Goal: run the first real phase-scale A/B token economics benchmark using
 FreshForge P16 as the target, starting with the direct-supervisor baseline lane
@@ -2197,7 +2201,7 @@ Active tasks:
 - [ ] P50.3 Delegated-graph FreshForge P16 iteration (#343)
   - [x] Run delegated-lane work from the same start commit.
   - [x] Preserve worker and supervisor token evidence.
-- [ ] P50.4 A/B comparison and benchmark record update (#344)
+- [x] P50.4 A/B comparison and benchmark record update (#344)
   - [x] Compare direct and delegated lanes after both have evidence.
   - [x] Record the target reassessment: broad FreshForge API-design work is a
     low-yield benchmark class for current local workers; high-volume
@@ -2219,9 +2223,16 @@ Active tasks:
     isolated reporting savings signal.
   - [x] Promote the document-library indexing direction into generic workflow
     templates after MP11 showed the task class is high-potential.
-  - [ ] Update benchmark records with actual token economics.
-- [ ] P50.5 Maintainer-reviewed phase closeout (#345)
-  - [ ] Close only after the maintainer explicitly says P50 is done.
+  - [x] Update benchmark records with actual token economics where evidence is
+        strong enough, and record explicit limits where attribution remains
+        incomplete.
+  - [x] Reframe the next benchmark direction around high-volume document
+        metadata indexing rather than broad FreshForge API-design work.
+  - [x] Add managed document-library workflow templates as the next reusable
+        high-potential delegation lane.
+- [x] P50.5 Maintainer-reviewed phase closeout (#345)
+  - [x] Close only after the maintainer explicitly says P50 is done.
+  - [x] Plan P51-P54 as the next managed-delegation roadmap tranche.
 
 Phase 50 acceptance criteria:
 
@@ -2244,4 +2255,105 @@ Phase 50 acceptance criteria:
   outcome, and economics tuples.
 - The phase records whether the benchmark task class itself appears profitable
   before further paid supervisor tokens are spent on that class.
-- P50 remains open until the maintainer explicitly says the phase is done.
+- P50 remained open until the maintainer explicitly said the phase is done.
+
+## Phase 51: Managed Delegation Workflow Lanes
+
+Parent issue: #347
+
+Branch: `feature/p51-managed-delegation-workflows`
+
+Status: planned
+
+Goal: turn P50's managed-delegation lessons into reusable graph templates,
+ticket patterns, stop rules, and role boundaries for tightly guardrailed local
+worker lanes.
+
+Planned tasks:
+
+- [ ] P51.1 Managed role graph vocabulary
+  - [ ] Define extractor, self-auditor, repairer, convergence-checker, and
+        supervisor-auditor node roles.
+  - [ ] Mark script-owned, local-worker-owned, and supervisor-owned boundaries.
+- [ ] P51.2 Iteration and stop-condition templates
+  - [ ] Define max-iteration, no-improvement, format-failure, and budget
+        stop rules.
+  - [ ] Define escalation paths to supervisor repair, abandon, or scale.
+- [ ] P51.3 Document-library graph update
+  - [ ] Add local self-audit and delegated repair nodes to the document-library
+        workflow graph.
+  - [ ] Keep local self-audit framed as defect reduction, not validation.
+
+## Phase 52: Local Self-Audit And Repair Loop
+
+Parent issue: #348
+
+Branch: `feature/p52-local-self-audit-repair-loop`
+
+Status: planned
+
+Goal: dogfood a bounded local self-audit plus repair loop on the MP11 audit
+sample and measure whether zero-cash worker iterations reduce paid supervisor
+audit/repair cost.
+
+Planned tasks:
+
+- [ ] P52.1 Self-audit and repair ticket templates
+  - [ ] Add local self-audit ticket template.
+  - [ ] Add delegated repair iteration ticket template.
+- [ ] P52.2 MP11 repair-loop experiment
+  - [ ] Run a local Ollama self-audit/repair loop on the qwen x16 audit sample.
+  - [ ] Record worker tokens, format errors, repair yield, and convergence
+        behavior.
+- [ ] P52.3 Supervisor delta-review economics
+  - [ ] Measure paid supervisor delta-review tokens.
+  - [ ] Compare direct audit cost against repair-assisted audit cost.
+
+## Phase 53: Document Library Index Pilot
+
+Parent issue: #349
+
+Branch: `feature/p53-document-library-index-pilot`
+
+Status: planned
+
+Goal: apply the document-library indexing workflow to a small multi-document
+public technical-document corpus so MP11-derived settings can be tested for
+generalization.
+
+Planned tasks:
+
+- [ ] P53.1 Corpus selection and registration
+  - [ ] Select a bounded public mini-corpus.
+  - [ ] Record corpus registry entries and chunk manifests.
+- [ ] P53.2 Multi-document structure/content extraction
+  - [ ] Run structure and content metadata passes on at least two documents.
+  - [ ] Preserve source, model, chunk, and token metadata.
+- [ ] P53.3 Cross-document audit calibration
+  - [ ] Audit a stratified sample across documents.
+  - [ ] Record whether task settings generalize or need retuning.
+
+## Phase 54: Delegation Loop Policy Tuning
+
+Parent issue: #350
+
+Branch: `feature/p54-delegation-loop-policy-tuning`
+
+Status: planned
+
+Goal: convert managed-loop observations into conservative, explainable policy
+guidance for splitting, iterating, self-auditing, repairing, escalating, or
+stopping delegated work.
+
+Planned tasks:
+
+- [ ] P54.1 Managed-loop decision rules
+  - [ ] Define task-shape thresholds and bailout rules.
+  - [ ] Define when to run self-audit, repair, supervisor audit, or direct
+        supervisor completion.
+- [ ] P54.2 Evidence mining and policy update
+  - [ ] Mine experiment registry fields for cost/quality signals.
+  - [ ] Update delegation decision guidance with managed-loop recommendations.
+- [ ] P54.3 Missing-evidence reporting
+  - [ ] Make missing evidence explicit rather than inferred.
+  - [ ] Keep model-specific guidance scoped to observed task classes.
