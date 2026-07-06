@@ -67,7 +67,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P56 Authority hierarchy and supervisor contract scaffold | #372 | `feature/p56-authority-hierarchy-supervisor-contracts` | Complete |
 | P57 VS Code subagent supervisor-worker spike | #378 | `feature/p57-vscode-subagent-supervisor-worker-spike` | Complete |
 | P58 Evidence consolidation and active-phase reconciliation | #384 | `feature/p58-evidence-consolidation-active-phase-reconciliation` | Active |
-| P59 Paid-supervisor budget gates and stop rules | TBD | `feature/p59-supervisor-budget-gates` | Planned |
+| P59 Paid-supervisor budget gates and stop rules | #390 | `feature/p59-supervisor-budget-gates` | Active |
 | P60 Outcome semantics and scoring split | TBD | `feature/p60-outcome-semantics-scoring-split` | Planned |
 | P61 Packaged local-supervisor workflow v1 | TBD | `feature/p61-packaged-local-supervisor-workflow-v1` | Planned |
 | P62 Document-indexing workflow recipe v1 | TBD | `feature/p62-document-indexing-recipe-v1` | Planned |
@@ -2544,22 +2544,45 @@ Planned tasks:
 
 ## Phase 59: Paid-Supervisor Budget Gates And Stop Rules
 
-Parent issue: TBD
+Parent issue: #390
 
 Branch: `feature/p59-supervisor-budget-gates`
 
-Status: planned
+Status: active
 
 Goal: make paid-supervisor budget declarations, checkpoint spans, stop
 conditions, and maintainer checkpoints enforceable in tooling.
 
 Planned tasks:
 
-- [ ] Define benchmark budget declaration schema.
-- [ ] Add `agent-workbench supervisor budget validate`.
-- [ ] Require budget records before economics claims.
-- [ ] Render budget-exceeded, attempt-count, stop-rule, and maintainer
-      checkpoint status.
+- [x] P59.1 Budget declaration schema and template (#391)
+  - [x] Define required budget declaration fields.
+  - [x] Include experiment question, max paid cost, max attempts, checkpoint
+        spans, stop condition, and maintainer checkpoint.
+  - [x] Add summary status fields for declared/exceeded/attempt/stop/checkpoint
+        state.
+  - [x] Add a public-safe template.
+- [x] P59.2 Supervisor budget CLI validation (#392)
+  - [x] Add `agent-workbench supervisor budget validate`.
+  - [x] Fail closed for missing or malformed fields.
+  - [x] Render concise validation diagnostics.
+  - [x] Preserve existing supervisor token commands.
+- [x] P59.3 Stop-rule and summary status fields (#393)
+  - [x] Define `budget_declared`, `budget_exceeded`, `attempt_count`,
+        `stop_rule_triggered`, and `maintainer_checkpoint_required`.
+  - [x] Validate attempt counts and max-attempt limits.
+  - [x] Validate stop condition and maintainer checkpoint settings.
+  - [x] Document that aborted/stale runs are diagnostic evidence, not progress.
+- [ ] P59.4 Planning, tests, and PR closeout (#394)
+  - [x] Link P59 roadmap and planning notes to GitHub issues.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Run focused validation.
+  - [ ] Open a P59-only PR against `main`.
+
+Closeout boundary: P59 adds the budget declaration validator and status
+semantics needed before future live economics runs. Wiring every live launcher
+to require a budget record remains a follow-on integration task, because this
+phase must not launch new live runs while testing enforcement.
 
 ## Phase 60: Outcome Semantics And Scoring Split
 

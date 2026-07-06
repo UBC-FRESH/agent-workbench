@@ -1,0 +1,52 @@
+{
+  "budget_id": "p59-example-budget",
+  "project": "agent-workbench",
+  "phase": "P59",
+  "experiment_question": "Can this bounded benchmark produce useful economics evidence within the declared paid-supervisor budget?",
+  "max_paid_cost_usd": 5.0,
+  "max_attempts": 2,
+  "checkpoint_spans": [
+    {
+      "span_id": "setup",
+      "owner": "paid_supervisor",
+      "description": "Coordinator setup, ticket review, and deterministic preflight.",
+      "required": true
+    },
+    {
+      "span_id": "worker_run_orchestration",
+      "owner": "paid_supervisor",
+      "description": "Paid-supervisor orchestration around local worker execution.",
+      "required": true
+    },
+    {
+      "span_id": "supervisor_audit",
+      "owner": "paid_supervisor",
+      "description": "Paid-supervisor audit or escalation review of worker results.",
+      "required": true
+    }
+  ],
+  "stop_condition": {
+    "description": "Stop when the budget is exceeded, the attempt limit is reached, or two attempts fail with the same protocol defect.",
+    "stop_after_attempts": 2,
+    "stop_on_budget_exceeded": true,
+    "stop_on_repeated_failure": true
+  },
+  "maintainer_checkpoint": {
+    "required": true,
+    "trigger": "before any third paid-supervisor attempt or any scope expansion",
+    "decision_surface": "tracked sanitized summary with line-item paid-supervisor cost and failure/status evidence"
+  },
+  "summary_status": {
+    "budget_declared": true,
+    "budget_exceeded": false,
+    "attempt_count": 0,
+    "stop_rule_triggered": false,
+    "maintainer_checkpoint_required": true
+  },
+  "public_safety": {
+    "tracked_artifact": true,
+    "contains_private_paths": false,
+    "contains_provider_details": false,
+    "contains_raw_prompts": false
+  }
+}

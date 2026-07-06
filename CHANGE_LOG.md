@@ -1506,3 +1506,16 @@ issues, pull requests, and closeout comments.
   consolidation-first tranche before more large live benchmark runs.
 - Updated `AGENTS.md` and `planning/delegation_economics_vision.md` with the
   P57 paid-supervisor overrun lesson and budget-gate posture.
+
+## 2026-07-05 - Opened P59 paid-supervisor budget gates
+
+- Created P59 parent issue #390 and child issues #391-#394 for budget
+  declaration validation and stop-rule status semantics.
+- Added `src/agent_workbench/budget.py`,
+  `templates/supervisor_budget_declaration.json`, and focused tests for
+  budget declaration validation.
+- Added `agent-workbench supervisor budget validate` so future live economics
+  runs have a concrete fail-closed budget gate before they claim evidence.
+- Recorded the P59 boundary in `planning/phase59_supervisor_budget_gates.md`:
+  this phase adds validation and status semantics, but launches no live
+  Copilot/Ollama jobs.
