@@ -71,7 +71,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P60 Outcome semantics and scoring split | #396 | `feature/p60-outcome-semantics-scoring-split` | Complete |
 | P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Complete |
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
-| P63 Bounded TSA23 recipe pilot | TBD | `feature/p63-bounded-tsa23-recipe-pilot` | Planned |
+| P63 Bounded TSA23 recipe pilot | #414 / PR #419 | `feature/p63-bounded-tsa23-recipe-pilot` | PR open |
 | P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -2698,38 +2698,107 @@ Planned tasks:
 
 ## Phase 63: Bounded TSA23 Recipe Pilot
 
-Parent issue: TBD
+Parent issue: #414
 
 Branch: `feature/p63-bounded-tsa23-recipe-pilot`
 
-Status: planned
+Status: PR open
 
 Goal: run one controlled, budgeted pilot using the P62 recipe on a bounded
 TSA23 slice.
 
 Planned tasks:
 
-- [ ] P63.1 Pilot selection and budget
-  - [ ] Choose one most-recent TSA23 information-package or rationale slice.
-  - [ ] Declare a P59 budget record before any live execution.
-  - [ ] Define maximum attempts and maintainer checkpoint.
-  - [ ] Confirm raw materialized inputs stay ignored.
-- [ ] P63.2 Recipe execution
-  - [ ] Instantiate the P62 recipe for the selected bounded slice.
-  - [ ] Run local worker extraction within the declared attempt limit.
-  - [ ] Run repair/normalization only if the budget gate allows it.
-  - [ ] Stop immediately when stop rules trigger.
-- [ ] P63.3 Outcome and economics reporting
-  - [ ] Use P60 outcome semantics.
-  - [ ] Track accepted, repaired, rejected, and escalated fact counts.
-  - [ ] Produce line-item paid supervisor, local worker, audit, and repair cost
-        tables.
-  - [ ] Compare delegated cost against direct-supervisor sample audit cost.
-- [ ] P63.4 Scale decision
-  - [ ] Decide whether to scale document indexing, adjust the recipe, or pause.
-  - [ ] Record maintainer-facing value, not only model behavior.
-  - [ ] Update roadmap/changelog/planning.
-  - [ ] Close P63 through PR only after the pilot decision is explicit.
+- [x] P63.1 Pilot selection and budget (#415)
+  - [x] Choose one most-recent TSA23 information-package or rationale slice.
+  - [x] Declare a P59 budget record before any live execution.
+  - [x] Define maximum attempts and maintainer checkpoint.
+  - [x] Confirm raw materialized inputs stay ignored.
+- [x] P63.2 Recipe execution (#418)
+  - [x] Generate ignored runtime tickets and SDK eval manifests from the
+        tracked P63 pilot plan.
+  - [x] Verify generated manifests with a dry run before contacting the
+        provider.
+  - [x] Confirm the selected local model is available through the configured
+        Ollama/OpenAI-compatible provider path.
+  - [x] Run exactly one live local-worker extraction attempt within the
+        declared P59 budget and attempt limit.
+  - [x] Capture raw worker output, prompts, provider details, and token traces
+        only under ignored runtime paths.
+  - [x] Run deterministic validation for JSONL parseability, document ID,
+        chunk ID, model provenance, schema shape, and public-safety boundaries.
+  - [x] Run repair/normalization only if the budget gate and stop rules allow
+        it; otherwise record the repair need as an unresolved outcome.
+  - [x] Stop immediately when budget, attempt, model-availability,
+        malformed-output, wrong-root, or public-safety stop rules trigger.
+  - Result: the single live attempt produced 40 parseable candidate records but
+    stopped as diagnostic evidence because the SDK observed a provider 524
+    model-call failure, malformed/truncated JSONL, and one invalid chunk ID.
+    No retry or repair expansion is allowed before maintainer checkpoint.
+- [x] P63.3 Outcome and economics reporting (#416)
+  - [x] Produce tracked sanitized summaries only; do not promote raw source
+        text, raw quotes, raw prompts, transcripts, provider URLs, headers, or
+        credentials.
+  - [x] Use P60 outcome semantics for every candidate artifact:
+        `quality_validated_candidate`, `protocol_accepted_candidate`,
+        `economics_usable`, `final_decision`, and `rejection_reasons`.
+  - [x] Track accepted, repaired, rejected, escalated, and unresolved fact
+        counts by stage and by source chunk.
+  - [x] Track hard-constraint failures separately from soft scoring penalties
+        such as quote length.
+  - [x] Produce line-item paid supervisor, local worker, audit, repair,
+        validation, and reporting cost tables.
+  - [x] Compare delegated cost against the direct-supervisor sample audit
+        baseline for the same bounded slice.
+        Result: comparison is `not_comparable` because the stop rule triggered
+        before a quality-valid delegated candidate existed, so running a new
+        paid direct-supervisor baseline would answer a different question.
+  - [x] Mark aborted, stale, malformed, or budget-blocked runs as diagnostic
+        evidence rather than successful economics evidence.
+  - [x] Update the P63 planning note with what the pilot actually taught before
+        proposing any scale-up.
+  - Result: tracked sanitized reporting records 0 accepted, 0 repaired, 1
+    rejected, 0 escalated, and 39 unresolved candidate records. P63 remains at
+    maintainer checkpoint before P63.4 scale decision.
+- [x] P63.4 Scale decision (#417)
+  - [x] Draft the scale/adjust/repeat/pause decision memo from measured P63.2
+        and P63.3 evidence.
+  - [x] Recommend whether the next move is scale document indexing, adjust the
+        recipe, repeat the bounded slice, change model roles, or pause the
+        lane.
+  - [x] Record maintainer-facing value: what usable document-indexing work was
+        produced, what paid-supervisor cost was avoided or added, and what
+        quality risk remains.
+  - [x] Record the exact gate for any follow-on live run, including budget,
+        attempt limit, model lane, document slice, and stop rule.
+  - [x] Receive maintainer acceptance of the scale, adjust, repeat, pause, or
+        abandon decision.
+  - [x] Update roadmap, changelog, planning note, parent issue, and child issue
+        to reflect the accepted decision.
+  - [x] Confirm P63-only PR and merge remain parent-phase closeout steps rather
+        than unresolved scale-decision subtasks.
+  - Draft recommendation: pause live scaling and adjust the recipe/provider
+    execution shape before any repeat. Do not rerun, repair-expand, broaden the
+    slice, add a model family, or run a direct-supervisor baseline without a new
+    maintainer-approved gate.
+  - Maintainer decision options:
+    - [ ] Pause and merge diagnostic evidence.
+    - [x] Adjust recipe in a follow-on phase.
+    - [ ] Approve bounded repeat under a new gate.
+    - [ ] Approve a different model/provider lane.
+    - [ ] Abandon or park the TSA23 indexing lane.
+  - Accepted decision: close P63 as diagnostic evidence and move any repeat
+    into a follow-on recipe-adjustment phase focused on smaller section-level
+    tickets, deterministic JSONL repair, chunk-ID hardening, and provider 524
+    isolation. P63 authorizes no further live model calls, direct-supervisor
+    baseline, broader slice, or model-lane change.
+
+Phase closeout:
+
+- [x] Open a P63-only PR after P63.2-P63.4 evidence agrees (#419).
+- [ ] Merge the P63 PR.
+- [ ] Verify parent issue #414 closure after merge.
+- [ ] Sync local `main` and delete `feature/p63-bounded-tsa23-recipe-pilot`.
 
 ## Phase 64: Deployment Environment And Operator Playbook
 
@@ -2745,24 +2814,39 @@ VS Code environment without relying on chat memory.
 Planned tasks:
 
 - [ ] P64.1 Environment shape
+  - [ ] Create the P64 parent issue and child issue before branch work begins.
+  - [ ] Link P64 issue numbers in this roadmap section after issue creation.
   - [ ] Document supported VS Code and code-server configurations.
   - [ ] Document Copilot Chat permission-mode expectations.
   - [ ] Document Ollama provider and model inventory requirements.
   - [ ] Document ignored runtime paths for tickets, transcripts, reports, and
         provider details.
+  - [ ] Document what must remain environment-specific and ignored.
 - [ ] P64.2 Operator checklist
   - [ ] Add model inventory checklist.
   - [ ] Add permission-mode and workspace-root checklist.
   - [ ] Add bridge launch and budget declaration checklist.
   - [ ] Add evidence collection and public-safety checklist.
+  - [ ] Add pre-run and post-run checks for stale sessions, run IDs, and
+        budget records.
+  - [ ] Add explicit "do not run" gates for missing budget, wrong model, wrong
+        root, stale chat evidence, or repeated failed attempts.
 - [ ] P64.3 Troubleshooting
   - [ ] Document stale chat session symptoms and reset procedure.
   - [ ] Document wrong workspace root and model mismatch checks.
   - [ ] Document runaway loop cancellation procedure.
   - [ ] Document when not to run because budget or evidence gates are missing.
+  - [ ] Document how to distinguish provider/model failures from Copilot Chat
+        session-loop failures.
+  - [ ] Document when to restart Ollama versus when to reset VS Code/Copilot
+        state.
 - [ ] P64.4 Public-safe closeout
+  - [ ] Add a P64 planning note that records the supported deployment posture
+        and excluded private details.
   - [ ] Keep private endpoint, server, credential, and personal-path details out
         of tracked docs.
   - [ ] Validate docs and examples.
   - [ ] Public-safety scan tracked playbook.
+  - [ ] Update roadmap, changelog, parent issue, child issues, and PR body from
+        the same subtask checklist.
   - [ ] Open a P64-only PR after review.

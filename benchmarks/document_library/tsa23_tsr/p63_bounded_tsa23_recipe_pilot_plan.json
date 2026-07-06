@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "pilot_id": "p63-bounded-tsa23-recipe-pilot",
+  "phase": "P63",
+  "status": "single_live_attempt_completed_stop_rule_triggered",
+  "recipe": {
+    "recipe_id": "document-indexing-workflow-v1",
+    "recipe_manifest_template": "templates/document_indexing_recipe_manifest.json",
+    "workflow_graph_template": "templates/workbench_templates/document_library_index_graph.json"
+  },
+  "budget_record": "benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_budget.json",
+  "corpus": {
+    "corpus_id": "bc_tsr_tsa23_public_1995_present",
+    "registry": "benchmarks/document_library/tsa23_tsr/corpus_registry.json",
+    "management_unit": "100 Mile House TSA",
+    "tsa_code": "23"
+  },
+  "selected_document": {
+    "document_id": "tsa23_2012_23tsdp12",
+    "document_type": "data_package",
+    "cycle_year": 2012,
+    "source_sha256": "b334d15b71824c91460ad59bc0cc1ed5a7bed7efea4dd4d22eba0279e26cfedf",
+    "tracked_chunk_manifest": "benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23tsdp12.json"
+  },
+  "selected_chunks": [
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_001_008",
+      "page_start": 1,
+      "page_end": 8,
+      "text_char_count": 21045,
+      "text_sha256": "8ed2855531ad2ce126bc6b8c2ce4c6ca600d73b48fe8c9d7a4bff2eb0d0ec665"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_008_015",
+      "page_start": 8,
+      "page_end": 15,
+      "text_char_count": 18889,
+      "text_sha256": "9157a489d13d3862cc9264d6bbb1c0daeb74b2b802552021ade9c554f0151ba1"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_015_022",
+      "page_start": 15,
+      "page_end": 22,
+      "text_char_count": 18706,
+      "text_sha256": "a12a88d3be0e2f210796f251c6a6e44fc9e07543fdfcd9f47722a933701a797e"
+    }
+  ],
+  "execution_gate": {
+    "live_execution_allowed": false,
+    "post_attempt_live_execution_allowed": false,
+    "required_before_live_execution": [
+      "budget validation passes",
+      "maintainer accepts budget and stop rule",
+      "runtime raw text chunks are confirmed ignored",
+      "worker ticket manifests are dry-run validated"
+    ],
+    "stop_rule_state": "single attempt used; maintainer checkpoint required before any retry, repair expansion, broader page span, added model family, or budget increase"
+  },
+  "expected_outcomes": {
+    "quality_validated_candidate": false,
+    "protocol_accepted_candidate": false,
+    "economics_usable": false,
+    "final_decision": "stop_after_single_attempt_model_call_failure",
+    "rejection_reasons": [
+      "invalid_chunk_id",
+      "malformed_or_truncated_jsonl",
+      "model-call-failure",
+      "provider_524_model_call_failure"
+    ]
+  },
+  "public_safety": {
+    "raw_documents_tracked": false,
+    "raw_text_tracked": false,
+    "raw_prompts_tracked": false,
+    "raw_worker_outputs_tracked": false,
+    "provider_details_tracked": false,
+    "personal_paths_tracked": false
+  }
+}

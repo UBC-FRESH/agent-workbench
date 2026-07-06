@@ -1586,3 +1586,91 @@ issues, pull requests, and closeout comments.
 - Updated the document-index worker ticket and document-library graph template
   so future instantiations inherit the P62 budget, outcome, quote-penalty, and
   no-hidden-cap rules.
+
+## 2026-07-05 - Opened P63 bounded TSA23 recipe pilot
+
+- Created P63 parent issue #414 and child issues #415-#418 on
+  `feature/p63-bounded-tsa23-recipe-pilot`.
+- Selected the bounded pilot slice from the tracked TSA23 2012 data-package
+  manifest: `tsa23_2012_23tsdp12`, pages 1-22 across three chunks.
+- Added `benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_budget.json`
+  with a one-attempt USD 10 paid-supervisor budget and maintainer checkpoint
+  before any retry or scope expansion.
+- Added `benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_plan.json`
+  and `planning/phase63_bounded_tsa23_recipe_pilot.md` to keep live execution
+  blocked until the budget gate is accepted.
+- Expanded the remaining P63 and planned P64 roadmap tasks to explicit
+  subtask-level checklists so live execution, reporting, scale decisions, and
+  future deployment-playbook work do not rely on broad one-line placeholders.
+
+## 2026-07-05 - Ran P63 bounded TSA23 recipe pilot execution attempt
+
+- Added `scripts/build_p63_recipe_pilot_runtime.py` to reproducibly generate
+  the ignored P63 worker ticket, SDK eval manifest, and runtime index from the
+  tracked pilot plan and ignored TSA23 chunk text.
+- Generated and dry-run validated the P63 runtime manifest for
+  `qwen3.6:35b-a3b-q8_0`, then confirmed the model is visible through the
+  configured provider path.
+- Ran the single live worker attempt allowed by the P59 budget gate. The
+  attempt produced 40 parseable candidate records across all three selected
+  chunks but was classified as blocked because the SDK observed a provider 524
+  model-call failure, two malformed/truncated JSONL lines, and one invalid
+  chunk ID.
+- Added `scripts/summarize_p63_recipe_pilot.py` plus sanitized tracked P63
+  execution summaries under `benchmarks/document_library/tsa23_tsr/`, keeping
+  raw worker output, source quotes, prompts, provider details, and transcripts
+  ignored under `runtime/`.
+- Recorded paid supervisor token spans for `ticket_build` and
+  `worker_run_orchestration`; the tracked summary reports USD 0.414679 of paid
+  supervisor cost for those two spans and USD 0.00 local-worker cash cost.
+- Marked P63.2 complete as diagnostic evidence only. The P63 maintainer
+  checkpoint is now required before any retry, repair expansion, broader page
+  span, added model family, or budget increase.
+
+## 2026-07-05 - Completed P63 outcome and economics reporting
+
+- Extended the P63 execution summary to include accepted, repaired, rejected,
+  escalated, and unresolved fact counts without promoting raw worker records or
+  source quotes.
+- Added baseline-comparison semantics showing the direct-supervisor baseline is
+  `not_run_stop_rule_triggered` and the cost comparison is `not_comparable`,
+  because the single live attempt failed before producing a quality-valid
+  delegated candidate.
+- Added separate paid-supervisor `worker_output_summarize` and
+  `tracked_update` token spans to the sanitized cost table, increasing the
+  measured supervisor cost for the diagnostic run to USD 0.811920 across four
+  captured spans.
+- Updated the P63 planning note and roadmap so P63.3 is complete as diagnostic
+  reporting while P63.4 remains open for the maintainer-facing scale, adjust,
+  repeat, or pause decision.
+
+## 2026-07-05 - Drafted P63 scale decision
+
+- Added `planning/phase63_scale_decision.md` as the maintainer-facing P63.4
+  decision draft.
+- Recommended pausing live scaling and adjusting the recipe/provider execution
+  shape before any repeat, rather than rerunning the same all-in-one 22-page
+  ticket.
+- Recorded the follow-on gate required before any repeat: new or amended budget
+  record, one named model lane, same bounded slice unless approved otherwise,
+  smaller section-level tickets, stop on provider failure/malformed output/
+  invalid chunk IDs/missing token spans, and no direct-supervisor baseline until
+  a quality-valid delegated candidate exists.
+- Left P63.4 open pending explicit maintainer acceptance of scale, adjust,
+  repeat, pause, or abandon.
+- Added explicit P63.4 maintainer decision options to the tracked decision memo
+  and roadmap so the phase cannot close by implication.
+
+## 2026-07-05 - Accepted P63 scale decision
+
+- Accepted the P63.4 recommendation to close P63 as diagnostic evidence and
+  adjust the document-indexing recipe in a follow-on phase before any repeat.
+- Updated the P63 decision memo and roadmap to mark the selected option:
+  smaller section-level tickets, deterministic JSONL repair, chunk-ID
+  hardening, and provider 524 isolation before the next live run.
+- Recorded that P63 authorizes no further live model calls, direct-supervisor
+  baseline, broader TSA23 slice, model-lane change, or repair expansion.
+- Closed child issue #417 and prepared P63 for a P63-only PR after parent issue
+  #414 was synchronized with the accepted decision.
+- Opened P63-only pull request #419 to merge the bounded TSA23 recipe pilot as
+  diagnostic evidence and close parent issue #414 on merge.
