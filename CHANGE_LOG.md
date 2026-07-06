@@ -1566,3 +1566,5 @@ issues, pull requests, and closeout comments.
 - Added non-live replay coverage using existing P57 v11 evidence and documented
   the packaged workflow contract in
   `planning/phase61_packaged_local_supervisor_workflow_v1.md`.
+- Opened P61 PR #407 after validation so the phase closeout can proceed through
+  the one-phase/one-branch workflow.

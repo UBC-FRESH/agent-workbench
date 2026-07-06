@@ -2653,11 +2653,11 @@ Planned tasks:
         consistently.
   - [x] Confirm budget records from P59 can be attached to replayed summaries.
   - [x] Add focused tests for replay and launcher-plan rendering.
-- [ ] P61.4 Documentation and closeout (#403)
+- [x] P61.4 Documentation and closeout (#403)
   - [x] Update workflow docs and planning note.
   - [x] State when subagent use is required versus advisory.
   - [x] Public-safety scan generated docs/templates.
-  - [ ] Open a P61-only PR after validation.
+  - [x] Open a P61-only PR after validation.
 
 ## Phase 62: Document-Indexing Workflow Recipe V1
 
