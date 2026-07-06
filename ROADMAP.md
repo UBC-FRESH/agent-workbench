@@ -71,7 +71,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P60 Outcome semantics and scoring split | #396 | `feature/p60-outcome-semantics-scoring-split` | Complete |
 | P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Complete |
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
-| P63 Bounded TSA23 recipe pilot | #414 | `feature/p63-bounded-tsa23-recipe-pilot` | PR-ready |
+| P63 Bounded TSA23 recipe pilot | #414 / PR #419 | `feature/p63-bounded-tsa23-recipe-pilot` | PR open |
 | P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -2702,7 +2702,7 @@ Parent issue: #414
 
 Branch: `feature/p63-bounded-tsa23-recipe-pilot`
 
-Status: PR-ready
+Status: PR open
 
 Goal: run one controlled, budgeted pilot using the P62 recipe on a bounded
 TSA23 slice.
@@ -2795,7 +2795,7 @@ Planned tasks:
 
 Phase closeout:
 
-- [ ] Open a P63-only PR after P63.2-P63.4 evidence agrees.
+- [x] Open a P63-only PR after P63.2-P63.4 evidence agrees (#419).
 - [ ] Merge the P63 PR.
 - [ ] Verify parent issue #414 closure after merge.
 - [ ] Sync local `main` and delete `feature/p63-bounded-tsa23-recipe-pilot`.

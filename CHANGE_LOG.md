@@ -1672,3 +1672,5 @@ issues, pull requests, and closeout comments.
   baseline, broader TSA23 slice, model-lane change, or repair expansion.
 - Closed child issue #417 and prepared P63 for a P63-only PR after parent issue
   #414 was synchronized with the accepted decision.
+- Opened P63-only pull request #419 to merge the bounded TSA23 recipe pilot as
+  diagnostic evidence and close parent issue #414 on merge.
