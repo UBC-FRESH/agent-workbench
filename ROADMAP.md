@@ -70,7 +70,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P59 Paid-supervisor budget gates and stop rules | #390 | `feature/p59-supervisor-budget-gates` | Complete |
 | P60 Outcome semantics and scoring split | #396 | `feature/p60-outcome-semantics-scoring-split` | Complete |
 | P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Complete |
-| P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Active |
+| P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
 | P63 Bounded TSA23 recipe pilot | TBD | `feature/p63-bounded-tsa23-recipe-pilot` | Planned |
 | P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
 
@@ -2665,7 +2665,7 @@ Parent issue: #408
 
 Branch: `feature/p62-document-indexing-recipe-v1`
 
-Status: active
+Status: complete
 
 Goal: convert TSA23/MP11 lessons into a reusable public technical PDF
 document-indexing recipe.
