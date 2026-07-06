@@ -32,12 +32,12 @@ class DocumentAuditGraphRunConfig:
     code_command: str = "code"
     expected_model: str | None = None
     bridge_prompt: str | None = None
-    pre_materialize_audit_ticket: bool = False
+    pre_materialize_audit_ticket: bool = True
     timeout_seconds: int = 1800
     poll_seconds: float = 10.0
     dry_run: bool = False
     bridge_no_launch: bool = False
-    quiet_runtime_output: bool = False
+    quiet_runtime_output: bool = True
 
 
 def build_run_plan(config: DocumentAuditGraphRunConfig) -> dict[str, Any]:
@@ -165,6 +165,7 @@ def build_run_plan(config: DocumentAuditGraphRunConfig) -> dict[str, Any]:
             repo_relative(path, project_root) for path in config.source_summaries
         ],
         "pre_materialized_audit_ticket": config.pre_materialize_audit_ticket,
+        "packaged_workflow": packaged_workflow_contract(config),
         "runtime_only": {
             "raw_chat_session_paths_excluded": True,
             "raw_transcripts_excluded": True,
@@ -173,7 +174,59 @@ def build_run_plan(config: DocumentAuditGraphRunConfig) -> dict[str, Any]:
     }
 
 
+def packaged_workflow_contract(config: DocumentAuditGraphRunConfig) -> dict[str, Any]:
+    return {
+        "workflow_version": "packaged-local-supervisor-v1",
+        "coordinator_owned_nodes": [
+            "coordinator_job_ticket",
+            "materialize_runtime_job",
+        ],
+        "local_supervisor_nodes": [
+            "subagent_artifact_audit",
+            "write_supervisor_report",
+            "validate_and_repair_report",
+        ],
+        "deterministic_validator_nodes": [
+            "authority_validate",
+            "document_audit_verify",
+            "graph_report_verify",
+        ],
+        "paid_coordinator_nodes": [
+            "budget_gate",
+            "token_checkpoint",
+            "summary_review",
+            "pr_or_issue_closeout",
+        ],
+        "setup_commands_visible_to_local_supervisor": not config.pre_materialize_audit_ticket,
+        "subagent_use": "advisory_unless_ticket_requires_it",
+        "live_run_requires_budget_record": True,
+        "quiet_runtime_output_default": True,
+    }
+
+
+def validate_job_id_for_packaged_run(job_id: str, *, live: bool) -> None:
+    if not live:
+        return
+    if high_entropy_run_id(job_id):
+        return
+    raise ValueError(
+        "live packaged supervisor jobs require a high-entropy job id with at "
+        "least one 8+ character hex/timestamp suffix, for example "
+        "'p61_graph_replay_20260706_a1b2c3d4'"
+    )
+
+
+def high_entropy_run_id(job_id: str) -> bool:
+    if len(job_id) < 16:
+        return False
+    parts = re.split(r"[-_]", job_id)
+    if any(re.fullmatch(r"[0-9a-fA-F]{8,}", part) for part in parts):
+        return True
+    return any(re.fullmatch(r"20\d{6,}", part) for part in parts)
+
+
 def run_document_audit_graph(config: DocumentAuditGraphRunConfig) -> dict[str, Any]:
+    validate_job_id_for_packaged_run(config.job_id, live=not config.dry_run)
     plan = build_run_plan(config)
     if config.dry_run:
         return plan

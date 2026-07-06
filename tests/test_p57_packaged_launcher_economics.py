@@ -5,10 +5,12 @@ import json
 from pathlib import Path
 
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
 def load_summary_module():
     path = (
-        Path(__file__).resolve().parents[1]
-        / "scripts"
+        ROOT / "scripts"
         / "summarize_p57_packaged_launcher_economics.py"
     )
     spec = importlib.util.spec_from_file_location("summarize_p57_packaged_launcher", path)
@@ -97,3 +99,55 @@ def test_normalize_marks_legacy_model_field(tmp_path: Path) -> None:
     assert record["model_provenance"]["source"] == "legacy_model_field"
     assert record["model_provenance"]["match_status"] == "legacy_unavailable"
     assert record["model_provenance"]["self_report_status"] == "legacy_unavailable"
+
+
+def test_normalize_replays_quality_valid_protocol_rejected_summary(
+    tmp_path: Path,
+) -> None:
+    module = load_summary_module()
+    summary_path = tmp_path / "v11_style_summary.json"
+    summary_path.write_text(
+        json.dumps(
+            {
+                "summary_id": "v11_style_summary",
+                "status": "needs-supervisor-review",
+                "accepted_candidate": False,
+                "quality_validated_candidate": True,
+                "protocol_accepted_candidate": False,
+                "model": "qwen3.6:35b-a3b-bf16",
+                "source_count": 14,
+                "token_costs": {
+                    "estimated_paid_cost_usd": 0.071044,
+                    "economics_usable": False,
+                    "codex_total_token_delta": 123456,
+                    "measurement_boundary": "external_coordinator_span",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    record = module.normalize(summary_path)
+
+    assert record["quality_validated_candidate"] is True
+    assert record["protocol_accepted_candidate"] is False
+    assert record["economics_usable"] is False
+    assert record["final_decision"] == "quality_valid_protocol_rejected"
+    assert record["estimated_paid_cost_per_source_artifact_usd"] == 0.005075
+
+
+def test_normalize_replays_tracked_p57_v11_quality_valid_diagnostic() -> None:
+    module = load_summary_module()
+    summary_path = (
+        ROOT
+        / "benchmarks"
+        / "vscode_subagent_spike"
+        / "p57_graph_batch_all_p55_summaries_v1_full_14_v11_summary.json"
+    )
+
+    record = module.normalize(summary_path)
+
+    assert record["quality_validated_candidate"] is True
+    assert record["protocol_accepted_candidate"] is False
+    assert record["economics_usable"] is False
+    assert record["final_decision"] == "quality_valid_protocol_rejected"

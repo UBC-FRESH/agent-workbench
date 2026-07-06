@@ -66,10 +66,10 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P55 TSA23 first real indexing run | #367 | `feature/p55-tsa23-first-indexing-run` | Complete |
 | P56 Authority hierarchy and supervisor contract scaffold | #372 | `feature/p56-authority-hierarchy-supervisor-contracts` | Complete |
 | P57 VS Code subagent supervisor-worker spike | #378 | `feature/p57-vscode-subagent-supervisor-worker-spike` | Complete |
-| P58 Evidence consolidation and active-phase reconciliation | #384 | `feature/p58-evidence-consolidation-active-phase-reconciliation` | Active |
-| P59 Paid-supervisor budget gates and stop rules | #390 | `feature/p59-supervisor-budget-gates` | Active |
-| P60 Outcome semantics and scoring split | TBD | `feature/p60-outcome-semantics-scoring-split` | Planned |
-| P61 Packaged local-supervisor workflow v1 | TBD | `feature/p61-packaged-local-supervisor-workflow-v1` | Planned |
+| P58 Evidence consolidation and active-phase reconciliation | #384 | `feature/p58-evidence-consolidation-active-phase-reconciliation` | Complete |
+| P59 Paid-supervisor budget gates and stop rules | #390 | `feature/p59-supervisor-budget-gates` | Complete |
+| P60 Outcome semantics and scoring split | #396 | `feature/p60-outcome-semantics-scoring-split` | Complete |
+| P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Active |
 | P62 Document-indexing workflow recipe v1 | TBD | `feature/p62-document-indexing-recipe-v1` | Planned |
 | P63 Bounded TSA23 recipe pilot | TBD | `feature/p63-bounded-tsa23-recipe-pilot` | Planned |
 | P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
@@ -2379,7 +2379,7 @@ Parent issue: #367
 
 Branch: `feature/p55-tsa23-first-indexing-run`
 
-Status: ready for PR review; parent issue remains open until merge
+Status: complete
 
 Goal: run the first real multi-run document-indexing experiment over the P53
 TSA23 corpus, with enough model/chunk/document variation to produce useful
@@ -2470,7 +2470,7 @@ Parent issue: #378
 
 Branch: `feature/p57-vscode-subagent-supervisor-worker-spike`
 
-Status: active
+Status: complete
 
 Goal: test whether a VS Code Copilot/Ollama local supervisor can reliably
 execute bounded supervisor-worker graph tasks through custom agents, subagent
@@ -2497,7 +2497,7 @@ Planned tasks:
   - [x] Add packaged launcher economics comparison.
   - [x] Document the pre-materialized ticket boundary and quiet-runtime output
         result.
-- [ ] P57.4 Economics summary, planning, tests, and PR closeout (#382)
+- [x] P57.4 Economics summary, planning, tests, and PR closeout (#382)
   - [x] Link P57 roadmap and planning notes to GitHub issues.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Run focused P57 test suite.
@@ -2509,7 +2509,7 @@ Parent issue: #384
 
 Branch: `feature/p58-evidence-consolidation-active-phase-reconciliation`
 
-Status: active
+Status: complete
 
 Goal: turn the P55-P57 experimental state into a trustworthy decision base
 before any more large live Copilot/Ollama experiments.
@@ -2536,7 +2536,7 @@ Planned tasks:
   - [x] Add `planning/p58_p64_roadmap_tranche.md`.
   - [x] Update cost-discipline guidance after the P57 overrun.
   - [x] Update `AGENTS.md` with the paid-supervisor cost-control lesson.
-- [ ] P58.4 Planning, tests, and PR closeout (#388)
+- [x] P58.4 Planning, tests, and PR closeout (#388)
   - [x] Rebase P58 onto merged P57 `main`.
   - [x] Resolve conflicts without rewriting landed P55-P57 history.
   - [x] Run focused validation.
@@ -2548,7 +2548,7 @@ Parent issue: #390
 
 Branch: `feature/p59-supervisor-budget-gates`
 
-Status: active
+Status: complete
 
 Goal: make paid-supervisor budget declarations, checkpoint spans, stop
 conditions, and maintainer checkpoints enforceable in tooling.
@@ -2591,7 +2591,7 @@ Parent issue: #396
 
 Branch: `feature/p60-outcome-semantics-scoring-split`
 
-Status: active
+Status: complete
 
 Goal: separate artifact quality, protocol compliance, and economics usability
 across benchmark summaries.
@@ -2624,40 +2624,40 @@ Planned tasks:
 
 ## Phase 61: Packaged Local-Supervisor Workflow V1
 
-Parent issue: TBD
+Parent issue: #402
 
 Branch: `feature/p61-packaged-local-supervisor-workflow-v1`
 
-Status: planned
+Status: active
 
 Goal: promote the successful P57 pre-materialized graph-ticket pattern into a
 reusable packaged workflow.
 
 Planned tasks:
 
-- [ ] P61.1 Packaged workflow contract
-  - [ ] Define coordinator-owned setup and pre-materialization nodes.
-  - [ ] Define local-supervisor audit, repair, validation, and compact-report
+- [x] P61.1 Packaged workflow contract (#404)
+  - [x] Define coordinator-owned setup and pre-materialization nodes.
+  - [x] Define local-supervisor audit, repair, validation, and compact-report
         nodes.
-  - [ ] Define deterministic validator authority boundaries.
-  - [ ] Define paid-coordinator review and escalation nodes.
-- [ ] P61.2 Launcher hardening
-  - [ ] Make pre-materialized graph tickets the default launcher mode.
-  - [ ] Keep setup/materializer commands out of local-supervisor action lists by
+  - [x] Define deterministic validator authority boundaries.
+  - [x] Define paid-coordinator review and escalation nodes.
+- [x] P61.2 Launcher hardening (#405)
+  - [x] Make pre-materialized graph tickets the default launcher mode.
+  - [x] Keep setup/materializer commands out of local-supervisor action lists by
         default.
-  - [ ] Require high-entropy run IDs for live bridge jobs.
-  - [ ] Keep quiet runtime output as the default for large packaged runs.
-- [ ] P61.3 Evidence replay
-  - [ ] Replay P57 v13/v11-style summaries without launching live Copilot jobs.
-  - [ ] Confirm accepted, rejected, aborted, and diagnostic evidence renders
+  - [x] Require high-entropy run IDs for live bridge jobs.
+  - [x] Keep quiet runtime output as the default for large packaged runs.
+- [x] P61.3 Evidence replay (#406)
+  - [x] Replay P57 v13/v11-style summaries without launching live Copilot jobs.
+  - [x] Confirm accepted, rejected, aborted, and diagnostic evidence renders
         consistently.
-  - [ ] Confirm budget records from P59 can be attached to replayed summaries.
-  - [ ] Add focused tests for replay and launcher-plan rendering.
-- [ ] P61.4 Documentation and closeout
-  - [ ] Update workflow docs and planning note.
-  - [ ] State when subagent use is required versus advisory.
-  - [ ] Public-safety scan generated docs/templates.
-  - [ ] Open a P61-only PR after validation.
+  - [x] Confirm budget records from P59 can be attached to replayed summaries.
+  - [x] Add focused tests for replay and launcher-plan rendering.
+- [x] P61.4 Documentation and closeout (#403)
+  - [x] Update workflow docs and planning note.
+  - [x] State when subagent use is required versus advisory.
+  - [x] Public-safety scan generated docs/templates.
+  - [x] Open a P61-only PR after validation.
 
 ## Phase 62: Document-Indexing Workflow Recipe V1
 

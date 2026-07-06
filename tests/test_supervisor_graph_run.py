@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 from types import SimpleNamespace
 from pathlib import Path
 
@@ -11,6 +14,8 @@ from agent_workbench.cli import (
 from agent_workbench.supervisor_graph_run import (
     DocumentAuditGraphRunConfig,
     build_run_plan,
+    high_entropy_run_id,
+    run_document_audit_graph,
     run_checked,
     summarize_document_audit_graph_run,
     summarize_existing_document_audit_graph,
@@ -73,6 +78,77 @@ def test_document_audit_graph_run_plan_uses_bridge_without_maximize(
     assert plan["paths"]["ticket"] == "runtime/agent_jobs/p57_example_ticket.md"
     assert plan["paths"]["summary_output"] == "benchmarks/summary.json"
     assert plan["runtime_only"]["raw_transcripts_excluded"] is True
+    assert plan["pre_materialized_audit_ticket"] is True
+    assert plan["packaged_workflow"] == {
+        "workflow_version": "packaged-local-supervisor-v1",
+        "coordinator_owned_nodes": [
+            "coordinator_job_ticket",
+            "materialize_runtime_job",
+        ],
+        "local_supervisor_nodes": [
+            "subagent_artifact_audit",
+            "write_supervisor_report",
+            "validate_and_repair_report",
+        ],
+        "deterministic_validator_nodes": [
+            "authority_validate",
+            "document_audit_verify",
+            "graph_report_verify",
+        ],
+        "paid_coordinator_nodes": [
+            "budget_gate",
+            "token_checkpoint",
+            "summary_review",
+            "pr_or_issue_closeout",
+        ],
+        "setup_commands_visible_to_local_supervisor": False,
+        "subagent_use": "advisory_unless_ticket_requires_it",
+        "live_run_requires_budget_record": True,
+        "quiet_runtime_output_default": True,
+    }
+
+
+def test_document_audit_graph_cli_dry_run_defaults_to_packaged_boundary() -> None:
+    command = [
+        sys.executable,
+        "-m",
+        "agent_workbench.cli",
+        "supervisor",
+        "run-document-audit-graph",
+        "--job-id",
+        "p61_cli_default",
+        "--marker",
+        "P61_CLI_DEFAULT",
+        "--title",
+        "P61 CLI default dry run",
+        "--project-root",
+        str(ROOT),
+        "--source-summary",
+        "source.json",
+        "--summary-output",
+        "runtime/p61_cli_default_summary.json",
+        "--dry-run",
+    ]
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(ROOT / "src")
+    completed = subprocess.run(
+        command,
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+        env=env,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    plan = json.loads(completed.stdout)
+    assert plan["pre_materialized_audit_ticket"] is True
+    assert "--pre-materialize-audit-ticket" in plan["commands"]["materialize"]
+    assert (
+        plan["packaged_workflow"]["setup_commands_visible_to_local_supervisor"]
+        is False
+    )
 
 
 def test_document_audit_graph_plan_can_pre_materialize_audit_ticket(
@@ -99,6 +175,63 @@ def test_document_audit_graph_plan_can_pre_materialize_audit_ticket(
     assert "--pre-materialize-audit-ticket" in plan["commands"]["materialize"]
     assert plan["pre_materialized_audit_ticket"] is True
     assert "--pre-materialize-audit-ticket" not in plan["commands"]["bridge"]
+
+
+def test_document_audit_graph_plan_can_expose_legacy_setup_surface(
+    tmp_path: Path,
+) -> None:
+    config = DocumentAuditGraphRunConfig(
+        project_root=tmp_path,
+        repo_root=tmp_path,
+        job_id="p57_legacy_setup",
+        marker="P57_LEGACY_SETUP",
+        phase="P57",
+        task_id="P57.5",
+        title="Legacy setup graph run",
+        source_summaries=(Path("benchmarks/source_a.json"),),
+        output_dir=Path("runtime/agent_jobs"),
+        summary_output=Path("benchmarks/summary.json"),
+        token_dir=Path("runtime/supervisor_tokens/p57_legacy_setup"),
+        pre_materialize_audit_ticket=False,
+        dry_run=True,
+    )
+
+    plan = build_run_plan(config)
+
+    assert plan["pre_materialized_audit_ticket"] is False
+    assert "--pre-materialize-audit-ticket" not in plan["commands"]["materialize"]
+    assert plan["packaged_workflow"]["setup_commands_visible_to_local_supervisor"] is True
+
+
+def test_live_document_audit_graph_requires_high_entropy_job_id(tmp_path: Path) -> None:
+    config = DocumentAuditGraphRunConfig(
+        project_root=tmp_path,
+        repo_root=tmp_path,
+        job_id="p61_low_entropy",
+        marker="P61_LOW_ENTROPY",
+        phase="P61",
+        task_id="P61.2",
+        title="Low entropy graph run",
+        source_summaries=(Path("benchmarks/source_a.json"),),
+        output_dir=Path("runtime/agent_jobs"),
+        summary_output=Path("benchmarks/summary.json"),
+        token_dir=Path("runtime/supervisor_tokens/p61_low_entropy"),
+    )
+
+    try:
+        run_document_audit_graph(config)
+    except ValueError as exc:
+        message = str(exc)
+    else:
+        raise AssertionError("low-entropy live job id should fail before launch")
+
+    assert "high-entropy job id" in message
+
+
+def test_high_entropy_run_id_accepts_timestamp_or_hex_suffix() -> None:
+    assert high_entropy_run_id("p61_graph_replay_20260706_a1b2c3d4") is True
+    assert high_entropy_run_id("p61_graph_replay_a1b2c3d4") is True
+    assert high_entropy_run_id("p61_graph_replay_v1") is False
 
 
 def test_run_checked_quiet_captures_failure_output(tmp_path: Path) -> None:
