@@ -2624,39 +2624,39 @@ Planned tasks:
 
 ## Phase 61: Packaged Local-Supervisor Workflow V1
 
-Parent issue: TBD
+Parent issue: #402
 
 Branch: `feature/p61-packaged-local-supervisor-workflow-v1`
 
-Status: planned
+Status: active
 
 Goal: promote the successful P57 pre-materialized graph-ticket pattern into a
 reusable packaged workflow.
 
 Planned tasks:
 
-- [ ] P61.1 Packaged workflow contract
-  - [ ] Define coordinator-owned setup and pre-materialization nodes.
-  - [ ] Define local-supervisor audit, repair, validation, and compact-report
+- [x] P61.1 Packaged workflow contract (#404)
+  - [x] Define coordinator-owned setup and pre-materialization nodes.
+  - [x] Define local-supervisor audit, repair, validation, and compact-report
         nodes.
-  - [ ] Define deterministic validator authority boundaries.
-  - [ ] Define paid-coordinator review and escalation nodes.
-- [ ] P61.2 Launcher hardening
-  - [ ] Make pre-materialized graph tickets the default launcher mode.
-  - [ ] Keep setup/materializer commands out of local-supervisor action lists by
+  - [x] Define deterministic validator authority boundaries.
+  - [x] Define paid-coordinator review and escalation nodes.
+- [x] P61.2 Launcher hardening (#405)
+  - [x] Make pre-materialized graph tickets the default launcher mode.
+  - [x] Keep setup/materializer commands out of local-supervisor action lists by
         default.
-  - [ ] Require high-entropy run IDs for live bridge jobs.
-  - [ ] Keep quiet runtime output as the default for large packaged runs.
-- [ ] P61.3 Evidence replay
-  - [ ] Replay P57 v13/v11-style summaries without launching live Copilot jobs.
-  - [ ] Confirm accepted, rejected, aborted, and diagnostic evidence renders
+  - [x] Require high-entropy run IDs for live bridge jobs.
+  - [x] Keep quiet runtime output as the default for large packaged runs.
+- [x] P61.3 Evidence replay (#406)
+  - [x] Replay P57 v13/v11-style summaries without launching live Copilot jobs.
+  - [x] Confirm accepted, rejected, aborted, and diagnostic evidence renders
         consistently.
-  - [ ] Confirm budget records from P59 can be attached to replayed summaries.
-  - [ ] Add focused tests for replay and launcher-plan rendering.
-- [ ] P61.4 Documentation and closeout
-  - [ ] Update workflow docs and planning note.
-  - [ ] State when subagent use is required versus advisory.
-  - [ ] Public-safety scan generated docs/templates.
+  - [x] Confirm budget records from P59 can be attached to replayed summaries.
+  - [x] Add focused tests for replay and launcher-plan rendering.
+- [ ] P61.4 Documentation and closeout (#403)
+  - [x] Update workflow docs and planning note.
+  - [x] State when subagent use is required versus advisory.
+  - [x] Public-safety scan generated docs/templates.
   - [ ] Open a P61-only PR after validation.
 
 ## Phase 62: Document-Indexing Workflow Recipe V1

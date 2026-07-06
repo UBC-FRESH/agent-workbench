@@ -1551,3 +1551,18 @@ issues, pull requests, and closeout comments.
   model-provenance mismatch as a protocol defect.
 - Opened P60 PR #401 after validation so the phase closeout can proceed through
   the one-phase/one-branch workflow.
+
+## 2026-07-05 - Implemented P61 packaged local-supervisor workflow defaults
+
+- Created P61 parent issue #402 and child issues #403-#406 on
+  `feature/p61-packaged-local-supervisor-workflow-v1`.
+- Made pre-materialized audit tickets and quiet runtime output the default
+  packaged graph-run posture, with explicit legacy/debug opt-out flags.
+- Added packaged workflow metadata to dry-run plans so coordinator-owned setup,
+  local-supervisor work, deterministic validators, and paid-coordinator review
+  boundaries are visible.
+- Added high-entropy job-ID validation for live packaged bridge jobs to reduce
+  stale-session contamination risk.
+- Added non-live replay coverage using existing P57 v11 evidence and documented
+  the packaged workflow contract in
+  `planning/phase61_packaged_local_supervisor_workflow_v1.md`.

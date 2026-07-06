@@ -591,9 +591,19 @@ def build_parser() -> argparse.ArgumentParser:
     supervisor_document_audit_parser.add_argument(
         "--pre-materialize-audit-ticket",
         action="store_true",
+        default=True,
         help=(
             "Coordinator-materialize the lower-level audit ticket before launching "
             "Copilot, so the local supervisor starts at audit/report/repair nodes."
+        ),
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--no-pre-materialize-audit-ticket",
+        action="store_false",
+        dest="pre_materialize_audit_ticket",
+        help=(
+            "Legacy/debug mode: expose setup/materializer work to the local "
+            "supervisor ticket."
         ),
     )
     supervisor_document_audit_parser.add_argument(
@@ -615,10 +625,17 @@ def build_parser() -> argparse.ArgumentParser:
     supervisor_document_audit_parser.add_argument(
         "--quiet-runtime-output",
         action="store_true",
+        default=True,
         help=(
             "Capture materializer and bridge stdout/stderr instead of printing "
             "large runtime reports into the coordinator shell."
         ),
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--loud-runtime-output",
+        action="store_false",
+        dest="quiet_runtime_output",
+        help="Legacy/debug mode: stream materializer and bridge output.",
     )
     supervisor_document_audit_parser.set_defaults(
         func=run_supervisor_document_audit_graph
@@ -700,7 +717,14 @@ def build_parser() -> argparse.ArgumentParser:
     supervisor_document_audit_summary_parser.add_argument(
         "--pre-materialize-audit-ticket",
         action="store_true",
+        default=True,
         help="Reconstruct the plan as a pre-materialized-audit-ticket run.",
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--no-pre-materialize-audit-ticket",
+        action="store_false",
+        dest="pre_materialize_audit_ticket",
+        help="Reconstruct the plan as a legacy self-materialized run.",
     )
     supervisor_document_audit_summary_parser.add_argument(
         "--timeout-seconds",
