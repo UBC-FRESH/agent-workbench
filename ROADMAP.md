@@ -72,7 +72,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Complete |
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
 | P63 Bounded TSA23 recipe pilot | #414 / PR #419 | `feature/p63-bounded-tsa23-recipe-pilot` | Complete |
-| P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
+| P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | PR open |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2802,51 +2802,59 @@ Phase closeout:
 
 ## Phase 64: Deployment Environment And Operator Playbook
 
-Parent issue: TBD
+Parent issue: #420
 
 Branch: `feature/p64-deployment-environment-operator-playbook`
 
-Status: planned
+Status: PR open
 
 Goal: make Agent Workbench usable in the intended remote GPU/code-server or
 VS Code environment without relying on chat memory.
 
 Planned tasks:
 
-- [ ] P64.1 Environment shape
-  - [ ] Create the P64 parent issue and child issue before branch work begins.
-  - [ ] Link P64 issue numbers in this roadmap section after issue creation.
-  - [ ] Document supported VS Code and code-server configurations.
-  - [ ] Document Copilot Chat permission-mode expectations.
-  - [ ] Document Ollama provider and model inventory requirements.
-  - [ ] Document ignored runtime paths for tickets, transcripts, reports, and
+- [x] P64.1 Environment shape (#421)
+  - [x] Create the P64 parent issue and child issue before branch work begins.
+  - [x] Link P64 issue numbers in this roadmap section after issue creation.
+  - [x] Document supported VS Code and code-server configurations.
+  - [x] Document Copilot Chat permission-mode expectations.
+  - [x] Document Ollama provider and model inventory requirements.
+  - [x] Document ignored runtime paths for tickets, transcripts, reports, and
         provider details.
-  - [ ] Document what must remain environment-specific and ignored.
-- [ ] P64.2 Operator checklist
-  - [ ] Add model inventory checklist.
-  - [ ] Add permission-mode and workspace-root checklist.
-  - [ ] Add bridge launch and budget declaration checklist.
-  - [ ] Add evidence collection and public-safety checklist.
-  - [ ] Add pre-run and post-run checks for stale sessions, run IDs, and
+  - [x] Document what must remain environment-specific and ignored.
+- [x] P64.2 Operator checklist (#422)
+  - [x] Add model inventory checklist.
+  - [x] Add permission-mode and workspace-root checklist.
+  - [x] Add bridge launch and budget declaration checklist.
+  - [x] Add evidence collection and public-safety checklist.
+  - [x] Add pre-run and post-run checks for stale sessions, run IDs, and
         budget records.
-  - [ ] Add explicit "do not run" gates for missing budget, wrong model, wrong
+  - [x] Add explicit "do not run" gates for missing budget, wrong model, wrong
         root, stale chat evidence, or repeated failed attempts.
-- [ ] P64.3 Troubleshooting
-  - [ ] Document stale chat session symptoms and reset procedure.
-  - [ ] Document wrong workspace root and model mismatch checks.
-  - [ ] Document runaway loop cancellation procedure.
-  - [ ] Document when not to run because budget or evidence gates are missing.
-  - [ ] Document how to distinguish provider/model failures from Copilot Chat
+- [x] P64.3 Troubleshooting (#423)
+  - [x] Document stale chat session symptoms and reset procedure.
+  - [x] Document wrong workspace root and model mismatch checks.
+  - [x] Document runaway loop cancellation procedure.
+  - [x] Document when not to run because budget or evidence gates are missing.
+  - [x] Document how to distinguish provider/model failures from Copilot Chat
         session-loop failures.
-  - [ ] Document when to restart Ollama versus when to reset VS Code/Copilot
+  - [x] Document when to restart Ollama versus when to reset VS Code/Copilot
         state.
-- [ ] P64.4 Public-safe closeout
-  - [ ] Add a P64 planning note that records the supported deployment posture
+- [x] P64.4 Public-safe closeout (#424)
+  - [x] Add a P64 planning note that records the supported deployment posture
         and excluded private details.
-  - [ ] Keep private endpoint, server, credential, and personal-path details out
+  - [x] Keep private endpoint, server, credential, and personal-path details out
         of tracked docs.
-  - [ ] Validate docs and examples.
-  - [ ] Public-safety scan tracked playbook.
-  - [ ] Update roadmap, changelog, parent issue, child issues, and PR body from
+  - [x] Validate docs and examples.
+  - [x] Public-safety scan tracked playbook.
+  - [x] Update roadmap, changelog, parent issue, child issues, and PR body from
         the same subtask checklist.
-  - [ ] Open a P64-only PR after review.
+  - [x] Open a P64-only PR after review (#425).
+
+Phase closeout:
+
+- [x] Open a P64-only PR after P64.1-P64.4 evidence agrees (#425).
+- [ ] Merge the P64 PR (#425).
+- [ ] Verify parent issue #420 closure after merge.
+- [ ] Sync local `main` and delete
+      `feature/p64-deployment-environment-operator-playbook`.

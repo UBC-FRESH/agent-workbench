@@ -1676,3 +1676,30 @@ issues, pull requests, and closeout comments.
   diagnostic evidence and close parent issue #414 on merge.
 - Squash-merged PR #419, verified parent issue #414 closed, synced local
   `main`, and deleted the local P63 feature branch.
+
+## 2026-07-05 - Opened P64 deployment operator playbook
+
+- Created P64 parent issue #420 and child issues #421-#424 on
+  `feature/p64-deployment-environment-operator-playbook`.
+- Activated P64 as a non-live consolidation phase for deployment environment
+  and operator guidance before any further local-supervisor experiments.
+- Scoped P64 to public-safe documentation only: supported VS Code/code-server
+  runtime shape, operator checklists, troubleshooting, and closeout hygiene.
+
+## 2026-07-05 - Added P64 deployment operator playbook
+
+- Added `playbooks/deployment_environment_operator.md` with the supported
+  local-supervisor runtime shape for VS Code or code-server, Copilot Chat,
+  configured Ollama-backed providers, ignored runtime paths, and tracked
+  public-safe summaries.
+- Added pre-run, launch, evidence, do-not-run, troubleshooting, restart, and
+  post-run checklists so operators can avoid stale sessions, wrong roots,
+  wrong models, missing budgets, and repeated noisy attempts.
+- Added `planning/phase64_deployment_environment_operator_playbook.md` to
+  record the P64 evidence carry-forward, deployment posture, excluded private
+  details, and closeout boundary.
+- Closed child issues #421-#423 after syncing their checklists and comments.
+- Validated the changed Markdown surfaces with `git diff --check` and a
+  public-safety scan for private paths, provider URLs, headers, credentials,
+  and transcript fragments.
+- Opened P64-only pull request #425 after P64.1-P64.4 evidence agreed.
