@@ -34,6 +34,7 @@ from .budget import (
     validate_budget_declaration,
 )
 from .comparison import render_eval_comparison
+from .copilot_archive import CopilotArchiveConfig, archive_copilot_session
 from .decision import (
     DecisionInputError,
     decide_task,
@@ -148,6 +149,70 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional ignored Markdown report path.",
     )
     smoke_parser.set_defaults(func=run_smoke)
+
+    copilot_parser = subparsers.add_parser(
+        "copilot",
+        help="Archive and summarize local VS Code Copilot Chat evidence.",
+    )
+    copilot_subparsers = copilot_parser.add_subparsers(
+        dest="copilot_command",
+        required=True,
+    )
+    copilot_archive_parser = copilot_subparsers.add_parser(
+        "archive",
+        help="Copy raw Copilot session logs to runtime storage and write a sanitized manifest.",
+    )
+    copilot_archive_parser.add_argument(
+        "--workspace-root",
+        type=Path,
+        default=Path("."),
+        help="Workspace root whose VS Code workspaceStorage should be searched.",
+    )
+    copilot_archive_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        required=True,
+        help="Ignored runtime directory for raw session copies and manifest.",
+    )
+    copilot_archive_parser.add_argument(
+        "--code-user-dir",
+        type=Path,
+        default=None,
+        help="VS Code User directory. Defaults to APPDATA/Code/User or ~/.config/Code/User.",
+    )
+    copilot_archive_parser.add_argument(
+        "--run-id",
+        default=None,
+        help="Optional run id expected to appear in the chat session.",
+    )
+    copilot_archive_parser.add_argument(
+        "--session-id",
+        default=None,
+        help="Optional exact Copilot/VS Code chat session id.",
+    )
+    copilot_archive_parser.add_argument(
+        "--prompt-marker",
+        default=None,
+        help="Optional prompt marker expected to appear in the chat session.",
+    )
+    copilot_archive_parser.add_argument(
+        "--max-snippet-chars",
+        type=int,
+        default=240,
+        help="Maximum characters retained per sanitized snippet.",
+    )
+    copilot_archive_parser.add_argument(
+        "--max-snippets",
+        type=int,
+        default=20,
+        help="Maximum sanitized snippets retained per message/tool category.",
+    )
+    copilot_archive_parser.add_argument(
+        "--manifest-only",
+        action="store_true",
+        help="Do not copy raw logs; write only the sanitized manifest.",
+    )
+    copilot_archive_parser.set_defaults(func=run_copilot_archive)
 
     eval_parser = subparsers.add_parser(
         "eval",
@@ -1029,6 +1094,39 @@ def run_smoke(args: argparse.Namespace) -> int:
     if args.report is not None:
         command.extend(["--report", str(args.report)])
     return run_command(command, args.repo_root)
+
+
+def run_copilot_archive(args: argparse.Namespace) -> int:
+    config = CopilotArchiveConfig(
+        workspace_root=args.workspace_root,
+        output_dir=args.output_dir,
+        code_user_dir=args.code_user_dir,
+        run_id=args.run_id,
+        session_id=args.session_id,
+        prompt_marker=args.prompt_marker,
+        max_snippet_chars=args.max_snippet_chars,
+        max_snippets=args.max_snippets,
+        copy_raw=not args.manifest_only,
+    )
+    try:
+        manifest = archive_copilot_session(config)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    manifest_path = args.output_dir / str(manifest.get("manifest_path", ""))
+    print(f"manifest: {manifest_path}")
+    for raw_file in manifest.get("raw_files", []):
+        print(f"raw: {args.output_dir / str(raw_file)}")
+    print(
+        "session_id={session_id} user_messages={user_messages} "
+        "assistant_messages={assistant_messages} tool_requests={tool_requests}".format(
+            session_id=manifest.get("session_id", ""),
+            user_messages=manifest.get("user_message_count", 0),
+            assistant_messages=manifest.get("assistant_message_count_with_text", 0),
+            tool_requests=manifest.get("tool_request_count", 0),
+        )
+    )
+    return 0
 
 
 def run_eval(args: argparse.Namespace) -> int:

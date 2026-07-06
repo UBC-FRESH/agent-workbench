@@ -73,6 +73,12 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
 | P63 Bounded TSA23 recipe pilot | #414 / PR #419 | `feature/p63-bounded-tsa23-recipe-pilot` | Complete |
 | P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | Complete |
+| P65 Copilot session archive | #426 | `feature/p65-copilot-session-archive` | Active |
+| P66 Task-level delegation protocol | TBD | `feature/p66-task-level-delegation-protocol` | Planned |
+| P67 Heartbeat and nudge protocol | TBD | `feature/p67-heartbeat-nudge-protocol` | Planned |
+| P68 Copilot task controller v0 | TBD | `feature/p68-copilot-task-controller-v0` | Planned |
+| P69 Behavior analytics from archives | TBD | `feature/p69-behavior-analytics-from-archives` | Planned |
+| P70 FEMIC P108 repair dogfood | TBD | `feature/p70-femic-p108-repair-dogfood` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2858,3 +2864,231 @@ Phase closeout:
 - [x] Verify parent issue #420 closure after merge.
 - [x] Sync local `main` and delete
       `feature/p64-deployment-environment-operator-playbook`.
+
+## Phase 65: Copilot Session Archive
+
+Parent issue: #426
+
+Branch: `feature/p65-copilot-session-archive`
+
+Status: active
+
+Goal: make ticket-plus-Copilot-chatlog archival a systematic Agent Workbench
+function so delegated-run behavior evidence is captured by default.
+
+Planned tasks:
+
+- [x] P65.1 Archive command surface (#427)
+  - [x] Add `agent-workbench copilot archive`.
+  - [x] Resolve VS Code workspace storage from `workspace.json`.
+  - [x] Match sessions by session id, run id, prompt marker, or latest session.
+  - [x] Copy raw `chatSessions/*.jsonl` and Copilot transcript JSONL into
+        ignored runtime storage.
+  - [x] Fail closed when no matching session exists.
+- [x] P65.2 Sanitized manifest (#428)
+  - [x] Record event counts, model ids, permission levels, message counts, and
+        tool-request counts.
+  - [x] Record bounded snippets for user messages, assistant messages, tool
+        requests, stall nudges, and `keep going` nudges.
+  - [x] Keep source paths and raw transcript content out of the manifest.
+  - [x] Mark raw files as runtime-only and not safe for tracked commit without
+        sanitization.
+- [x] P65.3 Tests and docs (#429)
+  - [x] Add fake VS Code workspace-storage fixtures for archive tests.
+  - [x] Test successful archive and no-match fail-closed behavior.
+  - [x] Add a P65 planning note explaining the evidence unit and boundaries.
+  - [x] Update `AGENTS.md` so future Copilot delegation tests archive chat
+        behavior by default.
+
+Closeout boundary:
+
+- [x] Run focused tests for the archive helper and CLI.
+- [x] Run `git diff --check`.
+- [x] Update `CHANGE_LOG.md`.
+
+## Phase 66: Task-Level Delegation Protocol
+
+Parent issue: TBD
+
+Branch: `feature/p66-task-level-delegation-protocol`
+
+Status: planned
+
+Goal: make one roadmap child task the default delegation unit, with coordinator
+ownership of phase sequencing and acceptance.
+
+Planned tasks:
+
+- [ ] P66.1 Protocol contract
+  - [ ] Define coordinator-owned responsibilities for phase setup, task
+        sequencing, acceptance, PR merge, parent issue closure, and final
+        completion claims.
+  - [ ] Define delegated local-supervisor responsibilities for one child task
+        at a time.
+  - [ ] Define when whole-phase delegation is allowed as an experiment.
+  - [ ] Define handoff boundaries between child-task runs.
+- [ ] P66.2 Child-task ticket template
+  - [ ] Add a template with current state, governing child issue, allowed files,
+        allowed commands, stop conditions, and evidence requirements.
+  - [ ] Require explicit result, blocker, heartbeat, and archive paths.
+  - [ ] Require Windows/Linux shell context to be stated explicitly.
+  - [ ] Include a no-summary substitute rule: prose cannot replace command
+        execution or artifact evidence.
+- [ ] P66.3 Task result and decision packets
+  - [ ] Add a result schema for commands run, files changed, tests/checks,
+        GitHub URLs touched, artifacts produced, and blockers.
+  - [ ] Add coordinator decision packet states: accept, reject, repair,
+        escalate, or abandon.
+  - [ ] Add repair-ticket input fields that cite exact defects in the previous
+        task output.
+- [ ] P66.4 P108 retrospective
+  - [ ] Summarize the P108 whole-phase delegation success signals.
+  - [ ] Summarize P108 control-loop failures and housekeeping defects.
+  - [ ] Record why future default delegation should be task-level.
+
+## Phase 67: Heartbeat And Nudge Protocol
+
+Parent issue: TBD
+
+Branch: `feature/p67-heartbeat-nudge-protocol`
+
+Status: planned
+
+Goal: make delegated-run stalls observable and make mid-run nudges structured,
+cheap, and auditable.
+
+Planned tasks:
+
+- [ ] P67.1 Heartbeat file contract
+  - [ ] Define `runtime/agent_jobs/<run_id>.heartbeat.jsonl`.
+  - [ ] Define required heartbeat fields: timestamp, checklist item, action,
+        artifact path, command summary, and next intended action.
+  - [ ] Define result and blocker companion files.
+  - [ ] Define public-safety rules for heartbeat content.
+- [ ] P67.2 Stale-run detection
+  - [ ] Define stale heartbeat thresholds by run type.
+  - [ ] Distinguish thinking, command execution, tool blockage, and no-progress
+        states where possible.
+  - [ ] Define when the coordinator should inspect filesystem/Git state before
+        nudging.
+- [ ] P67.3 Nudge templates
+  - [ ] Add canned nudges for continue-next-subtask, stop-summarizing,
+        write-blocker, fix-shell-context, and reconcile-checklist states.
+  - [ ] Require every nudge to be archived with timestamp and triggering
+        evidence.
+  - [ ] Define a stop rule after repeated failed nudges.
+- [ ] P67.4 Nudge evidence summary
+  - [ ] Define nudge count and stall count as behavior metrics.
+  - [ ] Define accepted versus protocol-noisy behavior after nudges.
+  - [ ] Add examples derived from P108 without tracking raw transcripts.
+
+## Phase 68: Copilot Task Controller V0
+
+Parent issue: TBD
+
+Branch: `feature/p68-copilot-task-controller-v0`
+
+Status: planned
+
+Goal: package the launch, archive, heartbeat check, nudge, and review loop for
+one child-task delegation run.
+
+Planned tasks:
+
+- [ ] P68.1 Controller run manifest
+  - [ ] Define a manifest tying together run id, ticket path, child issue,
+        expected model, permission mode, heartbeat path, result path, blocker
+        path, archive path, and token ledger path.
+  - [ ] Require high-entropy run ids for live Copilot sessions.
+  - [ ] Validate wrong-root, wrong-model, missing-budget, and stale-session
+        stop gates before launch.
+- [ ] P68.2 Launch wrapper
+  - [ ] Add a command to launch a child-task ticket through the existing Copilot
+        bridge without maximizing the UI.
+  - [ ] Preserve model and permission evidence expectations.
+  - [ ] Fail closed when the prompt cannot be delivered as an executable
+        directive.
+- [ ] P68.3 Archive integration
+  - [ ] Invoke P65 archive after a task run by session id, run id, or prompt
+        marker.
+  - [ ] Link archive manifest to the run manifest and result file.
+  - [ ] Refuse economics or behavior claims without archive evidence when the
+        run used Copilot Chat.
+- [ ] P68.4 Review packet
+  - [ ] Generate a coordinator-facing review packet summarizing task output,
+        heartbeat state, archive metrics, validation checks, and recommended
+        decision.
+  - [ ] Keep raw logs ignored and promote only sanitized summaries.
+
+## Phase 69: Behavior Analytics From Archives
+
+Parent issue: TBD
+
+Branch: `feature/p69-behavior-analytics-from-archives`
+
+Status: planned
+
+Goal: mine archived Copilot sessions for reusable delegation behavior metrics.
+
+Planned tasks:
+
+- [ ] P69.1 Metrics schema
+  - [ ] Define stall count, nudge count, tool-call count, command-failure count,
+        shell-mismatch count, repeated-summary count, and premature-completion
+        claim count.
+  - [ ] Define user-intervention burden and coordinator-review burden fields.
+  - [ ] Define behavior outcome classes: smooth, nudged-success,
+        noisy-success, repair-needed, blocked, or runaway.
+- [ ] P69.2 Archive analyzer
+  - [ ] Add a command to analyze P65 archive manifests and raw runtime logs.
+  - [ ] Detect common P108-style patterns from sanitized snippets and event
+        structure.
+  - [ ] Emit a public-safe behavior summary JSON/Markdown pair.
+- [ ] P69.3 Cross-run synthesis
+  - [ ] Aggregate behavior summaries across delegation tests.
+  - [ ] Group by model, permission mode, ticket type, task size, and authority
+        level.
+  - [ ] Report trends without exposing raw transcript text.
+- [ ] P69.4 Policy feedback
+  - [ ] Feed behavior metrics into task-suitability and delegation-policy
+        recommendations.
+  - [ ] Identify ticket patterns that reduce stalls or repair burden.
+  - [ ] Define minimum archive count before tuning defaults.
+
+## Phase 70: FEMIC P108 Repair Dogfood
+
+Parent issue: TBD
+
+Branch: `feature/p70-femic-p108-repair-dogfood`
+
+Status: planned
+
+Goal: test the task-level delegation controller on real P108 cleanup tasks in
+FEMIC, while keeping coordinator authority over final PR merge and parent issue
+closure.
+
+Planned tasks:
+
+- [ ] P70.1 Dogfood setup
+  - [ ] Select the P108 cleanup branch/PR state as the target.
+  - [ ] Declare a budget and stop rule before any paid-coordinator monitoring.
+  - [ ] Generate one child-task ticket at a time through the P66 protocol.
+  - [ ] Require P65 archive capture for every Copilot-backed task.
+- [ ] P70.2 Cleanup ticket set
+  - [ ] Ticket A: repair `CHANGE_LOG.md` ordering and encoding damage.
+  - [ ] Ticket B: reconcile parent roadmap versus instance roadmap completion
+        state.
+  - [ ] Ticket C: repair stale P108 supervisor result-report claims.
+  - [ ] Ticket D: verify PR #303 and child issue checklist consistency.
+  - [ ] Ticket E: produce final coordinator review packet.
+- [ ] P70.3 Controller evaluation
+  - [ ] Measure stall count, nudge count, tool-call count, result validity, and
+        coordinator repair burden per ticket.
+  - [ ] Compare task-level behavior to the whole-phase P108 run.
+  - [ ] Record whether child-task tickets reduce drift and stale-report defects.
+- [ ] P70.4 Scale decision
+  - [ ] Decide whether to use task-level Copilot supervision for the next real
+        FEMIC or CLEWS development phase.
+  - [ ] Record remaining risks and required controller improvements.
+  - [ ] Keep final P108 merge/parent closure under coordinator/maintainer
+        authority.
