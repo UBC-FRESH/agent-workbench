@@ -2540,7 +2540,7 @@ Planned tasks:
   - [x] Rebase P58 onto merged P57 `main`.
   - [x] Resolve conflicts without rewriting landed P55-P57 history.
   - [x] Run focused validation.
-  - [ ] Open a P58-only PR.
+  - [x] Open a P58-only PR.
 
 ## Phase 59: Paid-Supervisor Budget Gates And Stop Rules
 
