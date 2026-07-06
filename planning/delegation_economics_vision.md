@@ -154,6 +154,42 @@ Each real-project pilot should record:
 The first target is not global optimality. The first target is evidence that
 some non-trivial task classes reliably produce positive net benefit.
 
+## Paid-Supervisor Burn Lesson From P57
+
+The P57 VS Code subagent spike produced useful evidence, but it also exposed a
+serious failure mode in the research process itself: the paid supervisor can
+spend far more on coordination, retries, and reporting than the experiment is
+worth if live runs continue after the learning signal is already clear.
+
+The broad P57 goal window was consistent with roughly a `gpt-5.5`-scale
+account impact of about `$130`. The useful learning was real:
+
+- a bounded Copilot/Ollama supervisor can produce validator-accepted artifacts
+  when tickets are pre-materialized and tightly scoped;
+- a 14-artifact package reached `quality_validated_candidate: true`; and
+- the remaining failure was mainly protocol-boundary noise, not total local
+  model incapability.
+
+That was not enough standalone value to justify repeating the same pattern.
+Future experiments must treat this as tuition already paid, not as a run style
+to normalize.
+
+Operational implications:
+
+- define a paid-supervisor budget before any live experiment starts;
+- checkpoint every supervisor-owned span when economics are part of the claim;
+- stop after two unsuccessful attempts in the same lane unless the maintainer
+  explicitly approves another run;
+- report the learning signal as soon as it is visible, even if the cleanest
+  possible acceptance result has not been achieved; and
+- separate `quality_validated_candidate`, `protocol_accepted_candidate`, and
+  `economics_usable` so a useful but noisy result does not trigger endless
+  retries.
+
+The goal is not to prove that local supervision can be perfect. The goal is to
+find task/workflow regions where local supervision is good enough that paid
+supervisor involvement drops sharply.
+
 ## Near-Term Roadmap Implication
 
 The next Agent Workbench tranche should focus on delegation economics rather

@@ -59,6 +59,47 @@ suite until a later roadmap phase records that evidence.
 - Preserve uncertainty. If a worker cannot prove a command ran or a file changed,
   record that as a blocker rather than smoothing it into success.
 
+## Paid Supervisor Cost Discipline
+
+Agent Workbench exists to reduce paid supervisor-token spend, not to create
+unbounded experiments that consume paid supervisor tokens while local worker
+agents thrash.
+
+Before launching any live benchmark, Copilot bridge run, model-comparison run,
+or delegated workflow experiment that may require sustained paid-supervisor
+coordination, the supervisor must define:
+
+- the exact experiment question;
+- the maximum paid-supervisor budget or token-span limit;
+- the stop condition that ends the run even if a cleaner result might be one
+  more retry away;
+- the evidence artifact that will be inspected before any retry; and
+- the point at which the supervisor must ask the maintainer whether the lane is
+  still worth pursuing.
+
+Default rule: one failed or protocol-noisy live run may be followed by one
+bounded repair or retry only when the failure teaches a concrete fix. After two
+unsuccessful attempts in the same lane, stop, summarize the evidence, and ask
+before continuing.
+
+Do not treat repeated live runs as harmless because local worker tokens are
+free. The paid supervisor still burns input, cached input, and output tokens
+while planning, launching, monitoring, repairing, validating, and reporting.
+Use token checkpoints around every supervisor-owned subtask when economics are
+part of the claim.
+
+When a run demonstrates the core learning signal, prefer consolidation over
+chasing a perfect acceptance result. Separate these outcomes explicitly:
+
+- `quality_validated_candidate`: the local worker/supervisor produced artifacts
+  that deterministic validators accept;
+- `protocol_accepted_candidate`: the run also obeyed the intended authority and
+  workflow boundaries; and
+- `economics_usable`: paid-supervisor token spans were captured at the correct
+  boundary and the run was not aborted or stale-contaminated.
+
+Never collapse those into a single vague success/failure claim.
+
 ## Supervisor And Worker Agent Roles
 
 Supervisor agents are responsible for:

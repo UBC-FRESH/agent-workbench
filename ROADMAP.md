@@ -65,7 +65,14 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Complete |
 | P55 TSA23 first real indexing run | #367 | `feature/p55-tsa23-first-indexing-run` | Complete |
 | P56 Authority hierarchy and supervisor contract scaffold | #372 | `feature/p56-authority-hierarchy-supervisor-contracts` | Complete |
-| P57 VS Code subagent supervisor-worker spike | #378 | `feature/p57-vscode-subagent-supervisor-worker-spike` | Active |
+| P57 VS Code subagent supervisor-worker spike | #378 | `feature/p57-vscode-subagent-supervisor-worker-spike` | Complete |
+| P58 Evidence consolidation and active-phase reconciliation | #384 | `feature/p58-evidence-consolidation-active-phase-reconciliation` | Active |
+| P59 Paid-supervisor budget gates and stop rules | TBD | `feature/p59-supervisor-budget-gates` | Planned |
+| P60 Outcome semantics and scoring split | TBD | `feature/p60-outcome-semantics-scoring-split` | Planned |
+| P61 Packaged local-supervisor workflow v1 | TBD | `feature/p61-packaged-local-supervisor-workflow-v1` | Planned |
+| P62 Document-indexing workflow recipe v1 | TBD | `feature/p62-document-indexing-recipe-v1` | Planned |
+| P63 Bounded TSA23 recipe pilot | TBD | `feature/p63-bounded-tsa23-recipe-pilot` | Planned |
+| P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2495,3 +2502,163 @@ Planned tasks:
   - [x] Update `CHANGE_LOG.md`.
   - [x] Run focused P57 test suite.
   - [x] Open a P57-only PR against `main`.
+
+## Phase 58: Evidence Consolidation And Active-Phase Reconciliation
+
+Parent issue: #384
+
+Branch: `feature/p58-evidence-consolidation-active-phase-reconciliation`
+
+Status: active
+
+Goal: turn the P55-P57 experimental state into a trustworthy decision base
+before any more large live Copilot/Ollama experiments.
+
+No new live worker, Copilot Chat, or Ollama runs are allowed in P58.
+
+Planned tasks:
+
+- [x] P58.1 Evidence register normalization (#385)
+  - [x] Define accepted, quality-valid, diagnostic, stale, historical, and
+        deferred evidence categories.
+  - [x] Classify P55 evidence.
+  - [x] Classify P56 evidence.
+  - [x] Classify P57 evidence.
+  - [x] Mark P50-era and overrun artifacts as historical or diagnostic where
+        appropriate.
+- [x] P58.2 Active-phase reconciliation (#386)
+  - [x] Update P55 status and defer further extraction work.
+  - [x] Update P56 status and move remaining policy detail to later phases.
+  - [x] Update P57 status and defer further live full-batch retries.
+  - [x] Keep P58 itself non-live.
+- [x] P58.3 Decision memo and no-live-run gate (#387)
+  - [x] Add `planning/p58_active_phase_reconciliation.md`.
+  - [x] Add `planning/p58_p64_roadmap_tranche.md`.
+  - [x] Update cost-discipline guidance after the P57 overrun.
+  - [x] Update `AGENTS.md` with the paid-supervisor cost-control lesson.
+- [ ] P58.4 Planning, tests, and PR closeout (#388)
+  - [x] Rebase P58 onto merged P57 `main`.
+  - [x] Resolve conflicts without rewriting landed P55-P57 history.
+  - [ ] Run focused validation.
+  - [ ] Open a P58-only PR.
+
+## Phase 59: Paid-Supervisor Budget Gates And Stop Rules
+
+Parent issue: TBD
+
+Branch: `feature/p59-supervisor-budget-gates`
+
+Status: planned
+
+Goal: make paid-supervisor budget declarations, checkpoint spans, stop
+conditions, and maintainer checkpoints enforceable in tooling.
+
+Planned tasks:
+
+- [ ] Define benchmark budget declaration schema.
+- [ ] Add `agent-workbench supervisor budget validate`.
+- [ ] Require budget records before economics claims.
+- [ ] Render budget-exceeded, attempt-count, stop-rule, and maintainer
+      checkpoint status.
+
+## Phase 60: Outcome Semantics And Scoring Split
+
+Parent issue: TBD
+
+Branch: `feature/p60-outcome-semantics-scoring-split`
+
+Status: planned
+
+Goal: separate artifact quality, protocol compliance, and economics usability
+across benchmark summaries.
+
+Planned tasks:
+
+- [ ] Standardize quality/protocol/economics outcome fields.
+- [ ] Preserve hard constraints for schema validity, source identity, and
+      authority violations.
+- [ ] Keep quote length and similar extraction preferences as soft weighted
+      penalties.
+- [ ] Update decision packets so quality-valid/protocol-noisy results are not
+      collapsed into vague rejected states.
+
+## Phase 61: Packaged Local-Supervisor Workflow V1
+
+Parent issue: TBD
+
+Branch: `feature/p61-packaged-local-supervisor-workflow-v1`
+
+Status: planned
+
+Goal: promote the successful P57 pre-materialized graph-ticket pattern into a
+reusable packaged workflow.
+
+Planned tasks:
+
+- [ ] Package coordinator-owned setup and pre-materialization as the default
+      launcher mode.
+- [ ] Keep setup/materializer commands out of local-supervisor action lists by
+      default.
+- [ ] Require high-entropy run IDs for live bridge jobs.
+- [ ] Replay P57 evidence without launching live Copilot jobs.
+
+## Phase 62: Document-Indexing Workflow Recipe V1
+
+Parent issue: TBD
+
+Branch: `feature/p62-document-indexing-recipe-v1`
+
+Status: planned
+
+Goal: convert TSA23/MP11 lessons into a reusable public technical PDF
+document-indexing recipe.
+
+Planned tasks:
+
+- [ ] Define corpus resolution, materialization, page/chunk manifests,
+      section-map extraction, typed fact extraction, repair, verification, and
+      paid sample-audit stages.
+- [ ] Define task-size defaults and split strategies without hidden record
+      caps.
+- [ ] Encode current model-role defaults.
+- [ ] Keep raw PDF text, prompts, and worker outputs ignored.
+
+## Phase 63: Bounded TSA23 Recipe Pilot
+
+Parent issue: TBD
+
+Branch: `feature/p63-bounded-tsa23-recipe-pilot`
+
+Status: planned
+
+Goal: run one controlled, budgeted pilot using the P62 recipe on a bounded
+TSA23 slice.
+
+Planned tasks:
+
+- [ ] Require P59 budget gate before live execution.
+- [ ] Use P60 outcome semantics.
+- [ ] Track accepted, repaired, rejected, and escalated fact counts.
+- [ ] Produce cost and quality tables before deciding whether to scale.
+
+## Phase 64: Deployment Environment And Operator Playbook
+
+Parent issue: TBD
+
+Branch: `feature/p64-deployment-environment-operator-playbook`
+
+Status: planned
+
+Goal: make Agent Workbench usable in the intended remote GPU/code-server or
+VS Code environment without relying on chat memory.
+
+Planned tasks:
+
+- [ ] Document supported VS Code/code-server, Copilot Chat, Ollama provider,
+      custom-agent, and ignored-runtime path setup.
+- [ ] Add operator checklist for model inventory, permission mode, bridge
+      launch, budget declaration, and evidence collection.
+- [ ] Add troubleshooting for stale sessions, wrong root, model mismatch, and
+      runaway loop cancellation.
+- [ ] Keep private endpoint, server, and credential details out of tracked
+      docs.
