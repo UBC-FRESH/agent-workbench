@@ -127,6 +127,10 @@ local persisted chat artifacts for the marker, and writes an ignored supervisor
 report. The report compares observed terminal commands and file-tool activity
 against the ticket.
 
+The helper does not maximize the Copilot Chat pane by default. Pass
+`--maximize` only when the supervisor explicitly wants the bridge to change the
+current VS Code layout.
+
 V0 evidence is local and supervisor-facing. It is not a stable VS Code API
 contract, and it does not replace human review.
 

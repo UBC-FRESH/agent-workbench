@@ -16,7 +16,6 @@ import shutil
 import subprocess
 import sys
 import time
-from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import unquote
@@ -53,6 +52,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--code-command", default="code", help="VS Code command executable.")
     parser.add_argument("--mode", default="agent", help="VS Code chat mode or custom agent identifier.")
     parser.add_argument("--prompt", default=DEFAULT_PROMPT, help="One-line prompt for code chat.")
+    parser.add_argument(
+        "--expected-model",
+        help="Optional required resolved model id for benchmark runs.",
+    )
+    parser.add_argument("--maximize", action="store_true", help="Maximize the VS Code chat pane on launch.")
     parser.add_argument("--no-launch", action="store_true", help="Skip launch and only parse existing sessions.")
     return parser.parse_args()
 
@@ -70,12 +74,13 @@ def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
         code_command,
         "chat",
         "--reuse-window",
-        "--maximize",
         "--mode",
         args.mode,
         args.prompt,
         "-",
     ]
+    if args.maximize:
+        command.insert(3, "--maximize")
     completed = subprocess.run(
         command,
         input=ticket_text,
@@ -168,9 +173,21 @@ def load_evidence(marker: str, session_path: Path | None, transcript_path: Path 
     evidence.tool_names = unique(
         name
         for name in re.findall(r'"name":"([^"]+)"', text)
-        if name in {"read_file", "run_in_terminal", "create_file", "replace_string_in_file"}
+        if is_relevant_tool_name(name)
     )
     return evidence
+
+
+def is_relevant_tool_name(name: str) -> bool:
+    if name in {
+        "read_file",
+        "run_in_terminal",
+        "create_file",
+        "replace_string_in_file",
+    }:
+        return True
+    lowered = name.lower()
+    return "subagent" in lowered or lowered in {"agent", "agent/runsubagent"}
 
 
 def unescape_json_text(value: str) -> str:
@@ -207,9 +224,22 @@ def section_text(ticket: str, heading: str) -> str:
 
 
 def extract_expected_commands(ticket: str) -> list[str]:
-    commands_section = section_text(ticket, "Required Commands")
     commands: list[str] = []
-    for block in re.findall(r"```(?:\w+)?\n([\s\S]*?)```", commands_section):
+    for heading in (
+        "Required Commands",
+        "Exact Materializer Command",
+        "Graph Execution Requirements",
+        "Required Graph Report",
+    ):
+        commands.extend(extract_fenced_commands(section_text(ticket, heading)))
+    return unique(commands)
+
+
+def extract_fenced_commands(section: str) -> list[str]:
+    commands: list[str] = []
+    for language, block in re.findall(r"```([A-Za-z0-9_-]*)\n([\s\S]*?)```", section):
+        if language.casefold() not in {"", "powershell", "pwsh", "bash", "sh", "shell"}:
+            continue
         for line in block.splitlines():
             stripped = line.strip()
             if stripped and not stripped.startswith("#"):
@@ -218,13 +248,243 @@ def extract_expected_commands(ticket: str) -> list[str]:
 
 
 def extract_allowed_files(ticket: str) -> list[str]:
-    read_paths = set(re.findall(r"`?(runtime/agent_jobs/[^`\s]+\.md)`?", section_text(ticket, "Required Reads")))
-    all_paths = re.findall(r"`?(runtime/agent_jobs/[^`\s]+\.md)`?", ticket)
-    return unique([path for path in all_paths if path not in read_paths])
+    runtime_path_pattern = r"`?(runtime[/\\]agent_jobs[/\\][^`\s]+\.(?:md|json))`?"
+    read_paths = set(re.findall(runtime_path_pattern, section_text(ticket, "Required Reads")))
+    output_sections = "\n".join(
+        section_text(ticket, heading)
+        for heading in (
+            "Required Output File",
+            "Required Output Files",
+            "Allowed Actions",
+        )
+    )
+    output_paths = {
+        path.replace("\\", "/")
+        for path in re.findall(runtime_path_pattern, output_sections)
+    }
+    all_paths = re.findall(runtime_path_pattern, ticket)
+    read_paths = {path.replace("\\", "/") for path in read_paths}
+    all_paths = [path.replace("\\", "/") for path in all_paths]
+    return unique(
+        [
+            path
+            for path in all_paths
+            if path in output_paths or path not in read_paths
+        ]
+    )
+
+
+def extract_required_json_fields(ticket: str) -> list[str]:
+    fields_section = section_text(ticket, "Required Report JSON Fields")
+    fields: list[str] = []
+    for value in re.findall(r"`([^`]+)`", fields_section):
+        stripped = value.strip()
+        if stripped:
+            fields.append(stripped)
+    return unique(fields)
+
+
+def json_field_present(data: object, dotted_path: str) -> bool:
+    value = data
+    for part in dotted_path.split("."):
+        if not isinstance(value, dict) or part not in value:
+            return False
+        value = value[part]
+    return value not in (None, "")
+
+
+def check_required_json_fields(
+    workspace_root: Path,
+    allowed_files: list[str],
+    required_fields: list[str],
+) -> list[str]:
+    if not required_fields:
+        return []
+    report_paths = [path for path in allowed_files if path.endswith(".json")]
+    if not report_paths:
+        return [f"{field} (no allowed JSON report file found)" for field in required_fields]
+    report_path = workspace_root / report_paths[0]
+    try:
+        data = json.loads(report_path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"{field} (cannot read JSON report: {exc})" for field in required_fields]
+    return [field for field in required_fields if not json_field_present(data, field)]
 
 
 def normalize_command(command: str) -> str:
-    return command.encode("utf-8").decode("unicode_escape").strip()
+    # Commands come from two surfaces:
+    # - ticket Markdown, where PowerShell paths use literal backslashes; and
+    # - VS Code JSON session text, where backslashes may already be escaped.
+    #
+    # Do not use ``unicode_escape`` here: Windows paths such as
+    # ``runtime\agent_jobs`` contain ``\a``, which becomes a bell character and
+    # causes false command mismatches.
+    normalized = (
+        command.replace("\\\\", "\\")
+        .replace('\\"', '"')
+        .replace("\\'", "'")
+        .strip()
+    )
+    normalized = re.sub(
+        r"^(?:cd|Set-Location)\s+[A-Za-z]:\\[^\n;]+;\s*",
+        "",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    normalized = re.sub(
+        r'^\$env:PYTHONPATH\s*=\s*["\'][^"\']+["\'];\s*',
+        "",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    normalized = re.sub(r'"([^"\s]+)"', r"\1", normalized)
+    normalized = re.sub(r"'([^'\s]+)'", r"\1", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    return normalized
+
+
+def normalize_command_for_comparison(command: str, workspace_root: Path) -> str:
+    normalized = normalize_command(command)
+    root_backslash = str(workspace_root.resolve()).rstrip("\\/")
+    root_slash = root_backslash.replace("\\", "/")
+    for root in (root_backslash, root_slash):
+        normalized = re.sub(
+            re.escape(root) + r"[/\\]",
+            "",
+            normalized,
+            flags=re.IGNORECASE,
+        )
+    normalized = normalized.replace("/", "\\")
+    normalized = re.sub(r"\s+", " ", normalized).strip()
+    return normalized
+
+
+def command_matches(expected: str, observed: str) -> bool:
+    if expected == observed:
+        return True
+    # VS Code/Copilot may choose repo-relative paths even when a ticket names an
+    # absolute script path. After workspace-root stripping, those commands are
+    # equivalent when the executable and full argument list match.
+    return expected.casefold() == observed.casefold()
+
+
+def is_benign_extra_command(command: str) -> bool:
+    lowered = command.casefold()
+    stripped = lowered.lstrip("() ")
+    if not stripped.startswith("test-path ") and "test-path " not in stripped:
+        return False
+    return "runtime\\agent_jobs\\" in lowered or "runtime/agent_jobs/" in lowered
+
+
+def is_repeatable_expected_command(command: str) -> bool:
+    lowered = command.casefold()
+    return (
+        " authority validate " in lowered
+        or "verify_document_artifact_audit_report.py" in lowered
+        or "verify_document_artifact_graph_report.py" in lowered
+    )
+
+
+def compare_commands(
+    expected_commands: list[str],
+    observed_commands: list[str],
+) -> tuple[list[str], list[str], list[str]]:
+    missing: list[str] = []
+    matched_observed_indices: set[int] = set()
+    for expected in expected_commands:
+        match_index = next(
+            (
+                index
+                for index, observed in enumerate(observed_commands)
+                if command_matches(expected, observed)
+            ),
+            None,
+        )
+        if match_index is None:
+            if not is_optional_expected_command(expected):
+                missing.append(expected)
+        else:
+            matched_observed_indices.add(match_index)
+
+    extra: list[str] = []
+    benign_extra: list[str] = []
+    for index, observed in enumerate(observed_commands):
+        if index in matched_observed_indices:
+            continue
+        if any(
+            command_matches(expected, observed) and is_repeatable_expected_command(expected)
+            for expected in expected_commands
+        ):
+            # Repeated validation commands are useful repair-loop evidence.
+            # One-shot setup commands such as materializers remain deviations
+            # when repeated.
+            continue
+        if is_benign_extra_command(observed):
+            benign_extra.append(observed)
+        else:
+            extra.append(observed)
+    return missing, extra, benign_extra
+
+
+def is_optional_expected_command(command: str) -> bool:
+    lowered = command.casefold()
+    return "repair_document_artifact_graph_reports.py" in lowered
+
+
+def is_allowed_report_write_command(command: str, allowed_files: list[str]) -> bool:
+    lowered = command.casefold()
+    if not (
+        "set-content" in lowered
+        or "[system.io.file]::writealltext" in lowered
+        or (
+            "python -c" in lowered
+            and "json" in lowered
+            and ("open(" in lowered or "json.load" in lowered or "json.dump" in lowered)
+        )
+    ):
+        return False
+    if "runtime\\agent_jobs\\" not in lowered and "runtime/agent_jobs/" not in lowered:
+        return False
+    if has_forbidden_report_repair_command(lowered):
+        return False
+    normalized = command.replace("/", "\\").casefold()
+    allowed_report_paths = {
+        path.replace("/", "\\").casefold()
+        for path in allowed_files
+        if path.startswith("runtime/agent_jobs/") and path.endswith(".json")
+    }
+    return any(path in normalized for path in allowed_report_paths)
+
+
+def has_forbidden_report_repair_command(lowered_command: str) -> bool:
+    if any(
+        term in lowered_command
+        for term in (
+            "remove-item",
+            "git ",
+            "gh ",
+            "code chat",
+            "invoke-webrequest",
+            "curl ",
+            "wget ",
+        )
+    ):
+        return True
+    return bool(re.search(r"(^|[;&|]\s*)(del|rm)\s+", lowered_command))
+
+
+def classify_allowed_report_write_commands(
+    extra_commands: list[str],
+    allowed_files: list[str],
+) -> tuple[list[str], list[str]]:
+    remaining: list[str] = []
+    benign: list[str] = []
+    for command in extra_commands:
+        if is_allowed_report_write_command(command, allowed_files):
+            benign.append(command)
+        else:
+            remaining.append(command)
+    return remaining, benign
 
 
 def normalize_path(path: str, workspace_root: Path) -> str:
@@ -240,6 +500,14 @@ def normalize_path(path: str, workspace_root: Path) -> str:
     return cleaned
 
 
+def model_matches(expected_model: str | None, observed_model: str | None) -> bool:
+    if not expected_model:
+        return True
+    return normalize_model_id(expected_model).casefold() == normalize_model_id(
+        observed_model or "unknown"
+    ).casefold()
+
+
 def build_report(
     marker: str,
     ticket_path: Path,
@@ -247,19 +515,41 @@ def build_report(
     workspace_root: Path,
     ticket_text: str,
     evidence: SessionEvidence,
+    expected_model: str | None = None,
 ) -> str:
-    expected_commands = [normalize_command(command) for command in extract_expected_commands(ticket_text)]
-    observed_commands = [normalize_command(command) for command in evidence.terminal_commands]
+    expected_commands = [
+        normalize_command_for_comparison(command, workspace_root)
+        for command in extract_expected_commands(ticket_text)
+    ]
+    observed_commands = [
+        normalize_command_for_comparison(command, workspace_root)
+        for command in evidence.terminal_commands
+    ]
     allowed_files = extract_allowed_files(ticket_text)
+    required_json_fields = extract_required_json_fields(ticket_text)
     observed_files = [normalize_path(path, workspace_root) for path in evidence.file_paths]
     expected_file_set = set(allowed_files)
     observed_runtime_files = [
-        path for path in observed_files if path.startswith("runtime/agent_jobs/") and path.endswith(".md")
+        path
+        for path in observed_files
+        if path.startswith("runtime/agent_jobs/") and path.endswith((".md", ".json"))
     ]
-    missing_commands = list((Counter(expected_commands) - Counter(observed_commands)).elements())
-    extra_commands = list((Counter(observed_commands) - Counter(expected_commands)).elements())
+    missing_commands, extra_commands, benign_extra_commands = compare_commands(
+        expected_commands,
+        observed_commands,
+    )
+    extra_commands, report_write_commands = classify_allowed_report_write_commands(
+        extra_commands,
+        allowed_files,
+    )
+    benign_extra_commands.extend(report_write_commands)
     missing_files = [path for path in allowed_files if path not in observed_runtime_files and not (workspace_root / path).exists()]
     extra_files = [path for path in observed_runtime_files if path not in expected_file_set]
+    missing_json_fields = check_required_json_fields(
+        workspace_root,
+        allowed_files,
+        required_json_fields,
+    )
     status = "accepted-candidate"
     deviations: list[str] = []
     if not evidence.session_path:
@@ -268,6 +558,8 @@ def build_report(
         deviations.append("Matching session did not show completed model state.")
     if not evidence.final_marker_present:
         deviations.append("Final marker was not found in the session artifact.")
+    if not model_matches(expected_model, evidence.resolved_model):
+        deviations.append("Resolved model did not match expected model.")
     if missing_commands:
         deviations.append("Missing expected terminal commands.")
     if extra_commands:
@@ -276,6 +568,8 @@ def build_report(
         deviations.append("Missing expected output files.")
     if extra_files:
         deviations.append("Observed unexpected runtime Markdown files.")
+    if missing_json_fields:
+        deviations.append("Missing required JSON report fields.")
     if deviations:
         status = "needs-supervisor-review"
 
@@ -287,7 +581,9 @@ def build_report(
         f"ticket: `{ticket_path.as_posix()}`",
         f"session_artifact: `{evidence.session_path}`" if evidence.session_path else "session_artifact: missing",
         f"transcript_artifact: `{evidence.transcript_path}`" if evidence.transcript_path else "transcript_artifact: missing",
+        f"expected_model: {expected_model or 'unspecified'}",
         f"resolved_model: {evidence.resolved_model or 'unknown'}",
+        f"model_match: {str(model_matches(expected_model, evidence.resolved_model)).lower()}",
         "permission_levels: " + (", ".join(evidence.permission_levels) if evidence.permission_levels else "unknown"),
         f"completed: {str(evidence.completed).lower()}",
         f"final_marker_present: {str(evidence.final_marker_present).lower()}",
@@ -300,6 +596,10 @@ def build_report(
         "",
         *[f"- `{command}`" for command in observed_commands],
         "",
+        "## Benign Extra Commands",
+        "",
+        *[f"- `{command}`" for command in benign_extra_commands],
+        "",
         "## Allowed Runtime Files",
         "",
         *[f"- `{path}`" for path in allowed_files],
@@ -311,6 +611,10 @@ def build_report(
         "## Tool Names",
         "",
         *[f"- `{name}`" for name in evidence.tool_names],
+        "",
+        "## Required JSON Report Fields",
+        "",
+        *[f"- `{field}`" for field in required_json_fields],
         "",
         "## Deviations",
         "",
@@ -325,6 +629,11 @@ def build_report(
             lines.extend(f"  - missing file: `{path}`" for path in missing_files)
         if extra_files:
             lines.extend(f"  - extra file: `{path}`" for path in extra_files)
+        if missing_json_fields:
+            lines.extend(f"  - missing JSON field: `{field}`" for field in missing_json_fields)
+        if not model_matches(expected_model, evidence.resolved_model):
+            lines.append(f"  - expected model: `{expected_model}`")
+            lines.append(f"  - resolved model: `{evidence.resolved_model or 'unknown'}`")
     else:
         lines.append("- none")
     lines.append("")
@@ -358,6 +667,7 @@ def main() -> int:
         workspace_root=workspace_root,
         ticket_text=ticket_text,
         evidence=evidence,
+        expected_model=args.expected_model,
     )
     print(report)
     return 0 if evidence.session_path and evidence.completed else 1

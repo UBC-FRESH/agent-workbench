@@ -64,7 +64,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Complete |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Complete |
 | P55 TSA23 first real indexing run | #367 | `feature/p55-tsa23-first-indexing-run` | Complete |
-| P56 Authority hierarchy and supervisor contract scaffold | #372 | `feature/p56-authority-hierarchy-supervisor-contracts` | Active |
+| P56 Authority hierarchy and supervisor contract scaffold | #372 | `feature/p56-authority-hierarchy-supervisor-contracts` | Complete |
+| P57 VS Code subagent supervisor-worker spike | #378 | `feature/p57-vscode-subagent-supervisor-worker-spike` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2424,7 +2425,7 @@ Parent issue: #372
 
 Branch: `feature/p56-authority-hierarchy-supervisor-contracts`
 
-Status: active
+Status: complete
 
 Goal: formalize the authority hierarchy and supervisor job contract layer
 needed for local Copilot/Ollama supervisors, worker subagents, and paid Codex
@@ -2450,8 +2451,47 @@ Planned tasks:
   - [x] Add `agent-workbench authority render`.
   - [x] Support contract and report validation/rendering.
   - [x] Render compact Markdown summaries for coordinator review.
-- [ ] P56.4 Planning, tests, and PR closeout (#376)
+- [x] P56.4 Planning, tests, and PR closeout (#376)
   - [x] Link P56 roadmap and planning notes to GitHub issues.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Run focused authority tests.
   - [x] Open a P56-only PR against `main`.
+
+## Phase 57: VS Code Subagent Supervisor-Worker Spike
+
+Parent issue: #378
+
+Branch: `feature/p57-vscode-subagent-supervisor-worker-spike`
+
+Status: active
+
+Goal: test whether a VS Code Copilot/Ollama local supervisor can reliably
+execute bounded supervisor-worker graph tasks through custom agents, subagent
+calls, deterministic validators, and packaged launcher evidence.
+
+Planned tasks:
+
+- [x] P57.1 Custom-agent bridge and subagent handshake (#379)
+  - [x] Add local-supervisor and result-auditor custom agent definitions.
+  - [x] Harden bridge launch so it does not maximize the Copilot pane.
+  - [x] Capture bridge evidence for expected model, permission mode, final
+        marker, expected commands, expected output files, and deviations.
+  - [x] Require reports to preserve subagent payload evidence when subagent
+        invocation is attempted.
+- [x] P57.2 Document-artifact audit materialization and validators (#380)
+  - [x] Add materializers for document-artifact audit jobs and graph jobs.
+  - [x] Add validators for document-artifact audit reports and graph reports.
+  - [x] Add repair helpers for malformed graph reports.
+  - [x] Track sanitized summaries while keeping raw runtime artifacts ignored.
+- [x] P57.3 Graph batch packaged launcher evidence (#381)
+  - [x] Add graph batch materialization and runner surfaces.
+  - [x] Track sanitized summaries for accepted, rejected, aborted, and
+        internal P57 runs.
+  - [x] Add packaged launcher economics comparison.
+  - [x] Document the pre-materialized ticket boundary and quiet-runtime output
+        result.
+- [ ] P57.4 Economics summary, planning, tests, and PR closeout (#382)
+  - [x] Link P57 roadmap and planning notes to GitHub issues.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Run focused P57 test suite.
+  - [x] Open a P57-only PR against `main`.

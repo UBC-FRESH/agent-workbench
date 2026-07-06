@@ -1,0 +1,74 @@
+{
+  "summary_id": "p57_graph_batch_all_p55_summaries_v1_split_02_v5_summary",
+  "phase": "P57",
+  "task_id": "P57.4",
+  "status": "valid_artifacts_with_protocol_failure",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "copilot_permission_level": "autopilot",
+  "workflow_graph": "document_artifact_audit_supervisor_graph",
+  "batch_plan": {
+    "batch_id": "p57_graph_batch_all_p55_summaries_v1",
+    "split_id": "split_02_v5",
+    "source_count": 5,
+    "batch_size_policy": 5,
+    "split_strategy": "preserve_input_order"
+  },
+  "bridge_status": "needs-supervisor-review",
+  "final_marker_present": true,
+  "subagent_tool_observed": true,
+  "materializer_command_observed": true,
+  "materializer_command_count": 2,
+  "audit_report_written": true,
+  "graph_report_written": true,
+  "delete_command_observed": false,
+  "authority_validation_passed": true,
+  "document_audit_verifier_passed": true,
+  "document_graph_report_verifier_passed": true,
+  "all_source_facts_copied_correctly": true,
+  "all_decisions_consistent_with_gate": true,
+  "accepted_candidate": false,
+  "process_deviations": [
+    {
+      "deviation_id": "materializer_rerun",
+      "severity": "hard_protocol_failure",
+      "observed_command_count": 2,
+      "description": "The local supervisor ran the one-shot materializer command twice even though the ticket said to run it exactly once."
+    }
+  ],
+  "source_artifacts": [
+    "benchmarks/document_library/tsa23_tsr/p55_wave2_model_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_chunk_orchestration_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_qwen36_bf16_chunk_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_size_scale_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_deepseek_r1_summary.json"
+  ],
+  "subagent_outcome": {
+    "audit_report_status": "rejected_supervisor_replaced",
+    "graph_report_status": "rejected_supervisor_replaced",
+    "repair_required": true,
+    "items_repaired_or_replaced": 5,
+    "summary": "The subagent result used wrong item IDs and incorrect quote_repair_required decisions for items 2 and 3. The local supervisor replaced the subagent output with deterministic needs_coordinator_review decisions."
+  },
+  "audit_decision_breakdown": {
+    "ready_to_scale": 0,
+    "quote_repair_required": 0,
+    "needs_coordinator_review": 5,
+    "paid_supervisor_audit_required": 0
+  },
+  "supervisor_report_score": 0.2,
+  "token_costs": {
+    "measured_paid_cost_available": true,
+    "economics_usable": false,
+    "not_usable_reason": "The end checkpoint was taken after post-run bridge hardening and reparsing, so this span includes extra coordinator work outside the Copilot supervisor run.",
+    "estimated_paid_cost_usd": 0.542613,
+    "estimated_paid_cost_per_source_artifact_usd": 0.108523,
+    "supervisor_input_tokens": 17298,
+    "supervisor_cached_input_tokens": 2599424,
+    "supervisor_output_tokens": 3556,
+    "supervisor_reasoning_output_tokens": 547,
+    "codex_total_input_token_delta": 2616722,
+    "codex_total_token_delta": 2620278,
+    "local_copilot_ollama_cash_cost_usd": 0.0
+  },
+  "interpretation": "V5 proves the stricter graph-report verifier can be executed by the local Copilot supervisor and that final artifacts can pass all three deterministic gates. It also exposed two important negatives: the supervisor repeated the one-shot materializer command, so the run is not accepted, and the subagent output was rejected and replaced rather than accepted. The next protocol hardening should make one-shot materializer reruns an explicit blocked condition inside the ticket."
+}

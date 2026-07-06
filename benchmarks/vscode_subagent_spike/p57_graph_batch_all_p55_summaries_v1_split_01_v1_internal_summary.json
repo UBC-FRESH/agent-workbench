@@ -1,0 +1,83 @@
+{
+  "summary_id": "p57_graph_batch_all_p55_summaries_v1_split_01_v1_summary",
+  "phase": "P57",
+  "task_id": "P57.5",
+  "status": "needs-supervisor-review",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "model_provenance": {
+    "expected_model": "qwen3.6:35b-a3b-bf16",
+    "observed_model": "qwen3.6:35b-a3b-bf16",
+    "authoritative_model": "qwen3.6:35b-a3b-bf16",
+    "source": "copilot_chat_bridge_report",
+    "match_status": "matched",
+    "self_reported_model": "",
+    "self_report_status": "not_applicable"
+  },
+  "copilot_permission_level": "autopilot",
+  "workflow_graph": "",
+  "job_id": "p57_graph_batch_all_p55_summaries_v1_split_01_v1",
+  "source_artifacts": [
+    "benchmarks/document_library/tsa23_tsr/p55_codex_vs_copilot_supervisor_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_large_codex_vs_copilot_supervisor_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave1_full_document_rerun_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave1_smoke_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave10_quote_repair_prepass_summary.json"
+  ],
+  "source_count": 5,
+  "bridge_status": "needs-supervisor-review",
+  "final_marker_present": true,
+  "subagent_tool_observed": false,
+  "materializer_command_count": 1,
+  "accepted_candidate": false,
+  "failure": "authority_validation failed",
+  "authority_validation_passed": false,
+  "document_audit_verifier_passed": false,
+  "document_graph_report_verifier_passed": false,
+  "validation_results": {
+    "authority_validation": {
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: [Errno 2] No such file or directory: 'runtime\\\\agent_jobs\\\\p57_graph_batch_all_p55_summaries_v1_split_01_v1_audit_report.json'"
+    },
+    "document_audit_verifier": {
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<agent-workbench-root>\\scripts\\verify_document_artifact_audit_report.py\", line 185, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"<agent-workbench-root>\\scripts\\verify_document_artifact_audit_report.py\", line 169, in main\n    report = load_json(report_path)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"<agent-workbench-root>\\scripts\\verify_document_artifact_audit_report.py\", line 28, in load_json\n    data = json.loads(path.read_text(encoding=\"utf-8-sig\"))\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<local-app-data>\\Local\\Programs\\Python\\Python312\\Lib\\pathlib.py\", line 1027, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<local-app-data>\\Local\\Programs\\Python\\Python312\\Lib\\pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^..."
+    },
+    "graph_report_verifier": {
+      "returncode": 1,
+      "stdout": "invalid document artifact graph report: missing JSON report: <agent-workbench-root>\\runtime\\agent_jobs\\p57_graph_batch_all_p55_summaries_v1_split_01_v1_graph_report.json",
+      "stderr": ""
+    }
+  },
+  "all_decisions_consistent_with_gate": null,
+  "supervisor_report_score": null,
+  "subagent_outcome": {
+    "audit_report_status": null,
+    "graph_report_status": "",
+    "repair_required": null,
+    "summary": ""
+  },
+  "audit_decision_breakdown": {},
+  "token_costs": {
+    "measured_paid_cost_available": true,
+    "economics_usable": false,
+    "not_usable_reason": "Token delta is zero or the run was not accepted; this span is not usable as paid coordinator economics evidence.",
+    "estimated_paid_cost_usd": 0.0,
+    "estimated_paid_cost_per_source_artifact_usd": 0.0,
+    "supervisor_input_tokens": 0,
+    "supervisor_cached_input_tokens": 0,
+    "supervisor_output_tokens": 0,
+    "supervisor_reasoning_output_tokens": 0,
+    "worker_input_tokens": 0,
+    "worker_output_tokens": 0,
+    "codex_total_input_token_delta": 0,
+    "codex_total_token_delta": 0,
+    "local_copilot_ollama_cash_cost_usd": 0.0
+  },
+  "public_safety": {
+    "raw_chat_session_paths_excluded": true,
+    "raw_transcripts_excluded": true,
+    "provider_details_excluded": true
+  }
+}

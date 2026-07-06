@@ -70,6 +70,11 @@ from .roles import (
     render_role_markdown,
     validate_role_record,
 )
+from .supervisor_graph_run import (
+    DocumentAuditGraphRunConfig,
+    run_document_audit_graph,
+    summarize_existing_document_audit_graph,
+)
 from .supervisor_tokens import (
     latest_snapshot,
     span_record_from_checkpoints,
@@ -490,6 +495,186 @@ def build_parser() -> argparse.ArgumentParser:
     )
     supervisor_tokens_synthesize_parser.set_defaults(
         func=run_supervisor_tokens_synthesize
+    )
+
+    supervisor_parser = subparsers.add_parser(
+        "supervisor",
+        help="Run packaged local-supervisor workflows.",
+    )
+    supervisor_subparsers = supervisor_parser.add_subparsers(
+        dest="supervisor_command",
+        required=True,
+    )
+
+    supervisor_document_audit_parser = supervisor_subparsers.add_parser(
+        "run-document-audit-graph",
+        help="Run a packaged document-artifact audit graph through Copilot supervisor.",
+    )
+    supervisor_document_audit_parser.add_argument("--job-id", required=True)
+    supervisor_document_audit_parser.add_argument("--marker", required=True)
+    supervisor_document_audit_parser.add_argument("--phase", default="P57")
+    supervisor_document_audit_parser.add_argument("--task-id", default="P57.4")
+    supervisor_document_audit_parser.add_argument("--title", required=True)
+    supervisor_document_audit_parser.add_argument(
+        "--source-summary",
+        action="append",
+        required=True,
+        help="Source summary JSON path. May be repeated.",
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--project-root",
+        type=Path,
+        default=Path("."),
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("runtime/agent_jobs"),
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--token-dir",
+        type=Path,
+        default=None,
+        help="Runtime token ledger directory. Defaults under runtime/supervisor_tokens.",
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--summary-output",
+        type=Path,
+        required=True,
+        help="Sanitized summary JSON output path.",
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--mode",
+        default="agent-workbench-local-supervisor",
+    )
+    supervisor_document_audit_parser.add_argument("--code-command", default="code")
+    supervisor_document_audit_parser.add_argument(
+        "--bridge-prompt",
+        default=None,
+        help="Override the one-line prompt passed to code chat.",
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--expected-model",
+        default=None,
+        help="Require the Copilot bridge to observe this resolved model.",
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--pre-materialize-audit-ticket",
+        action="store_true",
+        help=(
+            "Coordinator-materialize the lower-level audit ticket before launching "
+            "Copilot, so the local supervisor starts at audit/report/repair nodes."
+        ),
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=1800,
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--poll-seconds",
+        type=float,
+        default=10.0,
+    )
+    supervisor_document_audit_parser.add_argument("--dry-run", action="store_true")
+    supervisor_document_audit_parser.add_argument(
+        "--bridge-no-launch",
+        action="store_true",
+        help="Parse an existing Copilot session instead of launching a new one.",
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--quiet-runtime-output",
+        action="store_true",
+        help=(
+            "Capture materializer and bridge stdout/stderr instead of printing "
+            "large runtime reports into the coordinator shell."
+        ),
+    )
+    supervisor_document_audit_parser.set_defaults(
+        func=run_supervisor_document_audit_graph
+    )
+
+    supervisor_document_audit_summary_parser = supervisor_subparsers.add_parser(
+        "summarize-document-audit-graph",
+        help=(
+            "Validate and summarize an existing document-artifact audit graph "
+            "run, optionally using an externally captured token record."
+        ),
+    )
+    supervisor_document_audit_summary_parser.add_argument("--job-id", required=True)
+    supervisor_document_audit_summary_parser.add_argument("--marker", required=True)
+    supervisor_document_audit_summary_parser.add_argument("--phase", default="P57")
+    supervisor_document_audit_summary_parser.add_argument("--task-id", default="P57.4")
+    supervisor_document_audit_summary_parser.add_argument("--title", required=True)
+    supervisor_document_audit_summary_parser.add_argument(
+        "--source-summary",
+        action="append",
+        required=True,
+        help="Source summary JSON path. May be repeated.",
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--project-root",
+        type=Path,
+        default=Path("."),
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("runtime/agent_jobs"),
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--token-dir",
+        type=Path,
+        default=None,
+        help="Runtime token ledger directory. Defaults under runtime/supervisor_tokens.",
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--token-record",
+        type=Path,
+        default=None,
+        help=(
+            "Optional externally captured token record to use instead of the "
+            "launcher-contained token record."
+        ),
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--summary-output",
+        type=Path,
+        required=True,
+        help="Sanitized summary JSON output path.",
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--mode",
+        default="agent-workbench-local-supervisor",
+    )
+    supervisor_document_audit_summary_parser.add_argument("--code-command", default="code")
+    supervisor_document_audit_summary_parser.add_argument(
+        "--bridge-prompt",
+        default=None,
+        help="Recorded prompt override for run-plan reconstruction.",
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--expected-model",
+        default=None,
+        help="Expected bridge-observed model used for provenance reporting.",
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--pre-materialize-audit-ticket",
+        action="store_true",
+        help="Reconstruct the plan as a pre-materialized-audit-ticket run.",
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=1800,
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--poll-seconds",
+        type=float,
+        default=10.0,
+    )
+    supervisor_document_audit_summary_parser.set_defaults(
+        func=run_supervisor_document_audit_graph_summary
     )
 
     experiments_parser = subparsers.add_parser(
@@ -1172,6 +1357,87 @@ def run_supervisor_tokens_synthesize(args: argparse.Namespace) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     print(f"wrote {args.output}")
+    return 0
+
+
+def run_supervisor_document_audit_graph(args: argparse.Namespace) -> int:
+    project_root = args.project_root.resolve()
+    token_dir = args.token_dir
+    if token_dir is None:
+        token_dir = Path("runtime/supervisor_tokens") / args.job_id
+    config = DocumentAuditGraphRunConfig(
+        project_root=project_root,
+        repo_root=args.repo_root.resolve(),
+        job_id=args.job_id,
+        marker=args.marker,
+        phase=args.phase,
+        task_id=args.task_id,
+        title=args.title,
+        source_summaries=tuple(Path(value) for value in args.source_summary),
+        output_dir=args.output_dir,
+        summary_output=args.summary_output,
+        token_dir=token_dir,
+        mode=args.mode,
+        code_command=args.code_command,
+        expected_model=args.expected_model,
+        bridge_prompt=args.bridge_prompt,
+        pre_materialize_audit_ticket=args.pre_materialize_audit_ticket,
+        timeout_seconds=args.timeout_seconds,
+        poll_seconds=args.poll_seconds,
+        dry_run=args.dry_run,
+        bridge_no_launch=args.bridge_no_launch,
+        quiet_runtime_output=args.quiet_runtime_output,
+    )
+    try:
+        result = run_document_audit_graph(config)
+    except (OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    if args.dry_run:
+        print(json.dumps(result, indent=2))
+    else:
+        print(f"wrote {args.summary_output}")
+    if isinstance(result, dict) and result.get("accepted_candidate") is False:
+        return 1
+    return 0
+
+
+def run_supervisor_document_audit_graph_summary(args: argparse.Namespace) -> int:
+    project_root = args.project_root.resolve()
+    token_dir = args.token_dir
+    if token_dir is None:
+        token_dir = Path("runtime/supervisor_tokens") / args.job_id
+    config = DocumentAuditGraphRunConfig(
+        project_root=project_root,
+        repo_root=args.repo_root.resolve(),
+        job_id=args.job_id,
+        marker=args.marker,
+        phase=args.phase,
+        task_id=args.task_id,
+        title=args.title,
+        source_summaries=tuple(Path(value) for value in args.source_summary),
+        output_dir=args.output_dir,
+        summary_output=args.summary_output,
+        token_dir=token_dir,
+        mode=args.mode,
+        code_command=args.code_command,
+        expected_model=args.expected_model,
+        bridge_prompt=args.bridge_prompt,
+        pre_materialize_audit_ticket=args.pre_materialize_audit_ticket,
+        timeout_seconds=args.timeout_seconds,
+        poll_seconds=args.poll_seconds,
+    )
+    try:
+        result = summarize_existing_document_audit_graph(
+            config,
+            token_record=args.token_record,
+        )
+    except (OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"wrote {args.summary_output}")
+    if isinstance(result, dict) and result.get("accepted_candidate") is False:
+        return 1
     return 0
 
 

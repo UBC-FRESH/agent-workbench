@@ -1,0 +1,89 @@
+{
+  "summary_id": "p57_graph_batch_all_p55_summaries_v1_split_03_v1_summary",
+  "phase": "P57",
+  "task_id": "P57.5",
+  "status": "accepted-candidate",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "model_provenance": {
+    "expected_model": "qwen3.6:35b-a3b-bf16",
+    "observed_model": "qwen3.6:35b-a3b-bf16",
+    "authoritative_model": "qwen3.6:35b-a3b-bf16",
+    "source": "copilot_chat_bridge_report",
+    "match_status": "matched",
+    "self_reported_model": "",
+    "self_report_status": "not_applicable"
+  },
+  "copilot_permission_level": "autopilot",
+  "workflow_graph": "document_artifact_audit_supervisor_graph",
+  "job_id": "p57_graph_batch_all_p55_summaries_v1_split_03_v1",
+  "source_artifacts": [
+    "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_q8_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave9_json_repair_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave9_validation_critic_summary.json"
+  ],
+  "source_count": 4,
+  "bridge_status": "accepted-candidate",
+  "final_marker_present": true,
+  "subagent_tool_observed": true,
+  "materializer_command_count": 0,
+  "pre_materialized_audit_ticket": true,
+  "accepted_candidate": true,
+  "failure": "",
+  "authority_validation_passed": true,
+  "document_audit_verifier_passed": true,
+  "document_graph_report_verifier_passed": true,
+  "validation_results": {
+    "authority_validation": {
+      "returncode": 0,
+      "stdout": "valid supervisor report: runtime\\agent_jobs\\p57_graph_batch_all_p55_summaries_v1_split_03_v1_audit_report.json",
+      "stderr": ""
+    },
+    "document_audit_verifier": {
+      "returncode": 0,
+      "stdout": "valid document artifact audit report: runtime/agent_jobs/p57_graph_batch_all_p55_summaries_v1_split_03_v1_audit_report.json",
+      "stderr": ""
+    },
+    "graph_report_verifier": {
+      "returncode": 0,
+      "stdout": "valid document artifact graph report: runtime/agent_jobs/p57_graph_batch_all_p55_summaries_v1_split_03_v1_graph_report.json",
+      "stderr": ""
+    }
+  },
+  "all_decisions_consistent_with_gate": true,
+  "supervisor_report_score": 1.0,
+  "subagent_outcome": {
+    "audit_report_status": "accepted_without_repair",
+    "graph_report_status": "accepted_without_repair",
+    "repair_required": false,
+    "summary": "All four source summaries audited deterministically. Decisions: source_summary_1 quote_repair_required, source_summary_2 quote_repair_required, source_summary_3 paid_supervisor_audit_required, source_summary_4 needs_coordinator_review. All decisions consistent with gate rules. Subagent result accepted without supervisor repair."
+  },
+  "audit_decision_breakdown": {
+    "quote_repair_required": 2,
+    "paid_supervisor_audit_required": 1,
+    "needs_coordinator_review": 1
+  },
+  "token_costs": {
+    "measured_paid_cost_available": true,
+    "economics_usable": true,
+    "not_usable_reason": "",
+    "estimated_paid_cost_usd": 0.080875,
+    "estimated_paid_cost_per_source_artifact_usd": 0.020219,
+    "supervisor_input_tokens": 1678,
+    "supervisor_cached_input_tokens": 403200,
+    "supervisor_output_tokens": 527,
+    "supervisor_reasoning_output_tokens": 0,
+    "worker_input_tokens": 0,
+    "worker_output_tokens": 0,
+    "codex_total_input_token_delta": 404878,
+    "codex_total_token_delta": 405405,
+    "local_copilot_ollama_cash_cost_usd": 0.0,
+    "measurement_boundary": "external_coordinator_span",
+    "external_token_record": "runtime/supervisor_tokens/p57_graph_batch_all_p55_summaries_v1_split_03_v1_external/external.tokens.json"
+  },
+  "public_safety": {
+    "raw_chat_session_paths_excluded": true,
+    "raw_transcripts_excluded": true,
+    "provider_details_excluded": true
+  }
+}

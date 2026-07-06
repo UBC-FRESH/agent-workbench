@@ -1,0 +1,67 @@
+{
+  "summary_id": "p57_graph_batch_all_p55_summaries_v1_split_02_v3_summary",
+  "phase": "P57",
+  "task_id": "P57.4",
+  "status": "accepted_candidate_with_quality_caveat",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "copilot_permission_level": "autopilot",
+  "workflow_graph": "document_artifact_audit_supervisor_graph",
+  "batch_plan": {
+    "batch_id": "p57_graph_batch_all_p55_summaries_v1",
+    "split_id": "split_02_v3",
+    "source_count": 5,
+    "batch_size_policy": 5,
+    "split_strategy": "preserve_input_order"
+  },
+  "bridge_status": "accepted-candidate",
+  "final_marker_present": true,
+  "subagent_tool_observed": true,
+  "materializer_command_observed": true,
+  "audit_report_written": true,
+  "graph_report_written": true,
+  "delete_command_observed": false,
+  "authority_validation_passed": true,
+  "document_audit_verifier_passed": true,
+  "all_source_facts_copied_correctly": true,
+  "all_decisions_consistent_with_gate": true,
+  "accepted_candidate": true,
+  "source_artifacts": [
+    "benchmarks/document_library/tsa23_tsr/p55_wave2_model_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_chunk_orchestration_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_qwen36_bf16_chunk_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_size_scale_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_deepseek_r1_summary.json"
+  ],
+  "audit_decision_breakdown": {
+    "ready_to_scale": 0,
+    "quote_repair_required": 0,
+    "needs_coordinator_review": 5,
+    "paid_supervisor_audit_required": 0
+  },
+  "quality_caveats": [
+    {
+      "caveat_id": "subagent_decision_repair_required",
+      "severity": "material_but_repaired",
+      "description": "The local supervisor invoked the result-auditor subagent, but the runtime graph report states that the supervisor had to determine or repair decisions directly before validators passed."
+    },
+    {
+      "caveat_id": "initial_validation_failures",
+      "severity": "expected_repair_loop",
+      "description": "The supervisor produced an initial audit report with wrong decisions for several items, then repaired the report after deterministic verifier feedback."
+    }
+  ],
+  "process_improvements_over_split_02": [
+    "No runtime report delete command was observed.",
+    "The required graph report was written before the final marker.",
+    "Bridge reparse classified the run as accepted-candidate after benign parenthesized Test-Path checks were allowed."
+  ],
+  "remaining_issues": [
+    "The supervisor still needed deterministic verifier feedback to repair subagent or self-derived decisions.",
+    "The bridge can prove that the subagent tool was invoked, but it does not yet independently score the quality of the subagent response."
+  ],
+  "token_costs": {
+    "measured_paid_cost_available": false,
+    "reason": "This rerun was launched before a dedicated start/end supervisor-token checkpoint was recorded. Do not use this summary for cost economics."
+  },
+  "interpretation": "The no-delete and mandatory-graph-report hardening changed the same split from valid artifact with protocol failure into an accepted bridge candidate. The result supports graph-derived Copilot supervisor execution for five-artifact batches, but also shows that deterministic validators remain essential because the local supervisor/subagent lane still repairs incorrect initial decisions."
+}

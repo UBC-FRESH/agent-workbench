@@ -337,15 +337,13 @@ def decision_input_from_node(node: dict[str, Any]) -> dict[str, Any]:
 
     node_kind = str(agent_parameters.get("node_kind", "graph_node"))
     authority = str(provenance.get("authority_level", "L6"))
-    supervisor_owned = authority == "supervisor-owned"
+    decision_authority = authority_to_decision_level(authority)
+    supervisor_owned = decision_authority == "L6"
     worker_node = node_kind.startswith("worker_") or authority in {"L0", "L1"}
 
-    if supervisor_owned:
-        decision_authority = "L6"
-    elif authority in {"L0", "L1", "L2", "L3", "L4", "L5", "L6"}:
-        decision_authority = authority
-    else:
-        decision_authority = "L6"
+    expected_verification = str(agent_parameters.get("evidence_reference", "")).strip()
+    if not expected_verification:
+        expected_verification = verification_reference_from_node(node)
 
     return {
         "task_id": str(node.get("id", "")),
@@ -357,13 +355,45 @@ def decision_input_from_node(node: dict[str, Any]) -> dict[str, Any]:
         "model": str(provenance.get("model_profile") or provenance.get("implementation", "")),
         "model_profile_status": "observed",
         "authority_level": decision_authority,
-        "expected_verification": str(agent_parameters.get("evidence_reference", "")),
+        "expected_verification": expected_verification,
         "role": str(provenance.get("role", "")),
         "requires_tracked_mutation": node_kind == "supervisor_promotion",
         "requires_github_mutation": False,
         "requires_release_or_closeout": node_kind == "supervisor_promotion",
         "economics": default_node_economics(worker_node),
     }
+
+
+def authority_to_decision_level(authority: str) -> str:
+    if authority in {"L0", "L1", "L2", "L3", "L4", "L5", "L6"}:
+        return authority
+    authority_map = {
+        "deterministic": "L0",
+        "worker-owned": "L1",
+        "local-worker-owned": "L1",
+        "supervisor-approved": "L4",
+        "supervisor-owned": "L6",
+        "coordinator-owned": "L6",
+        "developer-owned": "L6",
+    }
+    return authority_map.get(authority, "L6")
+
+
+def verification_reference_from_node(node: dict[str, Any]) -> str:
+    artifacts = node.get("artifacts", [])
+    if not isinstance(artifacts, list):
+        return "graph node artifacts"
+    references: list[str] = []
+    for artifact in artifacts:
+        if not isinstance(artifact, dict):
+            continue
+        artifact_id = str(artifact.get("artifact_id", "")).strip()
+        path_or_reference = str(artifact.get("path_or_reference", "")).strip()
+        if artifact_id and path_or_reference:
+            references.append(f"{artifact_id}: {path_or_reference}")
+        elif path_or_reference:
+            references.append(path_or_reference)
+    return "; ".join(references) or "graph node artifacts"
 
 
 def default_node_economics(worker_node: bool) -> dict[str, float]:

@@ -1483,3 +1483,15 @@ issues, pull requests, and closeout comments.
   `feature/p56-authority-hierarchy-supervisor-contracts`.
 - Linked `ROADMAP.md` and `planning/phase56_authority_contracts.md` to the P56
   issue set before opening the P56 PR.
+
+## 2026-07-05 - Opened P57 VS Code subagent supervisor spike
+
+- Created P57 parent issue #378 and child issues #379-#382 after P56 landed so
+  the VS Code subagent supervisor work has its own phase tracker.
+- Rebased `feature/p57-vscode-subagent-supervisor-worker-spike` onto merged
+  P56 `main`.
+- Added tracked local-supervisor custom agent definitions, graph/materializer
+  tooling, deterministic validators, repair helpers, packaged-launcher
+  economics summaries, and P57 planning notes.
+- Kept P58 evidence consolidation out of the P57 branch; P57 focuses on the
+  spike and packaged-run evidence surface only.
