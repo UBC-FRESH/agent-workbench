@@ -1720,3 +1720,16 @@ issues, pull requests, and closeout comments.
 - Updated `AGENTS.md` and `planning/phase65_copilot_session_archive.md` so
   future Copilot-backed delegation runs capture behavior traces by default
   rather than relying on manual post-run reminders.
+
+## 2026-07-06 - Planned P66-P70 task-level delegation tranche
+
+- Added `planning/p66_p70_task_level_delegation_tranche.md` to capture the
+  P108-derived direction: default to one-child-task delegation, keep phase
+  sequencing and acceptance coordinator-owned, and use archived Copilot
+  behavior traces as systematic evidence.
+- Expanded `ROADMAP.md` with planned P66-P70 phases:
+  task-level delegation protocol, heartbeat and nudge protocol, Copilot task
+  controller v0, behavior analytics from archives, and FEMIC P108 repair
+  dogfood.
+- Fleshed out each planned phase to task/subtask level so the next tranche is
+  ready for UBC-FRESH phase activation rather than remaining a chat-only idea.
