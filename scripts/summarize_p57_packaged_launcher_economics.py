@@ -12,6 +12,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from agent_workbench.outcomes import outcome_from_summary
+
 
 DEFAULT_OUTPUT = Path(
     "benchmarks/vscode_subagent_spike/p57_packaged_launcher_economics_comparison.json"
@@ -79,6 +81,7 @@ def normalize(path: Path) -> dict[str, Any]:
     economics_usable = costs.get("economics_usable")
     if economics_usable is None:
         economics_usable = bool(accepted and estimated_cost is not None)
+    outcome = outcome_from_summary(data)
     subagent = data.get("subagent_outcome", {})
     if not isinstance(subagent, dict):
         subagent = {}
@@ -90,11 +93,15 @@ def normalize(path: Path) -> dict[str, Any]:
     )
     observed_model = str(model_provenance.get("observed_model") or authoritative_model)
     return {
-        "summary_path": path.as_posix(),
+        "summary_path": display_path(path),
         "record_label": path.stem,
         "summary_id": data.get("summary_id", path.stem),
         "status": data.get("status", ""),
         "accepted_candidate": bool(accepted),
+        "quality_validated_candidate": outcome["quality_validated_candidate"],
+        "protocol_accepted_candidate": outcome["protocol_accepted_candidate"],
+        "final_decision": outcome["final_decision"],
+        "rejection_reasons": outcome["rejection_reasons"],
         "model": authoritative_model,
         "model_provenance": {
             "expected_model": str(model_provenance.get("expected_model") or ""),
@@ -143,6 +150,13 @@ def number_or_none(value: Any) -> float | None:
         return float(str(value))
     except ValueError:
         return None
+
+
+def display_path(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        return path.as_posix()
 
 
 def summarize(records: list[dict[str, Any]]) -> dict[str, Any]:
@@ -212,25 +226,26 @@ def render_markdown(summary: dict[str, Any]) -> str:
     if not isinstance(latest_model_provenance, dict):
         latest_model_provenance = {}
     rows = [
-        "| Record | Model | Accepted | Economics | Cost | Cost/source | Boundary | Subagent tool | Subagent status |",
-        "| --- | --- | --- | --- | ---: | ---: | --- | --- | --- |",
+        "| Record | Model | Quality | Protocol | Economics | Decision | Cost | Cost/source | Boundary | Subagent tool |",
+        "| --- | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |",
     ]
     for record in summary.get("records", []):
         if not isinstance(record, dict):
             continue
         rows.append(
-            "| {record} | `{model}` | {accepted} | {usable} | {cost} | {per_source} | {boundary} | {subagent_tool} | {subagent} |".format(
+            "| {record} | `{model}` | {quality} | {protocol} | {usable} | `{decision}` | {cost} | {per_source} | {boundary} | {subagent_tool} |".format(
                 record=record.get("record_label", ""),
                 model=record.get("model", "") or "unknown",
-                accepted=yes_no(record.get("accepted_candidate")),
+                quality=yes_no(record.get("quality_validated_candidate")),
+                protocol=yes_no(record.get("protocol_accepted_candidate")),
                 usable=yes_no(record.get("economics_usable")),
+                decision=record.get("final_decision", "") or "n/a",
                 cost=format_usd(record.get("estimated_paid_cost_usd")),
                 per_source=format_usd(
                     record.get("estimated_paid_cost_per_source_artifact_usd")
                 ),
                 boundary=record.get("measurement_boundary", "") or "legacy",
                 subagent_tool=yes_no(record.get("subagent_tool_observed")),
-                subagent=record.get("subagent_status", "") or "n/a",
             )
         )
 

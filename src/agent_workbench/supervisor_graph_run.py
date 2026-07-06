@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .outcomes import OutcomeInput, classify_outcome
 from .supervisor_tokens import span_record_from_checkpoints, write_checkpoint
 
 
@@ -327,13 +328,15 @@ def summarize_document_audit_graph_run(
         total_delta = int(usage.get("codex_total_token_delta", 0) or 0)
     source_count = len(plan.get("source_summaries", []))
     validation_results = sanitize_validation_results(validation_results or {})
+    validator_passed = all(
+        result.get("returncode") == 0
+        for result in validation_results.values()
+        if isinstance(result, dict)
+    )
+    bridge_accepted = bridge.get("status") == "accepted-candidate"
     accepted = (
-        bridge.get("status") == "accepted-candidate"
-        and all(
-            result.get("returncode") == 0
-            for result in validation_results.values()
-            if isinstance(result, dict)
-        )
+        bridge_accepted
+        and validator_passed
     )
     status = "accepted-candidate" if accepted else bridge.get("status", "unknown")
     if failure and status == "accepted-candidate":
@@ -341,6 +344,34 @@ def summarize_document_audit_graph_run(
     model_provenance = bridge_model_provenance(
         bridge,
         expected_model=expected_model_from_plan(plan),
+    )
+    protocol_rejection_reasons = protocol_reasons(
+        bridge_accepted=bridge_accepted,
+        validator_passed=validator_passed,
+        failure=failure,
+        model_provenance=model_provenance,
+    )
+    outcome = classify_outcome(
+        OutcomeInput(
+            quality_validated_candidate=validator_passed and not bool(failure),
+            protocol_accepted_candidate=accepted
+            and not protocol_rejection_reasons,
+            measured_token_delta=total_delta,
+            protocol_rejection_reasons=tuple(protocol_rejection_reasons),
+            economics_rejection_reasons=()
+            if total_delta > 0
+            else ("missing_measured_paid_token_delta",),
+            metadata={
+                "bridge_status": bridge.get("status", "unknown"),
+                "validator_passed": validator_passed,
+                "model_match_status": model_provenance["match_status"],
+            },
+        )
+    )
+    accepted_candidate = (
+        bridge.get("status") == "accepted-candidate"
+        and outcome["quality_validated_candidate"]
+        and outcome["protocol_accepted_candidate"]
     )
     pre_materialized_audit_ticket = bool(plan.get("pre_materialized_audit_ticket"))
     return {
@@ -362,7 +393,8 @@ def summarize_document_audit_graph_run(
             "materialize_document_artifact_audit.py"
         ),
         "pre_materialized_audit_ticket": pre_materialized_audit_ticket,
-        "accepted_candidate": accepted,
+        "accepted_candidate": accepted_candidate,
+        **outcome_without_metadata(outcome),
         "failure": failure or "",
         "authority_validation_passed": validation_passed(
             validation_results, "authority_validation"
@@ -393,12 +425,13 @@ def summarize_document_audit_graph_run(
         "audit_decision_breakdown": decisions,
         "token_costs": {
             "measured_paid_cost_available": True,
-            "economics_usable": accepted and total_delta > 0,
+            "economics_usable": outcome["economics_usable"],
             "not_usable_reason": ""
-            if accepted and total_delta > 0
+            if outcome["economics_usable"]
             else (
-                "Token delta is zero or the run was not accepted; this span is "
-                "not usable as paid coordinator economics evidence."
+                "Token delta is zero, the run was not protocol accepted, or the "
+                "artifact did not validate; this span is not usable as paid "
+                "coordinator economics evidence."
             ),
             "estimated_paid_cost_usd": round(paid_cost, 6),
             "estimated_paid_cost_per_source_artifact_usd": round(
@@ -414,6 +447,42 @@ def summarize_document_audit_graph_run(
             "raw_transcripts_excluded": True,
             "provider_details_excluded": True,
         },
+    }
+
+
+def protocol_reasons(
+    *,
+    bridge_accepted: bool,
+    validator_passed: bool,
+    failure: str | None,
+    model_provenance: dict[str, Any],
+) -> list[str]:
+    reasons: list[str] = []
+    if not bridge_accepted:
+        reasons.append("bridge_status_not_accepted")
+    if not validator_passed:
+        reasons.append("deterministic_validator_failed")
+    if failure:
+        reasons.append(failure)
+    if model_provenance.get("match_status") == "mismatched":
+        reasons.append("model_provenance_mismatch")
+    return reasons
+
+
+def outcome_without_metadata(outcome: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: value
+        for key, value in outcome.items()
+        if key
+        in {
+            "quality_validated_candidate",
+            "protocol_accepted_candidate",
+            "economics_usable",
+            "final_decision",
+            "rejection_reasons",
+            "soft_penalty",
+            "soft_reasons",
+        }
     }
 
 
