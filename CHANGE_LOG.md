@@ -1702,3 +1702,4 @@ issues, pull requests, and closeout comments.
 - Validated the changed Markdown surfaces with `git diff --check` and a
   public-safety scan for private paths, provider URLs, headers, credentials,
   and transcript fragments.
+- Opened P64-only pull request #425 after P64.1-P64.4 evidence agreed.
