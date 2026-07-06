@@ -1,0 +1,130 @@
+{
+  "contract_id": "example_supervisor_job_contract",
+  "authority_model": {
+    "levels": [
+      {
+        "role": "developer",
+        "authority": "Defines project purpose, constraints, acceptance posture, and final research or product judgment.",
+        "responsibilities": [
+          "approve high-level direction",
+          "decide unresolved product or research tradeoffs"
+        ],
+        "nondelegable_actions": [
+          "change project purpose",
+          "accept unreviewed high-risk output"
+        ]
+      },
+      {
+        "role": "coordinator",
+        "authority": "Translates developer intent into roadmap phases, issue structure, workflow graphs, and supervisor job tickets.",
+        "responsibilities": [
+          "select workflow graph",
+          "define acceptance gates",
+          "review compact supervisor evidence"
+        ],
+        "nondelegable_actions": [
+          "merge phase PR",
+          "close parent issue without evidence"
+        ]
+      },
+      {
+        "role": "supervisor",
+        "authority": "Runs the assigned workflow within ticket boundaries and escalates when the graph cannot be completed safely.",
+        "responsibilities": [
+          "activate graph nodes",
+          "launch workers",
+          "run local validation and repair loops",
+          "write final QA/QC report"
+        ],
+        "nondelegable_actions": [
+          "broaden scope",
+          "edit tracked files unless explicitly authorized"
+        ]
+      },
+      {
+        "role": "worker",
+        "authority": "Executes one bounded node with assigned context and tools.",
+        "responsibilities": [
+          "produce structured node output",
+          "preserve uncertainty",
+          "stop at the node boundary"
+        ],
+        "nondelegable_actions": [
+          "claim phase completion",
+          "mutate GitHub state"
+        ]
+      }
+    ]
+  },
+  "workspace": {
+    "root": "${PROJECT_ROOT}",
+    "root_policy": "placeholder",
+    "wrong_root_stop_rule": "If the active workspace root does not resolve to the assigned project, write a blocked report and stop."
+  },
+  "job": {
+    "phase": "PXX",
+    "task_id": "PXX.Y",
+    "title": "Bounded supervisor workflow",
+    "goal": "Run one assigned workflow graph and return compact evidence for coordinator review.",
+    "supervisor_role": "supervisor"
+  },
+  "inputs": [
+    {
+      "artifact_id": "source_ticket",
+      "path": "runtime/agent_jobs/example_ticket.md",
+      "role": "input"
+    }
+  ],
+  "outputs": [
+    {
+      "artifact_id": "supervisor_report",
+      "path": "runtime/agent_jobs/example_supervisor_report.json",
+      "role": "report"
+    }
+  ],
+  "allowed_tools": [
+    "read_file",
+    "create_file",
+    "run_in_terminal"
+  ],
+  "forbidden_actions": [
+    "edit tracked files",
+    "create commits",
+    "create or close GitHub issues",
+    "merge pull requests"
+  ],
+  "stop_conditions": [
+    "required input is missing",
+    "active root is not the assigned workspace",
+    "workflow requires unauthorized authority",
+    "allowed retry budget is exhausted"
+  ],
+  "success_criteria": [
+    "all required output artifacts exist",
+    "final signal is one of the allowed job signals",
+    "verification evidence is compact and inspectable"
+  ],
+  "final_signals": [
+    "job_complete",
+    "job_complete_with_caveats",
+    "needs_coordinator_review",
+    "needs_developer_decision",
+    "job_failed",
+    "job_aborted",
+    "job_partially_complete"
+  ],
+  "verification": {
+    "required_checks": [
+      "output_json_valid",
+      "expected_artifact_exists"
+    ],
+    "evidence_paths": [
+      "runtime/agent_jobs/example_supervisor_report.json"
+    ],
+    "scoring": "Use the task-specific scoring rubric named by the coordinator ticket."
+  },
+  "public_safety": {
+    "tracked_artifact": true,
+    "raw_transcript_policy": "raw transcripts stay under ignored runtime or tmp paths"
+  }
+}

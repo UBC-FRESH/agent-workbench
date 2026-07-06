@@ -15,6 +15,13 @@ from .accounting import (
     synthesize_accounting_markdown,
     validate_accounting_record,
 )
+from .authority import (
+    load_authority_record,
+    render_supervisor_job_contract,
+    render_supervisor_report,
+    validate_supervisor_job_contract,
+    validate_supervisor_report,
+)
 from .benchmark import (
     load_benchmark_record,
     prepare_benchmark_worktrees,
@@ -270,6 +277,40 @@ def build_parser() -> argparse.ArgumentParser:
     )
     policy_tune_parser.add_argument("--output", type=Path, required=True)
     policy_tune_parser.set_defaults(func=run_policy_tune)
+
+    authority_parser = subparsers.add_parser(
+        "authority",
+        help="Validate or render supervisor job contracts and reports.",
+    )
+    authority_subparsers = authority_parser.add_subparsers(
+        dest="authority_command",
+        required=True,
+    )
+
+    authority_validate_parser = authority_subparsers.add_parser(
+        "validate",
+        help="Validate an authority hierarchy contract or supervisor report.",
+    )
+    authority_validate_parser.add_argument(
+        "--kind",
+        choices=("contract", "report"),
+        required=True,
+    )
+    authority_validate_parser.add_argument("--input", type=Path, required=True)
+    authority_validate_parser.set_defaults(func=run_authority_validate)
+
+    authority_render_parser = authority_subparsers.add_parser(
+        "render",
+        help="Render an authority hierarchy contract or supervisor report.",
+    )
+    authority_render_parser.add_argument(
+        "--kind",
+        choices=("contract", "report"),
+        required=True,
+    )
+    authority_render_parser.add_argument("--input", type=Path, required=True)
+    authority_render_parser.add_argument("--output", type=Path, required=True)
+    authority_render_parser.set_defaults(func=run_authority_render)
 
     workflow_parser = subparsers.add_parser(
         "workflow",
@@ -873,6 +914,48 @@ def run_policy_tune(args: argparse.Namespace) -> int:
         return 1
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(report, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
+
+
+def run_authority_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_authority_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    if args.kind == "contract":
+        result = validate_supervisor_job_contract(data)
+        label = "supervisor job contract"
+    else:
+        result = validate_supervisor_report(data)
+        label = "supervisor report"
+    if result.ok:
+        print(f"valid {label}: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_authority_render(args: argparse.Namespace) -> int:
+    try:
+        data = load_authority_record(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    if args.kind == "contract":
+        result = validate_supervisor_job_contract(data)
+        renderer = render_supervisor_job_contract
+    else:
+        result = validate_supervisor_report(data)
+        renderer = render_supervisor_report
+    if not result.ok:
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(renderer(data), encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
 

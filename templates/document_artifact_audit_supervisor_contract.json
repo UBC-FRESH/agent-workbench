@@ -1,0 +1,136 @@
+{
+  "contract_id": "example_document_artifact_audit_supervisor_contract",
+  "authority_model": {
+    "levels": [
+      {
+        "role": "developer",
+        "authority": "Defines the document-indexing objective, quality posture, and acceptable risk.",
+        "responsibilities": [
+          "set indexing purpose",
+          "decide when quality is good enough for downstream scientific use"
+        ],
+        "nondelegable_actions": [
+          "accept a corpus-wide indexing workflow without spot-check evidence",
+          "change the scientific purpose of the index"
+        ]
+      },
+      {
+        "role": "coordinator",
+        "authority": "Selects the source artifact, gate rules, and supervisor ticket.",
+        "responsibilities": [
+          "define source artifact path",
+          "define gate-to-decision invariants",
+          "review compact supervisor evidence"
+        ],
+        "nondelegable_actions": [
+          "claim benchmark win without token and quality evidence",
+          "close a roadmap phase without synchronized evidence"
+        ]
+      },
+      {
+        "role": "supervisor",
+        "authority": "Runs the bounded document-artifact audit and writes a report.",
+        "responsibilities": [
+          "read the source artifact",
+          "extract allowed source facts",
+          "invoke the auditor subagent",
+          "check gate-to-decision consistency",
+          "write the supervisor report"
+        ],
+        "nondelegable_actions": [
+          "edit tracked files unless the ticket explicitly authorizes it",
+          "invent source facts",
+          "override source gate evidence"
+        ]
+      },
+      {
+        "role": "worker",
+        "authority": "Audits only the extracted source facts passed by the supervisor.",
+        "responsibilities": [
+          "return compact audit status",
+          "use only the allowed decision vocabulary",
+          "preserve uncertainty"
+        ],
+        "nondelegable_actions": [
+          "modify files",
+          "claim whole-job completion"
+        ]
+      }
+    ]
+  },
+  "workspace": {
+    "root": "${PROJECT_ROOT}",
+    "root_policy": "placeholder",
+    "wrong_root_stop_rule": "If the active workspace root does not resolve to the assigned project, write a blocked report and stop."
+  },
+  "job": {
+    "phase": "PXX",
+    "task_id": "PXX.Y",
+    "title": "Strict document artifact audit",
+    "goal": "Audit one document-indexing summary and preserve explicit source gate evidence in the supervisor decision.",
+    "supervisor_role": "supervisor"
+  },
+  "inputs": [
+    {
+      "artifact_id": "source_summary",
+      "path": "${SOURCE_SUMMARY_PATH}",
+      "role": "input"
+    }
+  ],
+  "outputs": [
+    {
+      "artifact_id": "supervisor_report",
+      "path": "${SUPERVISOR_REPORT_PATH}",
+      "role": "report"
+    }
+  ],
+  "allowed_tools": [
+    "read",
+    "agent"
+  ],
+  "forbidden_actions": [
+    "edit tracked files",
+    "create commits",
+    "create or modify GitHub issues or pull requests",
+    "copy raw transcripts into tracked files",
+    "claim ready_to_scale when source gate requires repair or supervisor audit"
+  ],
+  "stop_conditions": [
+    "required source artifact is missing or unreadable",
+    "active root is not the assigned workspace",
+    "auditor decision contradicts explicit source gate evidence",
+    "supervisor report JSON exists"
+  ],
+  "success_criteria": [
+    "source facts are copied exactly into the report",
+    "auditor_decision is one of the allowed decision values",
+    "gate-to-decision invariant is satisfied",
+    "subagent payload excerpt is present and compact"
+  ],
+  "final_signals": [
+    "job_complete",
+    "job_complete_with_caveats",
+    "needs_coordinator_review",
+    "job_failed"
+  ],
+  "verification": {
+    "required_checks": [
+      "source_artifact_read",
+      "auditor_subagent_invoked",
+      "source_fact_copy_checked",
+      "gate_to_decision_invariant_checked"
+    ],
+    "evidence_paths": [
+      "${SUPERVISOR_REPORT_PATH}"
+    ],
+    "scoring": {
+      "source_fact_copy": "pass/fail",
+      "gate_decision_consistency": "pass/fail",
+      "subagent_payload_present": "pass/fail"
+    }
+  },
+  "public_safety": {
+    "tracked_artifact": true,
+    "raw_transcript_policy": "raw prompts, transcripts, provider details, and source text stay under ignored runtime paths"
+  }
+}
