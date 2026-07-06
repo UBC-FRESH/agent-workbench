@@ -13,7 +13,10 @@ Return machine-readable records only. Do not summarize the task in prose.
 - page_range:
 - chunk_count:
 - chunk_manifest:
-- output_record_type: `structure` or `content_metadata`
+- output_record_type: `section_map`, `typed_fact`, `structure`, or
+  `content_metadata`
+- explicit_record_cap: `none` unless this ticket states a concrete cap and why
+  it exists
 
 ## Inputs
 
@@ -53,7 +56,7 @@ Set `review_status` to `raw_worker_candidate`.
 
 ## Allowed Object Types
 
-Structure pass:
+Section-map or structure pass:
 
 - `component_boundary`
 - `heading`
@@ -64,9 +67,10 @@ Structure pass:
 - `acronym`
 - `definition`
 - `cross_reference`
+- `section_summary`
 - `other`
 
-Content metadata pass:
+Typed fact or content metadata pass:
 
 - `claim`
 - `assumption`
@@ -84,8 +88,15 @@ Content metadata pass:
 - Do not invent pages, sections, titles, values, definitions, or citations.
 - Prefer fewer, stronger records over many vague records.
 - Include a short source quote that directly supports the record.
+- Treat roughly 25 words as the default quote-length target unless the ticket
+  says otherwise.
+- Quote length is a soft quality preference, not a hard failure, unless the
+  ticket explicitly says a downstream consumer requires strict excerpt length.
 - If a record is useful but uncertain, lower `confidence`.
 - If a chunk has no useful metadata, output no records for that chunk.
+- Do not stop because you reached an unstated record count. Hidden record caps
+  are forbidden. If the ticket contains an explicit record cap, obey that cap
+  and preserve coverage notes in the requested fields.
 - Stop after the JSONL records.
 
 ## Failure Conditions

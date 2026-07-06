@@ -72,12 +72,54 @@
       }
     },
     {
+      "id": "declare_budget_and_stop_rules",
+      "provider": "agent_workbench.supervisor.budget",
+      "name": "Declare budget and stop rules",
+      "description": "Validate the P59 budget declaration before any live worker call that may support economics claims.",
+      "needs": [
+        "extract_text_chunks"
+      ],
+      "outputs": {
+        "budget_record": "tracked or runtime budget declaration",
+        "stop_rule": "maximum attempts, maximum paid cost, and maintainer checkpoint trigger"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "budget_gate",
+          "execution_boundary": "Live worker execution for economics evidence fails closed without a valid budget declaration.",
+          "owner": "paid_supervisor_or_coordinator",
+          "budget_template": "templates/supervisor_budget_declaration.json",
+          "token_accounting": "supervisor checkpoint spans required for economics claims",
+          "outcome_fields": [
+            "quality_validated_candidate",
+            "protocol_accepted_candidate",
+            "economics_usable",
+            "final_decision",
+            "rejection_reasons"
+          ]
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "budget_record",
+          "kind": "promoted_or_runtime",
+          "path_or_reference": "target_project/runtime/document_library/<document_id>/budget_declaration.json"
+        }
+      ],
+      "provenance": {
+        "role": "coordinator",
+        "capability": "budget_gate_and_stop_rule_validation",
+        "authority_level": "supervisor-owned",
+        "implementation": "Agent Workbench budget validator"
+      }
+    },
+    {
       "id": "structure_pass",
       "provider": "agent_workbench.local_worker.document_index",
       "name": "Structure pass",
       "description": "Local worker extracts headings, components, tables, figures, maps, appendices, definitions, acronyms, and cross-references from bounded chunks.",
       "needs": [
-        "extract_text_chunks"
+        "declare_budget_and_stop_rules"
       ],
       "outputs": {
         "structure_candidates": "ignored raw worker candidate records"
@@ -90,6 +132,7 @@
           "allowed_authority": "L0",
           "ticket_template": "templates/document_index_worker_ticket.md",
           "record_type": "structure",
+          "record_cap_policy": "hidden caps forbidden; explicit ticket caps must state value, reason, and coverage-distortion risk",
           "token_accounting": "worker input/output tokens plus supervisor orchestration span"
         }
       },
@@ -126,6 +169,7 @@
           "allowed_authority": "L0",
           "ticket_template": "templates/document_index_worker_ticket.md",
           "record_type": "content_metadata",
+          "record_cap_policy": "hidden caps forbidden; explicit ticket caps must state value, reason, and coverage-distortion risk",
           "token_accounting": "worker input/output tokens plus supervisor orchestration span"
         }
       },
@@ -266,7 +310,15 @@
           "execution_boundary": "Paid supervisor owns source-level audit, economics interpretation, and scale or stop decision.",
           "owner": "paid_supervisor",
           "token_accounting": "required supervisor-token start/end checkpoint",
-          "decision_boundary": "supervisor owns final labels and scale/stop decision"
+          "decision_boundary": "supervisor owns final labels and scale/stop decision",
+          "outcome_fields": [
+            "quality_validated_candidate",
+            "protocol_accepted_candidate",
+            "economics_usable",
+            "final_decision",
+            "rejection_reasons"
+          ],
+          "soft_scoring": "quote length and wording preferences are soft penalties unless downstream consumer contract makes them hard constraints"
         }
       },
       "artifacts": [
@@ -300,7 +352,8 @@
           "execution_boundary": "Script may assemble only supervisor-accepted or explicitly repaired records into promoted outputs.",
           "owner": "script_with_supervisor_approval",
           "token_accounting": "tracked update span if paid supervisor edits or approves",
-          "promotion_boundary": "only accepted/repaired records with source anchors enter the index"
+          "promotion_boundary": "only accepted/repaired records with source anchors enter the index",
+          "required_outcome_state": "quality_validated_candidate true; promotion approved by supervisor or project policy"
         }
       },
       "artifacts": [

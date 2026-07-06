@@ -1571,3 +1571,18 @@ issues, pull requests, and closeout comments.
 - Reconciled `ROADMAP.md` status fields so P55 and P57-P60 detailed phase
   sections match the issue/PR closeout state, while P61 remains the only active
   phase on the P61 branch.
+
+## 2026-07-05 - Implemented P62 document-indexing workflow recipe
+
+- Created P62 parent issue #408 and child issues #409-#412 on
+  `feature/p62-document-indexing-recipe-v1`.
+- Added `playbooks/document_indexing_recipe.md` as the public technical PDF
+  document-indexing recipe.
+- Added `planning/phase62_document_indexing_recipe_v1.md` to record the
+  non-live recipe decisions and P63 handoff boundary.
+- Added recipe manifest and stage-record templates with P59 budget hooks, P60
+  outcome fields, public-safety policy, task-size defaults, model-role defaults,
+  and no-hidden-record-cap policy.
+- Updated the document-index worker ticket and document-library graph template
+  so future instantiations inherit the P62 budget, outcome, quote-penalty, and
+  no-hidden-cap rules.

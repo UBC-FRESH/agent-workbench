@@ -45,9 +45,10 @@ Promote only sanitized findings into tracked project files.
 
 `document_library_index_graph.json` is the starter graph for public technical
 document library indexing workflows. It covers corpus registration, text
-chunking, local-worker structure/content extraction, local self-audit,
-delegated repair iteration, deterministic convergence checking, paid supervisor
-audit calibration, and promoted index assembly.
+chunking, a P59 budget and stop-rule gate, local-worker structure/content
+extraction, local self-audit, delegated repair iteration, deterministic
+convergence checking, P60 split outcome fields, paid supervisor audit
+calibration, and promoted index assembly.
 
 `managed_delegate_loop_graph.json` is the generic loop shape behind that
 document workflow. It separates extractor, self-auditor, repairer,

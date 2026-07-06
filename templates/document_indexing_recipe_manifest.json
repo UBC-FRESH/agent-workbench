@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "recipe_id": "document-indexing-workflow-v1",
+  "recipe_name": "Document Indexing Workflow Recipe V1",
+  "project": "target-project",
+  "corpus_id": "public-technical-document-corpus",
+  "workflow_graph_template": "templates/workbench_templates/document_library_index_graph.json",
+  "budget_declaration_required_for_live_runs": true,
+  "budget_declaration_template": "templates/supervisor_budget_declaration.json",
+  "source_material_policy": {
+    "raw_documents_tracked": false,
+    "raw_extracted_text_tracked": false,
+    "raw_prompts_tracked": false,
+    "raw_worker_outputs_tracked": false,
+    "provider_details_tracked": false
+  },
+  "stage_sequence": [
+    "corpus_resolution",
+    "chunk_manifest_generation",
+    "budget_gate",
+    "section_map_extraction",
+    "typed_fact_extraction",
+    "local_self_audit",
+    "local_repair",
+    "disagreement_verification",
+    "deterministic_validation",
+    "paid_supervisor_sample_audit",
+    "promoted_index_assembly"
+  ],
+  "task_size_defaults": {
+    "section_map_page_window": {
+      "min_pages": 12,
+      "max_pages": 24,
+      "notes": "Use smaller windows when headings are dense or OCR quality is weak."
+    },
+    "typed_fact_page_window": {
+      "min_pages": 8,
+      "max_pages": 16,
+      "notes": "Use smaller windows for table-heavy, numeric, or policy-dense pages."
+    },
+    "repair_batch_records": {
+      "min_records": 25,
+      "max_records": 75,
+      "notes": "Provide source excerpts and validation defects, not raw whole-document text."
+    },
+    "disagreement_verification_fields": {
+      "min_fields": 10,
+      "max_fields": 40,
+      "notes": "Include disputed fields and compact source evidence only."
+    },
+    "paid_supervisor_audit_records": {
+      "min_records": 10,
+      "max_records": 30,
+      "notes": "Stratify by object type, confidence, document section, and worker model."
+    }
+  },
+  "record_cap_policy": {
+    "hidden_record_caps_allowed": false,
+    "explicit_ticket_record_caps_allowed": true,
+    "required_when_cap_used": [
+      "cap_value",
+      "reason",
+      "coverage_distortion_risk"
+    ]
+  },
+  "model_role_defaults": {
+    "section_map_extractor": {
+      "role_family": "general_document_understanding",
+      "model_name": "configured-ollama-document-model"
+    },
+    "typed_fact_extractor": {
+      "role_family": "general_document_understanding",
+      "model_name": "configured-ollama-document-model"
+    },
+    "json_repairer": {
+      "role_family": "coding_oriented_json_repair",
+      "model_name": "configured-ollama-coding-model"
+    },
+    "self_auditor": {
+      "role_family": "corpus_validated_local_auditor",
+      "model_name": "configured-ollama-audit-model-or-null"
+    },
+    "disagreement_verifier": {
+      "role_family": "evidence_supported_verifier",
+      "model_name": "configured-ollama-verifier-model-or-null"
+    },
+    "paid_sample_auditor": {
+      "role_family": "paid_supervisor",
+      "model_name": "configured-paid-supervisor"
+    }
+  },
+  "outcome_fields": {
+    "quality_validated_candidate": false,
+    "protocol_accepted_candidate": false,
+    "economics_usable": false,
+    "final_decision": "not_run",
+    "rejection_reasons": [],
+    "soft_penalty": 0.0,
+    "soft_reasons": []
+  },
+  "soft_scoring_defaults": {
+    "quote_length_target_words": 25,
+    "quote_length_is_hard_failure": false,
+    "quote_length_penalty_shape": "low penalty below target, increasing penalty above target",
+    "other_soft_preferences": [
+      "concise_title",
+      "specific_section_path",
+      "nonduplicative_summary"
+    ]
+  }
+}
