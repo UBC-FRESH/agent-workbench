@@ -1774,3 +1774,16 @@ issues, pull requests, and closeout comments.
   `planning/phase68_copilot_task_controller_v0.md`, and focused controller
   tests so the next live bridge layer has a deterministic child-task control
   surface.
+
+## 2026-07-06 - Added P69 behavior analytics from archives
+
+- Created P69 parent issue #454 and child issues #455 through #458 on
+  `feature/p69-behavior-analytics-from-archives`.
+- Added `src/agent_workbench/behavior_analytics.py` to convert sanitized P65
+  Copilot archive manifests into behavior metrics and outcome classes.
+- Added `agent-workbench behavior analyze` and
+  `agent-workbench behavior synthesize` command surfaces for public-safe
+  per-run summaries and cross-run synthesis.
+- Added `planning/phase69_behavior_analytics_from_archives.md` and focused
+  tests so P70 and later real-project dogfood runs can accumulate reusable
+  ticket-plus-behavior evidence instead of one-off impressions.
