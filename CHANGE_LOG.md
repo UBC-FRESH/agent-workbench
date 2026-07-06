@@ -1660,3 +1660,15 @@ issues, pull requests, and closeout comments.
   repeat, pause, or abandon.
 - Added explicit P63.4 maintainer decision options to the tracked decision memo
   and roadmap so the phase cannot close by implication.
+
+## 2026-07-05 - Accepted P63 scale decision
+
+- Accepted the P63.4 recommendation to close P63 as diagnostic evidence and
+  adjust the document-indexing recipe in a follow-on phase before any repeat.
+- Updated the P63 decision memo and roadmap to mark the selected option:
+  smaller section-level tickets, deterministic JSONL repair, chunk-ID
+  hardening, and provider 524 isolation before the next live run.
+- Recorded that P63 authorizes no further live model calls, direct-supervisor
+  baseline, broader TSA23 slice, model-lane change, or repair expansion.
+- Closed child issue #417 and prepared P63 for a P63-only PR after parent issue
+  #414 was synchronized with the accepted decision.

@@ -71,7 +71,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P60 Outcome semantics and scoring split | #396 | `feature/p60-outcome-semantics-scoring-split` | Complete |
 | P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Complete |
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
-| P63 Bounded TSA23 recipe pilot | #414 | `feature/p63-bounded-tsa23-recipe-pilot` | Active |
+| P63 Bounded TSA23 recipe pilot | #414 | `feature/p63-bounded-tsa23-recipe-pilot` | PR-ready |
 | P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -2702,7 +2702,7 @@ Parent issue: #414
 
 Branch: `feature/p63-bounded-tsa23-recipe-pilot`
 
-Status: active
+Status: PR-ready
 
 Goal: run one controlled, budgeted pilot using the P62 recipe on a bounded
 TSA23 slice.
@@ -2760,7 +2760,7 @@ Planned tasks:
   - Result: tracked sanitized reporting records 0 accepted, 0 repaired, 1
     rejected, 0 escalated, and 39 unresolved candidate records. P63 remains at
     maintainer checkpoint before P63.4 scale decision.
-- [ ] P63.4 Scale decision (#417)
+- [x] P63.4 Scale decision (#417)
   - [x] Draft the scale/adjust/repeat/pause decision memo from measured P63.2
         and P63.3 evidence.
   - [x] Recommend whether the next move is scale document indexing, adjust the
@@ -2771,23 +2771,34 @@ Planned tasks:
         quality risk remains.
   - [x] Record the exact gate for any follow-on live run, including budget,
         attempt limit, model lane, document slice, and stop rule.
-  - [ ] Receive maintainer acceptance of the scale, adjust, repeat, pause, or
+  - [x] Receive maintainer acceptance of the scale, adjust, repeat, pause, or
         abandon decision.
-  - [ ] Update roadmap, changelog, planning note, parent issue, and child issue
+  - [x] Update roadmap, changelog, planning note, parent issue, and child issue
         to reflect the accepted decision.
-  - [ ] Open a P63-only PR after P63.2-P63.4 evidence agrees.
-  - [ ] Merge and close P63 only after the maintainer explicitly accepts the
-        scale, adjust, repeat, or pause decision.
+  - [x] Confirm P63-only PR and merge remain parent-phase closeout steps rather
+        than unresolved scale-decision subtasks.
   - Draft recommendation: pause live scaling and adjust the recipe/provider
     execution shape before any repeat. Do not rerun, repair-expand, broaden the
     slice, add a model family, or run a direct-supervisor baseline without a new
     maintainer-approved gate.
   - Maintainer decision options:
     - [ ] Pause and merge diagnostic evidence.
-    - [ ] Adjust recipe in a follow-on phase.
+    - [x] Adjust recipe in a follow-on phase.
     - [ ] Approve bounded repeat under a new gate.
     - [ ] Approve a different model/provider lane.
     - [ ] Abandon or park the TSA23 indexing lane.
+  - Accepted decision: close P63 as diagnostic evidence and move any repeat
+    into a follow-on recipe-adjustment phase focused on smaller section-level
+    tickets, deterministic JSONL repair, chunk-ID hardening, and provider 524
+    isolation. P63 authorizes no further live model calls, direct-supervisor
+    baseline, broader slice, or model-lane change.
+
+Phase closeout:
+
+- [ ] Open a P63-only PR after P63.2-P63.4 evidence agrees.
+- [ ] Merge the P63 PR.
+- [ ] Verify parent issue #414 closure after merge.
+- [ ] Sync local `main` and delete `feature/p63-bounded-tsa23-recipe-pilot`.
 
 ## Phase 64: Deployment Environment And Operator Playbook
 

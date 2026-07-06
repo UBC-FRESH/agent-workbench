@@ -2,7 +2,7 @@
 
 ## Decision Status
 
-Status: pending maintainer acceptance
+Status: accepted by maintainer
 
 Recommended decision: pause the P63 live TSA23 recipe lane and adjust the
 workflow before any repeat or scale-up.
@@ -12,12 +12,12 @@ model families, or a direct-supervisor baseline from the current P63 state.
 
 ## Maintainer Decision Options
 
-The maintainer should choose exactly one option before P63 can close:
+The maintainer selected exactly one option before P63 closeout:
 
 - [ ] **Accept recommendation: pause and merge diagnostic evidence.** Merge P63
   as a diagnostic evidence phase, leave live repeat work for a later phase, and
   do not spend more paid supervisor tokens on this lane now.
-- [ ] **Accept recommendation: adjust recipe in a follow-on phase.** Close P63
+- [x] **Accept recommendation: adjust recipe in a follow-on phase.** Close P63
   as diagnostic evidence and open a new phase focused on smaller section-level
   tickets, deterministic JSONL repair, chunk-ID hardening, and provider 524
   isolation.
@@ -28,7 +28,24 @@ The maintainer should choose exactly one option before P63 can close:
 - [ ] **Abandon or park the TSA23 indexing lane.** Close P63 as diagnostic
   evidence and do not schedule a follow-on document-indexing repeat.
 
-Until one option is selected, P63.4 remains open and the phase should not merge.
+Decision accepted on 2026-07-05. P63 should merge as diagnostic evidence only.
+No repeat, repair expansion, model-lane change, direct-supervisor baseline, or
+broader page span is authorized by P63.
+
+## Accepted Decision
+
+P63 closes as diagnostic evidence. The next roadmap move is a follow-on recipe
+adjustment phase focused on:
+
+- smaller section-level extraction tickets;
+- deterministic JSONL validation and repair;
+- chunk-ID hardening with explicit enum validation;
+- provider 524 isolation before larger live runs; and
+- preserving P59 budget gates and P60 outcome semantics.
+
+The follow-on phase may plan a bounded repeat, but it must define a new budget
+record, one named model/provider lane, one document slice, one attempt limit,
+and stop rules before contacting any local worker model.
 
 ## Evidence Base
 
@@ -141,9 +158,11 @@ A future repeat must have a new explicit gate with:
 
 ## P63 Closeout Boundary
 
-P63 should not merge or close until the maintainer accepts one of these options:
+P63 may merge and close after the accepted decision is reflected in the
+roadmap, changelog, child issue, parent issue, and P63-only PR:
 
-- pause the lane and merge P63 as diagnostic evidence;
-- adjust the recipe and open a follow-on phase;
-- repeat the bounded slice under a new explicit budget gate; or
-- abandon this TSA23 indexing lane for now.
+- accepted decision: adjust the recipe and open a follow-on phase;
+- live execution status: stopped after the single budgeted diagnostic attempt;
+- follow-on live work: not authorized by P63; and
+- direct-supervisor baseline: deferred until a quality-valid delegated
+  candidate exists.
