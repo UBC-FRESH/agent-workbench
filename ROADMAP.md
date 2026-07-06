@@ -2714,23 +2714,27 @@ Planned tasks:
   - [x] Declare a P59 budget record before any live execution.
   - [x] Define maximum attempts and maintainer checkpoint.
   - [x] Confirm raw materialized inputs stay ignored.
-- [ ] P63.2 Recipe execution (#418)
-  - [ ] Generate ignored runtime tickets and SDK eval manifests from the
+- [x] P63.2 Recipe execution (#418)
+  - [x] Generate ignored runtime tickets and SDK eval manifests from the
         tracked P63 pilot plan.
-  - [ ] Verify generated manifests with a dry run before contacting the
+  - [x] Verify generated manifests with a dry run before contacting the
         provider.
-  - [ ] Confirm the selected local model is available through the configured
+  - [x] Confirm the selected local model is available through the configured
         Ollama/OpenAI-compatible provider path.
-  - [ ] Run exactly one live local-worker extraction attempt within the
+  - [x] Run exactly one live local-worker extraction attempt within the
         declared P59 budget and attempt limit.
-  - [ ] Capture raw worker output, prompts, provider details, and token traces
+  - [x] Capture raw worker output, prompts, provider details, and token traces
         only under ignored runtime paths.
-  - [ ] Run deterministic validation for JSONL parseability, document ID,
+  - [x] Run deterministic validation for JSONL parseability, document ID,
         chunk ID, model provenance, schema shape, and public-safety boundaries.
-  - [ ] Run repair/normalization only if the budget gate and stop rules allow
+  - [x] Run repair/normalization only if the budget gate and stop rules allow
         it; otherwise record the repair need as an unresolved outcome.
-  - [ ] Stop immediately when budget, attempt, model-availability,
+  - [x] Stop immediately when budget, attempt, model-availability,
         malformed-output, wrong-root, or public-safety stop rules trigger.
+  - Result: the single live attempt produced 40 parseable candidate records but
+    stopped as diagnostic evidence because the SDK observed a provider 524
+    model-call failure, malformed/truncated JSONL, and one invalid chunk ID.
+    No retry or repair expansion is allowed before maintainer checkpoint.
 - [ ] P63.3 Outcome and economics reporting (#416)
   - [ ] Produce tracked sanitized summaries only; do not promote raw source
         text, raw quotes, raw prompts, transcripts, provider URLs, headers, or

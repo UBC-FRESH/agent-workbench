@@ -106,3 +106,47 @@ Stop immediately when:
 - the run exceeds the declared paid-supervisor budget;
 - the first live attempt hits a protocol defect that requires reticketing; or
 - maintainer checkpoint is triggered.
+
+## P63.2 Execution Result
+
+P63.2 used the single live attempt allowed by the P59 budget record.
+
+Runtime setup:
+
+- generated ignored runtime ticket:
+  `runtime/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot/tickets/p63_section_map_typed_fact_ticket.md`;
+- generated ignored SDK eval manifest:
+  `runtime/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot/manifests/p63_section_map_typed_fact_manifest.json`;
+- selected model: `qwen3.6:35b-a3b-q8_0`;
+- model availability check passed through the configured provider path;
+- eval dry run passed before provider contact.
+
+Live attempt result:
+
+- harness status: `blocked`;
+- harness blocker: `model-call-failure`;
+- observed error kind: `provider_524_model_call_failure`;
+- parseable JSONL candidate records: 40;
+- malformed lines: 2;
+- valid chunk records: 39;
+- invalid chunk ID records: 1;
+- selected chunks covered: 3 of 3;
+- source quote records over the 25-word soft target: 0.
+
+Token and cost evidence:
+
+- paid supervisor `ticket_build` span: USD 0.362627;
+- paid supervisor `worker_run_orchestration` span: USD 0.052052;
+- local worker tokens: 15432 input, 10886 output, USD 0.00 cash cost;
+- tracked sanitized summary:
+  `benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_execution_summary.json`;
+- tracked sanitized report:
+  `benchmarks/document_library/tsa23_tsr/phase63_bounded_tsa23_recipe_pilot_execution_results.md`.
+
+Decision boundary:
+
+The result is useful diagnostic evidence, but it is not an accepted candidate
+and not usable economics evidence for a successful delegated run. The declared
+single-attempt stop rule is now triggered. No retry, repair expansion, broader
+page span, added model family, or budget increase is allowed without maintainer
+checkpoint.

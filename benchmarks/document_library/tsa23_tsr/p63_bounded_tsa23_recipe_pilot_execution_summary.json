@@ -1,0 +1,128 @@
+{
+  "attempt": {
+    "attempt_count": 1,
+    "fenced_output_detected": true,
+    "harness_blocker": "model-call-failure",
+    "harness_classification": "model-call-failure",
+    "harness_status": "blocked",
+    "max_attempts": 1,
+    "model": "qwen3.6:35b-a3b-q8_0",
+    "observed_error_count": 1,
+    "observed_error_kinds": [
+      "provider_524_model_call_failure"
+    ],
+    "preamble_detected": true
+  },
+  "candidate_metrics": {
+    "chunk_record_counts": {
+      "tsa23_2012_23tsdp12::pages_001_008": 22,
+      "tsa23_2012_23tsdp12::pages_008_015": 13,
+      "tsa23_2012_23tsdp12::pages_015_022": 4,
+      "tsa23_2012_23tsdp12::pages_7": 1
+    },
+    "covered_chunks": [
+      "tsa23_2012_23tsdp12::pages_001_008",
+      "tsa23_2012_23tsdp12::pages_008_015",
+      "tsa23_2012_23tsdp12::pages_015_022"
+    ],
+    "invalid_chunk_id_records": 1,
+    "invalid_chunk_id_values": [
+      "tsa23_2012_23tsdp12::pages_7"
+    ],
+    "malformed_lines": 2,
+    "missing_chunks": [],
+    "parseable_json_records": 40,
+    "record_type_counts": {
+      "acronym": 15,
+      "definition": 1,
+      "heading": 6,
+      "section_summary": 2,
+      "table": 13,
+      "tsr_fact": 3
+    },
+    "records_missing_required_fields": 0,
+    "records_with_source_quote": 40,
+    "source_quote_max_words": 24,
+    "source_quote_over_target_records": 0,
+    "valid_chunk_records": 39,
+    "worker_model_field_match_records": 40,
+    "wrong_corpus_id_records": 0,
+    "wrong_document_id_records": 0,
+    "wrong_review_status_records": 0
+  },
+  "generated_utc": "2026-07-06T04:58:18+00:00",
+  "github_child_issue": 418,
+  "github_parent_issue": 414,
+  "outcome": {
+    "economics_usable": false,
+    "final_decision": "stop_after_single_attempt_model_call_failure",
+    "follow_on_live_run_allowed_without_maintainer": false,
+    "maintainer_checkpoint_required": true,
+    "protocol_accepted_candidate": false,
+    "quality_validated_candidate": false,
+    "rejection_reasons": [
+      "invalid_chunk_id",
+      "malformed_or_truncated_jsonl",
+      "model-call-failure",
+      "provider_524_model_call_failure"
+    ]
+  },
+  "phase": "P63",
+  "pilot_id": "p63-bounded-tsa23-recipe-pilot",
+  "public_safety": {
+    "headers_tracked": false,
+    "personal_paths_tracked": false,
+    "provider_urls_tracked": false,
+    "raw_prompts_tracked": false,
+    "raw_source_quotes_tracked": false,
+    "raw_source_text_tracked": false
+  },
+  "raw_output_policy": "Raw worker records, source quotes, prompts, provider details, and transcripts remain ignored under runtime/.",
+  "runtime_evidence": {
+    "runtime_result_path": "runtime/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot/eval/section_map_typed_fact/qwen3_6_35b_a3b_q8_0_run01.md",
+    "runtime_summary_path": "runtime/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot/eval/section_map_typed_fact/summary.json",
+    "tracked_summary_json": "benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_execution_summary.json",
+    "tracked_summary_md": "benchmarks/document_library/tsa23_tsr/phase63_bounded_tsa23_recipe_pilot_execution_results.md"
+  },
+  "schema_version": 1,
+  "selected_chunk_count": 3,
+  "selected_document": {
+    "cycle_year": 2012,
+    "document_id": "tsa23_2012_23tsdp12",
+    "document_type": "data_package"
+  },
+  "summary_id": "p63_bounded_tsa23_recipe_pilot_execution",
+  "supervisor_token_spans": [
+    {
+      "cached_input_tokens": 1298176,
+      "cash_cost_usd": 0.362627,
+      "fresh_input_tokens": 15038,
+      "output_tokens": 6364,
+      "present": true,
+      "reasoning_output_tokens": 1431,
+      "span_id": "ticket_build"
+    },
+    {
+      "cached_input_tokens": 270080,
+      "cash_cost_usd": 0.052052,
+      "fresh_input_tokens": 984,
+      "output_tokens": 219,
+      "present": true,
+      "reasoning_output_tokens": 0,
+      "span_id": "worker_run_orchestration"
+    }
+  ],
+  "supervisor_totals": {
+    "cached_input_tokens": 1568256,
+    "cash_cost_usd": 0.414679,
+    "fresh_input_tokens": 16022,
+    "output_tokens": 6583,
+    "reasoning_output_tokens": 1431,
+    "span_count": 2
+  },
+  "worker_tokens": {
+    "cash_cost_usd": 0.0,
+    "input_tokens": 15432,
+    "output_tokens": 10886
+  }
+}

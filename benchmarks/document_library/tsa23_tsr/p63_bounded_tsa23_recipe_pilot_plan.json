@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pilot_id": "p63-bounded-tsa23-recipe-pilot",
   "phase": "P63",
-  "status": "budget_declared_not_executed",
+  "status": "single_live_attempt_completed_stop_rule_triggered",
   "recipe": {
     "recipe_id": "document-indexing-workflow-v1",
     "recipe_manifest_template": "templates/document_indexing_recipe_manifest.json",
@@ -47,19 +47,26 @@
   ],
   "execution_gate": {
     "live_execution_allowed": false,
+    "post_attempt_live_execution_allowed": false,
     "required_before_live_execution": [
       "budget validation passes",
       "maintainer accepts budget and stop rule",
       "runtime raw text chunks are confirmed ignored",
       "worker ticket manifests are dry-run validated"
-    ]
+    ],
+    "stop_rule_state": "single attempt used; maintainer checkpoint required before any retry, repair expansion, broader page span, added model family, or budget increase"
   },
   "expected_outcomes": {
     "quality_validated_candidate": false,
     "protocol_accepted_candidate": false,
     "economics_usable": false,
-    "final_decision": "not_run",
-    "rejection_reasons": []
+    "final_decision": "stop_after_single_attempt_model_call_failure",
+    "rejection_reasons": [
+      "invalid_chunk_id",
+      "malformed_or_truncated_jsonl",
+      "model-call-failure",
+      "provider_524_model_call_failure"
+    ]
   },
   "public_safety": {
     "raw_documents_tracked": false,

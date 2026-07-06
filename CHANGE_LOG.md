@@ -1602,3 +1602,27 @@ issues, pull requests, and closeout comments.
 - Expanded the remaining P63 and planned P64 roadmap tasks to explicit
   subtask-level checklists so live execution, reporting, scale decisions, and
   future deployment-playbook work do not rely on broad one-line placeholders.
+
+## 2026-07-05 - Ran P63 bounded TSA23 recipe pilot execution attempt
+
+- Added `scripts/build_p63_recipe_pilot_runtime.py` to reproducibly generate
+  the ignored P63 worker ticket, SDK eval manifest, and runtime index from the
+  tracked pilot plan and ignored TSA23 chunk text.
+- Generated and dry-run validated the P63 runtime manifest for
+  `qwen3.6:35b-a3b-q8_0`, then confirmed the model is visible through the
+  configured provider path.
+- Ran the single live worker attempt allowed by the P59 budget gate. The
+  attempt produced 40 parseable candidate records across all three selected
+  chunks but was classified as blocked because the SDK observed a provider 524
+  model-call failure, two malformed/truncated JSONL lines, and one invalid
+  chunk ID.
+- Added `scripts/summarize_p63_recipe_pilot.py` plus sanitized tracked P63
+  execution summaries under `benchmarks/document_library/tsa23_tsr/`, keeping
+  raw worker output, source quotes, prompts, provider details, and transcripts
+  ignored under `runtime/`.
+- Recorded paid supervisor token spans for `ticket_build` and
+  `worker_run_orchestration`; the tracked summary reports USD 0.414679 of paid
+  supervisor cost for those two spans and USD 0.00 local-worker cash cost.
+- Marked P63.2 complete as diagnostic evidence only. The P63 maintainer
+  checkpoint is now required before any retry, repair expansion, broader page
+  span, added model family, or budget increase.
