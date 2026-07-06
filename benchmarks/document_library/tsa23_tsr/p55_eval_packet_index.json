@@ -1,7 +1,7 @@
 {
   "battery_id": "p55_tsa23_first_indexing_battery",
   "corpus_id": "bc_tsr_tsa23_public_1995_present",
-  "generated_utc": "2026-07-05T07:22:17.755957+00:00",
+  "generated_utc": "2026-07-05T08:59:07.247982+00:00",
   "model_catalog": [
     "qwen3.6:35b-a3b-bf16",
     "qwen3-coder-next:latest",
