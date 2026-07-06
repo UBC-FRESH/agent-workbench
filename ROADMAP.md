@@ -2454,4 +2454,4 @@ Planned tasks:
   - [x] Link P56 roadmap and planning notes to GitHub issues.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Run focused authority tests.
-  - [ ] Open a P56-only PR against `main`.
+  - [x] Open a P56-only PR against `main`.
