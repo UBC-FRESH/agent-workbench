@@ -35,6 +35,12 @@ from .budget import (
 )
 from .comparison import render_eval_comparison
 from .copilot_archive import CopilotArchiveConfig, archive_copilot_session
+from .copilot_task_controller import (
+    generate_prompt_file,
+    load_run_manifest,
+    render_review_packet,
+    validate_run_manifest,
+)
 from .decision import (
     DecisionInputError,
     decide_task,
@@ -220,6 +226,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="Do not copy raw logs; write only the sanitized manifest.",
     )
     copilot_archive_parser.set_defaults(func=run_copilot_archive)
+
+    copilot_task_validate_parser = copilot_subparsers.add_parser(
+        "task-validate",
+        help="Validate a Copilot child-task run manifest.",
+    )
+    copilot_task_validate_parser.add_argument("--manifest", type=Path, required=True)
+    copilot_task_validate_parser.set_defaults(func=run_copilot_task_validate)
+
+    copilot_task_prompt_parser = copilot_subparsers.add_parser(
+        "task-prompt",
+        help="Render the executable prompt for a Copilot child-task run.",
+    )
+    copilot_task_prompt_parser.add_argument("--manifest", type=Path, required=True)
+    copilot_task_prompt_parser.add_argument("--output", type=Path, required=True)
+    copilot_task_prompt_parser.set_defaults(func=run_copilot_task_prompt)
+
+    copilot_task_review_parser = copilot_subparsers.add_parser(
+        "task-review",
+        help="Render a coordinator review packet for one Copilot child-task run.",
+    )
+    copilot_task_review_parser.add_argument("--manifest", type=Path, required=True)
+    copilot_task_review_parser.add_argument("--output", type=Path, required=True)
+    copilot_task_review_parser.add_argument("--json-output", type=Path, default=None)
+    copilot_task_review_parser.set_defaults(func=run_copilot_task_review)
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1186,6 +1216,46 @@ def run_copilot_archive(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_copilot_task_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_run_manifest(args.manifest)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_run_manifest(data, manifest_path=args.manifest)
+    if result.ok:
+        print(f"valid Copilot task manifest: {args.manifest}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_copilot_task_prompt(args: argparse.Namespace) -> int:
+    try:
+        result = generate_prompt_file(args.manifest, args.output)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"wrote {args.output}")
+    print(f"launch_command: {result.get('launch_command', '')}")
+    return 0
+
+
+def run_copilot_task_review(args: argparse.Namespace) -> int:
+    try:
+        packet = render_review_packet(args.manifest, args.output)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"wrote {args.output}")
+    if args.json_output is not None:
+        args.json_output.parent.mkdir(parents=True, exist_ok=True)
+        args.json_output.write_text(json.dumps(packet, indent=2) + "\n", encoding="utf-8")
+        print(f"wrote {args.json_output}")
+    return 0
+
+
 def run_heartbeat_validate(args: argparse.Namespace) -> int:
     try:
         records = load_heartbeat_jsonl(args.input)
@@ -1237,6 +1307,15 @@ def run_nudge_suggest(args: argparse.Namespace) -> int:
     args.output.write_text(suggest_nudge(summary) + "\n", encoding="utf-8")
     print(f"wrote {args.output}")
     return 0
+
+
+def load_optional_json(path: Path | None) -> dict[str, object] | None:
+    if path is None:
+        return None
+    data = json.loads(path.read_text(encoding="utf-8-sig"))
+    if not isinstance(data, dict):
+        raise ValueError(f"expected JSON object: {path}")
+    return data
 
 
 def run_eval(args: argparse.Namespace) -> int:

@@ -236,6 +236,14 @@ intended action. After repeated stale or ineffective nudges in the same lane,
 stop and review the ticket, result, blocker, archive, and token/cash ledger
 instead of continuing to prompt the local supervisor.
 
+For one child-task Copilot delegation run, prefer a controller manifest that
+ties together run id, ticket, child issue, expected model, permission mode,
+heartbeat, result, blocker, archive manifest, token ledger, and workspace root.
+Use `agent-workbench copilot task-validate`, `task-prompt`, and `task-review`
+to check the manifest, generate the bounded Copilot directive, and render the
+coordinator review packet. The default controller prompt must not ask VS Code to
+maximize or rearrange the UI.
+
 ## Planning Workflow
 
 This repo follows the UBC-FRESH phase/task/subtask workflow:

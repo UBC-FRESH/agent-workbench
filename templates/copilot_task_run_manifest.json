@@ -1,0 +1,16 @@
+{
+  "run_id": "p68-example-run-20260706-a1b2c3",
+  "ticket_path": "runtime/agent_jobs/p68_example_ticket.md",
+  "child_issue": "#449",
+  "expected_model": "ollama/qwen3.6:35b-a3b-bf16",
+  "permission_mode": "autopilot",
+  "heartbeat_path": "runtime/agent_jobs/p68_example.heartbeat.jsonl",
+  "result_path": "runtime/agent_jobs/p68_example_result.md",
+  "blocker_path": "runtime/agent_jobs/p68_example_blocker.md",
+  "archive_manifest_path": "runtime/agent_jobs/p68_example_archive/manifest.json",
+  "token_ledger_path": "runtime/supervisor_tokens/p68_example/summary.md",
+  "workspace_root": ".",
+  "prompt_marker": "P68_EXAMPLE_RUN",
+  "economics_claim": false,
+  "budget_record_path": ""
+}
