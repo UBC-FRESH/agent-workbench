@@ -2782,6 +2782,12 @@ Planned tasks:
     execution shape before any repeat. Do not rerun, repair-expand, broaden the
     slice, add a model family, or run a direct-supervisor baseline without a new
     maintainer-approved gate.
+  - Maintainer decision options:
+    - [ ] Pause and merge diagnostic evidence.
+    - [ ] Adjust recipe in a follow-on phase.
+    - [ ] Approve bounded repeat under a new gate.
+    - [ ] Approve a different model/provider lane.
+    - [ ] Abandon or park the TSA23 indexing lane.
 
 ## Phase 64: Deployment Environment And Operator Playbook
 

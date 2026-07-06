@@ -1658,3 +1658,5 @@ issues, pull requests, and closeout comments.
   a quality-valid delegated candidate exists.
 - Left P63.4 open pending explicit maintainer acceptance of scale, adjust,
   repeat, pause, or abandon.
+- Added explicit P63.4 maintainer decision options to the tracked decision memo
+  and roadmap so the phase cannot close by implication.

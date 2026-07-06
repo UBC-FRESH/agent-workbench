@@ -10,6 +10,26 @@ workflow before any repeat or scale-up.
 Do not scale to a larger page range, additional TSA23 documents, additional
 model families, or a direct-supervisor baseline from the current P63 state.
 
+## Maintainer Decision Options
+
+The maintainer should choose exactly one option before P63 can close:
+
+- [ ] **Accept recommendation: pause and merge diagnostic evidence.** Merge P63
+  as a diagnostic evidence phase, leave live repeat work for a later phase, and
+  do not spend more paid supervisor tokens on this lane now.
+- [ ] **Accept recommendation: adjust recipe in a follow-on phase.** Close P63
+  as diagnostic evidence and open a new phase focused on smaller section-level
+  tickets, deterministic JSONL repair, chunk-ID hardening, and provider 524
+  isolation.
+- [ ] **Approve bounded repeat under a new gate.** Amend or create a P59 budget
+  record and rerun the same bounded slice with smaller section-level tickets.
+- [ ] **Approve a different model/provider lane.** Open a new gated task to
+  test whether the blocker is model-specific or provider-specific.
+- [ ] **Abandon or park the TSA23 indexing lane.** Close P63 as diagnostic
+  evidence and do not schedule a follow-on document-indexing repeat.
+
+Until one option is selected, P63.4 remains open and the phase should not merge.
+
 ## Evidence Base
 
 P63.2 executed the single live attempt allowed by the budget gate.
