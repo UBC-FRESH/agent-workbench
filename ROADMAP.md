@@ -73,7 +73,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
 | P63 Bounded TSA23 recipe pilot | #414 / PR #419 | `feature/p63-bounded-tsa23-recipe-pilot` | Complete |
 | P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | Complete |
-| P65 Copilot session archive | TBD | `feature/p65-copilot-session-archive` | Active |
+| P65 Copilot session archive | #426 | `feature/p65-copilot-session-archive` | Active |
 | P66 Task-level delegation protocol | TBD | `feature/p66-task-level-delegation-protocol` | Planned |
 | P67 Heartbeat and nudge protocol | TBD | `feature/p67-heartbeat-nudge-protocol` | Planned |
 | P68 Copilot task controller v0 | TBD | `feature/p68-copilot-task-controller-v0` | Planned |
@@ -2867,7 +2867,7 @@ Phase closeout:
 
 ## Phase 65: Copilot Session Archive
 
-Parent issue: TBD
+Parent issue: #426
 
 Branch: `feature/p65-copilot-session-archive`
 
@@ -2878,14 +2878,14 @@ function so delegated-run behavior evidence is captured by default.
 
 Planned tasks:
 
-- [x] P65.1 Archive command surface
+- [x] P65.1 Archive command surface (#427)
   - [x] Add `agent-workbench copilot archive`.
   - [x] Resolve VS Code workspace storage from `workspace.json`.
   - [x] Match sessions by session id, run id, prompt marker, or latest session.
   - [x] Copy raw `chatSessions/*.jsonl` and Copilot transcript JSONL into
         ignored runtime storage.
   - [x] Fail closed when no matching session exists.
-- [x] P65.2 Sanitized manifest
+- [x] P65.2 Sanitized manifest (#428)
   - [x] Record event counts, model ids, permission levels, message counts, and
         tool-request counts.
   - [x] Record bounded snippets for user messages, assistant messages, tool
@@ -2893,7 +2893,7 @@ Planned tasks:
   - [x] Keep source paths and raw transcript content out of the manifest.
   - [x] Mark raw files as runtime-only and not safe for tracked commit without
         sanitization.
-- [x] P65.3 Tests and docs
+- [x] P65.3 Tests and docs (#429)
   - [x] Add fake VS Code workspace-storage fixtures for archive tests.
   - [x] Test successful archive and no-match fail-closed behavior.
   - [x] Add a P65 planning note explaining the evidence unit and boundaries.
