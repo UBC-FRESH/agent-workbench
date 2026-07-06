@@ -39,48 +39,48 @@ Two uninterrupted full-batch retries failed before completing all splits. The fi
 
 ## Comparison Table
 
-| Record | Model | Accepted | Economics | Cost | Cost/source | Boundary | Subagent tool | Subagent status |
-| --- | --- | --- | --- | ---: | ---: | --- | --- | --- |
-| p57_graph_batch_all_p55_summaries_v1_full_14_v1_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.190046 | $0.013575 | summed_external_coordinator_spans | yes | accepted_child_packages |
-| p57_graph_batch_all_p55_summaries_v1_full_14_v10_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | needs_review |
-| p57_graph_batch_all_p55_summaries_v1_full_14_v11_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.071044 | $0.005075 | external_coordinator_span | yes | needs_review |
-| p57_graph_batch_all_p55_summaries_v1_full_14_v14_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.084697 | $0.006050 | external_coordinator_span | yes | needs_review |
-| p57_graph_batch_all_p55_summaries_v1_full_14_v2_aborted_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.129425 | $0.025885 | external_coordinator_span | no | n/a |
-| p57_graph_batch_all_p55_summaries_v1_full_14_v3_aborted_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.136821 | $0.027364 | external_coordinator_span | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_02_v1_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.109171 | $0.010917 | external_coordinator_span | yes | accepted_child_runs |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v1_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | no | n/a |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v10_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v11_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v14_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v2_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v3_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v4_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v5_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | no | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v5_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.065285 | $0.013057 | external_coordinator_span | no | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v6_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v7_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | no | n/a |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v8_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_01_v9_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | unavailable_supervisor_completed |
-| p57_graph_batch_all_p55_summaries_v1_split_02_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.092546 | $0.018509 | legacy | yes | n/a |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v10_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v10_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v11_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v11_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.138710 | $0.027742 | external_coordinator_span | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v12_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v12_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.162815 | $0.032563 | external_coordinator_span | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v13_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v13_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.088970 | $0.017794 | external_coordinator_span | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v14_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v14_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.091294 | $0.018259 | external_coordinator_span | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v15_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v3_summary | `qwen3.6:35b-a3b-bf16` | yes | no | n/a | n/a | legacy | yes | n/a |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v4_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.146603 | $0.029321 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v5_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.542613 | $0.108523 | legacy | yes | rejected_supervisor_replaced |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v6_summary | `qwen3.6:35b-a3b-bf16` | yes | no | n/a | n/a | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v7_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.120379 | $0.024076 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v8_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.092783 | $0.018557 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_02_v9_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_03_v1_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_03_v1_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | $0.080875 | $0.020219 | external_coordinator_span | yes | accepted_without_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_03_v11_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | no | $0.000000 | $0.000000 | legacy | yes | accepted_after_supervisor_repair |
-| p57_graph_batch_all_p55_summaries_v1_split_03_v14_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | $0.000000 | $0.000000 | legacy | no | accepted_after_supervisor_repair |
+| Record | Model | Quality | Protocol | Economics | Decision | Cost | Cost/source | Boundary | Subagent tool |
+| --- | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
+| p57_graph_batch_all_p55_summaries_v1_full_14_v1_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.190046 | $0.013575 | summed_external_coordinator_spans | yes |
+| p57_graph_batch_all_p55_summaries_v1_full_14_v10_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_full_14_v11_summary | `qwen3.6:35b-a3b-bf16` | yes | no | no | `quality_valid_protocol_rejected` | $0.071044 | $0.005075 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_full_14_v14_summary | `qwen3.6:35b-a3b-bf16` | yes | no | no | `quality_valid_protocol_rejected` | $0.084697 | $0.006050 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_full_14_v2_aborted_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.129425 | $0.025885 | external_coordinator_span | no |
+| p57_graph_batch_all_p55_summaries_v1_full_14_v3_aborted_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.136821 | $0.027364 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_02_v1_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.109171 | $0.010917 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v1_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | no |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v10_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v11_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v14_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v2_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v3_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v4_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v5_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | no |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v5_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.065285 | $0.013057 | external_coordinator_span | no |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v6_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v7_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | no |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v8_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_01_v9_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.092546 | $0.018509 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v10_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v10_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v11_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v11_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.138710 | $0.027742 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v12_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v12_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.162815 | $0.032563 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v13_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v13_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.088970 | $0.017794 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v14_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v14_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.091294 | $0.018259 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v15_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v3_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | n/a | n/a | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v4_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_quality_protocol_diagnostic` | $0.146603 | $0.029321 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v5_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.542613 | $0.108523 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v6_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | n/a | n/a | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v7_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.120379 | $0.024076 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v8_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.092783 | $0.018557 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_02_v9_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_03_v1_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_03_v1_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | yes | `accepted_economics_evidence` | $0.080875 | $0.020219 | external_coordinator_span | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_03_v11_internal_summary | `qwen3.6:35b-a3b-bf16` | yes | yes | no | `accepted_quality_protocol_diagnostic` | $0.000000 | $0.000000 | legacy | yes |
+| p57_graph_batch_all_p55_summaries_v1_split_03_v14_internal_summary | `qwen3.6:35b-a3b-bf16` | no | no | no | `rejected` | $0.000000 | $0.000000 | legacy | no |

@@ -1533,3 +1533,21 @@ issues, pull requests, and closeout comments.
   development workflow contract.
 - Opened P59 PR #395 after validation so the phase closeout can proceed through
   the one-phase/one-branch workflow.
+
+## 2026-07-05 - Implemented P60 split outcome semantics
+
+- Created P60 parent issue #396 and child issues #397-#400 on
+  `feature/p60-outcome-semantics-scoring-split`.
+- Added reusable outcome classification fields for
+  `quality_validated_candidate`, `protocol_accepted_candidate`,
+  `economics_usable`, `final_decision`, and `rejection_reasons`.
+- Wired packaged document-audit graph summaries and P57 packaged-launcher
+  economics normalization to emit split outcome fields.
+- Regenerated the P57 packaged-launcher comparison and decision packet from the
+  existing 43-record evidence set with repo-relative paths and explicit
+  quality/protocol/economics columns.
+- Added tests for accepted evidence, quality-valid protocol rejection, stale
+  diagnostics, hard quality rejection reasons, soft quote-style penalties, and
+  model-provenance mismatch as a protocol defect.
+- Opened P60 PR #401 after validation so the phase closeout can proceed through
+  the one-phase/one-branch workflow.

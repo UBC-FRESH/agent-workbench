@@ -211,6 +211,11 @@ final_marker_present: true
     )
 
     assert summary["accepted_candidate"] is True, summary["validation_results"]
+    assert summary["quality_validated_candidate"] is True
+    assert summary["protocol_accepted_candidate"] is True
+    assert summary["economics_usable"] is True
+    assert summary["final_decision"] == "accepted_economics_evidence"
+    assert summary["rejection_reasons"] == []
     assert summary["model"] == "qwen3.6:35b-a3b-bf16"
     assert summary["model_provenance"] == {
         "expected_model": "qwen3.6:35b-a3b-bf16",
@@ -307,10 +312,71 @@ final_marker_present: true
     )
 
     assert summary["accepted_candidate"] is False
+    assert summary["quality_validated_candidate"] is False
+    assert summary["protocol_accepted_candidate"] is False
+    assert summary["economics_usable"] is False
+    assert summary["final_decision"] == "rejected"
+    assert "authority_validation failed" in summary["rejection_reasons"]
     assert summary["failure"] == "authority_validation failed"
     assert summary["token_costs"]["economics_usable"] is False
     assert "not usable" in summary["token_costs"]["not_usable_reason"]
     assert "C:\\Users" not in summary["validation_results"]["authority_validation"]["stderr"]
+
+
+def test_document_audit_graph_model_mismatch_is_protocol_rejection(
+    tmp_path: Path,
+) -> None:
+    bridge_report = tmp_path / "bridge.md"
+    bridge_report.write_text(
+        """# Copilot Chat Bridge Supervisor Report
+
+status: accepted-candidate
+expected_model: qwen3.6:35b-a3b-bf16
+resolved_model: qwen3-coder:latest
+model_match: false
+permission_levels: autopilot
+final_marker_present: true
+""",
+        encoding="utf-8",
+    )
+    token_record = tmp_path / "tokens.json"
+    token_record.write_text(
+        json.dumps(
+            {
+                "usage": {
+                    "supervisor_input_tokens": 100,
+                    "supervisor_cached_input_tokens": 0,
+                    "supervisor_output_tokens": 10,
+                    "supervisor_reasoning_output_tokens": 0,
+                    "codex_total_token_delta": 110,
+                },
+                "prices": {
+                    "supervisor_input_price_per_1m_usd": 1.0,
+                    "supervisor_cached_input_price_per_1m_usd": 0.1,
+                    "supervisor_output_price_per_1m_usd": 10.0,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    summary = summarize_document_audit_graph_run(
+        job_id="p57_model_mismatch",
+        phase="P57",
+        task_id="P57.5",
+        plan={"source_summaries": ["source_a.json"]},
+        bridge_report=bridge_report,
+        audit_report=tmp_path / "audit.json",
+        graph_report=tmp_path / "graph.json",
+        token_record=token_record,
+    )
+
+    assert summary["accepted_candidate"] is False
+    assert summary["quality_validated_candidate"] is True
+    assert summary["protocol_accepted_candidate"] is False
+    assert summary["economics_usable"] is False
+    assert summary["final_decision"] == "quality_valid_protocol_rejected"
+    assert "model_provenance_mismatch" in summary["rejection_reasons"]
 
 
 def test_summarize_existing_document_audit_graph_uses_external_token_record(
@@ -500,6 +566,10 @@ final_marker_present: true
     )
 
     assert summary["accepted_candidate"] is True, summary["validation_results"]
+    assert summary["quality_validated_candidate"] is True
+    assert summary["protocol_accepted_candidate"] is True
+    assert summary["economics_usable"] is True
+    assert summary["final_decision"] == "accepted_economics_evidence"
     assert summary["authority_validation_passed"] is True
     assert summary["document_audit_verifier_passed"] is True
     assert summary["document_graph_report_verifier_passed"] is True

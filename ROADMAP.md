@@ -2587,40 +2587,40 @@ that enforcement.
 
 ## Phase 60: Outcome Semantics And Scoring Split
 
-Parent issue: TBD
+Parent issue: #396
 
 Branch: `feature/p60-outcome-semantics-scoring-split`
 
-Status: planned
+Status: active
 
 Goal: separate artifact quality, protocol compliance, and economics usability
 across benchmark summaries.
 
 Planned tasks:
 
-- [ ] P60.1 Outcome field schema
-  - [ ] Define `quality_validated_candidate`.
-  - [ ] Define `protocol_accepted_candidate`.
-  - [ ] Define `economics_usable`.
-  - [ ] Define `final_decision`.
-  - [ ] Define `rejection_reasons`.
-- [ ] P60.2 Hard constraint semantics
-  - [ ] Preserve hard failure for invalid schema shape.
-  - [ ] Preserve hard failure for wrong source identity or invalid source IDs.
-  - [ ] Preserve hard failure for authority-boundary violations.
-  - [ ] Keep model-provenance mismatch as a protocol defect.
-- [ ] P60.3 Soft scoring semantics
-  - [ ] Keep quote length as a soft weighted penalty by default.
-  - [ ] Support configurable penalty weights for task-specific preferences.
-  - [ ] Keep downstream-consumer hard excerpt limits opt-in.
-  - [ ] Document how soft scores affect scale/repair/escalate decisions.
-- [ ] P60.4 Decision packet migration
-  - [ ] Update comparison scripts to emit split outcome fields.
-  - [ ] Update decision packets so quality-valid/protocol-noisy results are not
+- [x] P60.1 Outcome field schema (#397)
+  - [x] Define `quality_validated_candidate`.
+  - [x] Define `protocol_accepted_candidate`.
+  - [x] Define `economics_usable`.
+  - [x] Define `final_decision`.
+  - [x] Define `rejection_reasons`.
+- [x] P60.2 Hard constraint semantics (#399)
+  - [x] Preserve hard failure for invalid schema shape.
+  - [x] Preserve hard failure for wrong source identity or invalid source IDs.
+  - [x] Preserve hard failure for authority-boundary violations.
+  - [x] Keep model-provenance mismatch as a protocol defect.
+- [x] P60.3 Soft scoring semantics (#398)
+  - [x] Keep quote length as a soft weighted penalty by default.
+  - [x] Support configurable penalty weights for task-specific preferences.
+  - [x] Keep downstream-consumer hard excerpt limits opt-in.
+  - [x] Document how soft scores affect scale/repair/escalate decisions.
+- [x] P60.4 Decision packet migration (#400)
+  - [x] Update comparison scripts to emit split outcome fields.
+  - [x] Update decision packets so quality-valid/protocol-noisy results are not
         collapsed into vague rejected states.
-  - [ ] Add tests for accepted, quality-valid, protocol-rejected, economics
+  - [x] Add tests for accepted, quality-valid, protocol-rejected, economics
         diagnostic, and stale cases.
-  - [ ] Backfill at least one P57-style summary fixture.
+  - [x] Backfill at least one P57-style summary fixture.
 
 ## Phase 61: Packaged Local-Supervisor Workflow V1
 
