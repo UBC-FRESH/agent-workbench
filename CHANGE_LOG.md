@@ -1599,3 +1599,6 @@ issues, pull requests, and closeout comments.
 - Added `benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_plan.json`
   and `planning/phase63_bounded_tsa23_recipe_pilot.md` to keep live execution
   blocked until the budget gate is accepted.
+- Expanded the remaining P63 and planned P64 roadmap tasks to explicit
+  subtask-level checklists so live execution, reporting, scale decisions, and
+  future deployment-playbook work do not rely on broad one-line placeholders.

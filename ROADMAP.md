@@ -2715,21 +2715,55 @@ Planned tasks:
   - [x] Define maximum attempts and maintainer checkpoint.
   - [x] Confirm raw materialized inputs stay ignored.
 - [ ] P63.2 Recipe execution (#418)
-  - [ ] Instantiate the P62 recipe for the selected bounded slice.
-  - [ ] Run local worker extraction within the declared attempt limit.
-  - [ ] Run repair/normalization only if the budget gate allows it.
-  - [ ] Stop immediately when stop rules trigger.
+  - [ ] Generate ignored runtime tickets and SDK eval manifests from the
+        tracked P63 pilot plan.
+  - [ ] Verify generated manifests with a dry run before contacting the
+        provider.
+  - [ ] Confirm the selected local model is available through the configured
+        Ollama/OpenAI-compatible provider path.
+  - [ ] Run exactly one live local-worker extraction attempt within the
+        declared P59 budget and attempt limit.
+  - [ ] Capture raw worker output, prompts, provider details, and token traces
+        only under ignored runtime paths.
+  - [ ] Run deterministic validation for JSONL parseability, document ID,
+        chunk ID, model provenance, schema shape, and public-safety boundaries.
+  - [ ] Run repair/normalization only if the budget gate and stop rules allow
+        it; otherwise record the repair need as an unresolved outcome.
+  - [ ] Stop immediately when budget, attempt, model-availability,
+        malformed-output, wrong-root, or public-safety stop rules trigger.
 - [ ] P63.3 Outcome and economics reporting (#416)
-  - [ ] Use P60 outcome semantics.
-  - [ ] Track accepted, repaired, rejected, and escalated fact counts.
-  - [ ] Produce line-item paid supervisor, local worker, audit, and repair cost
-        tables.
-  - [ ] Compare delegated cost against direct-supervisor sample audit cost.
+  - [ ] Produce tracked sanitized summaries only; do not promote raw source
+        text, raw quotes, raw prompts, transcripts, provider URLs, headers, or
+        credentials.
+  - [ ] Use P60 outcome semantics for every candidate artifact:
+        `quality_validated_candidate`, `protocol_accepted_candidate`,
+        `economics_usable`, `final_decision`, and `rejection_reasons`.
+  - [ ] Track accepted, repaired, rejected, escalated, and unresolved fact
+        counts by stage and by source chunk.
+  - [ ] Track hard-constraint failures separately from soft scoring penalties
+        such as quote length.
+  - [ ] Produce line-item paid supervisor, local worker, audit, repair,
+        validation, and reporting cost tables.
+  - [ ] Compare delegated cost against the direct-supervisor sample audit
+        baseline for the same bounded slice.
+  - [ ] Mark aborted, stale, malformed, or budget-blocked runs as diagnostic
+        evidence rather than successful economics evidence.
+  - [ ] Update the P63 planning note with what the pilot actually taught before
+        proposing any scale-up.
 - [ ] P63.4 Scale decision (#417)
-  - [ ] Decide whether to scale document indexing, adjust the recipe, or pause.
-  - [ ] Record maintainer-facing value, not only model behavior.
-  - [ ] Update roadmap/changelog/planning.
-  - [ ] Close P63 through PR only after the pilot decision is explicit.
+  - [ ] Decide whether the next move is scale document indexing, adjust the
+        recipe, repeat the bounded slice, change model roles, or pause the
+        lane.
+  - [ ] Record maintainer-facing value: what usable document-indexing work was
+        produced, what paid-supervisor cost was avoided or added, and what
+        quality risk remains.
+  - [ ] Record the exact gate for any follow-on live run, including budget,
+        attempt limit, model lane, document slice, and stop rule.
+  - [ ] Update roadmap, changelog, planning note, parent issue, and child
+        issues so issue state matches the decision.
+  - [ ] Open a P63-only PR after P63.2-P63.4 evidence agrees.
+  - [ ] Merge and close P63 only after the maintainer explicitly accepts the
+        scale, adjust, repeat, or pause decision.
 
 ## Phase 64: Deployment Environment And Operator Playbook
 
@@ -2745,24 +2779,39 @@ VS Code environment without relying on chat memory.
 Planned tasks:
 
 - [ ] P64.1 Environment shape
+  - [ ] Create the P64 parent issue and child issue before branch work begins.
+  - [ ] Link P64 issue numbers in this roadmap section after issue creation.
   - [ ] Document supported VS Code and code-server configurations.
   - [ ] Document Copilot Chat permission-mode expectations.
   - [ ] Document Ollama provider and model inventory requirements.
   - [ ] Document ignored runtime paths for tickets, transcripts, reports, and
         provider details.
+  - [ ] Document what must remain environment-specific and ignored.
 - [ ] P64.2 Operator checklist
   - [ ] Add model inventory checklist.
   - [ ] Add permission-mode and workspace-root checklist.
   - [ ] Add bridge launch and budget declaration checklist.
   - [ ] Add evidence collection and public-safety checklist.
+  - [ ] Add pre-run and post-run checks for stale sessions, run IDs, and
+        budget records.
+  - [ ] Add explicit "do not run" gates for missing budget, wrong model, wrong
+        root, stale chat evidence, or repeated failed attempts.
 - [ ] P64.3 Troubleshooting
   - [ ] Document stale chat session symptoms and reset procedure.
   - [ ] Document wrong workspace root and model mismatch checks.
   - [ ] Document runaway loop cancellation procedure.
   - [ ] Document when not to run because budget or evidence gates are missing.
+  - [ ] Document how to distinguish provider/model failures from Copilot Chat
+        session-loop failures.
+  - [ ] Document when to restart Ollama versus when to reset VS Code/Copilot
+        state.
 - [ ] P64.4 Public-safe closeout
+  - [ ] Add a P64 planning note that records the supported deployment posture
+        and excluded private details.
   - [ ] Keep private endpoint, server, credential, and personal-path details out
         of tracked docs.
   - [ ] Validate docs and examples.
   - [ ] Public-safety scan tracked playbook.
+  - [ ] Update roadmap, changelog, parent issue, child issues, and PR body from
+        the same subtask checklist.
   - [ ] Open a P64-only PR after review.

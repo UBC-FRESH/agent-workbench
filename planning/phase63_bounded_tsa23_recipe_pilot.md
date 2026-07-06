@@ -65,6 +65,22 @@ validating the budget record.
 P63.2 is the live boundary. It should not start until the maintainer accepts the
 budget declaration and the live command sequence is explicit.
 
+P63.2-P63.4 must stay at task/subtask resolution in both `ROADMAP.md` and the
+child issue bodies. This is not optional checklist decoration: the live recipe
+run, outcome report, and scale decision all carry paid-supervisor cost risk, so
+each task needs explicit subtasks, validation steps, and stop conditions before
+it can be treated as implementation-ready.
+
+For P63, a broad instruction such as "run the recipe" is not sufficient. The
+execution task must separately track runtime ticket generation, dry-run
+validation, model availability, the single live attempt, ignored raw evidence,
+deterministic validation, allowed repair/normalization, and stop-rule handling.
+The reporting task must separately track sanitized summaries, P60 outcome
+fields, fact counts, hard-vs-soft defects, line-item economics, baseline
+comparison, diagnostic evidence, and planning-note updates. The scale-decision
+task must record the exact follow-on gate before any new live run can be
+proposed.
+
 ## Expected Outcome Fields
 
 The pilot summary must include:
