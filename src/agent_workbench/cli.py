@@ -28,6 +28,12 @@ from .benchmark import (
     render_benchmark_markdown,
     validate_benchmark_record,
 )
+from .behavior_analytics import (
+    analyze_archive_manifest,
+    load_archive_manifest,
+    render_behavior_markdown,
+    synthesize_behavior_summaries,
+)
 from .budget import (
     load_budget_declaration,
     render_budget_validation,
@@ -300,6 +306,43 @@ def build_parser() -> argparse.ArgumentParser:
     nudge_suggest_parser.add_argument("--summary", type=Path, required=True)
     nudge_suggest_parser.add_argument("--output", type=Path, required=True)
     nudge_suggest_parser.set_defaults(func=run_nudge_suggest)
+
+    behavior_parser = subparsers.add_parser(
+        "behavior",
+        help="Analyze sanitized Copilot archive manifests for delegation behavior.",
+    )
+    behavior_subparsers = behavior_parser.add_subparsers(
+        dest="behavior_command",
+        required=True,
+    )
+    behavior_analyze_parser = behavior_subparsers.add_parser(
+        "analyze",
+        help="Analyze one sanitized Copilot archive manifest.",
+    )
+    behavior_analyze_parser.add_argument("--input", type=Path, required=True)
+    behavior_analyze_parser.add_argument("--output", type=Path, required=True)
+    behavior_analyze_parser.add_argument("--markdown-output", type=Path, required=True)
+    behavior_analyze_parser.set_defaults(func=run_behavior_analyze)
+
+    behavior_synthesize_parser = behavior_subparsers.add_parser(
+        "synthesize",
+        help="Synthesize multiple behavior summary JSON files.",
+    )
+    behavior_synthesize_parser.add_argument(
+        "--input",
+        type=Path,
+        action="append",
+        default=[],
+    )
+    behavior_synthesize_parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=None,
+        help="Directory containing *.behavior.json files.",
+    )
+    behavior_synthesize_parser.add_argument("--output", type=Path, required=True)
+    behavior_synthesize_parser.add_argument("--json-output", type=Path, required=True)
+    behavior_synthesize_parser.set_defaults(func=run_behavior_synthesize)
 
     eval_parser = subparsers.add_parser(
         "eval",
@@ -1306,6 +1349,43 @@ def run_nudge_suggest(args: argparse.Namespace) -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(suggest_nudge(summary) + "\n", encoding="utf-8")
     print(f"wrote {args.output}")
+    return 0
+
+
+def run_behavior_analyze(args: argparse.Namespace) -> int:
+    try:
+        data = load_archive_manifest(args.input)
+        metrics = analyze_archive_manifest(data)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote {args.output}")
+    args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+    args.markdown_output.write_text(render_behavior_markdown(metrics), encoding="utf-8")
+    print(f"wrote {args.markdown_output}")
+    return 0
+
+
+def run_behavior_synthesize(args: argparse.Namespace) -> int:
+    paths = list(args.input)
+    if args.input_dir is not None:
+        paths.extend(sorted(args.input_dir.glob("*.behavior.json")))
+    if not paths:
+        print("error: provide --input or --input-dir", file=sys.stderr)
+        return 1
+    try:
+        synthesis, markdown = synthesize_behavior_summaries(paths)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(markdown, encoding="utf-8")
+    print(f"wrote {args.output}")
+    args.json_output.parent.mkdir(parents=True, exist_ok=True)
+    args.json_output.write_text(json.dumps(synthesis, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote {args.json_output}")
     return 0
 
 

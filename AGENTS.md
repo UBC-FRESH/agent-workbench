@@ -244,6 +244,11 @@ to check the manifest, generate the bounded Copilot directive, and render the
 coordinator review packet. The default controller prompt must not ask VS Code to
 maximize or rearrange the UI.
 
+Use `agent-workbench behavior analyze` and `agent-workbench behavior synthesize`
+on sanitized Copilot archive manifests and behavior summaries when comparing
+delegated-run behavior. Behavior metrics are diagnostic until enough archived
+runs exist to support policy tuning; do not tune defaults from a single run.
+
 ## Planning Workflow
 
 This repo follows the UBC-FRESH phase/task/subtask workflow:

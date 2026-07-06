@@ -76,8 +76,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P65 Copilot session archive | #426 | `feature/p65-copilot-session-archive` | Complete |
 | P66 Task-level delegation protocol | #431 | `feature/p66-task-level-delegation-protocol` | Active |
 | P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Complete |
-| P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Active |
-| P69 Behavior analytics from archives | TBD | `feature/p69-behavior-analytics-from-archives` | Planned |
+| P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Complete |
+| P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Active |
 | P70 FEMIC P108 repair dogfood | TBD | `feature/p70-femic-p108-repair-dogfood` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -2958,7 +2958,7 @@ Parent issue: #437
 
 Branch: `feature/p67-heartbeat-nudge-protocol`
 
-Status: active
+Status: complete
 
 Goal: make delegated-run stalls observable and make mid-run nudges structured,
 cheap, and auditable.
@@ -3040,38 +3040,44 @@ Closeout boundary:
 
 ## Phase 69: Behavior Analytics From Archives
 
-Parent issue: TBD
+Parent issue: #454
 
 Branch: `feature/p69-behavior-analytics-from-archives`
 
-Status: planned
+Status: active
 
 Goal: mine archived Copilot sessions for reusable delegation behavior metrics.
 
 Planned tasks:
 
-- [ ] P69.1 Metrics schema
-  - [ ] Define stall count, nudge count, tool-call count, command-failure count,
+- [x] P69.1 Metrics schema (#455)
+  - [x] Define stall count, nudge count, tool-call count, command-failure count,
         shell-mismatch count, repeated-summary count, and premature-completion
         claim count.
-  - [ ] Define user-intervention burden and coordinator-review burden fields.
-  - [ ] Define behavior outcome classes: smooth, nudged-success,
+  - [x] Define user-intervention burden and coordinator-review burden fields.
+  - [x] Define behavior outcome classes: smooth, nudged-success,
         noisy-success, repair-needed, blocked, or runaway.
-- [ ] P69.2 Archive analyzer
-  - [ ] Add a command to analyze P65 archive manifests and raw runtime logs.
-  - [ ] Detect common P108-style patterns from sanitized snippets and event
+- [x] P69.2 Archive analyzer (#456)
+  - [x] Add a command to analyze P65 archive manifests.
+  - [x] Detect common P108-style patterns from sanitized snippets and event
         structure.
-  - [ ] Emit a public-safe behavior summary JSON/Markdown pair.
-- [ ] P69.3 Cross-run synthesis
-  - [ ] Aggregate behavior summaries across delegation tests.
-  - [ ] Group by model, permission mode, ticket type, task size, and authority
+  - [x] Emit a public-safe behavior summary JSON/Markdown pair.
+- [x] P69.3 Cross-run synthesis (#457)
+  - [x] Aggregate behavior summaries across delegation tests.
+  - [x] Group by model, permission mode, ticket type, task size, and authority
         level.
-  - [ ] Report trends without exposing raw transcript text.
-- [ ] P69.4 Policy feedback
-  - [ ] Feed behavior metrics into task-suitability and delegation-policy
+  - [x] Report trends without exposing raw transcript text.
+- [x] P69.4 Policy feedback (#458)
+  - [x] Feed behavior metrics into task-suitability and delegation-policy
         recommendations.
-  - [ ] Identify ticket patterns that reduce stalls or repair burden.
-  - [ ] Define minimum archive count before tuning defaults.
+  - [x] Identify ticket patterns that reduce stalls or repair burden.
+  - [x] Define minimum archive count before tuning defaults.
+
+Closeout boundary:
+
+- [x] Run focused behavior analytics tests.
+- [x] Run `git diff --check`.
+- [x] Update `CHANGE_LOG.md`.
 
 ## Phase 70: FEMIC P108 Repair Dogfood
 
