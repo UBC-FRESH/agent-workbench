@@ -2494,4 +2494,4 @@ Planned tasks:
   - [x] Link P57 roadmap and planning notes to GitHub issues.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Run focused P57 test suite.
-  - [ ] Open a P57-only PR against `main`.
+  - [x] Open a P57-only PR against `main`.
