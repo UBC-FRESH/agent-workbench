@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ubc-fresh.github.io/agent-workbench/schemas/task_result.schema.json",
+  "title": "Agent Workbench Task Result",
+  "type": "object",
+  "required": [
+    "run_id",
+    "phase",
+    "child_issue",
+    "final_status",
+    "commands_run",
+    "files_changed",
+    "checks_run",
+    "github_urls_touched",
+    "artifacts",
+    "blockers",
+    "heartbeat_path",
+    "archive_manifest_path"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "phase": {
+      "type": "string"
+    },
+    "child_issue": {
+      "type": "string"
+    },
+    "final_status": {
+      "type": "string",
+      "enum": [
+        "accepted-candidate",
+        "blocked",
+        "needs-supervisor-review"
+      ]
+    },
+    "commands_run": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["command", "cwd", "exit_status"],
+        "properties": {
+          "command": {"type": "string"},
+          "cwd": {"type": "string"},
+          "exit_status": {"type": "integer"},
+          "evidence_path": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "files_changed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "change_type"],
+        "properties": {
+          "path": {"type": "string"},
+          "change_type": {
+            "type": "string",
+            "enum": ["added", "modified", "deleted", "generated", "none"]
+          },
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "checks_run": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status"],
+        "properties": {
+          "name": {"type": "string"},
+          "status": {
+            "type": "string",
+            "enum": ["passed", "failed", "blocked", "not-run"]
+          },
+          "evidence_path": {"type": "string"},
+          "details": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "github_urls_touched": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "public_safe"],
+        "properties": {
+          "path": {"type": "string"},
+          "public_safe": {"type": "boolean"},
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["blocker", "exact_error_text"],
+        "properties": {
+          "blocker": {"type": "string"},
+          "exact_error_text": {"type": "string"},
+          "failed_command": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "heartbeat_path": {
+      "type": "string"
+    },
+    "archive_manifest_path": {
+      "type": ["string", "null"]
+    },
+    "token_record_path": {
+      "type": ["string", "null"]
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
