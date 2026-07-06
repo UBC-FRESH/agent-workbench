@@ -95,6 +95,8 @@ See:
 - `playbooks/cli_workflow.md` for the current CLI workflow.
 - `playbooks/real_project_deployment.md` for real-project proposal-assist
   deployment.
+- `playbooks/document_indexing_recipe.md` for the public technical PDF
+  document-indexing recipe.
 - `model_profiles/` for evidence-scoped worker model capability notes.
 - `templates/workbench_templates/` for FreshForge-style graph envelopes around
   agent-assisted project work.

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "stage_id": "section_map_extraction",
+  "stage_name": "Section-map extraction",
+  "owner": "local_worker",
+  "authority_level": "L0",
+  "input_artifacts": [
+    {
+      "artifact_id": "chunk_manifest",
+      "kind": "tracked_sanitized_manifest",
+      "path_or_reference": "benchmarks/document_library/<corpus_id>/<document_id>/chunk_manifest.json"
+    },
+    {
+      "artifact_id": "runtime_chunks",
+      "kind": "ignored_raw_text",
+      "path_or_reference": "runtime/document_library/<corpus_id>/<document_id>/chunks"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "artifact_id": "candidate_records",
+      "kind": "ignored_worker_output",
+      "path_or_reference": "runtime/document_library/<corpus_id>/<document_id>/section_map_candidates.jsonl"
+    }
+  ],
+  "budget_hooks": {
+    "requires_budget_record_for_live_run": true,
+    "supervisor_checkpoint_spans": [
+      "setup",
+      "ticket_build",
+      "worker_run_orchestration",
+      "worker_output_summarize",
+      "supervisor_audit"
+    ]
+  },
+  "outcome_fields": {
+    "quality_validated_candidate": false,
+    "protocol_accepted_candidate": false,
+    "economics_usable": false,
+    "final_decision": "not_run",
+    "rejection_reasons": []
+  },
+  "hard_constraints": [
+    "valid_json_or_jsonl_schema",
+    "correct_source_document_id",
+    "correct_chunk_id",
+    "no_fabricated_source_anchors",
+    "no_tracked_raw_source_leakage",
+    "no_authority_boundary_violation"
+  ],
+  "soft_objectives": [
+    {
+      "objective": "source_quote_length",
+      "target": "25 words",
+      "hard_failure": false
+    },
+    {
+      "objective": "concise_title",
+      "target": "short descriptive phrase",
+      "hard_failure": false
+    }
+  ],
+  "public_safety": {
+    "raw_documents_tracked": false,
+    "raw_text_tracked": false,
+    "raw_prompts_tracked": false,
+    "raw_worker_outputs_tracked": false,
+    "provider_details_tracked": false,
+    "personal_paths_tracked": false
+  }
+}

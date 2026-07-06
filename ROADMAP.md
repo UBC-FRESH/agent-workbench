@@ -69,8 +69,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P58 Evidence consolidation and active-phase reconciliation | #384 | `feature/p58-evidence-consolidation-active-phase-reconciliation` | Complete |
 | P59 Paid-supervisor budget gates and stop rules | #390 | `feature/p59-supervisor-budget-gates` | Complete |
 | P60 Outcome semantics and scoring split | #396 | `feature/p60-outcome-semantics-scoring-split` | Complete |
-| P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Active |
-| P62 Document-indexing workflow recipe v1 | TBD | `feature/p62-document-indexing-recipe-v1` | Planned |
+| P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Complete |
+| P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Active |
 | P63 Bounded TSA23 recipe pilot | TBD | `feature/p63-bounded-tsa23-recipe-pilot` | Planned |
 | P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
 
@@ -2628,7 +2628,7 @@ Parent issue: #402
 
 Branch: `feature/p61-packaged-local-supervisor-workflow-v1`
 
-Status: active
+Status: complete
 
 Goal: promote the successful P57 pre-materialized graph-ticket pattern into a
 reusable packaged workflow.
@@ -2661,40 +2661,40 @@ Planned tasks:
 
 ## Phase 62: Document-Indexing Workflow Recipe V1
 
-Parent issue: TBD
+Parent issue: #408
 
 Branch: `feature/p62-document-indexing-recipe-v1`
 
-Status: planned
+Status: active
 
 Goal: convert TSA23/MP11 lessons into a reusable public technical PDF
 document-indexing recipe.
 
 Planned tasks:
 
-- [ ] P62.1 Recipe stage model
-  - [ ] Define corpus resolution and materialization stage.
-  - [ ] Define deterministic page/chunk manifest generation stage.
-  - [ ] Define section-map extraction stage.
-  - [ ] Define typed TSR fact extraction stage.
-  - [ ] Define repair, normalization, verification, and paid sample-audit
+- [x] P62.1 Recipe stage model (#411)
+  - [x] Define corpus resolution and materialization stage.
+  - [x] Define deterministic page/chunk manifest generation stage.
+  - [x] Define section-map extraction stage.
+  - [x] Define typed TSR fact extraction stage.
+  - [x] Define repair, normalization, verification, and paid sample-audit
         stages.
-- [ ] P62.2 Task sizing and split strategy
-  - [ ] Define default page/chunk sizes for public technical PDFs.
-  - [ ] Define split strategy for long documents and mini-corpora.
-  - [ ] Explicitly forbid hidden record caps.
-  - [ ] Define stop/escalation behavior for scanned/OCR-poor inputs.
-- [ ] P62.3 Model role defaults
-  - [ ] Assign Qwen3.6-style general document models to extraction roles.
-  - [ ] Assign coding-oriented models to JSON repair roles.
-  - [ ] Assign verifier/critic roles only where P55-P57 evidence supports them.
-  - [ ] Keep model defaults configurable per deployment.
-- [ ] P62.4 Public-safe recipe artifacts
-  - [ ] Track recipe docs and templates only.
-  - [ ] Keep raw PDF text, prompts, worker outputs, and provider details
+- [x] P62.2 Task sizing and split strategy (#412)
+  - [x] Define default page/chunk sizes for public technical PDFs.
+  - [x] Define split strategy for long documents and mini-corpora.
+  - [x] Explicitly forbid hidden record caps.
+  - [x] Define stop/escalation behavior for scanned/OCR-poor inputs.
+- [x] P62.3 Model role defaults (#409)
+  - [x] Assign Qwen3.6-style general document models to extraction roles.
+  - [x] Assign coding-oriented models to JSON repair roles.
+  - [x] Assign verifier/critic roles only where P55-P57 evidence supports them.
+  - [x] Keep model defaults configurable per deployment.
+- [x] P62.4 Public-safe recipe artifacts (#410)
+  - [x] Track recipe docs and templates only.
+  - [x] Keep raw PDF text, prompts, worker outputs, and provider details
         ignored.
-  - [ ] Include P59 budget hooks and P60 outcome fields.
-  - [ ] Add public-safety scan and docs validation.
+  - [x] Include P59 budget hooks and P60 outcome fields.
+  - [x] Add public-safety scan and docs validation.
 
 ## Phase 63: Bounded TSA23 Recipe Pilot
 
