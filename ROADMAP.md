@@ -2539,7 +2539,7 @@ Planned tasks:
 - [ ] P58.4 Planning, tests, and PR closeout (#388)
   - [x] Rebase P58 onto merged P57 `main`.
   - [x] Resolve conflicts without rewriting landed P55-P57 history.
-  - [ ] Run focused validation.
+  - [x] Run focused validation.
   - [ ] Open a P58-only PR.
 
 ## Phase 59: Paid-Supervisor Budget Gates And Stop Rules
