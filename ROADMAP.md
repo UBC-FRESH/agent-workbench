@@ -2573,11 +2573,11 @@ Planned tasks:
   - [x] Validate attempt counts and max-attempt limits.
   - [x] Validate stop condition and maintainer checkpoint settings.
   - [x] Document that aborted/stale runs are diagnostic evidence, not progress.
-- [ ] P59.4 Planning, tests, and PR closeout (#394)
+- [x] P59.4 Planning, tests, and PR closeout (#394)
   - [x] Link P59 roadmap and planning notes to GitHub issues.
   - [x] Update `CHANGE_LOG.md`.
   - [x] Run focused validation.
-  - [ ] Open a P59-only PR against `main`.
+  - [x] Open a P59-only PR against `main`.
 
 Closeout boundary: P59 adds the budget declaration validator and status
 semantics needed before future live economics runs. The existing packaged
