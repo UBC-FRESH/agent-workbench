@@ -1,0 +1,36 @@
+{
+  "summary_id": "p57_document_artifact_audit_strict_repeat",
+  "phase": "P57",
+  "task_id": "P57.3",
+  "status": "completed",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "copilot_permission_level": "autopilot",
+  "bridge_status": "accepted-candidate",
+  "subagent_tool_observed": true,
+  "source_artifact": "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_summary.json",
+  "runtime_report": "runtime/agent_jobs/p57_document_artifact_audit_strict_report.json",
+  "runtime_token_record": "runtime/supervisor_tokens/p57_document_artifact_audit_strict_repeat/p57-document-artifact-audit-strict-repeat.tokens.json",
+  "source_gate_result": "wave8-quote-repair-needed",
+  "source_recommended_next_move": "Send only unresolved verifier fields to paid supervisor audit: decision_rationale",
+  "auditor_decision": "quote_repair_required",
+  "decision_consistent_with_gate": true,
+  "source_fact_checks": {
+    "summary_id": true,
+    "document_id": true,
+    "gate_result": true,
+    "recommended_next_move": true,
+    "needs_supervisor_fields": true,
+    "quote_over_limit_fields": true,
+    "resolved_fields": true,
+    "gate_decision_consistency": true
+  },
+  "source_totals": {
+    "needs_supervisor_fields": 1,
+    "quote_over_limit_fields": 1,
+    "resolved_fields": 6,
+    "worker_input_tokens": 17030,
+    "worker_output_tokens": 4619
+  },
+  "defects": [],
+  "interpretation": "Strict decision rules corrected the prior auditor contradiction; this supports larger supervisor-scope tests with explicit gate-to-decision invariants."
+}

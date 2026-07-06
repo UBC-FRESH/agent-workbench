@@ -1,0 +1,75 @@
+{
+  "summary_id": "p57_graph_batch_all_p55_summaries_v1_split_02_v4_summary",
+  "phase": "P57",
+  "task_id": "P57.4",
+  "status": "accepted_candidate_with_subagent_repair",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "copilot_permission_level": "autopilot",
+  "workflow_graph": "document_artifact_audit_supervisor_graph",
+  "batch_plan": {
+    "batch_id": "p57_graph_batch_all_p55_summaries_v1",
+    "split_id": "split_02_v4",
+    "source_count": 5,
+    "batch_size_policy": 5,
+    "split_strategy": "preserve_input_order"
+  },
+  "bridge_status": "accepted-candidate",
+  "final_marker_present": true,
+  "subagent_tool_observed": true,
+  "materializer_command_observed": true,
+  "audit_report_written": true,
+  "graph_report_written": true,
+  "delete_command_observed": false,
+  "authority_validation_passed": true,
+  "document_audit_verifier_passed": true,
+  "document_graph_report_verifier_passed": true,
+  "all_source_facts_copied_correctly": true,
+  "all_decisions_consistent_with_gate": true,
+  "accepted_candidate": true,
+  "source_artifacts": [
+    "benchmarks/document_library/tsa23_tsr/p55_wave2_model_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_chunk_orchestration_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_qwen36_bf16_chunk_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave3_size_scale_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_deepseek_r1_summary.json"
+  ],
+  "subagent_outcome": {
+    "audit_report_status": "accepted_after_supervisor_repair",
+    "graph_report_status": "accepted_after_supervisor_repair",
+    "repair_required": true,
+    "items_repaired": 5,
+    "summary": "The subagent lane produced or contributed to decisions that failed the deterministic gate-vocabulary mapping. The local supervisor repaired all five items to needs_coordinator_review before validators passed."
+  },
+  "audit_decision_breakdown": {
+    "ready_to_scale": 0,
+    "quote_repair_required": 0,
+    "needs_coordinator_review": 5,
+    "paid_supervisor_audit_required": 0
+  },
+  "supervisor_report_score": 0.0,
+  "quality_caveats": [
+    {
+      "caveat_id": "subagent_decisions_all_repaired",
+      "severity": "material",
+      "description": "The run is a valid protocol candidate, but not a clean supervisor-worker quality win because all five audited decisions required supervisor repair."
+    },
+    {
+      "caveat_id": "validator_dependency_confirmed",
+      "severity": "expected",
+      "description": "Deterministic authority and document-audit validators were necessary to turn the local supervisor/subagent result into a valid report."
+    }
+  ],
+  "token_costs": {
+    "measured_paid_cost_available": true,
+    "estimated_paid_cost_usd": 0.146603,
+    "estimated_paid_cost_per_source_artifact_usd": 0.029321,
+    "supervisor_input_tokens": 3725,
+    "supervisor_cached_input_tokens": 711680,
+    "supervisor_output_tokens": 989,
+    "supervisor_reasoning_output_tokens": 121,
+    "codex_total_input_token_delta": 715405,
+    "codex_total_token_delta": 716394,
+    "local_copilot_ollama_cash_cost_usd": 0.0
+  },
+  "interpretation": "The hardened contract produced a bridge-accepted, validator-clean graph run with measured paid coordinator token cost. The new subagent outcome fields show that the local supervisor/subagent workflow still depends heavily on deterministic verifier feedback: the job completed, but all five decisions were repaired by the supervisor before acceptance. A follow-up graph-report verifier now validates the coordinator-facing subagent_result status against the audit report."
+}

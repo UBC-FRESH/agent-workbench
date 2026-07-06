@@ -1,0 +1,87 @@
+{
+  "summary_id": "p57_graph_batch_all_p55_summaries_v1_split_01_v9_summary",
+  "phase": "P57",
+  "task_id": "P57.5",
+  "status": "accepted-candidate",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "model_provenance": {
+    "expected_model": "qwen3.6:35b-a3b-bf16",
+    "observed_model": "qwen3.6:35b-a3b-bf16",
+    "authoritative_model": "qwen3.6:35b-a3b-bf16",
+    "source": "copilot_chat_bridge_report",
+    "match_status": "matched",
+    "self_reported_model": "",
+    "self_report_status": "not_applicable"
+  },
+  "copilot_permission_level": "autopilot",
+  "workflow_graph": "document_artifact_audit_supervisor_graph",
+  "job_id": "p57_graph_batch_all_p55_summaries_v1_split_01_v9",
+  "source_artifacts": [
+    "benchmarks/document_library/tsa23_tsr/p55_codex_vs_copilot_supervisor_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_large_codex_vs_copilot_supervisor_ab_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave1_full_document_rerun_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave1_smoke_summary.json",
+    "benchmarks/document_library/tsa23_tsr/p55_wave10_quote_repair_prepass_summary.json"
+  ],
+  "source_count": 5,
+  "bridge_status": "accepted-candidate",
+  "final_marker_present": true,
+  "subagent_tool_observed": true,
+  "materializer_command_count": 0,
+  "pre_materialized_audit_ticket": true,
+  "accepted_candidate": true,
+  "failure": "",
+  "authority_validation_passed": true,
+  "document_audit_verifier_passed": true,
+  "document_graph_report_verifier_passed": true,
+  "validation_results": {
+    "authority_validation": {
+      "returncode": 0,
+      "stdout": "valid supervisor report: runtime\\agent_jobs\\p57_graph_batch_all_p55_summaries_v1_split_01_v9_audit_report.json",
+      "stderr": ""
+    },
+    "document_audit_verifier": {
+      "returncode": 0,
+      "stdout": "valid document artifact audit report: runtime/agent_jobs/p57_graph_batch_all_p55_summaries_v1_split_01_v9_audit_report.json",
+      "stderr": ""
+    },
+    "graph_report_verifier": {
+      "returncode": 0,
+      "stdout": "valid document artifact graph report: runtime/agent_jobs/p57_graph_batch_all_p55_summaries_v1_split_01_v9_graph_report.json",
+      "stderr": ""
+    }
+  },
+  "all_decisions_consistent_with_gate": true,
+  "supervisor_report_score": 1.0,
+  "subagent_outcome": {
+    "audit_report_status": "unavailable_supervisor_completed",
+    "graph_report_status": "unavailable_supervisor_completed",
+    "repair_required": true,
+    "summary": "Auditor subagent did not return a result. Supervisor computed all decisions deterministically from gate rules."
+  },
+  "audit_decision_breakdown": {
+    "needs_coordinator_review": 4,
+    "quote_repair_required": 1
+  },
+  "token_costs": {
+    "measured_paid_cost_available": true,
+    "economics_usable": false,
+    "not_usable_reason": "Token delta is zero or the run was not accepted; this span is not usable as paid coordinator economics evidence.",
+    "estimated_paid_cost_usd": 0.0,
+    "estimated_paid_cost_per_source_artifact_usd": 0.0,
+    "supervisor_input_tokens": 0,
+    "supervisor_cached_input_tokens": 0,
+    "supervisor_output_tokens": 0,
+    "supervisor_reasoning_output_tokens": 0,
+    "worker_input_tokens": 0,
+    "worker_output_tokens": 0,
+    "codex_total_input_token_delta": 0,
+    "codex_total_token_delta": 0,
+    "local_copilot_ollama_cash_cost_usd": 0.0
+  },
+  "public_safety": {
+    "raw_chat_session_paths_excluded": true,
+    "raw_transcripts_excluded": true,
+    "provider_details_excluded": true
+  }
+}

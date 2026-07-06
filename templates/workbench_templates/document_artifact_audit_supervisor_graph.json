@@ -1,0 +1,265 @@
+{
+  "workflow": {
+    "id": "document_artifact_audit_supervisor_graph",
+    "name": "Document Artifact Audit Supervisor Graph",
+    "description": "FreshForge-compatible graph for a local Copilot supervisor that materializes, audits, repairs, and reports document-indexing artifact gates under Agent Workbench authority boundaries."
+  },
+  "nodes": [
+    {
+      "id": "coordinator_job_ticket",
+      "provider": "agent_workbench.coordinator.ticket",
+      "name": "Prepare supervisor job ticket",
+      "description": "Coordinator selects source artifacts, project root, allowed tools, and final signal vocabulary.",
+      "outputs": {
+        "supervisor_ticket": "runtime supervisor ticket"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "coordinator_ticket_prepare",
+          "execution_boundary": "Paid coordinator or future free coordinator owns task framing and acceptance gates.",
+          "owner": "coordinator",
+          "authority_role": "coordinator",
+          "token_accounting": "coordinator span required when paid model performs this node",
+          "nondelegable_actions": [
+            "change developer objective",
+            "claim final benchmark conclusion without evidence"
+          ]
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "supervisor_ticket",
+          "kind": "generated",
+          "path_or_reference": "runtime/agent_jobs/<job_id>_ticket.md"
+        }
+      ],
+      "provenance": {
+        "role": "coordinator",
+        "capability": "supervisor_job_ticketing",
+        "authority_level": "coordinator-owned",
+        "implementation": "Codex coordinator or future free coordinator agent"
+      }
+    },
+    {
+      "id": "materialize_runtime_job",
+      "provider": "agent_workbench.script.materialize_document_artifact_audit",
+      "name": "Materialize runtime audit job",
+      "description": "Supervisor runs the materializer with explicit project root to create the runtime contract and audit ticket.",
+      "needs": [
+        "coordinator_job_ticket"
+      ],
+      "inputs": {
+        "supervisor_ticket": "${nodes.coordinator_job_ticket.outputs.supervisor_ticket}"
+      },
+      "outputs": {
+        "runtime_contract": "runtime supervisor contract",
+        "runtime_ticket": "runtime generated audit ticket"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_tool_execution",
+          "execution_boundary": "Local supervisor may run the exact materializer command only.",
+          "owner": "supervisor",
+          "authority_role": "supervisor",
+          "required_project_root": "explicit --project-root argument",
+          "wrong_root_rule": "Stop or fail validation if output is written outside assigned project root.",
+          "token_accounting": "coordinator launch span plus zero-cash local supervisor execution"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "runtime_contract",
+          "kind": "generated",
+          "path_or_reference": "runtime/agent_jobs/<job_id>_contract.json"
+        },
+        {
+          "artifact_id": "runtime_ticket",
+          "kind": "generated",
+          "path_or_reference": "runtime/agent_jobs/<job_id>_ticket.md"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "workflow_tool_execution",
+        "authority_level": "supervisor-owned",
+        "implementation": "Copilot custom supervisor using local tool command"
+      }
+    },
+    {
+      "id": "subagent_artifact_audit",
+      "provider": "agent_workbench.subagent.document_artifact_auditor",
+      "name": "Audit source artifact gates",
+      "description": "Supervisor invokes a read-only auditor subagent to classify source summary gates with a fixed decision vocabulary.",
+      "needs": [
+        "materialize_runtime_job"
+      ],
+      "inputs": {
+        "runtime_ticket": "${nodes.materialize_runtime_job.outputs.runtime_ticket}",
+        "runtime_contract": "${nodes.materialize_runtime_job.outputs.runtime_contract}"
+      },
+      "outputs": {
+        "auditor_payload": "compact auditor payload"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "worker_subagent_audit",
+          "execution_boundary": "Subagent receives only extracted source facts and returns compact advisory audit findings. Worker output is not authoritative until the supervisor and deterministic validators accept or repair it.",
+          "owner": "worker_subagent",
+          "authority_role": "worker",
+          "default_subagent_policy": "advisory_until_validated",
+          "allowed_decisions": [
+            "paid_supervisor_audit_required",
+            "quote_repair_required",
+            "ready_to_scale",
+            "needs_coordinator_review"
+          ],
+          "known_quality_risk": "P57 split_02 v4-v8 showed repeated subagent decision defects; supervisor repair and deterministic verification are required before coordinator acceptance.",
+          "token_accounting": "local Copilot/Ollama tokens at zero cash cost"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "auditor_payload",
+          "kind": "generated",
+          "path_or_reference": "runtime-only subagent payload excerpt"
+        }
+      ],
+      "provenance": {
+        "role": "worker",
+        "capability": "document_artifact_gate_audit",
+        "authority_level": "worker-owned",
+        "implementation": "agent-workbench-result-auditor custom subagent"
+      }
+    },
+    {
+      "id": "write_supervisor_report",
+      "provider": "agent_workbench.supervisor.report_writer",
+      "name": "Write supervisor report",
+      "description": "Supervisor writes the runtime JSON report using source facts, subagent payload, and decision consistency checks.",
+      "needs": [
+        "subagent_artifact_audit"
+      ],
+      "inputs": {
+        "auditor_payload": "${nodes.subagent_artifact_audit.outputs.auditor_payload}"
+      },
+      "outputs": {
+        "supervisor_report": "runtime supervisor report"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "supervisor_report_write",
+          "execution_boundary": "Supervisor may write only the assigned runtime report path.",
+          "owner": "supervisor",
+          "authority_role": "supervisor",
+          "required_report_fields": [
+            "verification.subagent_payload_excerpt",
+            "verification.subagent_result_status",
+            "verification.subagent_repair_summary",
+            "verification.audit_items",
+            "verification.all_decisions_consistent_with_gate",
+            "verification.score"
+          ],
+          "subagent_outcome_policy": "Supervisor must record whether the subagent result was accepted, repaired, replaced, or unavailable.",
+          "token_accounting": "zero-cash local supervisor tokens plus paid coordinator validation span"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "supervisor_report",
+          "kind": "generated",
+          "path_or_reference": "runtime/agent_jobs/<job_id>_report.json"
+        }
+      ],
+      "provenance": {
+        "role": "supervisor",
+        "capability": "structured_report_writing",
+        "authority_level": "supervisor-owned",
+        "implementation": "Copilot custom supervisor"
+      }
+    },
+    {
+      "id": "validate_and_repair_report",
+      "provider": "agent_workbench.authority.validate_report",
+      "name": "Validate and repair report",
+      "description": "Coordinator validates the supervisor report; if it fails a bounded validator rule, a repair ticket may be delegated back to the supervisor.",
+      "needs": [
+        "write_supervisor_report"
+      ],
+      "inputs": {
+        "supervisor_report": "${nodes.write_supervisor_report.outputs.supervisor_report}"
+      },
+      "outputs": {
+        "validated_report": "validated or repaired report",
+        "repair_evidence": "repair bridge report when repair was required"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "validator_repair_loop",
+          "execution_boundary": "Deterministic validator owns pass/fail; supervisor may repair only bounded report defects.",
+          "owner": "coordinator_or_script",
+          "authority_role": "coordinator",
+          "repair_allowed": true,
+          "repair_stop_rule": "Escalate after one failed bounded repair in this graph version.",
+          "validator_policy": "Deterministic validators own pass/fail for source facts, gate decisions, score consistency, graph-report coherence, and allowed mutation surfaces.",
+          "token_accounting": "separate coordinator spans for validation and repair launch"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "validated_report",
+          "kind": "generated",
+          "path_or_reference": "runtime/agent_jobs/<job_id>_report.json"
+        },
+        {
+          "artifact_id": "repair_evidence",
+          "kind": "generated",
+          "path_or_reference": "runtime/agent_jobs/<job_id>_repair_bridge_report.md"
+        }
+      ],
+      "provenance": {
+        "role": "coordinator",
+        "capability": "authority_validation_and_repair_routing",
+        "authority_level": "coordinator-owned",
+        "implementation": "Agent Workbench authority validator plus bounded Copilot repair ticket"
+      }
+    },
+    {
+      "id": "coordinator_review_packet",
+      "provider": "agent_workbench.coordinator.review_packet",
+      "name": "Prepare coordinator review packet",
+      "description": "Coordinator records a sanitized summary, token spans, and open questions for developer review.",
+      "needs": [
+        "validate_and_repair_report"
+      ],
+      "inputs": {
+        "validated_report": "${nodes.validate_and_repair_report.outputs.validated_report}"
+      },
+      "outputs": {
+        "sanitized_summary": "tracked sanitized benchmark summary"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "coordinator_review_summary",
+          "execution_boundary": "Tracked summary may contain sanitized evidence only; no raw transcripts, provider details, or personal paths.",
+          "owner": "coordinator",
+          "authority_role": "coordinator",
+          "developer_review_needed": true,
+          "token_accounting": "paid coordinator summary span unless delegated to free coordinator"
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "sanitized_summary",
+          "kind": "promoted",
+          "path_or_reference": "benchmarks/vscode_subagent_spike/<job_id>_summary.json"
+        }
+      ],
+      "provenance": {
+        "role": "coordinator",
+        "capability": "developer_review_packet",
+        "authority_level": "coordinator-owned",
+        "implementation": "Codex coordinator or future free coordinator agent"
+      }
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "summary_id": "p57_document_artifact_audit_self_materialized_v2_summary",
+  "phase": "P57",
+  "task_id": "P57.3",
+  "status": "completed_with_repair",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "copilot_permission_level": "autopilot",
+  "bridge_status_initial": "accepted-candidate",
+  "bridge_status_repair": "accepted-candidate",
+  "subagent_tool_observed_initial": true,
+  "workflow_tool_command_observed": true,
+  "repair_tool_observed": true,
+  "runtime_ticket": "runtime/agent_jobs/p57_document_artifact_audit_self_materialized_v2_ticket.md",
+  "runtime_report": "runtime/agent_jobs/p57_document_artifact_audit_self_materialized_v2_batch4_report.json",
+  "runtime_token_record_initial": "runtime/supervisor_tokens/p57_document_artifact_audit_self_materialized_v2/p57-document-artifact-audit-self-materialized-v2.tokens.json",
+  "runtime_token_record_repair": "runtime/supervisor_tokens/p57_document_artifact_audit_self_materialized_v2_repair/p57-document-artifact-audit-self-materialized-v2-repair.tokens.json",
+  "source_count": 4,
+  "all_decisions_consistent_with_gate": true,
+  "audit_items": [
+    {
+      "item_id": "source_summary_1",
+      "source_path": "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_deepseek_r1_summary.json",
+      "source_gate_result": "wave8-verifier-parse-failed",
+      "expected_auditor_decision": "needs_coordinator_review",
+      "observed_auditor_decision": "needs_coordinator_review",
+      "decision_ok": true,
+      "source_fact_checks": {
+        "summary_id": true,
+        "document_id": true,
+        "gate_result": true,
+        "recommended_next_move": true,
+        "needs_supervisor_fields": true,
+        "quote_over_limit_fields": true,
+        "resolved_fields": true
+      }
+    },
+    {
+      "item_id": "source_summary_2",
+      "source_path": "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_q8_summary.json",
+      "source_gate_result": "wave8-quote-repair-needed",
+      "expected_auditor_decision": "quote_repair_required",
+      "observed_auditor_decision": "quote_repair_required",
+      "decision_ok": true,
+      "source_fact_checks": {
+        "summary_id": true,
+        "document_id": true,
+        "gate_result": true,
+        "recommended_next_move": true,
+        "needs_supervisor_fields": true,
+        "quote_over_limit_fields": true,
+        "resolved_fields": true
+      }
+    },
+    {
+      "item_id": "source_summary_3",
+      "source_path": "benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_summary.json",
+      "source_gate_result": "wave8-quote-repair-needed",
+      "expected_auditor_decision": "quote_repair_required",
+      "observed_auditor_decision": "quote_repair_required",
+      "decision_ok": true,
+      "source_fact_checks": {
+        "summary_id": true,
+        "document_id": true,
+        "gate_result": true,
+        "recommended_next_move": true,
+        "needs_supervisor_fields": true,
+        "quote_over_limit_fields": true,
+        "resolved_fields": true
+      }
+    },
+    {
+      "item_id": "source_summary_4",
+      "source_path": "benchmarks/document_library/tsa23_tsr/p55_wave9_json_repair_summary.json",
+      "source_gate_result": "wave8-ready-for-supervisor-audit-sampling",
+      "expected_auditor_decision": "paid_supervisor_audit_required",
+      "observed_auditor_decision": "paid_supervisor_audit_required",
+      "decision_ok": true,
+      "source_fact_checks": {
+        "summary_id": true,
+        "document_id": true,
+        "gate_result": true,
+        "recommended_next_move": true,
+        "needs_supervisor_fields": true,
+        "quote_over_limit_fields": true,
+        "resolved_fields": true
+      }
+    }
+  ],
+  "defects": [],
+  "repair_reason": "Initial V2 report exceeded authority validator subagent_payload_excerpt length limit; delegated repair shortened excerpt and corrected the Source 4 wording.",
+  "token_costs": {
+    "initial_estimated_paid_cost_usd": 0.082409,
+    "repair_estimated_paid_cost_usd": 0.077654,
+    "combined_estimated_paid_cost_usd": 0.160063,
+    "combined_cost_per_source_artifact_usd": 0.040016,
+    "initial_usage": {
+      "supervisor_input_tokens": 2414,
+      "supervisor_cached_input_tokens": 392448,
+      "supervisor_output_tokens": 634,
+      "supervisor_reasoning_output_tokens": 45,
+      "worker_input_tokens": 0,
+      "worker_output_tokens": 0,
+      "codex_total_input_token_delta": 394862,
+      "codex_total_token_delta": 395496
+    },
+    "repair_usage": {
+      "supervisor_input_tokens": 1780,
+      "supervisor_cached_input_tokens": 402176,
+      "supervisor_output_tokens": 297,
+      "supervisor_reasoning_output_tokens": 0,
+      "worker_input_tokens": 0,
+      "worker_output_tokens": 0,
+      "codex_total_input_token_delta": 403956,
+      "codex_total_token_delta": 404253
+    }
+  },
+  "interpretation": "Copilot supervisor can run the materializer tool, invoke a subagent, write a structured report, and repair a validator failure. The main remaining weakness is root ambiguity unless project-root and absolute write targets are specified."
+}

@@ -1,0 +1,101 @@
+{
+  "summary_id": "p57_graph_derived_mixed_schema_split_a_v3_summary",
+  "phase": "P57",
+  "task_id": "P57.4",
+  "status": "completed",
+  "model": "qwen3.6:35b-a3b-bf16",
+  "copilot_permission_level": "autopilot",
+  "workflow_graph": "document_artifact_audit_supervisor_graph",
+  "source_count": 5,
+  "source_mix": {
+    "missing_gate_summaries": 2,
+    "non_vocabulary_gate_summaries": 2,
+    "quote_limit_failed_summaries": 1
+  },
+  "bridge_status": "accepted-candidate",
+  "subagent_tool_observed": true,
+  "materializer_command_observed": true,
+  "authority_validation_passed": true,
+  "document_audit_verifier_passed": true,
+  "all_source_facts_copied_correctly": true,
+  "all_decisions_consistent_with_gate": true,
+  "audit_items": [
+    {
+      "item_id": "source_summary_1",
+      "source_gate_result": "",
+      "expected_auditor_decision": "needs_coordinator_review",
+      "observed_auditor_decision": "needs_coordinator_review",
+      "decision_ok": true
+    },
+    {
+      "item_id": "source_summary_2",
+      "source_gate_result": "",
+      "expected_auditor_decision": "needs_coordinator_review",
+      "observed_auditor_decision": "needs_coordinator_review",
+      "decision_ok": true
+    },
+    {
+      "item_id": "source_summary_3",
+      "source_gate_result": "do-not-scale-single-huge-ticket",
+      "expected_auditor_decision": "needs_coordinator_review",
+      "observed_auditor_decision": "needs_coordinator_review",
+      "decision_ok": true
+    },
+    {
+      "item_id": "source_summary_4",
+      "source_gate_result": "proceed-with-caution",
+      "expected_auditor_decision": "needs_coordinator_review",
+      "observed_auditor_decision": "needs_coordinator_review",
+      "decision_ok": true
+    },
+    {
+      "item_id": "source_summary_5",
+      "source_gate_result": "wave10-quote-limit-failed",
+      "expected_auditor_decision": "quote_repair_required",
+      "observed_auditor_decision": "quote_repair_required",
+      "decision_ok": true
+    }
+  ],
+  "token_costs": {
+    "estimated_paid_cost_usd": 0.082281,
+    "estimated_paid_cost_per_source_artifact_usd": 0.016456,
+    "supervisor_input_tokens": 1245,
+    "supervisor_cached_input_tokens": 438528,
+    "supervisor_output_tokens": 240,
+    "supervisor_reasoning_output_tokens": 0,
+    "codex_total_input_token_delta": 439773,
+    "codex_total_token_delta": 440013,
+    "local_copilot_ollama_cash_cost_usd": 0.0
+  },
+  "related_attempts": [
+    {
+      "run_id": "p57_graph_derived_document_audit_mixed_summary_batch_v1",
+      "source_count": 14,
+      "result": "failed_early",
+      "bridge_status": "needs-supervisor-review",
+      "reason": "The local supervisor ran the materializer twice and emitted the outer marker before executing the generated audit ticket or writing reports.",
+      "estimated_paid_cost_usd": 0.074542
+    },
+    {
+      "run_id": "p57_graph_derived_mixed_schema_split_a_v1",
+      "source_count": 5,
+      "result": "partial",
+      "reason": "Bridge accepted and source facts were correct, but the audit report omitted verification.all_decisions_consistent_with_gate."
+    },
+    {
+      "run_id": "p57_graph_derived_mixed_schema_split_a_v2",
+      "source_count": 5,
+      "result": "failed_strict_verifier",
+      "reason": "The first document-audit verifier command was present, but the deterministic decision policy treated quote-limit-failed and generic supervisor-audit language too loosely; the corrected verifier rejects v2."
+    }
+  ],
+  "learned_changes": [
+    "A 14-artifact mixed-schema audit is too large for the current single audit node; the supervisor can stop after materialization unless the graph ticket forbids materializer-only completion.",
+    "Five-artifact split batches are currently a better unit for this local supervisor graph pattern.",
+    "Generic authority validation is necessary but not sufficient for document-artifact audit reports.",
+    "A document-specific verifier is required to catch missing aggregate decision fields and wrong gate-to-decision mappings.",
+    "Quote-limit-failed gates must be handled before generic failed gates.",
+    "Generic wording such as before supervisor audit does not prove paid_supervisor_audit_required; only explicit ready-for-supervisor-audit or paid-supervisor-audit evidence should do that."
+  ],
+  "interpretation": "This run supports split-node graph orchestration over one large mixed audit node. The free local supervisor can complete a five-artifact mixed-schema graph job when deterministic source facts and a document-specific verifier are in the loop."
+}

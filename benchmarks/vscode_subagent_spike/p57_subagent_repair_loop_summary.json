@@ -1,0 +1,68 @@
+{
+  "phase": "P57",
+  "summary_id": "p57_subagent_repair_loop_20260705_1700",
+  "experiment": "VS Code custom supervisor subagent repair loop",
+  "runtime_artifacts": {
+    "seed_report": "runtime/agent_jobs/p57_repair_loop_seed_report.json",
+    "contract": "runtime/agent_jobs/p57_subagent_repair_loop_contract.json",
+    "ticket": "runtime/agent_jobs/p57_subagent_repair_loop_ticket.md",
+    "repaired_report": "runtime/agent_jobs/p57_subagent_repair_loop_report.json",
+    "bridge_report": "runtime/agent_jobs/p57_subagent_repair_loop_bridge_report.md",
+    "coordinator_token_span": "runtime/supervisor_tokens/p57_subagent_repair_loop/p57-subagent-repair-loop.tokens.json"
+  },
+  "custom_agents": {
+    "supervisor": ".github/agents/agent-workbench-local-supervisor.agent.md",
+    "auditor_subagent": ".github/agents/agent-workbench-result-auditor.agent.md"
+  },
+  "seed_report_evidence": {
+    "report_validation": "invalid",
+    "missing_field": "verification.subagent_payload_excerpt",
+    "subagent_invocation_attempted": true
+  },
+  "bridge_evidence": {
+    "status": "accepted-candidate",
+    "resolved_model": "qwen3.6:35b-a3b-bf16",
+    "permission_levels": ["autopilot"],
+    "completed": true,
+    "final_marker_present": true,
+    "expected_command_observed": true,
+    "expected_output_file_observed": true,
+    "required_json_fields_present": true,
+    "tool_names": [
+      "agent",
+      "read_file",
+      "runSubagent",
+      "create_file",
+      "run_in_terminal"
+    ],
+    "deviations": []
+  },
+  "repaired_report_evidence": {
+    "report_validation": "valid",
+    "final_signal": "job_complete_with_caveats",
+    "subagent_invocation_attempted": true,
+    "subagent_invocation_observed_by_supervisor": true,
+    "subagent_name": "agent-workbench-result-auditor",
+    "subagent_payload_excerpt_status": "present",
+    "subagent_payload_classification": "needs-repair"
+  },
+  "coordinator_token_cost": {
+    "span_kind": "coordinator_repair_loop_launch_and_validation",
+    "fresh_input_tokens": 7679,
+    "cached_input_tokens": 1678336,
+    "output_tokens": 3379,
+    "reasoning_output_tokens": 45,
+    "cash_cost_usd": 0.35508305,
+    "scope_note": "Includes coordinator harness creation, launch, validation, and reporting for this experimental iteration."
+  },
+  "interpretation": {
+    "result": "positive-repair-loop-handshake",
+    "summary": "The custom supervisor used a named auditor subagent to identify a missing report field, wrote a repaired report, and the repaired report passed the authority validator.",
+    "next_step": "Move from synthetic report repair to a small document-indexing artifact audit or repair node with a leaner coordinator token span."
+  },
+  "public_safety": {
+    "raw_session_paths_tracked": false,
+    "raw_transcripts_tracked": false,
+    "private_paths_tracked": false
+  }
+}
