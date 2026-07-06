@@ -1586,3 +1586,16 @@ issues, pull requests, and closeout comments.
 - Updated the document-index worker ticket and document-library graph template
   so future instantiations inherit the P62 budget, outcome, quote-penalty, and
   no-hidden-cap rules.
+
+## 2026-07-05 - Opened P63 bounded TSA23 recipe pilot
+
+- Created P63 parent issue #414 and child issues #415-#418 on
+  `feature/p63-bounded-tsa23-recipe-pilot`.
+- Selected the bounded pilot slice from the tracked TSA23 2012 data-package
+  manifest: `tsa23_2012_23tsdp12`, pages 1-22 across three chunks.
+- Added `benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_budget.json`
+  with a one-attempt USD 10 paid-supervisor budget and maintainer checkpoint
+  before any retry or scope expansion.
+- Added `benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_plan.json`
+  and `planning/phase63_bounded_tsa23_recipe_pilot.md` to keep live execution
+  blocked until the budget gate is accepted.

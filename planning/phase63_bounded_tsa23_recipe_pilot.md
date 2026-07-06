@@ -1,0 +1,92 @@
+# Phase 63 Bounded TSA23 Recipe Pilot
+
+## Purpose
+
+P63 is the first bounded live-pilot candidate for the P62 document-indexing
+recipe. The phase must remain budget-gated: no live worker execution is allowed
+until the P59 budget record validates and the maintainer accepts the declared
+cost/attempt boundary.
+
+## Selected Pilot Slice
+
+Pilot corpus: `bc_tsr_tsa23_public_1995_present`
+
+Selected document: `tsa23_2012_23tsdp12`
+
+Document type: `data_package`
+
+Reason for selection:
+
+- It is part of the most recent TSA23 TSR cycle represented in the tracked
+  corpus registry.
+- It corresponds to the information-package/data-package style of document that
+  is likely to contain structured modelling metadata.
+- It already has a tracked sanitized chunk manifest from the P55 TSA23 setup.
+- A three-chunk slice is large enough to exercise the P62 recipe but bounded
+  enough for the first budgeted pilot.
+
+Selected chunks:
+
+- `tsa23_2012_23tsdp12::pages_001_008`
+- `tsa23_2012_23tsdp12::pages_008_015`
+- `tsa23_2012_23tsdp12::pages_015_022`
+
+Selected page span: pages 1-22, with one-page overlap between adjacent chunks.
+
+Raw text policy: the chunk text referenced by the manifest remains under
+ignored `runtime/` paths. P63 tracked files may reference chunk IDs, page
+ranges, source hashes, and character counts, but must not track raw extracted
+text.
+
+## Budget Gate
+
+Tracked budget declaration:
+
+- `benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_budget.json`
+
+Default budget posture:
+
+- maximum paid supervisor cash cost: USD 10.00;
+- maximum live attempts: 1;
+- stop on budget exceeded;
+- stop on repeated failure;
+- maintainer checkpoint required before any second attempt, repair expansion,
+  broader page span, or additional model family.
+
+This is intentionally conservative. The first P63 run should answer whether the
+P62 recipe can produce useful quality/protocol/economics evidence on a bounded
+slice, not whether the full TSA23 corpus can be indexed.
+
+## Planned Execution Boundary
+
+P63.1 is safe to complete before live execution by selecting the slice and
+validating the budget record.
+
+P63.2 is the live boundary. It should not start until the maintainer accepts the
+budget declaration and the live command sequence is explicit.
+
+## Expected Outcome Fields
+
+The pilot summary must include:
+
+- `quality_validated_candidate`;
+- `protocol_accepted_candidate`;
+- `economics_usable`;
+- `final_decision`;
+- `rejection_reasons`;
+- accepted fact count;
+- repaired fact count;
+- rejected fact count;
+- escalated fact count; and
+- line-item paid supervisor token/cash cost.
+
+## Stop Conditions
+
+Stop immediately when:
+
+- the budget validator fails;
+- runtime manifests reference missing or tracked raw text;
+- worker output is malformed in a way that prevents deterministic validation;
+- the run exceeds the declared paid-supervisor budget;
+- the first live attempt hits a protocol defect that requires reticketing; or
+- maintainer checkpoint is triggered.

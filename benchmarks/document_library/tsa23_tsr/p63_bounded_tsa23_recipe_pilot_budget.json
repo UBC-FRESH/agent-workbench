@@ -1,0 +1,70 @@
+{
+  "budget_id": "p63-bounded-tsa23-recipe-pilot",
+  "project": "agent-workbench",
+  "phase": "P63",
+  "experiment_question": "Can the P62 document-indexing recipe produce useful quality, protocol, and economics evidence on a bounded TSA23 data-package slice within a strict paid-supervisor budget?",
+  "max_paid_cost_usd": 10.0,
+  "max_attempts": 1,
+  "checkpoint_spans": [
+    {
+      "span_id": "setup",
+      "owner": "paid_supervisor",
+      "description": "Pilot slice selection, budget validation, and preflight.",
+      "required": true
+    },
+    {
+      "span_id": "ticket_build",
+      "owner": "paid_supervisor",
+      "description": "Build bounded worker tickets from tracked manifests and ignored runtime chunks.",
+      "required": true
+    },
+    {
+      "span_id": "worker_run_orchestration",
+      "owner": "paid_supervisor",
+      "description": "Launch and monitor the local worker execution within the declared attempt limit.",
+      "required": true
+    },
+    {
+      "span_id": "worker_output_summarize",
+      "owner": "paid_supervisor",
+      "description": "Summarize worker outputs into public-safe aggregate evidence.",
+      "required": true
+    },
+    {
+      "span_id": "supervisor_audit",
+      "owner": "paid_supervisor",
+      "description": "Audit selected candidate facts against source evidence and classify accepted, repaired, rejected, or escalated records.",
+      "required": true
+    },
+    {
+      "span_id": "tracked_update",
+      "owner": "paid_supervisor",
+      "description": "Update tracked summaries, roadmap, changelog, and issue state.",
+      "required": true
+    }
+  ],
+  "stop_condition": {
+    "description": "Stop after one live attempt, when the budget is exceeded, or when a protocol defect requires reticketing or scope expansion.",
+    "stop_after_attempts": 1,
+    "stop_on_budget_exceeded": true,
+    "stop_on_repeated_failure": true
+  },
+  "maintainer_checkpoint": {
+    "required": true,
+    "trigger": "before any second live attempt, repair expansion, broader page span, added model family, or budget increase",
+    "decision_surface": "tracked sanitized P63 pilot summary with quality/protocol/economics outcomes and line-item paid-supervisor cost"
+  },
+  "summary_status": {
+    "budget_declared": true,
+    "budget_exceeded": false,
+    "attempt_count": 0,
+    "stop_rule_triggered": false,
+    "maintainer_checkpoint_required": true
+  },
+  "public_safety": {
+    "tracked_artifact": true,
+    "contains_private_paths": false,
+    "contains_provider_details": false,
+    "contains_raw_prompts": false
+  }
+}

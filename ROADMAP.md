@@ -71,7 +71,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P60 Outcome semantics and scoring split | #396 | `feature/p60-outcome-semantics-scoring-split` | Complete |
 | P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Complete |
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
-| P63 Bounded TSA23 recipe pilot | TBD | `feature/p63-bounded-tsa23-recipe-pilot` | Planned |
+| P63 Bounded TSA23 recipe pilot | #414 | `feature/p63-bounded-tsa23-recipe-pilot` | Active |
 | P64 Deployment environment and operator playbook | TBD | `feature/p64-deployment-environment-operator-playbook` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -2698,34 +2698,34 @@ Planned tasks:
 
 ## Phase 63: Bounded TSA23 Recipe Pilot
 
-Parent issue: TBD
+Parent issue: #414
 
 Branch: `feature/p63-bounded-tsa23-recipe-pilot`
 
-Status: planned
+Status: active
 
 Goal: run one controlled, budgeted pilot using the P62 recipe on a bounded
 TSA23 slice.
 
 Planned tasks:
 
-- [ ] P63.1 Pilot selection and budget
-  - [ ] Choose one most-recent TSA23 information-package or rationale slice.
-  - [ ] Declare a P59 budget record before any live execution.
-  - [ ] Define maximum attempts and maintainer checkpoint.
-  - [ ] Confirm raw materialized inputs stay ignored.
-- [ ] P63.2 Recipe execution
+- [x] P63.1 Pilot selection and budget (#415)
+  - [x] Choose one most-recent TSA23 information-package or rationale slice.
+  - [x] Declare a P59 budget record before any live execution.
+  - [x] Define maximum attempts and maintainer checkpoint.
+  - [x] Confirm raw materialized inputs stay ignored.
+- [ ] P63.2 Recipe execution (#418)
   - [ ] Instantiate the P62 recipe for the selected bounded slice.
   - [ ] Run local worker extraction within the declared attempt limit.
   - [ ] Run repair/normalization only if the budget gate allows it.
   - [ ] Stop immediately when stop rules trigger.
-- [ ] P63.3 Outcome and economics reporting
+- [ ] P63.3 Outcome and economics reporting (#416)
   - [ ] Use P60 outcome semantics.
   - [ ] Track accepted, repaired, rejected, and escalated fact counts.
   - [ ] Produce line-item paid supervisor, local worker, audit, and repair cost
         tables.
   - [ ] Compare delegated cost against direct-supervisor sample audit cost.
-- [ ] P63.4 Scale decision
+- [ ] P63.4 Scale decision (#417)
   - [ ] Decide whether to scale document indexing, adjust the recipe, or pause.
   - [ ] Record maintainer-facing value, not only model behavior.
   - [ ] Update roadmap/changelog/planning.
