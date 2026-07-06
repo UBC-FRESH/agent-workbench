@@ -224,6 +224,18 @@ emit only a sanitized manifest for review. Treat this behavior trace as part of
 the evidence unit alongside the worker ticket, result file, final artifacts, and
 token/cash ledger. Do not promote raw chat logs into tracked files.
 
+Delegated runs should also append heartbeat records to:
+
+`runtime/agent_jobs/<run_id>.heartbeat.jsonl`
+
+Use `agent-workbench heartbeat validate`, `agent-workbench heartbeat summarize`,
+and `agent-workbench nudge suggest` to turn those records into structured
+coordinator decisions. Heartbeat files should contain public-safe run metadata
+only: checklist item, status, action, artifact path, command summary, and next
+intended action. After repeated stale or ineffective nudges in the same lane,
+stop and review the ticket, result, blocker, archive, and token/cash ledger
+instead of continuing to prompt the local supervisor.
+
 ## Planning Workflow
 
 This repo follows the UBC-FRESH phase/task/subtask workflow:
