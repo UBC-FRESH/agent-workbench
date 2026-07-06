@@ -1,8 +1,13 @@
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 from pathlib import Path
 
+from agent_workbench.cli import (
+    run_supervisor_document_audit_graph,
+    run_supervisor_document_audit_graph_summary,
+)
 from agent_workbench.supervisor_graph_run import (
     DocumentAuditGraphRunConfig,
     build_run_plan,
@@ -13,6 +18,26 @@ from agent_workbench.supervisor_graph_run import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_document_audit_graph_live_run_requires_budget_record(capsys) -> None:
+    args = SimpleNamespace(dry_run=False, budget_record=None)
+
+    exit_code = run_supervisor_document_audit_graph(args)
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "--budget-record is required" in captured.err
+
+
+def test_document_audit_graph_summary_requires_budget_record(capsys) -> None:
+    args = SimpleNamespace(budget_record=None)
+
+    exit_code = run_supervisor_document_audit_graph_summary(args)
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "--budget-record is required" in captured.err
 
 
 def test_document_audit_graph_run_plan_uses_bridge_without_maximize(

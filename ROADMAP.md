@@ -67,7 +67,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P56 Authority hierarchy and supervisor contract scaffold | #372 | `feature/p56-authority-hierarchy-supervisor-contracts` | Complete |
 | P57 VS Code subagent supervisor-worker spike | #378 | `feature/p57-vscode-subagent-supervisor-worker-spike` | Complete |
 | P58 Evidence consolidation and active-phase reconciliation | #384 | `feature/p58-evidence-consolidation-active-phase-reconciliation` | Active |
-| P59 Paid-supervisor budget gates and stop rules | TBD | `feature/p59-supervisor-budget-gates` | Planned |
+| P59 Paid-supervisor budget gates and stop rules | #390 | `feature/p59-supervisor-budget-gates` | Active |
 | P60 Outcome semantics and scoring split | TBD | `feature/p60-outcome-semantics-scoring-split` | Planned |
 | P61 Packaged local-supervisor workflow v1 | TBD | `feature/p61-packaged-local-supervisor-workflow-v1` | Planned |
 | P62 Document-indexing workflow recipe v1 | TBD | `feature/p62-document-indexing-recipe-v1` | Planned |
@@ -2544,22 +2544,46 @@ Planned tasks:
 
 ## Phase 59: Paid-Supervisor Budget Gates And Stop Rules
 
-Parent issue: TBD
+Parent issue: #390
 
 Branch: `feature/p59-supervisor-budget-gates`
 
-Status: planned
+Status: active
 
 Goal: make paid-supervisor budget declarations, checkpoint spans, stop
 conditions, and maintainer checkpoints enforceable in tooling.
 
 Planned tasks:
 
-- [ ] Define benchmark budget declaration schema.
-- [ ] Add `agent-workbench supervisor budget validate`.
-- [ ] Require budget records before economics claims.
-- [ ] Render budget-exceeded, attempt-count, stop-rule, and maintainer
-      checkpoint status.
+- [x] P59.1 Budget declaration schema and template (#391)
+  - [x] Define required budget declaration fields.
+  - [x] Include experiment question, max paid cost, max attempts, checkpoint
+        spans, stop condition, and maintainer checkpoint.
+  - [x] Add summary status fields for declared/exceeded/attempt/stop/checkpoint
+        state.
+  - [x] Add a public-safe template.
+- [x] P59.2 Supervisor budget CLI validation (#392)
+  - [x] Add `agent-workbench supervisor budget validate`.
+  - [x] Fail closed for missing or malformed fields.
+  - [x] Render concise validation diagnostics.
+  - [x] Preserve existing supervisor token commands.
+- [x] P59.3 Stop-rule and summary status fields (#393)
+  - [x] Define `budget_declared`, `budget_exceeded`, `attempt_count`,
+        `stop_rule_triggered`, and `maintainer_checkpoint_required`.
+  - [x] Validate attempt counts and max-attempt limits.
+  - [x] Validate stop condition and maintainer checkpoint settings.
+  - [x] Document that aborted/stale runs are diagnostic evidence, not progress.
+- [x] P59.4 Planning, tests, and PR closeout (#394)
+  - [x] Link P59 roadmap and planning notes to GitHub issues.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Run focused validation.
+  - [x] Open a P59-only PR against `main`.
+
+Closeout boundary: P59 adds the budget declaration validator and status
+semantics needed before future live economics runs. The existing packaged
+document-audit graph run and summary paths are wired to require valid budget
+records for live/economics use, but P59 launches no live runs while testing
+that enforcement.
 
 ## Phase 60: Outcome Semantics And Scoring Split
 
@@ -2574,13 +2598,29 @@ across benchmark summaries.
 
 Planned tasks:
 
-- [ ] Standardize quality/protocol/economics outcome fields.
-- [ ] Preserve hard constraints for schema validity, source identity, and
-      authority violations.
-- [ ] Keep quote length and similar extraction preferences as soft weighted
-      penalties.
-- [ ] Update decision packets so quality-valid/protocol-noisy results are not
-      collapsed into vague rejected states.
+- [ ] P60.1 Outcome field schema
+  - [ ] Define `quality_validated_candidate`.
+  - [ ] Define `protocol_accepted_candidate`.
+  - [ ] Define `economics_usable`.
+  - [ ] Define `final_decision`.
+  - [ ] Define `rejection_reasons`.
+- [ ] P60.2 Hard constraint semantics
+  - [ ] Preserve hard failure for invalid schema shape.
+  - [ ] Preserve hard failure for wrong source identity or invalid source IDs.
+  - [ ] Preserve hard failure for authority-boundary violations.
+  - [ ] Keep model-provenance mismatch as a protocol defect.
+- [ ] P60.3 Soft scoring semantics
+  - [ ] Keep quote length as a soft weighted penalty by default.
+  - [ ] Support configurable penalty weights for task-specific preferences.
+  - [ ] Keep downstream-consumer hard excerpt limits opt-in.
+  - [ ] Document how soft scores affect scale/repair/escalate decisions.
+- [ ] P60.4 Decision packet migration
+  - [ ] Update comparison scripts to emit split outcome fields.
+  - [ ] Update decision packets so quality-valid/protocol-noisy results are not
+        collapsed into vague rejected states.
+  - [ ] Add tests for accepted, quality-valid, protocol-rejected, economics
+        diagnostic, and stale cases.
+  - [ ] Backfill at least one P57-style summary fixture.
 
 ## Phase 61: Packaged Local-Supervisor Workflow V1
 
@@ -2595,12 +2635,29 @@ reusable packaged workflow.
 
 Planned tasks:
 
-- [ ] Package coordinator-owned setup and pre-materialization as the default
-      launcher mode.
-- [ ] Keep setup/materializer commands out of local-supervisor action lists by
-      default.
-- [ ] Require high-entropy run IDs for live bridge jobs.
-- [ ] Replay P57 evidence without launching live Copilot jobs.
+- [ ] P61.1 Packaged workflow contract
+  - [ ] Define coordinator-owned setup and pre-materialization nodes.
+  - [ ] Define local-supervisor audit, repair, validation, and compact-report
+        nodes.
+  - [ ] Define deterministic validator authority boundaries.
+  - [ ] Define paid-coordinator review and escalation nodes.
+- [ ] P61.2 Launcher hardening
+  - [ ] Make pre-materialized graph tickets the default launcher mode.
+  - [ ] Keep setup/materializer commands out of local-supervisor action lists by
+        default.
+  - [ ] Require high-entropy run IDs for live bridge jobs.
+  - [ ] Keep quiet runtime output as the default for large packaged runs.
+- [ ] P61.3 Evidence replay
+  - [ ] Replay P57 v13/v11-style summaries without launching live Copilot jobs.
+  - [ ] Confirm accepted, rejected, aborted, and diagnostic evidence renders
+        consistently.
+  - [ ] Confirm budget records from P59 can be attached to replayed summaries.
+  - [ ] Add focused tests for replay and launcher-plan rendering.
+- [ ] P61.4 Documentation and closeout
+  - [ ] Update workflow docs and planning note.
+  - [ ] State when subagent use is required versus advisory.
+  - [ ] Public-safety scan generated docs/templates.
+  - [ ] Open a P61-only PR after validation.
 
 ## Phase 62: Document-Indexing Workflow Recipe V1
 
@@ -2615,13 +2672,29 @@ document-indexing recipe.
 
 Planned tasks:
 
-- [ ] Define corpus resolution, materialization, page/chunk manifests,
-      section-map extraction, typed fact extraction, repair, verification, and
-      paid sample-audit stages.
-- [ ] Define task-size defaults and split strategies without hidden record
-      caps.
-- [ ] Encode current model-role defaults.
-- [ ] Keep raw PDF text, prompts, and worker outputs ignored.
+- [ ] P62.1 Recipe stage model
+  - [ ] Define corpus resolution and materialization stage.
+  - [ ] Define deterministic page/chunk manifest generation stage.
+  - [ ] Define section-map extraction stage.
+  - [ ] Define typed TSR fact extraction stage.
+  - [ ] Define repair, normalization, verification, and paid sample-audit
+        stages.
+- [ ] P62.2 Task sizing and split strategy
+  - [ ] Define default page/chunk sizes for public technical PDFs.
+  - [ ] Define split strategy for long documents and mini-corpora.
+  - [ ] Explicitly forbid hidden record caps.
+  - [ ] Define stop/escalation behavior for scanned/OCR-poor inputs.
+- [ ] P62.3 Model role defaults
+  - [ ] Assign Qwen3.6-style general document models to extraction roles.
+  - [ ] Assign coding-oriented models to JSON repair roles.
+  - [ ] Assign verifier/critic roles only where P55-P57 evidence supports them.
+  - [ ] Keep model defaults configurable per deployment.
+- [ ] P62.4 Public-safe recipe artifacts
+  - [ ] Track recipe docs and templates only.
+  - [ ] Keep raw PDF text, prompts, worker outputs, and provider details
+        ignored.
+  - [ ] Include P59 budget hooks and P60 outcome fields.
+  - [ ] Add public-safety scan and docs validation.
 
 ## Phase 63: Bounded TSA23 Recipe Pilot
 
@@ -2636,10 +2709,27 @@ TSA23 slice.
 
 Planned tasks:
 
-- [ ] Require P59 budget gate before live execution.
-- [ ] Use P60 outcome semantics.
-- [ ] Track accepted, repaired, rejected, and escalated fact counts.
-- [ ] Produce cost and quality tables before deciding whether to scale.
+- [ ] P63.1 Pilot selection and budget
+  - [ ] Choose one most-recent TSA23 information-package or rationale slice.
+  - [ ] Declare a P59 budget record before any live execution.
+  - [ ] Define maximum attempts and maintainer checkpoint.
+  - [ ] Confirm raw materialized inputs stay ignored.
+- [ ] P63.2 Recipe execution
+  - [ ] Instantiate the P62 recipe for the selected bounded slice.
+  - [ ] Run local worker extraction within the declared attempt limit.
+  - [ ] Run repair/normalization only if the budget gate allows it.
+  - [ ] Stop immediately when stop rules trigger.
+- [ ] P63.3 Outcome and economics reporting
+  - [ ] Use P60 outcome semantics.
+  - [ ] Track accepted, repaired, rejected, and escalated fact counts.
+  - [ ] Produce line-item paid supervisor, local worker, audit, and repair cost
+        tables.
+  - [ ] Compare delegated cost against direct-supervisor sample audit cost.
+- [ ] P63.4 Scale decision
+  - [ ] Decide whether to scale document indexing, adjust the recipe, or pause.
+  - [ ] Record maintainer-facing value, not only model behavior.
+  - [ ] Update roadmap/changelog/planning.
+  - [ ] Close P63 through PR only after the pilot decision is explicit.
 
 ## Phase 64: Deployment Environment And Operator Playbook
 
@@ -2654,11 +2744,25 @@ VS Code environment without relying on chat memory.
 
 Planned tasks:
 
-- [ ] Document supported VS Code/code-server, Copilot Chat, Ollama provider,
-      custom-agent, and ignored-runtime path setup.
-- [ ] Add operator checklist for model inventory, permission mode, bridge
-      launch, budget declaration, and evidence collection.
-- [ ] Add troubleshooting for stale sessions, wrong root, model mismatch, and
-      runaway loop cancellation.
-- [ ] Keep private endpoint, server, and credential details out of tracked
-      docs.
+- [ ] P64.1 Environment shape
+  - [ ] Document supported VS Code and code-server configurations.
+  - [ ] Document Copilot Chat permission-mode expectations.
+  - [ ] Document Ollama provider and model inventory requirements.
+  - [ ] Document ignored runtime paths for tickets, transcripts, reports, and
+        provider details.
+- [ ] P64.2 Operator checklist
+  - [ ] Add model inventory checklist.
+  - [ ] Add permission-mode and workspace-root checklist.
+  - [ ] Add bridge launch and budget declaration checklist.
+  - [ ] Add evidence collection and public-safety checklist.
+- [ ] P64.3 Troubleshooting
+  - [ ] Document stale chat session symptoms and reset procedure.
+  - [ ] Document wrong workspace root and model mismatch checks.
+  - [ ] Document runaway loop cancellation procedure.
+  - [ ] Document when not to run because budget or evidence gates are missing.
+- [ ] P64.4 Public-safe closeout
+  - [ ] Keep private endpoint, server, credential, and personal-path details out
+        of tracked docs.
+  - [ ] Validate docs and examples.
+  - [ ] Public-safety scan tracked playbook.
+  - [ ] Open a P64-only PR after review.

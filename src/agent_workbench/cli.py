@@ -28,6 +28,11 @@ from .benchmark import (
     render_benchmark_markdown,
     validate_benchmark_record,
 )
+from .budget import (
+    load_budget_declaration,
+    render_budget_validation,
+    validate_budget_declaration,
+)
 from .comparison import render_eval_comparison
 from .decision import (
     DecisionInputError,
@@ -506,6 +511,22 @@ def build_parser() -> argparse.ArgumentParser:
         required=True,
     )
 
+    supervisor_budget_parser = supervisor_subparsers.add_parser(
+        "budget",
+        help="Validate paid-supervisor benchmark budget declarations.",
+    )
+    supervisor_budget_subparsers = supervisor_budget_parser.add_subparsers(
+        dest="supervisor_budget_command",
+        required=True,
+    )
+    supervisor_budget_validate_parser = supervisor_budget_subparsers.add_parser(
+        "validate",
+        help="Validate a benchmark budget declaration.",
+    )
+    supervisor_budget_validate_parser.add_argument("--input", type=Path, required=True)
+    supervisor_budget_validate_parser.add_argument("--output", type=Path, default=None)
+    supervisor_budget_validate_parser.set_defaults(func=run_supervisor_budget_validate)
+
     supervisor_document_audit_parser = supervisor_subparsers.add_parser(
         "run-document-audit-graph",
         help="Run a packaged document-artifact audit graph through Copilot supervisor.",
@@ -536,6 +557,15 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=None,
         help="Runtime token ledger directory. Defaults under runtime/supervisor_tokens.",
+    )
+    supervisor_document_audit_parser.add_argument(
+        "--budget-record",
+        type=Path,
+        default=None,
+        help=(
+            "Required for live runs. Valid benchmark budget declaration used to "
+            "gate paid-supervisor economics evidence."
+        ),
     )
     supervisor_document_audit_parser.add_argument(
         "--summary-output",
@@ -635,6 +665,15 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Optional externally captured token record to use instead of the "
             "launcher-contained token record."
+        ),
+    )
+    supervisor_document_audit_summary_parser.add_argument(
+        "--budget-record",
+        type=Path,
+        default=None,
+        help=(
+            "Required to summarize graph runs as economics evidence. Valid "
+            "benchmark budget declaration for this run."
         ),
     )
     supervisor_document_audit_summary_parser.add_argument(
@@ -1360,7 +1399,43 @@ def run_supervisor_tokens_synthesize(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_supervisor_budget_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_budget_declaration(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_budget_declaration(data)
+    rendered = render_budget_validation(data, result)
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(rendered, encoding="utf-8")
+        print(f"wrote {args.output}")
+    else:
+        print(rendered, end="")
+    return 0 if result.ok else 1
+
+
+def require_valid_budget_record(path: Path | None) -> bool:
+    if path is None:
+        print("error: --budget-record is required for live/economics supervisor runs", file=sys.stderr)
+        return False
+    try:
+        data = load_budget_declaration(path)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: invalid --budget-record: {exc}", file=sys.stderr)
+        return False
+    result = validate_budget_declaration(data)
+    if result.ok:
+        return True
+    for error in result.errors:
+        print(f"error: budget-record: {error}", file=sys.stderr)
+    return False
+
+
 def run_supervisor_document_audit_graph(args: argparse.Namespace) -> int:
+    if not args.dry_run and not require_valid_budget_record(args.budget_record):
+        return 1
     project_root = args.project_root.resolve()
     token_dir = args.token_dir
     if token_dir is None:
@@ -1403,6 +1478,8 @@ def run_supervisor_document_audit_graph(args: argparse.Namespace) -> int:
 
 
 def run_supervisor_document_audit_graph_summary(args: argparse.Namespace) -> int:
+    if not require_valid_budget_record(args.budget_record):
+        return 1
     project_root = args.project_root.resolve()
     token_dir = args.token_dir
     if token_dir is None:

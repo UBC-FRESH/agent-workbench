@@ -1506,3 +1506,30 @@ issues, pull requests, and closeout comments.
   consolidation-first tranche before more large live benchmark runs.
 - Updated `AGENTS.md` and `planning/delegation_economics_vision.md` with the
   P57 paid-supervisor overrun lesson and budget-gate posture.
+
+## 2026-07-05 - Opened P59 paid-supervisor budget gates
+
+- Created P59 parent issue #390 and child issues #391-#394 for budget
+  declaration validation and stop-rule status semantics.
+- Added `src/agent_workbench/budget.py`,
+  `templates/supervisor_budget_declaration.json`, and focused tests for
+  budget declaration validation.
+- Added `agent-workbench supervisor budget validate` so future live economics
+  runs have a concrete fail-closed budget gate before they claim evidence.
+- Recorded the P59 boundary in `planning/phase59_supervisor_budget_gates.md`:
+  this phase adds validation and status semantics, but launches no live
+  Copilot/Ollama jobs.
+
+## 2026-07-05 - Added P59 budget enforcement and roadmap subtask contract
+
+- Wired the existing packaged document-audit graph live-run and summary paths
+  to require a valid `--budget-record` before paid-supervisor economics
+  evidence can be launched or summarized.
+- Added regression tests that prove those graph paths fail closed without a
+  budget record.
+- Expanded P60-P64 roadmap phases to task/subtask level so future phase work is
+  ready for issue activation without relying on broad one-line placeholders.
+- Updated `AGENTS.md` to make task/subtask-level roadmap planning part of the
+  development workflow contract.
+- Opened P59 PR #395 after validation so the phase closeout can proceed through
+  the one-phase/one-branch workflow.
