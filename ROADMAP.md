@@ -74,10 +74,10 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P63 Bounded TSA23 recipe pilot | #414 / PR #419 | `feature/p63-bounded-tsa23-recipe-pilot` | Complete |
 | P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | Complete |
 | P65 Copilot session archive | #426 | `feature/p65-copilot-session-archive` | Complete |
-| P66 Task-level delegation protocol | #431 | `feature/p66-task-level-delegation-protocol` | Active |
+| P66 Task-level delegation protocol | #431 | `feature/p66-task-level-delegation-protocol` | Complete |
 | P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Complete |
 | P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Complete |
-| P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Active |
+| P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Complete |
 | P70 FEMIC P108 repair dogfood | TBD | `feature/p70-femic-p108-repair-dogfood` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -3000,7 +3000,7 @@ Parent issue: #448
 
 Branch: `feature/p68-copilot-task-controller-v0`
 
-Status: active
+Status: complete
 
 Goal: package the launch, archive, heartbeat check, nudge, and review loop for
 one child-task delegation run.
