@@ -1705,3 +1705,18 @@ issues, pull requests, and closeout comments.
 - Opened P64-only pull request #425 after P64.1-P64.4 evidence agreed.
 - Squash-merged PR #425, verified parent issue #420 closed, synced local
   `main`, deleted the local P64 feature branch, and pruned the remote branch.
+
+## 2026-07-06 - Added P65 Copilot session archive command
+
+- Opened P65 on `feature/p65-copilot-session-archive` to make
+  ticket-plus-chatlog archiving a systematic Agent Workbench function.
+- Added `agent-workbench copilot archive`, which resolves VS Code workspace
+  storage, copies matching Copilot `chatSessions/*.jsonl` and
+  `GitHub.copilot-chat/transcripts/*.jsonl` files into ignored runtime storage,
+  and writes a sanitized manifest with event counts, model ids, permission
+  levels, message counts, tool-request counts, and nudge snippets.
+- Added tests for successful archive generation and fail-closed no-match
+  behavior using fake VS Code workspace-storage fixtures.
+- Updated `AGENTS.md` and `planning/phase65_copilot_session_archive.md` so
+  future Copilot-backed delegation runs capture behavior traces by default
+  rather than relying on manual post-run reminders.

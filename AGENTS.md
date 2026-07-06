@@ -170,6 +170,8 @@ Use ignored local files for raw coordination:
 - worker ticket path: `runtime/agent_jobs/<phase_or_task>_ticket.md`
 - worker result path: `runtime/agent_jobs/<phase_or_task>_result.md`
 - raw transcript path: `tmp/transcripts/<date>_<short-topic>.md`
+- Copilot session archive path:
+  `runtime/agent_jobs/<run_id>/copilot_session_archive/`
 
 Worker tickets should include:
 
@@ -192,6 +194,19 @@ Worker result files should include:
 
 Do not commit raw tickets, raw results, or transcripts unless they have been
 sanitized and moved into `planning/` as durable public notes.
+
+For Copilot-backed delegation runs, capture the ticket-plus-chatlog behavior
+pair before evaluating the run whenever possible. Use:
+
+```text
+agent-workbench copilot archive --workspace-root <repo> --output-dir <runtime-dir>
+```
+
+The archive must keep raw `chatSessions/*.jsonl` and
+`GitHub.copilot-chat/transcripts/*.jsonl` copies in ignored runtime storage and
+emit only a sanitized manifest for review. Treat this behavior trace as part of
+the evidence unit alongside the worker ticket, result file, final artifacts, and
+token/cash ledger. Do not promote raw chat logs into tracked files.
 
 ## Planning Workflow
 
