@@ -1,0 +1,49 @@
+{
+  "report_id": "example_supervisor_job_report",
+  "contract_id": "example_supervisor_job_contract",
+  "supervisor_role": "supervisor",
+  "final_signal": "needs_coordinator_review",
+  "completed_nodes": [
+    {
+      "node_id": "inspect_inputs",
+      "owner_role": "supervisor",
+      "status": "accepted"
+    },
+    {
+      "node_id": "worker_candidate",
+      "owner_role": "worker",
+      "status": "accepted-candidate"
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "supervisor_report",
+      "path": "runtime/agent_jobs/example_supervisor_report.json",
+      "role": "report"
+    }
+  ],
+  "verification": {
+    "checks_run": [
+      "output_json_valid",
+      "expected_artifact_exists"
+    ],
+    "score": 87.5,
+    "summary": "Example report structure only; not evidence from a real run.",
+    "subagent_invocation_attempted": true,
+    "subagent_invocation_observed_by_supervisor": true,
+    "subagent_name": "example-auditor",
+    "subagent_payload_excerpt": "audit_status: accepted-candidate; recommended_signal: needs_coordinator_review",
+    "subagent_result_status": "accepted_after_supervisor_repair",
+    "subagent_repair_summary": "Example report only: supervisor reconciled one caveat before finalizing."
+  },
+  "escalations": [
+    {
+      "target_role": "coordinator",
+      "reason": "Example report asks the coordinator to inspect one unresolved caveat."
+    }
+  ],
+  "public_safety": {
+    "tracked_artifact": true,
+    "raw_transcript_policy": "raw transcripts stay under ignored runtime or tmp paths"
+  }
+}
