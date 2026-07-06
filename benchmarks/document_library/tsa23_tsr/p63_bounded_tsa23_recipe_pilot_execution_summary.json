@@ -13,6 +13,14 @@
     ],
     "preamble_detected": true
   },
+  "baseline_comparison": {
+    "comparison_decision": "not_comparable",
+    "delegated_workflow_cost_usd": null,
+    "direct_supervisor_baseline_cost_usd": null,
+    "direct_supervisor_baseline_status": "not_run_stop_rule_triggered",
+    "net_delta_usd": null,
+    "reason": "P63.2 produced diagnostic evidence rather than an accepted delegated candidate. Running a direct-supervisor baseline now would answer a different question and spend additional paid tokens after the declared maintainer checkpoint."
+  },
   "candidate_metrics": {
     "chunk_record_counts": {
       "tsa23_2012_23tsdp12::pages_001_008": 22,
@@ -50,7 +58,16 @@
     "wrong_document_id_records": 0,
     "wrong_review_status_records": 0
   },
-  "generated_utc": "2026-07-06T04:58:18+00:00",
+  "fact_review_counts": {
+    "accepted": 0,
+    "basis": "No source audit or repair pass was run after the single-attempt stop rule. Valid raw records remain unresolved; invalid chunk-ID records are rejected by deterministic validation.",
+    "escalated": 0,
+    "malformed_lines": 2,
+    "rejected": 1,
+    "repaired": 0,
+    "unresolved": 39
+  },
+  "generated_utc": "2026-07-06T05:02:57+00:00",
   "github_child_issue": 418,
   "github_parent_issue": 414,
   "outcome": {
@@ -110,15 +127,33 @@
       "present": true,
       "reasoning_output_tokens": 0,
       "span_id": "worker_run_orchestration"
+    },
+    {
+      "cached_input_tokens": 603776,
+      "cash_cost_usd": 0.157729,
+      "fresh_input_tokens": 7129,
+      "output_tokens": 2079,
+      "present": true,
+      "reasoning_output_tokens": 749,
+      "span_id": "worker_output_summarize"
+    },
+    {
+      "cached_input_tokens": 1053568,
+      "cash_cost_usd": 0.239512,
+      "fresh_input_tokens": 9459,
+      "output_tokens": 2226,
+      "present": true,
+      "reasoning_output_tokens": 530,
+      "span_id": "tracked_update"
     }
   ],
   "supervisor_totals": {
-    "cached_input_tokens": 1568256,
-    "cash_cost_usd": 0.414679,
-    "fresh_input_tokens": 16022,
-    "output_tokens": 6583,
-    "reasoning_output_tokens": 1431,
-    "span_count": 2
+    "cached_input_tokens": 3225600,
+    "cash_cost_usd": 0.81192,
+    "fresh_input_tokens": 32610,
+    "output_tokens": 10888,
+    "reasoning_output_tokens": 2710,
+    "span_count": 4
   },
   "worker_tokens": {
     "cash_cost_usd": 0.0,

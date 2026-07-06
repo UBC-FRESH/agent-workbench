@@ -73,7 +73,10 @@ def main() -> int:
     supervisor_spans = [
         load_token_span(args.token_root / "ticket_build.tokens.json"),
         load_token_span(args.token_root / "worker_run_orchestration.tokens.json"),
+        load_token_span(args.token_root / "worker_output_summarize.tokens.json"),
+        load_token_span(args.token_root / "tracked_update.tokens.json"),
     ]
+    fact_review_counts = fact_counts(validation, malformed_lines)
 
     report = {
         "schema_version": 1,
@@ -113,6 +116,7 @@ def main() -> int:
             "malformed_lines": malformed_lines,
             **validation,
         },
+        "fact_review_counts": fact_review_counts,
         "worker_tokens": {
             "input_tokens": worker_usage["input_tokens"],
             "output_tokens": worker_usage["output_tokens"],
@@ -120,6 +124,7 @@ def main() -> int:
         },
         "supervisor_token_spans": supervisor_spans,
         "supervisor_totals": supervisor_totals(supervisor_spans),
+        "baseline_comparison": baseline_comparison(),
         "outcome": outcome(row, observed_errors, validation, malformed_lines),
         "public_safety": {
             "raw_source_text_tracked": false(),
@@ -209,6 +214,24 @@ def validate_records(
         "chunk_record_counts": {
             chunk_id: chunk_counts[chunk_id] for chunk_id in sorted(chunk_counts)
         },
+    }
+
+
+def fact_counts(validation: dict[str, Any], malformed_lines: int) -> dict[str, Any]:
+    invalid = int(validation["invalid_chunk_id_records"])
+    valid = int(validation["valid_chunk_records"])
+    return {
+        "accepted": 0,
+        "repaired": 0,
+        "rejected": invalid,
+        "escalated": 0,
+        "unresolved": valid,
+        "malformed_lines": malformed_lines,
+        "basis": (
+            "No source audit or repair pass was run after the single-attempt stop rule. "
+            "Valid raw records remain unresolved; invalid chunk-ID records are rejected "
+            "by deterministic validation."
+        ),
     }
 
 
@@ -303,6 +326,22 @@ def supervisor_totals(spans: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def baseline_comparison() -> dict[str, Any]:
+    return {
+        "direct_supervisor_baseline_status": "not_run_stop_rule_triggered",
+        "direct_supervisor_baseline_cost_usd": None,
+        "delegated_workflow_cost_usd": None,
+        "net_delta_usd": None,
+        "comparison_decision": "not_comparable",
+        "reason": (
+            "P63.2 produced diagnostic evidence rather than an accepted delegated "
+            "candidate. Running a direct-supervisor baseline now would answer a "
+            "different question and spend additional paid tokens after the declared "
+            "maintainer checkpoint."
+        ),
+    }
+
+
 def outcome(
     row: dict[str, Any],
     observed_errors: list[str],
@@ -335,6 +374,8 @@ def render_markdown(report: dict[str, Any]) -> str:
     totals = report["supervisor_totals"]
     worker = report["worker_tokens"]
     outcome_data = report["outcome"]
+    fact_counts_data = report["fact_review_counts"]
+    baseline = report["baseline_comparison"]
     lines = [
         "# Phase 63 Bounded TSA23 Recipe Pilot Execution Results",
         "",
@@ -359,6 +400,15 @@ def render_markdown(report: dict[str, Any]) -> str:
         f"- missing_chunks: `{', '.join(candidate['missing_chunks']) or 'none'}`",
         f"- source_quote_over_target_records: `{candidate['source_quote_over_target_records']}`",
         f"- source_quote_max_words: `{candidate['source_quote_max_words']}`",
+        "",
+        "## Fact Review Counts",
+        "",
+        f"- accepted: `{fact_counts_data['accepted']}`",
+        f"- repaired: `{fact_counts_data['repaired']}`",
+        f"- rejected: `{fact_counts_data['rejected']}`",
+        f"- escalated: `{fact_counts_data['escalated']}`",
+        f"- unresolved: `{fact_counts_data['unresolved']}`",
+        f"- basis: {fact_counts_data['basis']}",
         "",
         "## Token And Cost Lines",
         "",
@@ -405,6 +455,12 @@ def render_markdown(report: dict[str, Any]) -> str:
             f"- final_decision: `{outcome_data['final_decision']}`",
             f"- rejection_reasons: `{', '.join(outcome_data['rejection_reasons'])}`",
             f"- maintainer_checkpoint_required: `{outcome_data['maintainer_checkpoint_required']}`",
+            "",
+            "## Baseline Comparison",
+            "",
+            f"- direct_supervisor_baseline_status: `{baseline['direct_supervisor_baseline_status']}`",
+            f"- comparison_decision: `{baseline['comparison_decision']}`",
+            f"- reason: {baseline['reason']}",
             "",
             "## Interpretation",
             "",

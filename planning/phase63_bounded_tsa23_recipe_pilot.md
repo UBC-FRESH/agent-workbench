@@ -150,3 +150,45 @@ and not usable economics evidence for a successful delegated run. The declared
 single-attempt stop rule is now triggered. No retry, repair expansion, broader
 page span, added model family, or budget increase is allowed without maintainer
 checkpoint.
+
+## P63.3 Outcome And Economics Reporting Result
+
+P63.3 converted the P63.2 diagnostic runtime evidence into tracked, sanitized
+reporting artifacts. The report does not promote raw source text, raw quotes,
+raw prompts, provider details, headers, or transcripts.
+
+Outcome semantics:
+
+- `quality_validated_candidate`: false;
+- `protocol_accepted_candidate`: false;
+- `economics_usable`: false;
+- `final_decision`: `stop_after_single_attempt_model_call_failure`;
+- rejection reasons:
+  - `invalid_chunk_id`;
+  - `malformed_or_truncated_jsonl`;
+  - `model-call-failure`;
+  - `provider_524_model_call_failure`.
+
+Fact review counts:
+
+- accepted: 0;
+- repaired: 0;
+- rejected: 1;
+- escalated: 0;
+- unresolved: 39;
+- malformed lines: 2.
+
+The 39 valid raw candidate records remain unresolved because no source audit or
+repair pass was run after the single-attempt stop rule. The one invalid chunk-ID
+record is rejected by deterministic validation.
+
+Baseline comparison:
+
+- direct supervisor baseline status: `not_run_stop_rule_triggered`;
+- comparison decision: `not_comparable`.
+
+Running a new paid direct-supervisor baseline after this failure would answer a
+different question and spend additional paid tokens after the maintainer
+checkpoint. The useful P63.3 conclusion is therefore diagnostic: the current
+bounded recipe/ticket/model/provider combination produced promising partial
+records but failed the protocol/economics gate.

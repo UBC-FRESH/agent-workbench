@@ -1626,3 +1626,20 @@ issues, pull requests, and closeout comments.
 - Marked P63.2 complete as diagnostic evidence only. The P63 maintainer
   checkpoint is now required before any retry, repair expansion, broader page
   span, added model family, or budget increase.
+
+## 2026-07-05 - Completed P63 outcome and economics reporting
+
+- Extended the P63 execution summary to include accepted, repaired, rejected,
+  escalated, and unresolved fact counts without promoting raw worker records or
+  source quotes.
+- Added baseline-comparison semantics showing the direct-supervisor baseline is
+  `not_run_stop_rule_triggered` and the cost comparison is `not_comparable`,
+  because the single live attempt failed before producing a quality-valid
+  delegated candidate.
+- Added separate paid-supervisor `worker_output_summarize` and
+  `tracked_update` token spans to the sanitized cost table, increasing the
+  measured supervisor cost for the diagnostic run to USD 0.811920 across four
+  captured spans.
+- Updated the P63 planning note and roadmap so P63.3 is complete as diagnostic
+  reporting while P63.4 remains open for the maintainer-facing scale, adjust,
+  repeat, or pause decision.

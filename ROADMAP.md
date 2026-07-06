@@ -2735,25 +2735,31 @@ Planned tasks:
     stopped as diagnostic evidence because the SDK observed a provider 524
     model-call failure, malformed/truncated JSONL, and one invalid chunk ID.
     No retry or repair expansion is allowed before maintainer checkpoint.
-- [ ] P63.3 Outcome and economics reporting (#416)
-  - [ ] Produce tracked sanitized summaries only; do not promote raw source
+- [x] P63.3 Outcome and economics reporting (#416)
+  - [x] Produce tracked sanitized summaries only; do not promote raw source
         text, raw quotes, raw prompts, transcripts, provider URLs, headers, or
         credentials.
-  - [ ] Use P60 outcome semantics for every candidate artifact:
+  - [x] Use P60 outcome semantics for every candidate artifact:
         `quality_validated_candidate`, `protocol_accepted_candidate`,
         `economics_usable`, `final_decision`, and `rejection_reasons`.
-  - [ ] Track accepted, repaired, rejected, escalated, and unresolved fact
+  - [x] Track accepted, repaired, rejected, escalated, and unresolved fact
         counts by stage and by source chunk.
-  - [ ] Track hard-constraint failures separately from soft scoring penalties
+  - [x] Track hard-constraint failures separately from soft scoring penalties
         such as quote length.
-  - [ ] Produce line-item paid supervisor, local worker, audit, repair,
+  - [x] Produce line-item paid supervisor, local worker, audit, repair,
         validation, and reporting cost tables.
-  - [ ] Compare delegated cost against the direct-supervisor sample audit
+  - [x] Compare delegated cost against the direct-supervisor sample audit
         baseline for the same bounded slice.
-  - [ ] Mark aborted, stale, malformed, or budget-blocked runs as diagnostic
+        Result: comparison is `not_comparable` because the stop rule triggered
+        before a quality-valid delegated candidate existed, so running a new
+        paid direct-supervisor baseline would answer a different question.
+  - [x] Mark aborted, stale, malformed, or budget-blocked runs as diagnostic
         evidence rather than successful economics evidence.
-  - [ ] Update the P63 planning note with what the pilot actually taught before
+  - [x] Update the P63 planning note with what the pilot actually taught before
         proposing any scale-up.
+  - Result: tracked sanitized reporting records 0 accepted, 0 repaired, 1
+    rejected, 0 escalated, and 39 unresolved candidate records. P63 remains at
+    maintainer checkpoint before P63.4 scale decision.
 - [ ] P63.4 Scale decision (#417)
   - [ ] Decide whether the next move is scale document indexing, adjust the
         recipe, repeat the bounded slice, change model roles, or pause the
