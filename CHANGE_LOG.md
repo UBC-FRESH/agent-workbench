@@ -1568,3 +1568,6 @@ issues, pull requests, and closeout comments.
   `planning/phase61_packaged_local_supervisor_workflow_v1.md`.
 - Opened P61 PR #407 after validation so the phase closeout can proceed through
   the one-phase/one-branch workflow.
+- Reconciled `ROADMAP.md` status fields so P55 and P57-P60 detailed phase
+  sections match the issue/PR closeout state, while P61 remains the only active
+  phase on the P61 branch.
