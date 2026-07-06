@@ -2845,8 +2845,8 @@ Planned tasks:
         and excluded private details.
   - [x] Keep private endpoint, server, credential, and personal-path details out
         of tracked docs.
-  - [ ] Validate docs and examples.
-  - [ ] Public-safety scan tracked playbook.
-  - [ ] Update roadmap, changelog, parent issue, child issues, and PR body from
+  - [x] Validate docs and examples.
+  - [x] Public-safety scan tracked playbook.
+  - [x] Update roadmap, changelog, parent issue, child issues, and PR body from
         the same subtask checklist.
   - [ ] Open a P64-only PR after review.
