@@ -2370,7 +2370,7 @@ Parent issue: #367
 
 Branch: `feature/p55-tsa23-first-indexing-run`
 
-Status: active
+Status: ready for PR review; parent issue remains open until merge
 
 Goal: run the first real multi-run document-indexing experiment over the P53
 TSA23 corpus, with enough model/chunk/document variation to produce useful
@@ -2378,7 +2378,7 @@ delegation evidence rather than a one-off anecdote.
 
 Planned tasks:
 
-- [ ] P55.1 PDF chunk extraction and worker-ticket generation (#368)
+- [x] P55.1 PDF chunk extraction and worker-ticket generation (#368)
   - [x] Build reproducible chunk/ticket generation from the P53 corpus
         registry.
   - [x] Extract ignored page-window chunks for the three selected TSA23 pilot
@@ -2386,7 +2386,7 @@ Planned tasks:
   - [x] Track sanitized chunk manifests and runtime/eval manifests.
   - [x] Dry-run all generated eval manifests without provider contact.
   - [x] Decide whether to revise chunk size/OCR before worker contact.
-- [ ] P55.2 No-tool local-worker extraction run (#369)
+- [x] P55.2 No-tool local-worker extraction run (#369)
   - [x] Run Wave 1 single-model smoke across three documents.
   - [x] Run Wave 1.1 full-document smoke across the three 2012 documents.
   - [x] Run Wave 2 model A/B on identical document/chunk tickets.
@@ -2402,9 +2402,17 @@ Planned tasks:
         parses.
   - [x] Test DeepSeek-R1 as validation critic and Qwen3-Coder-Next as strict
         JSON repair executor.
-  - [ ] Run Wave 4 repeatability and Wave 5 content probe if earlier waves
-        justify it.
-- [ ] P55.3 Supervisor spot-check and scale/stop decision (#370)
-  - [ ] Run a measured supervisor audit calibration slice.
-  - [ ] Record accepted, repairable, rejected, and missing-evidence counts.
-  - [ ] Report wave results and wait for maintainer direction before closeout.
+  - [x] Defer Wave 4 repeatability and Wave 5 content probes; P55 produced
+        enough signal to move into consolidation and recipe design before more
+        live runs.
+- [x] P55.3 Supervisor spot-check and scale/stop decision (#370)
+  - [x] Run measured supervisor audit calibration slices.
+  - [x] Record accepted, repairable, rejected, missing-evidence, and
+        model-provenance counts in tracked summaries.
+  - [x] Report wave results and stop further P55 live runs pending PR review
+        and follow-on consolidation phases.
+
+Closeout decision: P55 should merge as an evidence packet, not as a finished
+production document-indexing workflow. The useful next step is consolidation,
+budget enforcement, outcome semantics, and reusable recipe packaging before any
+larger TSA23 or MP11 indexing run.
