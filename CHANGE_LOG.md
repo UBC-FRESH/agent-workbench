@@ -1549,3 +1549,5 @@ issues, pull requests, and closeout comments.
 - Added tests for accepted evidence, quality-valid protocol rejection, stale
   diagnostics, hard quality rejection reasons, soft quote-style penalties, and
   model-provenance mismatch as a protocol defect.
+- Opened P60 PR #401 after validation so the phase closeout can proceed through
+  the one-phase/one-branch workflow.
