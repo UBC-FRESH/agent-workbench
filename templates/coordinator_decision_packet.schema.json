@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ubc-fresh.github.io/agent-workbench/schemas/coordinator_decision_packet.schema.json",
+  "title": "Agent Workbench Coordinator Decision Packet",
+  "type": "object",
+  "required": [
+    "run_id",
+    "phase",
+    "child_issue",
+    "decision",
+    "evidence_reviewed",
+    "defects",
+    "next_action"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string"
+    },
+    "child_issue": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["accept", "reject", "repair", "escalate", "abandon"]
+    },
+    "evidence_reviewed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "evidence_type"],
+        "properties": {
+          "path": {"type": "string"},
+          "evidence_type": {
+            "type": "string",
+            "enum": [
+              "task-result",
+              "artifact",
+              "heartbeat",
+              "copilot-archive",
+              "token-ledger",
+              "github-state",
+              "test-output",
+              "other"
+            ]
+          },
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "defects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "defect", "evidence_path"],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["blocking", "repairable", "advisory"]
+          },
+          "defect": {"type": "string"},
+          "evidence_path": {"type": "string"},
+          "repair_instruction": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "coordinator_notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

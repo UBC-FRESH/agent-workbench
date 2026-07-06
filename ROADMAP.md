@@ -73,8 +73,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
 | P63 Bounded TSA23 recipe pilot | #414 / PR #419 | `feature/p63-bounded-tsa23-recipe-pilot` | Complete |
 | P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | Complete |
-| P65 Copilot session archive | #426 | `feature/p65-copilot-session-archive` | Active |
-| P66 Task-level delegation protocol | TBD | `feature/p66-task-level-delegation-protocol` | Planned |
+| P65 Copilot session archive | #426 | `feature/p65-copilot-session-archive` | Complete |
+| P66 Task-level delegation protocol | #431 | `feature/p66-task-level-delegation-protocol` | Active |
 | P67 Heartbeat and nudge protocol | TBD | `feature/p67-heartbeat-nudge-protocol` | Planned |
 | P68 Copilot task controller v0 | TBD | `feature/p68-copilot-task-controller-v0` | Planned |
 | P69 Behavior analytics from archives | TBD | `feature/p69-behavior-analytics-from-archives` | Planned |
@@ -2871,7 +2871,7 @@ Parent issue: #426
 
 Branch: `feature/p65-copilot-session-archive`
 
-Status: active
+Status: complete
 
 Goal: make ticket-plus-Copilot-chatlog archival a systematic Agent Workbench
 function so delegated-run behavior evidence is captured by default.
@@ -2908,43 +2908,49 @@ Closeout boundary:
 
 ## Phase 66: Task-Level Delegation Protocol
 
-Parent issue: TBD
+Parent issue: #431
 
 Branch: `feature/p66-task-level-delegation-protocol`
 
-Status: planned
+Status: active
 
 Goal: make one roadmap child task the default delegation unit, with coordinator
 ownership of phase sequencing and acceptance.
 
 Planned tasks:
 
-- [ ] P66.1 Protocol contract
-  - [ ] Define coordinator-owned responsibilities for phase setup, task
+- [x] P66.1 Protocol contract (#432)
+  - [x] Define coordinator-owned responsibilities for phase setup, task
         sequencing, acceptance, PR merge, parent issue closure, and final
         completion claims.
-  - [ ] Define delegated local-supervisor responsibilities for one child task
+  - [x] Define delegated local-supervisor responsibilities for one child task
         at a time.
-  - [ ] Define when whole-phase delegation is allowed as an experiment.
-  - [ ] Define handoff boundaries between child-task runs.
-- [ ] P66.2 Child-task ticket template
-  - [ ] Add a template with current state, governing child issue, allowed files,
+  - [x] Define when whole-phase delegation is allowed as an experiment.
+  - [x] Define handoff boundaries between child-task runs.
+- [x] P66.2 Child-task ticket template (#433)
+  - [x] Add a template with current state, governing child issue, allowed files,
         allowed commands, stop conditions, and evidence requirements.
-  - [ ] Require explicit result, blocker, heartbeat, and archive paths.
-  - [ ] Require Windows/Linux shell context to be stated explicitly.
-  - [ ] Include a no-summary substitute rule: prose cannot replace command
+  - [x] Require explicit result, blocker, heartbeat, and archive paths.
+  - [x] Require Windows/Linux shell context to be stated explicitly.
+  - [x] Include a no-summary substitute rule: prose cannot replace command
         execution or artifact evidence.
-- [ ] P66.3 Task result and decision packets
-  - [ ] Add a result schema for commands run, files changed, tests/checks,
+- [x] P66.3 Task result and decision packets (#434)
+  - [x] Add a result schema for commands run, files changed, tests/checks,
         GitHub URLs touched, artifacts produced, and blockers.
-  - [ ] Add coordinator decision packet states: accept, reject, repair,
+  - [x] Add coordinator decision packet states: accept, reject, repair,
         escalate, or abandon.
-  - [ ] Add repair-ticket input fields that cite exact defects in the previous
+  - [x] Add repair-ticket input fields that cite exact defects in the previous
         task output.
-- [ ] P66.4 P108 retrospective
-  - [ ] Summarize the P108 whole-phase delegation success signals.
-  - [ ] Summarize P108 control-loop failures and housekeeping defects.
-  - [ ] Record why future default delegation should be task-level.
+- [x] P66.4 P108 retrospective (#435)
+  - [x] Summarize the P108 whole-phase delegation success signals.
+  - [x] Summarize P108 control-loop failures and housekeeping defects.
+  - [x] Record why future default delegation should be task-level.
+
+Closeout boundary:
+
+- [x] Validate JSON templates.
+- [x] Run `git diff --check`.
+- [x] Update `CHANGE_LOG.md`.
 
 ## Phase 67: Heartbeat And Nudge Protocol
 

@@ -1733,3 +1733,16 @@ issues, pull requests, and closeout comments.
   dogfood.
 - Fleshed out each planned phase to task/subtask level so the next tranche is
   ready for UBC-FRESH phase activation rather than remaining a chat-only idea.
+
+## 2026-07-06 - Added P66 task-level delegation protocol
+
+- Created P66 parent issue #431 and child issues #432 through #435 on
+  `feature/p66-task-level-delegation-protocol`.
+- Added task-level delegation templates for child-task tickets, task results,
+  coordinator decisions, and bounded repair tickets.
+- Added `planning/phase66_task_level_delegation_protocol.md` to record the
+  P108 lesson: whole-phase delegation can produce substantial work, but the
+  default delegation unit should be one roadmap child task with explicit
+  heartbeat, result, blocker, archive, and coordinator-decision surfaces.
+- Updated `AGENTS.md` so coordinator-owned phase authority and delegated
+  child-task authority are separated in the repo contract.

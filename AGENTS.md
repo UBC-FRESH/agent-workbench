@@ -105,6 +105,7 @@ Never collapse those into a single vague success/failure claim.
 Supervisor agents are responsible for:
 
 - decomposing work into bounded worker tickets;
+- delegating one roadmap child task at a time by default;
 - stating exact allowed commands, files, and success criteria;
 - selecting worker models only from the configured Ollama host's live
   `ollama list` inventory unless a ticket explicitly includes model
@@ -125,6 +126,18 @@ Worker agents are responsible for:
 Worker prompts should avoid open-ended requests such as "finish the workflow" or
 "do the proper closeout" unless the prompt also includes the exact state machine,
 commands, stop conditions, and evidence requirements.
+
+Default delegation unit:
+
+- Delegate one child task, not one whole roadmap phase, unless the whole-phase
+  behavior is itself the experiment being measured.
+- The coordinator owns phase setup, task sequencing, acceptance decisions,
+  commits, branch pushes, PR creation, PR merge, parent issue closure, and final
+  completion claims.
+- The delegated local supervisor or worker owns only the child task named in
+  the ticket and must stop at that boundary.
+- A follow-on repair run must cite exact defects from the previous result or
+  coordinator decision packet rather than reopening the whole task.
 
 ## Delegation Trust Levels
 
@@ -176,9 +189,12 @@ Use ignored local files for raw coordination:
 Worker tickets should include:
 
 - current known state;
+- governing parent and child issue;
 - exact task boundary;
 - files or issues in scope;
 - commands to run or commands to avoid;
+- result, blocker, heartbeat, archive, and token-ledger paths;
+- shell and workspace-root context;
 - success criteria;
 - failure stop conditions; and
 - required final evidence format.
