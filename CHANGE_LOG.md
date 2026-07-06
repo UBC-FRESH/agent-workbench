@@ -1703,3 +1703,5 @@ issues, pull requests, and closeout comments.
   public-safety scan for private paths, provider URLs, headers, credentials,
   and transcript fragments.
 - Opened P64-only pull request #425 after P64.1-P64.4 evidence agreed.
+- Squash-merged PR #425, verified parent issue #420 closed, synced local
+  `main`, deleted the local P64 feature branch, and pruned the remote branch.

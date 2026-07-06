@@ -72,7 +72,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P61 Packaged local-supervisor workflow v1 | #402 | `feature/p61-packaged-local-supervisor-workflow-v1` | Complete |
 | P62 Document-indexing workflow recipe v1 | #408 | `feature/p62-document-indexing-recipe-v1` | Complete |
 | P63 Bounded TSA23 recipe pilot | #414 / PR #419 | `feature/p63-bounded-tsa23-recipe-pilot` | Complete |
-| P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | PR open |
+| P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2806,7 +2806,7 @@ Parent issue: #420
 
 Branch: `feature/p64-deployment-environment-operator-playbook`
 
-Status: PR open
+Status: complete
 
 Goal: make Agent Workbench usable in the intended remote GPU/code-server or
 VS Code environment without relying on chat memory.
@@ -2854,7 +2854,7 @@ Planned tasks:
 Phase closeout:
 
 - [x] Open a P64-only PR after P64.1-P64.4 evidence agrees (#425).
-- [ ] Merge the P64 PR (#425).
-- [ ] Verify parent issue #420 closure after merge.
-- [ ] Sync local `main` and delete
+- [x] Merge the P64 PR (#425).
+- [x] Verify parent issue #420 closure after merge.
+- [x] Sync local `main` and delete
       `feature/p64-deployment-environment-operator-playbook`.
