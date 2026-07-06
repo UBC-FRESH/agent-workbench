@@ -44,8 +44,28 @@ These fields are intentionally simple. P60 can split outcome semantics more
 deeply, but P59 gives every future live benchmark a minimum budget gate and a
 place to record when another paid attempt is forbidden.
 
+## Enforcement Hook
+
+The existing packaged document-audit graph live path now requires a valid
+budget record unless it is run as a dry run:
+
+```powershell
+python -m agent_workbench.cli supervisor run-document-audit-graph --budget-record templates\supervisor_budget_declaration.json ...
+```
+
+The graph summary path also requires a budget record before rendering a summary
+as economics evidence:
+
+```powershell
+python -m agent_workbench.cli supervisor summarize-document-audit-graph --budget-record templates\supervisor_budget_declaration.json ...
+```
+
+This is not a new live experiment. It is a fail-closed gate on existing
+P57-era launcher surfaces.
+
 ## Boundary
 
-P59 validates budget declarations. It does not run another benchmark and does
-not retrofit every existing launcher in one pass. Future live-run paths should
-call this validator before claiming economics evidence.
+P59 validates budget declarations and wires the existing graph audit launcher
+and summarizer to require them for live/economics use. It does not run another
+benchmark. Future live-run paths beyond this graph audit lane should call this
+validator before claiming economics evidence.

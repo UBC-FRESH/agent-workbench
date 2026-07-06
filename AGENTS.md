@@ -203,6 +203,12 @@ This repo follows the UBC-FRESH phase/task/subtask workflow:
 - Roadmap subtasks usually stay as checklist items inside the child issue body.
 - Use at most three issue levels: phase, task, implementation subtask.
 - Record issue numbers beside roadmap phases and tasks once created.
+- Planned and active roadmap phases must be fleshed out to task/subtask level
+  before they are treated as ready for implementation. A phase section with
+  only broad one-line task bullets is not sufficiently planned.
+- For planned future phases whose GitHub issues do not exist yet, use task IDs
+  such as `P60.1` and nested subtask checklists in `ROADMAP.md`; replace `TBD`
+  with issue numbers when the phase is activated.
 - Keep `ROADMAP.md`, `CHANGE_LOG.md`, planning notes, issue bodies, and PR
   descriptions synchronized.
 - Open a PR from the phase branch to `main` only after phase tasks, verification,

@@ -1519,3 +1519,15 @@ issues, pull requests, and closeout comments.
 - Recorded the P59 boundary in `planning/phase59_supervisor_budget_gates.md`:
   this phase adds validation and status semantics, but launches no live
   Copilot/Ollama jobs.
+
+## 2026-07-05 - Added P59 budget enforcement and roadmap subtask contract
+
+- Wired the existing packaged document-audit graph live-run and summary paths
+  to require a valid `--budget-record` before paid-supervisor economics
+  evidence can be launched or summarized.
+- Added regression tests that prove those graph paths fail closed without a
+  budget record.
+- Expanded P60-P64 roadmap phases to task/subtask level so future phase work is
+  ready for issue activation without relying on broad one-line placeholders.
+- Updated `AGENTS.md` to make task/subtask-level roadmap planning part of the
+  development workflow contract.

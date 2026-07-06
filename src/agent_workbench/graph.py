@@ -338,7 +338,6 @@ def decision_input_from_node(node: dict[str, Any]) -> dict[str, Any]:
     node_kind = str(agent_parameters.get("node_kind", "graph_node"))
     authority = str(provenance.get("authority_level", "L6"))
     decision_authority = authority_to_decision_level(authority)
-    supervisor_owned = decision_authority == "L6"
     worker_node = node_kind.startswith("worker_") or authority in {"L0", "L1"}
 
     expected_verification = str(agent_parameters.get("evidence_reference", "")).strip()
