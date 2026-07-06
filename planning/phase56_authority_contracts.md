@@ -3,10 +3,12 @@
 This note records the first concrete implementation slice for the authority
 hierarchy direction.
 
-P56 is not yet opened as a GitHub phase issue, but the core contract surface is
-useful immediately for P55/P57 experiments: supervisor tickets need a
-machine-checkable way to declare role boundaries, workspace roots, allowed
-tools, output artifacts, final signals, and public-safety posture.
+P56 is tracked by parent issue #372 on branch
+`feature/p56-authority-hierarchy-supervisor-contracts`. The core contract
+surface is useful immediately for the post-P55 local-supervisor lane:
+supervisor tickets need a machine-checkable way to declare role boundaries,
+workspace roots, allowed tools, output artifacts, final signals, and
+public-safety posture.
 
 ## Implemented Contract Surface
 

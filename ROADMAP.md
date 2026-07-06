@@ -63,7 +63,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Complete |
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Complete |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Complete |
-| P55 TSA23 first real indexing run | #367 | `feature/p55-tsa23-first-indexing-run` | Active |
+| P55 TSA23 first real indexing run | #367 | `feature/p55-tsa23-first-indexing-run` | Complete |
+| P56 Authority hierarchy and supervisor contract scaffold | #372 | `feature/p56-authority-hierarchy-supervisor-contracts` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2416,3 +2417,41 @@ Closeout decision: P55 should merge as an evidence packet, not as a finished
 production document-indexing workflow. The useful next step is consolidation,
 budget enforcement, outcome semantics, and reusable recipe packaging before any
 larger TSA23 or MP11 indexing run.
+
+## Phase 56: Authority Hierarchy And Supervisor Contract Scaffold
+
+Parent issue: #372
+
+Branch: `feature/p56-authority-hierarchy-supervisor-contracts`
+
+Status: active
+
+Goal: formalize the authority hierarchy and supervisor job contract layer
+needed for local Copilot/Ollama supervisors, worker subagents, and paid Codex
+coordinator review.
+
+Planned tasks:
+
+- [x] P56.1 Authority schema and validators (#373)
+  - [x] Define required developer, coordinator, supervisor, and worker roles.
+  - [x] Validate workspace-root policy and wrong-root stop rules.
+  - [x] Validate allowed tools, forbidden actions, stop conditions, success
+        criteria, final signals, verification requirements, and public-safety
+        posture.
+  - [x] Validate supervisor report final status, artifacts, observations,
+        blockers, and errors.
+- [x] P56.2 Supervisor job templates (#374)
+  - [x] Add generic supervisor job contract template.
+  - [x] Add generic supervisor job report template.
+  - [x] Add document-artifact audit supervisor contract template.
+  - [x] Add document-artifact audit supervisor ticket template.
+- [x] P56.3 CLI validation and rendering surface (#375)
+  - [x] Add `agent-workbench authority validate`.
+  - [x] Add `agent-workbench authority render`.
+  - [x] Support contract and report validation/rendering.
+  - [x] Render compact Markdown summaries for coordinator review.
+- [ ] P56.4 Planning, tests, and PR closeout (#376)
+  - [x] Link P56 roadmap and planning notes to GitHub issues.
+  - [x] Update `CHANGE_LOG.md`.
+  - [x] Run focused authority tests.
+  - [ ] Open a P56-only PR against `main`.

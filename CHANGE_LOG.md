@@ -1473,3 +1473,13 @@ issues, pull requests, and closeout comments.
 - Deferred repeatability, content-probe, full-corpus indexing, and production
   recipe work to follow-on consolidation and recipe phases rather than keeping
   P55 open for more live runs.
+
+## 2026-07-05 - Opened P56 authority hierarchy scaffold
+
+- Created P56 parent issue #372 and child issues #373-#376 after P55 landed so
+  the authority-contract work has its own clean phase tracker.
+- Added the authority contract scaffold, supervisor job templates, CLI
+  validation/rendering surface, and focused tests on
+  `feature/p56-authority-hierarchy-supervisor-contracts`.
+- Linked `ROADMAP.md` and `planning/phase56_authority_contracts.md` to the P56
+  issue set before opening the P56 PR.
