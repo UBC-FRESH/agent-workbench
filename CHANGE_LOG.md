@@ -1760,3 +1760,17 @@ issues, pull requests, and closeout comments.
 - Added heartbeat and nudge templates plus
   `planning/phase67_heartbeat_nudge_protocol.md` so P68 can build on a
   structured run-state signal instead of ad hoc "keep going" prompts.
+
+## 2026-07-06 - Added P68 Copilot task controller v0
+
+- Created P68 parent issue #448 and child issues #449 through #452 on
+  `feature/p68-copilot-task-controller-v0`.
+- Added `src/agent_workbench/copilot_task_controller.py` with task-run manifest
+  validation, bounded launch-prompt rendering, archive/heartbeat/result review
+  packet generation, and coordinator decision recommendations.
+- Added `agent-workbench copilot task-validate`, `task-prompt`, and
+  `task-review` command surfaces.
+- Added `templates/copilot_task_run_manifest.json`,
+  `planning/phase68_copilot_task_controller_v0.md`, and focused controller
+  tests so the next live bridge layer has a deterministic child-task control
+  surface.

@@ -75,8 +75,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | Complete |
 | P65 Copilot session archive | #426 | `feature/p65-copilot-session-archive` | Complete |
 | P66 Task-level delegation protocol | #431 | `feature/p66-task-level-delegation-protocol` | Active |
-| P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Active |
-| P68 Copilot task controller v0 | TBD | `feature/p68-copilot-task-controller-v0` | Planned |
+| P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Complete |
+| P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Active |
 | P69 Behavior analytics from archives | TBD | `feature/p69-behavior-analytics-from-archives` | Planned |
 | P70 FEMIC P108 repair dogfood | TBD | `feature/p70-femic-p108-repair-dogfood` | Planned |
 
@@ -2912,7 +2912,7 @@ Parent issue: #431
 
 Branch: `feature/p66-task-level-delegation-protocol`
 
-Status: active
+Status: complete
 
 Goal: make one roadmap child task the default delegation unit, with coordinator
 ownership of phase sequencing and acceptance.
@@ -2996,41 +2996,47 @@ Closeout boundary:
 
 ## Phase 68: Copilot Task Controller V0
 
-Parent issue: TBD
+Parent issue: #448
 
 Branch: `feature/p68-copilot-task-controller-v0`
 
-Status: planned
+Status: active
 
 Goal: package the launch, archive, heartbeat check, nudge, and review loop for
 one child-task delegation run.
 
 Planned tasks:
 
-- [ ] P68.1 Controller run manifest
-  - [ ] Define a manifest tying together run id, ticket path, child issue,
+- [x] P68.1 Controller run manifest (#449)
+  - [x] Define a manifest tying together run id, ticket path, child issue,
         expected model, permission mode, heartbeat path, result path, blocker
         path, archive path, and token ledger path.
-  - [ ] Require high-entropy run ids for live Copilot sessions.
-  - [ ] Validate wrong-root, wrong-model, missing-budget, and stale-session
+  - [x] Require high-entropy run ids for live Copilot sessions.
+  - [x] Validate wrong-root, wrong-model, missing-budget, and stale-session
         stop gates before launch.
-- [ ] P68.2 Launch wrapper
-  - [ ] Add a command to launch a child-task ticket through the existing Copilot
-        bridge without maximizing the UI.
-  - [ ] Preserve model and permission evidence expectations.
-  - [ ] Fail closed when the prompt cannot be delivered as an executable
+- [x] P68.2 Launch wrapper (#450)
+  - [x] Add a command to generate a child-task prompt through the Copilot
+        controller without maximizing the UI.
+  - [x] Preserve model and permission evidence expectations.
+  - [x] Fail closed when the prompt cannot be delivered as an executable
         directive.
-- [ ] P68.3 Archive integration
-  - [ ] Invoke P65 archive after a task run by session id, run id, or prompt
+- [x] P68.3 Archive integration (#451)
+  - [x] Require P65 archive after a task run by session id, run id, or prompt
         marker.
-  - [ ] Link archive manifest to the run manifest and result file.
-  - [ ] Refuse economics or behavior claims without archive evidence when the
+  - [x] Link archive manifest to the run manifest and result file.
+  - [x] Refuse economics or behavior claims without archive evidence when the
         run used Copilot Chat.
-- [ ] P68.4 Review packet
-  - [ ] Generate a coordinator-facing review packet summarizing task output,
+- [x] P68.4 Review packet (#452)
+  - [x] Generate a coordinator-facing review packet summarizing task output,
         heartbeat state, archive metrics, validation checks, and recommended
         decision.
-  - [ ] Keep raw logs ignored and promote only sanitized summaries.
+  - [x] Keep raw logs ignored and promote only sanitized summaries.
+
+Closeout boundary:
+
+- [x] Run focused controller tests.
+- [x] Run `git diff --check`.
+- [x] Update `CHANGE_LOG.md`.
 
 ## Phase 69: Behavior Analytics From Archives
 
