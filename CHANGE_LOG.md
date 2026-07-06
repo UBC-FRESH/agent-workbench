@@ -1220,3 +1220,256 @@ issues, pull requests, and closeout comments.
 - Recorded that future economics claims require measured paid-supervisor token
   spans and that model comparisons require worker token records, model identity,
   parseability status, and source anchors.
+
+## 2026-07-04 - Opened P55 TSA23 indexing battery
+
+- Opened P55 as the first real TSA23 document-indexing experiment after P53's
+  corpus scaffold and P54's policy rules.
+- Added `benchmarks/document_library/tsa23_tsr/p55_test_battery.json` with a
+  staged seven-wave battery across documents, chunk sizes, models,
+  repeatability, content metadata, and supervisor audit calibration.
+- Added `planning/phase55_tsa23_indexing_battery.md` to make the phase
+  explicitly non-trivial and to prevent premature closeout after a single
+  successful worker run.
+- Recorded a phase pause policy: report wave results to the maintainer and wait
+  for direction before advancing waves or closing P55.
+
+## 2026-07-04 - Ran P55 Wave 0 chunking and dry-run setup
+
+- Added `scripts/build_tsa23_indexing_battery.py` to extract ignored source
+  chunks from the three P55 TSA23 pilot PDFs and generate ignored worker tickets
+  and eval manifests.
+- Added tracked sanitized chunk manifests for the 1995, 2006, and 2012 pilot
+  PDFs plus `benchmarks/document_library/tsa23_tsr/p55_eval_packet_index.json`.
+- Dry-ran all 9 generated P55 eval manifests through `agent-workbench
+  eval-batch` without contacting the model provider.
+- Recorded Wave 0 findings in `planning/phase55_wave0_chunking_results.md`:
+  the 1995 PDF has sparse `pypdf` text extraction, while the 2006 and 2012 PDFs
+  need smaller chunks before a clean x2/x4/x8 worker comparison.
+
+## 2026-07-04 - Ran P55 Wave 1 single-model smoke
+
+- Refocused P55 on the three most recent TSA23 TSR documents from 2012: data
+  package, public discussion paper, and rationale.
+- Regenerated chunk manifests and ignored eval packets with 8-page windows and
+  1-page overlap, then committed the refocus checkpoint.
+- Ran `qwen3-coder-next:latest` on all three `structure_x2` Wave 1 tickets
+  through the Copilot SDK/Ollama eval path.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave1_smoke_summary.json`
+  and `planning/phase55_wave1_smoke_results.md` with sanitized aggregate
+  metrics only.
+- Recorded that all three worker calls completed with parseable JSONL and no
+  malformed lines, but scaling unchanged is not recommended because the outputs
+  exposed record-ID uniqueness, page-anchor type, and data-package coverage
+  defects.
+
+## 2026-07-04 - Reran P55 Wave 1 with full-document coverage
+
+- Added a `structure_full` ticket shape and Wave 1.1 full-document smoke lane
+  so P55 does not skip useful later pages before model A/B testing.
+- Tightened the structure-ticket contract to require unique `record_id` values,
+  string `page_anchor` values, bare JSONL, and at least one strong record per
+  metadata-bearing chunk.
+- Regenerated Wave 0 artifacts: 12 eval packets total, including full-document
+  packets covering 41 data-package pages, 17 public-discussion-paper pages, and
+  48 rationale pages.
+- Reran the three `structure_x2` tickets and ran three full-document tickets
+  with `qwen3-coder-next:latest`.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave1_full_document_rerun_summary.json`
+  and `planning/phase55_wave1_full_document_rerun_results.md` with sanitized
+  aggregate metrics.
+- Recorded the main result: later pages do contain useful indexable material,
+  but one huge ticket per document is format-fragile and should be replaced by
+  deterministic per-chunk or small-bundle orchestration plus delegated format
+  repair before Wave 2.
+
+## 2026-07-04 - Ran P55 Wave 2 model A/B
+
+- Fixed the SDK eval classifier so empty-marker JSONL runs report
+  `freeform-output` instead of a misleading `duplicate-marker`.
+- Tightened the generated structure-ticket wording with stricter JSONL rules,
+  uniqueness requirements, string page anchors, quote-length guidance, and a
+  maximum-record cap.
+- Ran the Wave 2 `structure_x4` rationale ticket across
+  `qwen3-coder:latest`, `qwen3-coder-next:latest`, and `gpt-oss:120b`.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave2_model_ab_summary.json`
+  and `planning/phase55_wave2_model_ab_results.md` with sanitized aggregate
+  metrics.
+- Recorded that `qwen3-coder:latest` produced the best coverage signal, while
+  `qwen3-coder-next:latest` under-covered and `gpt-oss:120b` invented chunk
+  IDs; no model is ready for unaudited scaling without validator/repair.
+
+## 2026-07-04 - Ran P55 Wave 3 size-scale test
+
+- Tightened the P55 worker-ticket framework again by removing the literal model
+  name from the example and adding explicit allowed chunk IDs.
+- Switched Wave 3 size-scale from `qwen3-coder-next:latest` to the Wave 2 best
+  coverage candidate, `qwen3-coder:latest`.
+- Ran `structure_x2`, `structure_x4`, and `structure_x8` on the 2012 rationale.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave3_size_scale_summary.json`
+  and `planning/phase55_wave3_size_scale_results.md` with sanitized aggregate
+  metrics.
+- Recorded that `structure_x4` is the best current ticket size: `structure_x8`
+  consumed more input tokens but still covered only four of seven chunks under
+  the 24-record cap.
+
+## 2026-07-04 - Removed P55 hidden record cap
+
+- Removed the hard-coded maximum-record rule from generated P55 worker tickets
+  after maintainer review identified it as an artificial guardrail that
+  distorted coverage results.
+- Updated the P55 battery definition and planning note to make verbosity,
+  malformed JSONL, repetitive records, quote-length defects, and low-value
+  filler measured validator outcomes rather than hidden ticket constraints.
+- Kept the earlier Wave 2 and Wave 3 summaries unchanged as historical evidence
+  because those worker runs really did execute under the old capped ticket
+  contract.
+
+## 2026-07-04 - Ran P55 Wave 3.1 chunk-orchestrated extraction
+
+- Regenerated P55 worker tickets without the hidden maximum-record rule and
+  added seven single-chunk `wave3_chunk_orchestration` eval packets for the
+  2012 TSA23 rationale.
+- Ran all seven no-tool `qwen3-coder:latest` worker calls through
+  `agent-workbench eval-batch`; all completed without provider failures or
+  malformed JSONL lines.
+- Added `scripts/summarize_p55_worker_outputs.py` to reproduce sanitized
+  aggregate quality metrics from ignored runtime outputs without tracking raw
+  source text or source quotes.
+- Recorded the Wave 3.1 result in
+  `benchmarks/document_library/tsa23_tsr/p55_wave3_chunk_orchestration_summary.json`
+  and `planning/phase55_wave3_chunk_orchestration_results.md`: all seven chunks
+  were covered, 95 parseable records were produced, and remaining defects are
+  mainly repairable chunk-ID copy errors plus source-quote length violations.
+
+## 2026-07-04 - Ran P55 Wave 3.2 Qwen3.6 BF16 chunk A/B
+
+- Added `qwen3.6:35b-a3b-bf16` to the P55 model catalog as the primary
+  document-understanding extraction candidate.
+- Added seven `wave3_qwen36_bf16_chunk_ab` single-chunk eval packets over the
+  same 2012 TSA23 rationale chunks used by the Wave 3.1
+  `qwen3-coder:latest` baseline.
+- Verified the BF16 model was available from the configured local Ollama
+  provider before running worker calls.
+- Ran all seven BF16 no-tool worker calls through `agent-workbench eval-batch`;
+  all completed without provider failures.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave3_qwen36_bf16_chunk_ab_summary.json`
+  and `planning/phase55_wave3_qwen36_bf16_chunk_ab_results.md` with sanitized
+  aggregate metrics.
+- Recorded the Wave 3.2 result as comparable but not a clean win: BF16
+  produced 123 parseable records versus 95 for the coding baseline, but still
+  needs validator/repair because it produced one malformed line, 14 invalid
+  chunk-ID records, and the same total count of quote-length violations.
+
+## 2026-07-05 - Planned P55 dual-model typed fact ensemble lane
+
+- Added `planning/phase55_dual_model_ensemble_design.md` to capture the next
+  extraction architecture: independent typed JSON candidates, deterministic
+  field-by-field comparison, disagreement-only verification, and compact
+  supervisor audit.
+- Added the `typed_fact_x2` ticket shape to the P55 battery so the next run
+  tests schema population rather than open-ended structure-record discovery.
+- Added Wave 7 dual-model candidate extraction and Wave 8 disagreement
+  verification to the P55 battery and roadmap.
+- Recorded the current model reality: `qwen3.6:35b-a3b-bf16` is available, GLM
+  is planned but not currently exposed by the local Ollama catalog, and
+  `gpt-oss:120b` is the installed large-model stand-in for the first runnable
+  ensemble test.
+
+## 2026-07-05 - Ran P55 Wave 7 dual-model typed fact ensemble
+
+- Generated the new Wave 7 typed fact candidate packet over the first two
+  chunks of the 2012 TSA23 rationale.
+- Dry-ran the Wave 7 eval manifest, then ran the live no-tool local-worker
+  packet with `qwen3.6:35b-a3b-bf16` and `gpt-oss:120b`.
+- Added `scripts/compare_p55_typed_candidates.py` to compare candidate JSON
+  outputs without tracking raw candidate values or source quotes.
+- Added `benchmarks/document_library/tsa23_tsr/p55_wave7_dual_model_typed_fact_ensemble_comparison.json`
+  and `planning/phase55_wave7_dual_model_typed_fact_ensemble_results.md` with
+  sanitized comparison metrics.
+- Recorded that both candidate JSON objects parsed, all 15 fields were
+  compared, five fields had value agreement, two fields were both not found,
+  and nine fields require verifier attention because of disagreement or schema
+  issues.
+- Preserved the GLM direction for a later rerun: GLM is still the intended
+  document-model comparison target, but it was not available from the local
+  Ollama catalog for this first Wave 7 run.
+
+## 2026-07-05 - Ran P55 Wave 8 disagreement verification
+
+- Added `scripts/build_p55_disagreement_verifier_packet.py` to build ignored
+  verifier tickets from the Wave 7 disagreement surface and tracked only a
+  sanitized verifier packet index.
+- Added `scripts/summarize_p55_verifier_output.py` to summarize verifier
+  outputs without tracking raw final values or source quotes.
+- Ran the first Wave 8 verifier packet with `deepseek-r1:latest`; the model
+  completed but failed the strict JSON verifier contract, first by using
+  verdict labels as field keys and then by returning malformed JSON after a
+  stricter field-key skeleton was added.
+- Preserved the DeepSeek-R1 result as negative verifier evidence in
+  `benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_deepseek_r1_summary.json`
+  and `planning/phase55_wave8_disagreement_verification_deepseek_r1_results.md`.
+- Reran the same disagreement verifier packet with `qwen3.6:35b-a3b-bf16`;
+  Qwen3.6 parsed successfully, covered all nine requested fields, produced no
+  quote-length or chunk-ID defects, and resolved the nine-field disagreement
+  surface into six `left_correct` and three `both_correct_equivalent` verdicts.
+- Recorded the Qwen3.6 verifier result in
+  `benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_summary.json`
+  and `planning/phase55_wave8_disagreement_verification_qwen36_results.md`.
+- Updated the ensemble design note to split "verifier" into strict verifier,
+  validation critic, and repair executor roles. DeepSeek-R1 remains a plausible
+  validation-critic candidate, while Qwen3-Coder-Next is the next repair
+  executor candidate for strict JSON repair.
+
+## 2026-07-05 - Ran P55 Wave 9 critic and repair rescue lane
+
+- Added `scripts/build_p55_critic_repair_packets.py` to generate ignored Wave 9
+  critic and repair tickets from the failed Wave 8 DeepSeek verifier output.
+- Added `scripts/summarize_p55_critic_output.py` to track sanitized critic
+  metrics without publishing raw repair instructions.
+- Ran `deepseek-r1:latest` as a validation critic; it produced parseable repair
+  instructions with two issue records and two repair-strategy steps, but the
+  harness still classified the output as loop-like.
+- Ran `qwen3-coder-next:latest` as a strict JSON repair executor. The first
+  repair pass parsed and covered all fields but invented an invalid
+  `supervisor_review_required` verdict label and invalid `final_chunk_id`
+  values, so the repair ticket was tightened and rerun.
+- The final repair pass parsed, preserved all required top-level keys and all
+  nine field keys, used valid verdict labels, and produced no quote-length or
+  chunk-ID defects. It resolved one field and marked eight fields as
+  `needs_supervisor`.
+- Recorded the result in
+  `benchmarks/document_library/tsa23_tsr/p55_wave9_validation_critic_summary.json`,
+  `benchmarks/document_library/tsa23_tsr/p55_wave9_json_repair_summary.json`,
+  `planning/phase55_wave9_validation_critic_results.md`, and
+  `planning/phase55_wave9_json_repair_results.md`.
+- Interpretation: the critic/repair lane is a safe fallback for producing
+  schema-shaped JSON from failed output, but on this test it is less useful
+  than direct Qwen3.6 disagreement verification because it punts most fields to
+  supervisor audit.
+
+## 2026-07-05 - Ran P55 Wave 8 Qwen3.6 Q8 verifier A/B
+
+- Added a Qwen3.6 Q8_0 verifier packet for the same nine-field Wave 8
+  disagreement surface used by the BF16 strict-verifier baseline.
+- Ran `qwen3.6:35b-a3b-q8_0` through the no-tool SDK eval path and summarized
+  the output with the existing verifier summarizer.
+- Recorded the result in
+  `benchmarks/document_library/tsa23_tsr/p55_wave8_disagreement_verification_qwen36_q8_summary.json`
+  and `planning/phase55_wave8_disagreement_verification_qwen36_q8_results.md`.
+- Compared with BF16: Q8_0 parsed successfully and used fewer output tokens
+  than BF16, but it had three quote-length defects and left one field as
+  `insufficient_evidence`; BF16 remains the stronger strict verifier candidate
+  for this node.
+
+## 2026-07-05 - Prepared P55 closeout as evidence packet
+
+- Reconciled the P55 roadmap state so completed chunking, worker-eval,
+  supervisor-calibration, and scoring work are marked complete on the P55
+  branch.
+- Added `planning/phase55_closeout_summary.md` to make the closeout boundary
+  explicit: P55 is an evidence-producing phase, not a production document-index
+  workflow.
+- Deferred repeatability, content-probe, full-corpus indexing, and production
+  recipe work to follow-on consolidation and recipe phases rather than keeping
+  P55 open for more live runs.

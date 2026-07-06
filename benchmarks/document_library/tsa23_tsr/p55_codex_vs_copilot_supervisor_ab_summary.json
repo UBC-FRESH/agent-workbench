@@ -1,0 +1,398 @@
+{
+  "benchmark_scope": "Four-field Wave 10 quote/value repair supervisor task over tsa23_2012_23ts13ra.",
+  "bridge_evidence": {
+    "bridge_report_path": "runtime/agent_jobs/p55_ab_copilot_supervisor_repair_bridge_report.md",
+    "completed": "true",
+    "final_marker_present": "true",
+    "numeric_token_status": "unavailable_from_vscode_chat_session",
+    "permission_levels": "autopilot",
+    "resolved_model": "qwen3.6:35b-a3b-bf16",
+    "status": "accepted-candidate",
+    "supervisor_cash_cost_usd": 0.0,
+    "supervisor_token_price_per_1m_usd": 0.0
+  },
+  "generated_utc": "2026-07-05T18:25:51Z",
+  "interpretation": "Scoped Copilot supervisor followed the process but did not meet repair-quality criteria. This supports tighter role prompts and/or a separate local audit node before allowing free-supervisor output to replace paid supervision.",
+  "lanes": [
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "extra_fields": [],
+      "field_count": 4,
+      "field_repairs": [
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "list",
+          "field": "aac_value",
+          "reason_code": "quote_compacted_source_supported",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": true,
+          "repaired_value_hash": "143cc2bbb402e7fc",
+          "repaired_value_present": true,
+          "repaired_value_type": "list",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 17,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "dict",
+          "field": "base_case_harvest_forecast",
+          "reason_code": "quote_compacted_source_supported",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": true,
+          "repaired_value_hash": "05152eabeebb70c2",
+          "repaired_value_present": true,
+          "repaired_value_type": "dict",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 19,
+          "type_mismatch": false
+        },
+        {
+          "action": "needs_supervisor",
+          "confidence_bucket": "zero",
+          "expected_value_type": "str",
+          "field": "decision_rationale",
+          "reason_code": "out_of_compact_repair_scope",
+          "repaired_chunk_id_present": false,
+          "repaired_chunk_id_valid": false,
+          "repaired_page_anchor_present": false,
+          "repaired_status": "uncertain",
+          "repaired_units_present": false,
+          "repaired_value_hash": "",
+          "repaired_value_present": false,
+          "repaired_value_type": "null",
+          "source_quote_over_limit": false,
+          "source_quote_present": false,
+          "source_quote_word_count": 0,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "int",
+          "field": "inventory_reference_year",
+          "reason_code": "schema_repaired_source_supported",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "77459b9b941bcb47",
+          "repaired_value_present": true,
+          "repaired_value_type": "int",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 11,
+          "type_mismatch": false
+        }
+      ],
+      "field_scores": [
+        {
+          "field": "aac_value",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "base_case_harvest_forecast",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "decision_rationale",
+          "hard_penalty": 0,
+          "soft_penalty": 15.0,
+          "terms": {
+            "needs_supervisor": 15.0
+          },
+          "total_penalty": 15.0
+        },
+        {
+          "field": "inventory_reference_year",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        }
+      ],
+      "lane_id": "codex_supervisor_direct",
+      "missing_fields": [],
+      "quality": {
+        "action_counts": {
+          "needs_supervisor": 1,
+          "repaired": 3
+        },
+        "clean_repaired_or_unchanged_fields": 3,
+        "invalid_action_fields": 0,
+        "invalid_chunk_id_fields": 0,
+        "needs_supervisor_fields": 1,
+        "parse_status": "parsed",
+        "quote_over_limit_fields": 0,
+        "status_value_inconsistency_fields": 0,
+        "type_mismatch_fields": 0
+      },
+      "repair_model": "codex-supervisor",
+      "review_status": "supervisor_repair_candidate",
+      "rubric_score": {
+        "hard_penalty": 0.0,
+        "max_score": 100.0,
+        "score": 85.0,
+        "soft_penalty": 15.0,
+        "total_penalty": 15.0
+      },
+      "source_packet_id": "wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "extra_fields": [],
+      "field_count": 4,
+      "field_repairs": [
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "list",
+          "field": "aac_value",
+          "reason_code": "source_verified_tighter_quote",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": true,
+          "repaired_value_hash": "143cc2bbb402e7fc",
+          "repaired_value_present": true,
+          "repaired_value_type": "list",
+          "source_quote_over_limit": true,
+          "source_quote_present": true,
+          "source_quote_word_count": 34,
+          "type_mismatch": false
+        },
+        {
+          "action": "needs_supervisor",
+          "confidence_bucket": "low",
+          "expected_value_type": "dict",
+          "field": "base_case_harvest_forecast",
+          "reason_code": "no_source_evidence_for_forecast_object",
+          "repaired_chunk_id_present": false,
+          "repaired_chunk_id_valid": false,
+          "repaired_page_anchor_present": false,
+          "repaired_status": "uncertain",
+          "repaired_units_present": false,
+          "repaired_value_hash": "",
+          "repaired_value_present": false,
+          "repaired_value_type": "null",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 16,
+          "type_mismatch": false
+        },
+        {
+          "action": "needs_supervisor",
+          "confidence_bucket": "zero",
+          "expected_value_type": "str",
+          "field": "decision_rationale",
+          "reason_code": "out_of_range",
+          "repaired_chunk_id_present": false,
+          "repaired_chunk_id_valid": false,
+          "repaired_page_anchor_present": false,
+          "repaired_status": "uncertain",
+          "repaired_units_present": false,
+          "repaired_value_hash": "",
+          "repaired_value_present": false,
+          "repaired_value_type": "null",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 10,
+          "type_mismatch": false
+        },
+        {
+          "action": "unchanged",
+          "confidence_bucket": "low",
+          "expected_value_type": "int",
+          "field": "inventory_reference_year",
+          "reason_code": "source_inconclusive",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "",
+          "repaired_value_present": false,
+          "repaired_value_type": "null",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 16,
+          "type_mismatch": false
+        }
+      ],
+      "field_scores": [
+        {
+          "field": "aac_value",
+          "hard_penalty": 0,
+          "soft_penalty": 1.459603,
+          "terms": {
+            "quote_excess": 1.459603
+          },
+          "total_penalty": 1.459603
+        },
+        {
+          "field": "base_case_harvest_forecast",
+          "hard_penalty": 0,
+          "soft_penalty": 15.0,
+          "terms": {
+            "needs_supervisor": 15.0
+          },
+          "total_penalty": 15.0
+        },
+        {
+          "field": "decision_rationale",
+          "hard_penalty": 0,
+          "soft_penalty": 15.0,
+          "terms": {
+            "needs_supervisor": 15.0
+          },
+          "total_penalty": 15.0
+        },
+        {
+          "field": "inventory_reference_year",
+          "hard_penalty": 120.0,
+          "soft_penalty": 10.0,
+          "terms": {
+            "found_null_value": 120.0,
+            "low_confidence_repaired": 10.0
+          },
+          "total_penalty": 130.0
+        }
+      ],
+      "lane_id": "copilot_free_supervisor",
+      "missing_fields": [],
+      "quality": {
+        "action_counts": {
+          "needs_supervisor": 2,
+          "repaired": 1,
+          "unchanged": 1
+        },
+        "clean_repaired_or_unchanged_fields": 0,
+        "invalid_action_fields": 0,
+        "invalid_chunk_id_fields": 0,
+        "needs_supervisor_fields": 2,
+        "parse_status": "parsed",
+        "quote_over_limit_fields": 1,
+        "status_value_inconsistency_fields": 1,
+        "type_mismatch_fields": 0
+      },
+      "repair_model": "qwen3-6-35b-a3b-bf16",
+      "review_status": "free_supervisor_repair_candidate",
+      "rubric_score": {
+        "hard_penalty": 120.0,
+        "max_score": 100.0,
+        "score": 0.0,
+        "soft_penalty": 41.459603,
+        "total_penalty": 161.459603
+      },
+      "source_packet_id": "wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b"
+    }
+  ],
+  "phase": "P55",
+  "quote_word_limit": 25,
+  "raw_output_policy": "Raw supervisor outputs remain ignored under runtime/; tracked summary stores hashes, counts, model evidence, and defect classes only.",
+  "scoring_rubric": {
+    "interpretation": "Hard penalties represent trust or schema failures. Soft penalties represent objective-function misses that should guide optimization rather than dominate pass/fail reporting.",
+    "max_score": 100.0,
+    "penalty_weights": {
+      "extra_field": 40.0,
+      "found_null_value": 120.0,
+      "invalid_action": 100.0,
+      "invalid_chunk_id": 80.0,
+      "low_confidence_repaired": 10.0,
+      "missing_chunk_id_on_found": 30.0,
+      "missing_quote_on_found": 20.0,
+      "missing_required_field": 200.0,
+      "needs_supervisor": 15.0,
+      "quote_excess": 1.0,
+      "value_type_mismatch": 120.0
+    },
+    "quote_penalty": {
+      "formula": "weight * (exp((words - target) / scale) - 1) for words > target",
+      "kind": "exponential_excess",
+      "scale": 10.0
+    },
+    "quote_word_target": 25
+  },
+  "summary_id": "p55_codex_vs_copilot_supervisor_ab",
+  "token_line_items": [
+    {
+      "model_or_worker": "codex-supervisor",
+      "record_path": "runtime/supervisor_tokens/p55_codex_vs_copilot_wave10_ab/p55-ab-codex-supervisor-extraction.tokens.json",
+      "span_id": "p55-ab-codex-supervisor-extraction",
+      "span_kind": "codex_supervisor_extraction",
+      "supervisor_cached_input_tokens": 385664,
+      "supervisor_cost_usd": 0.15756545,
+      "supervisor_input_tokens": 24351,
+      "supervisor_output_tokens": 2553,
+      "supervisor_reasoning_output_tokens": 837
+    },
+    {
+      "model_or_worker": "codex-supervisor",
+      "record_path": "runtime/supervisor_tokens/p55_codex_vs_copilot_wave10_ab/p55-ab-copilot-supervisor-delegation.tokens.json",
+      "span_id": "p55-ab-copilot-supervisor-delegation",
+      "span_kind": "copilot_supervisor_delegation",
+      "supervisor_cached_input_tokens": 869632,
+      "supervisor_cost_usd": 0.21325185,
+      "supervisor_input_tokens": 6487,
+      "supervisor_output_tokens": 3118,
+      "supervisor_reasoning_output_tokens": 433
+    },
+    {
+      "model_or_worker": "codex-supervisor",
+      "record_path": "runtime/supervisor_tokens/p55_codex_vs_copilot_wave10_ab/p55-ab-result-audit-and-summary.tokens.json",
+      "span_id": "p55-ab-result-audit-and-summary",
+      "span_kind": "result_audit_and_summary",
+      "supervisor_cached_input_tokens": 340736,
+      "supervisor_cost_usd": 0.0700238,
+      "supervisor_input_tokens": 1420,
+      "supervisor_output_tokens": 450,
+      "supervisor_reasoning_output_tokens": 115
+    },
+    {
+      "model_or_worker": "codex-supervisor",
+      "record_path": "runtime/supervisor_tokens/p55_codex_vs_copilot_wave10_ab/p55-ab-setup.tokens.json",
+      "span_id": "p55-ab-setup",
+      "span_kind": "setup",
+      "supervisor_cached_input_tokens": 108416,
+      "supervisor_cost_usd": 0.05988254999999999,
+      "supervisor_input_tokens": 10497,
+      "supervisor_output_tokens": 948,
+      "supervisor_reasoning_output_tokens": 662
+    }
+  ],
+  "totals": {
+    "codex_clean_repaired_or_unchanged_fields": 3,
+    "codex_direct_paid_supervisor_cost_usd": 0.15756545,
+    "codex_lane_total_cash_cost_usd_excluding_shared_setup": 0.15756545,
+    "codex_needs_supervisor_fields": 1,
+    "codex_quote_over_limit_fields": 0,
+    "codex_status_value_inconsistency_fields": 0,
+    "copilot_clean_repaired_or_unchanged_fields": 0,
+    "copilot_lane_local_supervisor_cost_usd": 0.0,
+    "copilot_lane_paid_codex_delegation_cost_usd": 0.21325185,
+    "copilot_lane_total_cash_cost_usd_excluding_shared_setup": 0.21325185,
+    "copilot_minus_codex_cash_delta_usd_excluding_shared_setup": 0.0556864,
+    "copilot_needs_supervisor_fields": 2,
+    "copilot_quote_over_limit_fields": 1,
+    "copilot_status_value_inconsistency_fields": 1,
+    "shared_setup_codex_supervisor_cost_usd": 0.05988254999999999
+  }
+}

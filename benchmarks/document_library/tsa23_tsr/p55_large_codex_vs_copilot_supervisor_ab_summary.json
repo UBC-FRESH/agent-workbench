@@ -1,0 +1,555 @@
+{
+  "benchmark_scope": "Seven-field Wave 8 adjudication supervisor task over tsa23_2012_23ts13ra.",
+  "bridge_evidence": {
+    "bridge_report_path": "runtime/agent_jobs/p55_ab_large_copilot_supervisor_bridge_report_v2.md",
+    "completed": "true",
+    "final_marker_present": "true",
+    "numeric_token_status": "unavailable_from_vscode_chat_session",
+    "permission_levels": "autopilot",
+    "resolved_model": "qwen3.6:35b-a3b-bf16",
+    "status": "accepted-candidate",
+    "supervisor_cash_cost_usd": 0.0,
+    "supervisor_token_price_per_1m_usd": 0.0
+  },
+  "generated_utc": "2026-07-05T18:33:18Z",
+  "interpretation": "Scoped Copilot supervisor followed the process but did not meet repair-quality criteria. This supports tighter role prompts and/or a separate local audit node before allowing free-supervisor output to replace paid supervision.",
+  "lanes": [
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "extra_fields": [],
+      "field_count": 7,
+      "field_repairs": [
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "list",
+          "field": "aac_value",
+          "reason_code": "source_supported",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": true,
+          "repaired_value_hash": "143cc2bbb402e7fc",
+          "repaired_value_present": true,
+          "repaired_value_type": "list",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 17,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "dict",
+          "field": "base_case_harvest_forecast",
+          "reason_code": "source_supported",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": true,
+          "repaired_value_hash": "05152eabeebb70c2",
+          "repaired_value_present": true,
+          "repaired_value_type": "dict",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 19,
+          "type_mismatch": false
+        },
+        {
+          "action": "needs_supervisor",
+          "confidence_bucket": "zero",
+          "expected_value_type": "str",
+          "field": "decision_rationale",
+          "reason_code": "out_of_bounded_evidence_scope",
+          "repaired_chunk_id_present": false,
+          "repaired_chunk_id_valid": false,
+          "repaired_page_anchor_present": false,
+          "repaired_status": "uncertain",
+          "repaired_units_present": false,
+          "repaired_value_hash": "",
+          "repaired_value_present": false,
+          "repaired_value_type": "null",
+          "source_quote_over_limit": false,
+          "source_quote_present": false,
+          "source_quote_word_count": 0,
+          "type_mismatch": false
+        },
+        {
+          "action": "unchanged",
+          "confidence_bucket": "high",
+          "expected_value_type": "str",
+          "field": "document_title",
+          "reason_code": "source_supported",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "35b4b4d510608bb9",
+          "repaired_value_present": true,
+          "repaired_value_type": "str",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 13,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "int",
+          "field": "inventory_reference_year",
+          "reason_code": "source_supported",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "77459b9b941bcb47",
+          "repaired_value_present": true,
+          "repaired_value_type": "int",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 11,
+          "type_mismatch": false
+        },
+        {
+          "action": "unchanged",
+          "confidence_bucket": "high",
+          "expected_value_type": "list",
+          "field": "major_land_base_constraints",
+          "reason_code": "partial_source_match",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "cc768c0a409a05ff",
+          "repaired_value_present": true,
+          "repaired_value_type": "list",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 16,
+          "type_mismatch": false
+        },
+        {
+          "action": "unchanged",
+          "confidence_bucket": "high",
+          "expected_value_type": "list",
+          "field": "major_management_assumptions",
+          "reason_code": "source_supported",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "3493f573575dbe94",
+          "repaired_value_present": true,
+          "repaired_value_type": "list",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 10,
+          "type_mismatch": false
+        }
+      ],
+      "field_scores": [
+        {
+          "field": "aac_value",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "base_case_harvest_forecast",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "decision_rationale",
+          "hard_penalty": 0,
+          "soft_penalty": 15.0,
+          "terms": {
+            "needs_supervisor": 15.0
+          },
+          "total_penalty": 15.0
+        },
+        {
+          "field": "document_title",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "inventory_reference_year",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "major_land_base_constraints",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "major_management_assumptions",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        }
+      ],
+      "lane_id": "codex_supervisor_direct",
+      "missing_fields": [],
+      "quality": {
+        "action_counts": {
+          "needs_supervisor": 1,
+          "repaired": 3,
+          "unchanged": 3
+        },
+        "clean_repaired_or_unchanged_fields": 6,
+        "invalid_action_fields": 0,
+        "invalid_chunk_id_fields": 0,
+        "needs_supervisor_fields": 1,
+        "parse_status": "parsed",
+        "quote_over_limit_fields": 0,
+        "status_value_inconsistency_fields": 0,
+        "type_mismatch_fields": 0
+      },
+      "repair_model": "codex-supervisor",
+      "review_status": "supervisor_adjudication_candidate",
+      "rubric_score": {
+        "hard_penalty": 0.0,
+        "max_score": 100.0,
+        "score": 85.0,
+        "soft_penalty": 15.0,
+        "total_penalty": 15.0
+      },
+      "source_packet_id": "wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b"
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "extra_fields": [],
+      "field_count": 7,
+      "field_repairs": [
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "list",
+          "field": "aac_value",
+          "reason_code": "source_verified",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": true,
+          "repaired_value_hash": "143cc2bbb402e7fc",
+          "repaired_value_present": true,
+          "repaired_value_type": "list",
+          "source_quote_over_limit": true,
+          "source_quote_present": true,
+          "source_quote_word_count": 34,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "dict",
+          "field": "base_case_harvest_forecast",
+          "reason_code": "source_verified",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": true,
+          "repaired_value_hash": "05152eabeebb70c2",
+          "repaired_value_present": true,
+          "repaired_value_type": "dict",
+          "source_quote_over_limit": true,
+          "source_quote_present": true,
+          "source_quote_word_count": 33,
+          "type_mismatch": false
+        },
+        {
+          "action": "unchanged",
+          "confidence_bucket": "low",
+          "expected_value_type": "str",
+          "field": "decision_rationale",
+          "reason_code": "formal_reasons_section_outside_chunk",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "uncertain",
+          "repaired_units_present": false,
+          "repaired_value_hash": "",
+          "repaired_value_present": false,
+          "repaired_value_type": "null",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 17,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "str",
+          "field": "document_title",
+          "reason_code": "cover_page_verified",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "f9e4087eb9386d95",
+          "repaired_value_present": true,
+          "repaired_value_type": "str",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 11,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "int",
+          "field": "inventory_reference_year",
+          "reason_code": "source_verified",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "77459b9b941bcb47",
+          "repaired_value_present": true,
+          "repaired_value_type": "int",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 11,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "list",
+          "field": "major_land_base_constraints",
+          "reason_code": "source_verified",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "14405d3f05b7f4be",
+          "repaired_value_present": true,
+          "repaired_value_type": "list",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 18,
+          "type_mismatch": false
+        },
+        {
+          "action": "repaired",
+          "confidence_bucket": "high",
+          "expected_value_type": "list",
+          "field": "major_management_assumptions",
+          "reason_code": "source_verified",
+          "repaired_chunk_id_present": true,
+          "repaired_chunk_id_valid": true,
+          "repaired_page_anchor_present": true,
+          "repaired_status": "found",
+          "repaired_units_present": false,
+          "repaired_value_hash": "a92cf4fdbb1aa851",
+          "repaired_value_present": true,
+          "repaired_value_type": "list",
+          "source_quote_over_limit": false,
+          "source_quote_present": true,
+          "source_quote_word_count": 21,
+          "type_mismatch": false
+        }
+      ],
+      "field_scores": [
+        {
+          "field": "aac_value",
+          "hard_penalty": 0,
+          "soft_penalty": 1.459603,
+          "terms": {
+            "quote_excess": 1.459603
+          },
+          "total_penalty": 1.459603
+        },
+        {
+          "field": "base_case_harvest_forecast",
+          "hard_penalty": 0,
+          "soft_penalty": 1.225541,
+          "terms": {
+            "quote_excess": 1.225541
+          },
+          "total_penalty": 1.225541
+        },
+        {
+          "field": "decision_rationale",
+          "hard_penalty": 0,
+          "soft_penalty": 10.0,
+          "terms": {
+            "low_confidence_repaired": 10.0
+          },
+          "total_penalty": 10.0
+        },
+        {
+          "field": "document_title",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "inventory_reference_year",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "major_land_base_constraints",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        },
+        {
+          "field": "major_management_assumptions",
+          "hard_penalty": 0,
+          "soft_penalty": 0,
+          "terms": {},
+          "total_penalty": 0
+        }
+      ],
+      "lane_id": "copilot_free_supervisor",
+      "missing_fields": [],
+      "quality": {
+        "action_counts": {
+          "repaired": 6,
+          "unchanged": 1
+        },
+        "clean_repaired_or_unchanged_fields": 5,
+        "invalid_action_fields": 0,
+        "invalid_chunk_id_fields": 0,
+        "needs_supervisor_fields": 0,
+        "parse_status": "parsed",
+        "quote_over_limit_fields": 2,
+        "status_value_inconsistency_fields": 0,
+        "type_mismatch_fields": 0
+      },
+      "repair_model": "qwen3.6:35b-a3b-bf16",
+      "review_status": "free_supervisor_adjudication_candidate",
+      "rubric_score": {
+        "hard_penalty": 0.0,
+        "max_score": 100.0,
+        "score": 87.314856,
+        "soft_penalty": 12.685144,
+        "total_penalty": 12.685144
+      },
+      "source_packet_id": "wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b"
+    }
+  ],
+  "phase": "P55",
+  "quote_word_limit": 25,
+  "raw_output_policy": "Raw supervisor outputs remain ignored under runtime/; tracked summary stores hashes, counts, model evidence, and defect classes only.",
+  "scoring_rubric": {
+    "interpretation": "Hard penalties represent trust or schema failures. Soft penalties represent objective-function misses that should guide optimization rather than dominate pass/fail reporting.",
+    "max_score": 100.0,
+    "penalty_weights": {
+      "extra_field": 40.0,
+      "found_null_value": 120.0,
+      "invalid_action": 100.0,
+      "invalid_chunk_id": 80.0,
+      "low_confidence_repaired": 10.0,
+      "missing_chunk_id_on_found": 30.0,
+      "missing_quote_on_found": 20.0,
+      "missing_required_field": 200.0,
+      "needs_supervisor": 15.0,
+      "quote_excess": 1.0,
+      "value_type_mismatch": 120.0
+    },
+    "quote_penalty": {
+      "formula": "weight * (exp((words - target) / scale) - 1) for words > target",
+      "kind": "exponential_excess",
+      "scale": 10.0
+    },
+    "quote_word_target": 25
+  },
+  "summary_id": "p55_large_codex_vs_copilot_supervisor_ab",
+  "token_line_items": [
+    {
+      "model_or_worker": "codex-supervisor",
+      "record_path": "runtime/supervisor_tokens/p55_large_codex_vs_copilot_supervisor_ab/p55-large-ab-codex-adjudication.tokens.json",
+      "span_id": "p55-large-ab-codex-adjudication",
+      "span_kind": "codex_supervisor_adjudication",
+      "supervisor_cached_input_tokens": 373504,
+      "supervisor_cost_usd": 0.09469844999999999,
+      "supervisor_input_tokens": 1875,
+      "supervisor_output_tokens": 1742,
+      "supervisor_reasoning_output_tokens": 119
+    },
+    {
+      "model_or_worker": "codex-supervisor",
+      "record_path": "runtime/supervisor_tokens/p55_large_codex_vs_copilot_supervisor_ab/p55-large-ab-copilot-delegation-v2.tokens.json",
+      "span_id": "p55-large-ab-copilot-delegation-v2",
+      "span_kind": "copilot_supervisor_delegation_v2",
+      "supervisor_cached_input_tokens": 416512,
+      "supervisor_cost_usd": 0.08072784999999999,
+      "supervisor_input_tokens": 2079,
+      "supervisor_output_tokens": 300,
+      "supervisor_reasoning_output_tokens": 0
+    },
+    {
+      "model_or_worker": "codex-supervisor",
+      "record_path": "runtime/supervisor_tokens/p55_large_codex_vs_copilot_supervisor_ab/p55-large-ab-copilot-delegation.failed.tokens.json",
+      "span_id": "p55-large-ab-copilot-delegation",
+      "span_kind": "copilot_supervisor_delegation_failed",
+      "supervisor_cached_input_tokens": 757248,
+      "supervisor_cost_usd": 0.16062865,
+      "supervisor_input_tokens": 4967,
+      "supervisor_output_tokens": 1293,
+      "supervisor_reasoning_output_tokens": 94
+    },
+    {
+      "model_or_worker": "codex-supervisor",
+      "record_path": "runtime/supervisor_tokens/p55_large_codex_vs_copilot_supervisor_ab/p55-large-ab-result-audit-and-summary.tokens.json",
+      "span_id": "p55-large-ab-result-audit-and-summary",
+      "span_kind": "result_audit_and_summary",
+      "supervisor_cached_input_tokens": 424704,
+      "supervisor_cost_usd": 0.08565270000000001,
+      "supervisor_input_tokens": 1970,
+      "supervisor_output_tokens": 563,
+      "supervisor_reasoning_output_tokens": 0
+    }
+  ],
+  "totals": {
+    "codex_clean_repaired_or_unchanged_fields": 6,
+    "codex_direct_paid_supervisor_cost_usd": 0.09469844999999999,
+    "codex_lane_total_cash_cost_usd_excluding_shared_setup": 0.09469844999999999,
+    "codex_needs_supervisor_fields": 1,
+    "codex_quote_over_limit_fields": 0,
+    "codex_status_value_inconsistency_fields": 0,
+    "copilot_clean_repaired_or_unchanged_fields": 5,
+    "copilot_lane_failed_retry_paid_codex_cost_usd": 0.16062865,
+    "copilot_lane_local_supervisor_cost_usd": 0.0,
+    "copilot_lane_paid_codex_delegation_cost_usd": 0.08072784999999999,
+    "copilot_lane_paid_codex_delegation_cost_usd_including_retries": 0.2413565,
+    "copilot_lane_total_cash_cost_usd_excluding_shared_setup": 0.08072784999999999,
+    "copilot_lane_total_cash_cost_usd_including_retries_excluding_shared_setup": 0.2413565,
+    "copilot_minus_codex_cash_delta_including_retries_usd_excluding_shared_setup": 0.14665805,
+    "copilot_minus_codex_cash_delta_usd_excluding_shared_setup": -0.0139706,
+    "copilot_needs_supervisor_fields": 0,
+    "copilot_quote_over_limit_fields": 2,
+    "copilot_status_value_inconsistency_fields": 0,
+    "shared_setup_codex_supervisor_cost_usd": 0.0
+  }
+}

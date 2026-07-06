@@ -1,0 +1,87 @@
+{
+  "chunk_count": 7,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_001_008",
+      "empty_pages": [],
+      "page_end": 8,
+      "page_start": 1,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_001_008.txt",
+      "text_char_count": 22864,
+      "text_sha256": "19cef6202eaf06c27d1dcb164537a1bcc7d9f16ccfd60da0be4c54dcd37588e7"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_008_015",
+      "empty_pages": [],
+      "page_end": 15,
+      "page_start": 8,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_008_015.txt",
+      "text_char_count": 27140,
+      "text_sha256": "3e7ed808196fd0b15fd76105c879dee7749cb89519f168f950043942b0ac1e1d"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_015_022",
+      "empty_pages": [],
+      "page_end": 22,
+      "page_start": 15,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_015_022.txt",
+      "text_char_count": 29021,
+      "text_sha256": "11c3f9dea1f5e1e451c451bab53b2f01de0078a4ff8268b425809d302bc78318"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_022_029",
+      "empty_pages": [],
+      "page_end": 29,
+      "page_start": 22,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_022_029.txt",
+      "text_char_count": 31755,
+      "text_sha256": "63bcfd453d07c2a57475320987c8aa1e2133c26ef0e10c52a2278a428c40235e"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_029_036",
+      "empty_pages": [],
+      "page_end": 36,
+      "page_start": 29,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_029_036.txt",
+      "text_char_count": 29406,
+      "text_sha256": "0d5eb11879b331531788fd70518e52be66610b1df496bbd5b8f274ff3500e61a"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_036_043",
+      "empty_pages": [],
+      "page_end": 43,
+      "page_start": 36,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_036_043.txt",
+      "text_char_count": 24401,
+      "text_sha256": "3d8e1ead00a2a04dd56b3259a8c6830e2eb98763e83322ab6a9760b53c93b3e6"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra::pages_043_048",
+      "empty_pages": [],
+      "page_end": 48,
+      "page_start": 43,
+      "pdf_page_count": 48,
+      "runtime_text_path": "runtime/document_library/tsa23_tsr/chunks/tsa23_2012_23ts13ra/tsa23_2012_23ts13ra__pages_043_048.txt",
+      "text_char_count": 3068,
+      "text_sha256": "ac672c5540d3efe72c8f18bb639401c3c189410cf186a2e024f4e941a77c7d55"
+    }
+  ],
+  "corpus_id": "bc_tsr_tsa23_public_1995_present",
+  "cycle_year": 2012,
+  "document_id": "tsa23_2012_23ts13ra",
+  "document_type": "rationale",
+  "generated_utc": "2026-07-05T08:59:07.176733+00:00",
+  "overlap_pages": 1,
+  "pdf_page_count": 48,
+  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
+  "schema_version": 1,
+  "source_sha256": "2391ac605494a3e3b1cc302c9aa83a25d3ed98c07c5690c1e9a7d9d3dc77a299",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2012/Rationale/23ts13ra.pdf",
+  "window_pages": 8
+}

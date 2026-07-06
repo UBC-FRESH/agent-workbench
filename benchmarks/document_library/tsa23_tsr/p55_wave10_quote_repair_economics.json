@@ -1,0 +1,132 @@
+{
+  "baseline_gate_result": "wave8-quote-repair-needed",
+  "generated_utc": "2026-07-05T09:16:58Z",
+  "interpretation": "Repair prepass is not ready for post-repair verification; inspect gate result before scaling.",
+  "line_items": [
+    {
+      "lane": "baseline_two_pass",
+      "model": "qwen3.6:35b-a3b-bf16, gpt-oss:120b",
+      "node": "wave7_candidate_generation",
+      "owner": "local_ollama",
+      "quality": {
+        "candidate_count": 2,
+        "fields": 15,
+        "invalid_chunk_id_fields": 0,
+        "needs_supervisor_fields": 0,
+        "quote_over_limit_fields": 2
+      },
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 28894,
+      "worker_output_tokens": 7551
+    },
+    {
+      "lane": "baseline_two_pass",
+      "model": "qwen3.6:35b-a3b-bf16",
+      "node": "wave8_disagreement_verification",
+      "owner": "local_ollama",
+      "quality": {
+        "invalid_chunk_id_fields": 0,
+        "needs_supervisor_fields": 1,
+        "quote_over_limit_fields": 1,
+        "resolved_fields": 6
+      },
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 17030,
+      "worker_output_tokens": 4619
+    },
+    {
+      "lane": "baseline_two_pass",
+      "model": "codex",
+      "node": "paid_supervisor_audit",
+      "owner": "paid_supervisor",
+      "quality": {
+        "needs_supervisor_fields": 1,
+        "required_measurement": "wrap actual supervisor audit with supervisor-token checkpoints",
+        "token_cost_status": "not_measured_in_this_worker_trial"
+      },
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 0,
+      "worker_output_tokens": 0
+    },
+    {
+      "lane": "repair_prepass_trial",
+      "model": "qwen3.6:35b-a3b-bf16, gpt-oss:120b",
+      "node": "wave7_candidate_generation_reused",
+      "owner": "local_ollama",
+      "quality": {
+        "candidate_count": 2,
+        "fields": 15,
+        "invalid_chunk_id_fields": 0,
+        "needs_supervisor_fields": 0,
+        "quote_over_limit_fields": 2
+      },
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 28894,
+      "worker_output_tokens": 7551
+    },
+    {
+      "lane": "repair_prepass_trial",
+      "model": "qwen3-coder-next:latest",
+      "node": "wave10_quote_repair_prepass",
+      "owner": "local_ollama",
+      "quality": {
+        "invalid_chunk_id_fields": 0,
+        "needs_supervisor_fields": 1,
+        "needs_verifier_fields": 0,
+        "quote_over_limit_fields": 1,
+        "repaired_or_unchanged_fields": 3,
+        "target_fields": 4
+      },
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 15224,
+      "worker_output_tokens": 949
+    },
+    {
+      "lane": "repair_prepass_trial",
+      "model": "not_run",
+      "node": "post_repair_verifier",
+      "owner": "not_run",
+      "quality": {
+        "note": "Run required before claiming full three-pass workflow economics.",
+        "status": "not_run"
+      },
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 0,
+      "worker_output_tokens": 0
+    },
+    {
+      "lane": "repair_prepass_trial",
+      "model": "codex",
+      "node": "paid_supervisor_audit",
+      "owner": "paid_supervisor",
+      "quality": {
+        "needs_supervisor_fields": 1,
+        "required_measurement": "wrap actual supervisor audit with supervisor-token checkpoints",
+        "token_cost_status": "not_measured_in_this_worker_trial"
+      },
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 0,
+      "worker_output_tokens": 0
+    }
+  ],
+  "phase": "P55",
+  "repair_gate_result": "wave10-quote-limit-failed",
+  "summary_id": "p55_wave10_quote_repair_economics",
+  "totals": {
+    "baseline_two_pass": {
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 45924,
+      "worker_output_tokens": 12170
+    },
+    "delta_repair_minus_baseline": {
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": -1806,
+      "worker_output_tokens": -3670
+    },
+    "repair_prepass_trial": {
+      "worker_cash_cost_usd": 0.0,
+      "worker_input_tokens": 44118,
+      "worker_output_tokens": 8500
+    }
+  }
+}

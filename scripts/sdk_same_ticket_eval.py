@@ -355,6 +355,8 @@ def classify_result(
         if require_patch:
             return "patch-proposal"
         return "structured-output"
+    if not expected_marker:
+        return "freeform-output" if assistant_message.strip() else "empty-output"
     if assistant_message == expected_marker:
         return "exact-marker"
     marker_count = assistant_message.count(expected_marker)

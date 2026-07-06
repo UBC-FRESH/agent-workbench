@@ -63,6 +63,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P52 Local self-audit and repair loop | #348 | `feature/p52-local-self-audit-repair-loop` | Complete |
 | P53 Document library index pilot | #349 | `feature/p53-document-library-index-pilot` | Complete |
 | P54 Delegation loop policy tuning | #350 | `feature/p54-delegation-loop-policy-tuning` | Complete |
+| P55 TSA23 first real indexing run | #367 | `feature/p55-tsa23-first-indexing-run` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -2362,3 +2363,56 @@ Planned tasks:
 - [x] P54.3 Missing-evidence reporting (#365)
   - [x] Make missing evidence explicit rather than inferred.
   - [x] Keep model-specific guidance scoped to observed task classes.
+
+## Phase 55: TSA23 First Real Indexing Run
+
+Parent issue: #367
+
+Branch: `feature/p55-tsa23-first-indexing-run`
+
+Status: ready for PR review; parent issue remains open until merge
+
+Goal: run the first real multi-run document-indexing experiment over the P53
+TSA23 corpus, with enough model/chunk/document variation to produce useful
+delegation evidence rather than a one-off anecdote.
+
+Planned tasks:
+
+- [x] P55.1 PDF chunk extraction and worker-ticket generation (#368)
+  - [x] Build reproducible chunk/ticket generation from the P53 corpus
+        registry.
+  - [x] Extract ignored page-window chunks for the three selected TSA23 pilot
+        PDFs.
+  - [x] Track sanitized chunk manifests and runtime/eval manifests.
+  - [x] Dry-run all generated eval manifests without provider contact.
+  - [x] Decide whether to revise chunk size/OCR before worker contact.
+- [x] P55.2 No-tool local-worker extraction run (#369)
+  - [x] Run Wave 1 single-model smoke across three documents.
+  - [x] Run Wave 1.1 full-document smoke across the three 2012 documents.
+  - [x] Run Wave 2 model A/B on identical document/chunk tickets.
+  - [x] Run Wave 3 ticket-size scale tests if Wave 1/2 gates pass.
+  - [x] Remove the hidden max-record ticket guardrail before further
+        extraction tests.
+  - [x] Run Wave 3.1 chunk-orchestrated coverage after regenerating uncapped
+        tickets.
+  - [x] Run Wave 3.2 Qwen3.6 BF16 chunk A/B against the Wave 3.1
+        `qwen3-coder:latest` baseline.
+  - [x] Run Wave 7 dual-model typed fact ensemble candidate extraction.
+  - [x] Run Wave 8 disagreement-only verification if Wave 7 candidate JSON
+        parses.
+  - [x] Test DeepSeek-R1 as validation critic and Qwen3-Coder-Next as strict
+        JSON repair executor.
+  - [x] Defer Wave 4 repeatability and Wave 5 content probes; P55 produced
+        enough signal to move into consolidation and recipe design before more
+        live runs.
+- [x] P55.3 Supervisor spot-check and scale/stop decision (#370)
+  - [x] Run measured supervisor audit calibration slices.
+  - [x] Record accepted, repairable, rejected, missing-evidence, and
+        model-provenance counts in tracked summaries.
+  - [x] Report wave results and stop further P55 live runs pending PR review
+        and follow-on consolidation phases.
+
+Closeout decision: P55 should merge as an evidence packet, not as a finished
+production document-indexing workflow. The useful next step is consolidation,
+budget enforcement, outcome semantics, and reusable recipe packaging before any
+larger TSA23 or MP11 indexing run.

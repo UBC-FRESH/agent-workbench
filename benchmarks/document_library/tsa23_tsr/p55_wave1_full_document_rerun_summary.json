@@ -1,0 +1,180 @@
+{
+  "summary_id": "p55_wave1_contract_rerun_and_full_document_smoke",
+  "generated_utc": "2026-07-05T02:55:00Z",
+  "phase": "P55",
+  "github_parent_issue": 367,
+  "github_child_issue": 369,
+  "battery_definition": "benchmarks/document_library/tsa23_tsr/p55_test_battery.json",
+  "runtime_output_root": "runtime/document_library/tsa23_tsr/p55/eval",
+  "raw_output_policy": "Raw worker outputs and source quotes remain ignored under runtime/.",
+  "model": "qwen3-coder-next:latest",
+  "wire_api": "completions",
+  "contract_changes": [
+    "added structure_full ticket shape",
+    "raised max ticket source-text character cap from 120000 to 220000",
+    "required unique record_id values",
+    "required page_anchor values as strings",
+    "explicitly banned markdown fences",
+    "added per-chunk minimum coverage rule when useful metadata is present"
+  ],
+  "wave0_rerun": {
+    "generated_eval_packets": 12,
+    "dry_run_manifest_count": 12,
+    "dry_run_exit_code": 0,
+    "full_document_packets": [
+      {
+        "document_id": "tsa23_2012_23tsdp12",
+        "unique_pdf_pages": 41,
+        "included_chunks": 6,
+        "overlapped_page_slots": 46
+      },
+      {
+        "document_id": "tsa23_2012_23ts13pdp",
+        "unique_pdf_pages": 17,
+        "included_chunks": 3,
+        "overlapped_page_slots": 18
+      },
+      {
+        "document_id": "tsa23_2012_23ts13ra",
+        "unique_pdf_pages": 48,
+        "included_chunks": 7,
+        "overlapped_page_slots": 54
+      }
+    ]
+  },
+  "runs": [
+    {
+      "document_id": "tsa23_2012_23tsdp12",
+      "document_role": "most recent data package",
+      "lane": "structure_x2_contract_rerun",
+      "unique_pdf_pages": 15,
+      "included_chunks": 2,
+      "status": "completed",
+      "harness_classification": "duplicate-marker",
+      "parseable_json_records": 4,
+      "tab_separated_lines": 0,
+      "brace_less_json_like_lines": 0,
+      "duplicate_record_ids": 1,
+      "object_type_counts": {
+        "component_boundary": 1,
+        "heading": 2,
+        "table": 1
+      },
+      "worker_input_tokens": 10756,
+      "worker_output_tokens": 1233,
+      "quality_signal": "Tightened x2 contract improved data-package yield from 2 to 4 records but still under-covers source richness."
+    },
+    {
+      "document_id": "tsa23_2012_23ts13pdp",
+      "document_role": "most recent public discussion paper",
+      "lane": "structure_x2_contract_rerun",
+      "unique_pdf_pages": 15,
+      "included_chunks": 2,
+      "status": "completed",
+      "harness_classification": "duplicate-marker",
+      "parseable_json_records": 10,
+      "tab_separated_lines": 0,
+      "brace_less_json_like_lines": 0,
+      "duplicate_record_ids": 0,
+      "object_type_counts": {
+        "figure": 7,
+        "table": 3
+      },
+      "worker_input_tokens": 10943,
+      "worker_output_tokens": 3156,
+      "quality_signal": "Tightened x2 contract fixed duplicate record IDs but produced fewer records and one document_id mismatch."
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "document_role": "most recent rationale",
+      "lane": "structure_x2_contract_rerun",
+      "unique_pdf_pages": 15,
+      "included_chunks": 2,
+      "status": "completed",
+      "harness_classification": "duplicate-marker",
+      "parseable_json_records": 0,
+      "tab_separated_lines": 0,
+      "brace_less_json_like_lines": 10,
+      "duplicate_record_ids": 0,
+      "object_type_counts": {},
+      "worker_input_tokens": 12947,
+      "worker_output_tokens": 3517,
+      "quality_signal": "Output was JSON-like but omitted enclosing braces, so it is not parseable JSONL without repair."
+    },
+    {
+      "document_id": "tsa23_2012_23tsdp12",
+      "document_role": "most recent data package",
+      "lane": "structure_full",
+      "unique_pdf_pages": 41,
+      "included_chunks": 6,
+      "status": "blocked",
+      "harness_classification": "model-call-failure",
+      "parseable_json_records": 0,
+      "tab_separated_lines": 20,
+      "brace_less_json_like_lines": 0,
+      "duplicate_record_ids": 0,
+      "object_type_counts": {},
+      "worker_input_tokens": 28759,
+      "worker_output_tokens": 3103,
+      "quality_signal": "Full document found later table/heading candidates but returned TSV, not JSONL, after observed 524 model-call failures."
+    },
+    {
+      "document_id": "tsa23_2012_23ts13pdp",
+      "document_role": "most recent public discussion paper",
+      "lane": "structure_full",
+      "unique_pdf_pages": 17,
+      "included_chunks": 3,
+      "status": "completed",
+      "harness_classification": "duplicate-marker",
+      "parseable_json_records": 15,
+      "tab_separated_lines": 0,
+      "brace_less_json_like_lines": 0,
+      "duplicate_record_ids": 0,
+      "object_type_counts": {
+        "heading": 7,
+        "figure": 6,
+        "table": 2
+      },
+      "worker_input_tokens": 12965,
+      "worker_output_tokens": 5353,
+      "quality_signal": "Full-document PDP run completed cleanly with parseable JSON and no duplicate IDs."
+    },
+    {
+      "document_id": "tsa23_2012_23ts13ra",
+      "document_role": "most recent rationale",
+      "lane": "structure_full",
+      "unique_pdf_pages": 48,
+      "included_chunks": 7,
+      "status": "completed",
+      "harness_classification": "loop-like-repetition",
+      "parseable_json_records": 18,
+      "tab_separated_lines": 270,
+      "brace_less_json_like_lines": 18,
+      "duplicate_record_ids": 1,
+      "object_type_counts": {
+        "component_boundary": 1,
+        "heading": 13,
+        "table": 2,
+        "appendix": 1,
+        "cross_reference": 1
+      },
+      "worker_input_tokens": 39288,
+      "worker_output_tokens": 7435,
+      "quality_signal": "Full-document rationale run produced useful parseable records but also format drift/loop-like repetition."
+    }
+  ],
+  "totals": {
+    "worker_runs": 6,
+    "completed_runs": 5,
+    "blocked_runs": 1,
+    "parseable_json_records": 47,
+    "tab_separated_lines": 290,
+    "brace_less_json_like_lines": 28,
+    "worker_input_tokens": 116658,
+    "worker_output_tokens": 23897,
+    "worker_total_tokens_counted": 140555,
+    "worker_cash_cost_usd": 0.0
+  },
+  "gate_result": "do-not-scale-single-huge-ticket",
+  "recommended_next_move": "Replace full-document mega tickets with deterministic per-chunk or small-bundle orchestration, then optionally delegate a repair step to normalize TSV/brace-less/pretty JSON into strict JSONL before supervisor audit."
+}

@@ -1,0 +1,42 @@
+{
+  "document_id": "tsa23_2012_23ts13ra",
+  "expected_field_count": 9,
+  "extra_fields": [],
+  "field_verdicts": [],
+  "gate_result": "wave8-verifier-parse-failed",
+  "generated_utc": "2026-07-05T07:36:21Z",
+  "harness_classification": "freeform-output",
+  "missing_fields": [
+    "aac_effective_date",
+    "aac_value",
+    "base_case_harvest_forecast",
+    "decision_rationale",
+    "document_title",
+    "inventory_reference_year",
+    "major_land_base_constraints",
+    "major_management_assumptions",
+    "sensitivity_cases"
+  ],
+  "packet_id": "wave8_disagreement_verification__tsa23_2012_23ts13ra__deepseek-r1",
+  "parse_error": "json-decode-error:Expecting property name enclosed in double quotes",
+  "parse_status": "parse_failed",
+  "phase": "P55",
+  "raw_output_policy": "Raw verifier output, final values, and source quotes remain ignored under runtime/.",
+  "recommended_next_move": "Repair verifier ticket or switch verifier model before supervisor audit.",
+  "source_packet_id": "wave7_dual_model_typed_fact_ensemble__tsa23_2012_23ts13ra__typed_fact_x2__qwen3-6-35b-a3b-bf16-gpt-oss-120b",
+  "status": "completed",
+  "summary_id": "p55_wave8_disagreement_verification",
+  "totals": {
+    "invalid_chunk_id_fields": 0,
+    "needs_supervisor_fields": 0,
+    "quote_over_limit_fields": 0,
+    "resolved_fields": 0,
+    "verdict_counts": {},
+    "worker_cash_cost_usd": 0.0,
+    "worker_input_tokens": 17000,
+    "worker_output_tokens": 402
+  },
+  "verdict_field_count": 0,
+  "verifier_model": "deepseek-r1:latest",
+  "wave_id": "wave8_disagreement_verification"
+}
