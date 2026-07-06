@@ -1643,3 +1643,18 @@ issues, pull requests, and closeout comments.
 - Updated the P63 planning note and roadmap so P63.3 is complete as diagnostic
   reporting while P63.4 remains open for the maintainer-facing scale, adjust,
   repeat, or pause decision.
+
+## 2026-07-05 - Drafted P63 scale decision
+
+- Added `planning/phase63_scale_decision.md` as the maintainer-facing P63.4
+  decision draft.
+- Recommended pausing live scaling and adjusting the recipe/provider execution
+  shape before any repeat, rather than rerunning the same all-in-one 22-page
+  ticket.
+- Recorded the follow-on gate required before any repeat: new or amended budget
+  record, one named model lane, same bounded slice unless approved otherwise,
+  smaller section-level tickets, stop on provider failure/malformed output/
+  invalid chunk IDs/missing token spans, and no direct-supervisor baseline until
+  a quality-valid delegated candidate exists.
+- Left P63.4 open pending explicit maintainer acceptance of scale, adjust,
+  repeat, pause, or abandon.

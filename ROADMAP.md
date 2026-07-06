@@ -2761,19 +2761,27 @@ Planned tasks:
     rejected, 0 escalated, and 39 unresolved candidate records. P63 remains at
     maintainer checkpoint before P63.4 scale decision.
 - [ ] P63.4 Scale decision (#417)
-  - [ ] Decide whether the next move is scale document indexing, adjust the
+  - [x] Draft the scale/adjust/repeat/pause decision memo from measured P63.2
+        and P63.3 evidence.
+  - [x] Recommend whether the next move is scale document indexing, adjust the
         recipe, repeat the bounded slice, change model roles, or pause the
         lane.
-  - [ ] Record maintainer-facing value: what usable document-indexing work was
+  - [x] Record maintainer-facing value: what usable document-indexing work was
         produced, what paid-supervisor cost was avoided or added, and what
         quality risk remains.
-  - [ ] Record the exact gate for any follow-on live run, including budget,
+  - [x] Record the exact gate for any follow-on live run, including budget,
         attempt limit, model lane, document slice, and stop rule.
-  - [ ] Update roadmap, changelog, planning note, parent issue, and child
-        issues so issue state matches the decision.
+  - [ ] Receive maintainer acceptance of the scale, adjust, repeat, pause, or
+        abandon decision.
+  - [ ] Update roadmap, changelog, planning note, parent issue, and child issue
+        to reflect the accepted decision.
   - [ ] Open a P63-only PR after P63.2-P63.4 evidence agrees.
   - [ ] Merge and close P63 only after the maintainer explicitly accepts the
         scale, adjust, repeat, or pause decision.
+  - Draft recommendation: pause live scaling and adjust the recipe/provider
+    execution shape before any repeat. Do not rerun, repair-expand, broaden the
+    slice, add a model family, or run a direct-supervisor baseline without a new
+    maintainer-approved gate.
 
 ## Phase 64: Deployment Environment And Operator Playbook
 
