@@ -1676,3 +1676,12 @@ issues, pull requests, and closeout comments.
   diagnostic evidence and close parent issue #414 on merge.
 - Squash-merged PR #419, verified parent issue #414 closed, synced local
   `main`, and deleted the local P63 feature branch.
+
+## 2026-07-05 - Opened P64 deployment operator playbook
+
+- Created P64 parent issue #420 and child issues #421-#424 on
+  `feature/p64-deployment-environment-operator-playbook`.
+- Activated P64 as a non-live consolidation phase for deployment environment
+  and operator guidance before any further local-supervisor experiments.
+- Scoped P64 to public-safe documentation only: supported VS Code/code-server
+  runtime shape, operator checklists, troubleshooting, and closeout hygiene.
