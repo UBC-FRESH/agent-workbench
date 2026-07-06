@@ -1495,3 +1495,14 @@ issues, pull requests, and closeout comments.
   economics summaries, and P57 planning notes.
 - Kept P58 evidence consolidation out of the P57 branch; P57 focuses on the
   spike and packaged-run evidence surface only.
+
+## 2026-07-05 - Started P58 active-phase reconciliation
+
+- Created P58 parent issue #384 and child issues #385-#388 after P57 landed so
+  evidence consolidation has its own phase tracker.
+- Added `planning/p58_active_phase_reconciliation.md` as the evidence register
+  and close/defer decision memo for P55-P57.
+- Added `planning/p58_p64_roadmap_tranche.md` and planned P59-P64 as the
+  consolidation-first tranche before more large live benchmark runs.
+- Updated `AGENTS.md` and `planning/delegation_economics_vision.md` with the
+  P57 paid-supervisor overrun lesson and budget-gate posture.
