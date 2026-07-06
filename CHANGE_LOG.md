@@ -1746,3 +1746,17 @@ issues, pull requests, and closeout comments.
   heartbeat, result, blocker, archive, and coordinator-decision surfaces.
 - Updated `AGENTS.md` so coordinator-owned phase authority and delegated
   child-task authority are separated in the repo contract.
+
+## 2026-07-06 - Added P67 heartbeat and nudge protocol
+
+- Created P67 parent issue #437 and child issues #438, #439, #440, and #442 on
+  `feature/p67-heartbeat-nudge-protocol`; closed duplicate retry-created issues
+  #441 and #443 through #446 as tracker cleanup.
+- Added `src/agent_workbench/heartbeat.py` with heartbeat JSONL loading,
+  validation, stale-run summarization, stall/nudge counting, and nudge rendering.
+- Added `agent-workbench heartbeat validate`,
+  `agent-workbench heartbeat summarize`, and
+  `agent-workbench nudge suggest` command surfaces for delegated-run monitoring.
+- Added heartbeat and nudge templates plus
+  `planning/phase67_heartbeat_nudge_protocol.md` so P68 can build on a
+  structured run-state signal instead of ad hoc "keep going" prompts.

@@ -75,7 +75,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P64 Deployment environment and operator playbook | #420 / PR #425 | `feature/p64-deployment-environment-operator-playbook` | Complete |
 | P65 Copilot session archive | #426 | `feature/p65-copilot-session-archive` | Complete |
 | P66 Task-level delegation protocol | #431 | `feature/p66-task-level-delegation-protocol` | Active |
-| P67 Heartbeat and nudge protocol | TBD | `feature/p67-heartbeat-nudge-protocol` | Planned |
+| P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Active |
 | P68 Copilot task controller v0 | TBD | `feature/p68-copilot-task-controller-v0` | Planned |
 | P69 Behavior analytics from archives | TBD | `feature/p69-behavior-analytics-from-archives` | Planned |
 | P70 FEMIC P108 repair dogfood | TBD | `feature/p70-femic-p108-repair-dogfood` | Planned |
@@ -2954,39 +2954,45 @@ Closeout boundary:
 
 ## Phase 67: Heartbeat And Nudge Protocol
 
-Parent issue: TBD
+Parent issue: #437
 
 Branch: `feature/p67-heartbeat-nudge-protocol`
 
-Status: planned
+Status: active
 
 Goal: make delegated-run stalls observable and make mid-run nudges structured,
 cheap, and auditable.
 
 Planned tasks:
 
-- [ ] P67.1 Heartbeat file contract
-  - [ ] Define `runtime/agent_jobs/<run_id>.heartbeat.jsonl`.
-  - [ ] Define required heartbeat fields: timestamp, checklist item, action,
+- [x] P67.1 Heartbeat file contract (#438)
+  - [x] Define `runtime/agent_jobs/<run_id>.heartbeat.jsonl`.
+  - [x] Define required heartbeat fields: timestamp, checklist item, action,
         artifact path, command summary, and next intended action.
-  - [ ] Define result and blocker companion files.
-  - [ ] Define public-safety rules for heartbeat content.
-- [ ] P67.2 Stale-run detection
-  - [ ] Define stale heartbeat thresholds by run type.
-  - [ ] Distinguish thinking, command execution, tool blockage, and no-progress
+  - [x] Define result and blocker companion files.
+  - [x] Define public-safety rules for heartbeat content.
+- [x] P67.2 Stale-run detection (#439)
+  - [x] Define stale heartbeat thresholds by run type.
+  - [x] Distinguish thinking, command execution, tool blockage, and no-progress
         states where possible.
-  - [ ] Define when the coordinator should inspect filesystem/Git state before
+  - [x] Define when the coordinator should inspect filesystem/Git state before
         nudging.
-- [ ] P67.3 Nudge templates
-  - [ ] Add canned nudges for continue-next-subtask, stop-summarizing,
+- [x] P67.3 Nudge templates (#440)
+  - [x] Add canned nudges for continue-next-subtask, stop-summarizing,
         write-blocker, fix-shell-context, and reconcile-checklist states.
-  - [ ] Require every nudge to be archived with timestamp and triggering
+  - [x] Require every nudge to be archived with timestamp and triggering
         evidence.
-  - [ ] Define a stop rule after repeated failed nudges.
-- [ ] P67.4 Nudge evidence summary
-  - [ ] Define nudge count and stall count as behavior metrics.
-  - [ ] Define accepted versus protocol-noisy behavior after nudges.
-  - [ ] Add examples derived from P108 without tracking raw transcripts.
+  - [x] Define a stop rule after repeated failed nudges.
+- [x] P67.4 Nudge evidence summary (#442)
+  - [x] Define nudge count and stall count as behavior metrics.
+  - [x] Define accepted versus protocol-noisy behavior after nudges.
+  - [x] Add examples derived from P108 without tracking raw transcripts.
+
+Closeout boundary:
+
+- [x] Run focused heartbeat tests.
+- [x] Run `git diff --check`.
+- [x] Update `CHANGE_LOG.md`.
 
 ## Phase 68: Copilot Task Controller V0
 

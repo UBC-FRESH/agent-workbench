@@ -63,6 +63,13 @@ from .graph import (
     render_graph_validation,
     validate_graph_document,
 )
+from .heartbeat import (
+    load_heartbeat_jsonl,
+    render_heartbeat_summary,
+    suggest_nudge,
+    summarize_heartbeat_records,
+    validate_heartbeat_records,
+)
 from .pilot import (
     PilotPackScaffoldConfig,
     PilotPackTask,
@@ -213,6 +220,56 @@ def build_parser() -> argparse.ArgumentParser:
         help="Do not copy raw logs; write only the sanitized manifest.",
     )
     copilot_archive_parser.set_defaults(func=run_copilot_archive)
+
+    heartbeat_parser = subparsers.add_parser(
+        "heartbeat",
+        help="Validate and summarize delegated-run heartbeat JSONL files.",
+    )
+    heartbeat_subparsers = heartbeat_parser.add_subparsers(
+        dest="heartbeat_command",
+        required=True,
+    )
+    heartbeat_validate_parser = heartbeat_subparsers.add_parser(
+        "validate",
+        help="Validate a delegated-run heartbeat JSONL file.",
+    )
+    heartbeat_validate_parser.add_argument("--input", type=Path, required=True)
+    heartbeat_validate_parser.set_defaults(func=run_heartbeat_validate)
+
+    heartbeat_summarize_parser = heartbeat_subparsers.add_parser(
+        "summarize",
+        help="Summarize heartbeat freshness and nudge state.",
+    )
+    heartbeat_summarize_parser.add_argument("--input", type=Path, required=True)
+    heartbeat_summarize_parser.add_argument("--output", type=Path, required=True)
+    heartbeat_summarize_parser.add_argument(
+        "--markdown-output",
+        type=Path,
+        default=None,
+        help="Optional Markdown summary path.",
+    )
+    heartbeat_summarize_parser.add_argument(
+        "--stale-after-seconds",
+        type=int,
+        default=900,
+    )
+    heartbeat_summarize_parser.set_defaults(func=run_heartbeat_summarize)
+
+    nudge_parser = subparsers.add_parser(
+        "nudge",
+        help="Render a targeted nudge from a heartbeat summary JSON file.",
+    )
+    nudge_subparsers = nudge_parser.add_subparsers(
+        dest="nudge_command",
+        required=True,
+    )
+    nudge_suggest_parser = nudge_subparsers.add_parser(
+        "suggest",
+        help="Render the recommended delegated-run nudge message.",
+    )
+    nudge_suggest_parser.add_argument("--summary", type=Path, required=True)
+    nudge_suggest_parser.add_argument("--output", type=Path, required=True)
+    nudge_suggest_parser.set_defaults(func=run_nudge_suggest)
 
     eval_parser = subparsers.add_parser(
         "eval",
@@ -1126,6 +1183,59 @@ def run_copilot_archive(args: argparse.Namespace) -> int:
             tool_requests=manifest.get("tool_request_count", 0),
         )
     )
+    return 0
+
+
+def run_heartbeat_validate(args: argparse.Namespace) -> int:
+    try:
+        records = load_heartbeat_jsonl(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_heartbeat_records(records)
+    if result.ok:
+        print(f"valid heartbeat: {args.input}")
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_heartbeat_summarize(args: argparse.Namespace) -> int:
+    try:
+        records = load_heartbeat_jsonl(args.input)
+        summary = summarize_heartbeat_records(
+            records,
+            stale_after_seconds=args.stale_after_seconds,
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote {args.output}")
+    if args.markdown_output is not None:
+        args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+        args.markdown_output.write_text(
+            render_heartbeat_summary(summary),
+            encoding="utf-8",
+        )
+        print(f"wrote {args.markdown_output}")
+    return 0 if summary.get("validation_ok") else 1
+
+
+def run_nudge_suggest(args: argparse.Namespace) -> int:
+    try:
+        summary = json.loads(args.summary.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    if not isinstance(summary, dict):
+        print("error: heartbeat summary must be a JSON object", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(suggest_nudge(summary) + "\n", encoding="utf-8")
+    print(f"wrote {args.output}")
     return 0
 
 
