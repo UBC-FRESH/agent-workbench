@@ -1796,3 +1796,16 @@ issues, pull requests, and closeout comments.
 - Merged P69 PR #460 and verified parent issue #454 closed.
 - Synced the roadmap status map so P66 through P69 are marked complete on
   `main`, leaving P70 as the next planned dogfood lane.
+
+## 2026-07-07 - Activated P71 Copilot SDK remote-control bridge
+
+- Parked Agent Workbench P70 (#461) after the initial FEMIC P108 dogfood setup
+  exposed that the VS Code Chat archive path cannot reliably nudge a specific
+  stalled session.
+- Created P71 parent issue #466 and child issues #467 through #471 on
+  `feature/p71-copilot-sdk-remote-control-bridge`.
+- Added `planning/phase71_copilot_sdk_remote_control_bridge.md` and
+  `templates/copilot_sdk_session_manifest.json` to define SDK-owned session
+  control, event/status vocabulary, nudge evidence, and P70/P108 resume gates.
+- Kept FEMIC P108 as the dogfood target while making P70 resume conditional on
+  verified SDK create, resume, monitor, and same-session nudge behavior.
