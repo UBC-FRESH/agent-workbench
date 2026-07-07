@@ -12,7 +12,9 @@
     "session_id": "",
     "resumable": true,
     "model": "",
-    "permission_mode": "operator-configured"
+    "permission_mode": "operator-configured",
+    "mode": "empty",
+    "base_directory": "runtime/copilot_sdk_home/p71-example-run"
   },
   "paths": {
     "ticket": "runtime/agent_jobs/p71_example_ticket.md",

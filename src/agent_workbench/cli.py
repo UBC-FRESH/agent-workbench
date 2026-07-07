@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import subprocess
 import sys
@@ -46,6 +47,12 @@ from .copilot_task_controller import (
     load_run_manifest,
     render_review_packet,
     validate_run_manifest,
+)
+from .copilot_sdk_bridge import (
+    SdkTurnConfig,
+    load_sdk_session_manifest,
+    run_live_sdk_turn,
+    validate_sdk_session_manifest,
 )
 from .decision import (
     DecisionInputError,
@@ -256,6 +263,54 @@ def build_parser() -> argparse.ArgumentParser:
     copilot_task_review_parser.add_argument("--output", type=Path, required=True)
     copilot_task_review_parser.add_argument("--json-output", type=Path, default=None)
     copilot_task_review_parser.set_defaults(func=run_copilot_task_review)
+
+    copilot_sdk_parser = subparsers.add_parser(
+        "copilot-sdk",
+        help="Create, resume, send, and validate SDK-owned Copilot sessions.",
+    )
+    copilot_sdk_subparsers = copilot_sdk_parser.add_subparsers(
+        dest="copilot_sdk_command",
+        required=True,
+    )
+
+    copilot_sdk_validate_parser = copilot_sdk_subparsers.add_parser(
+        "validate",
+        help="Validate a Copilot SDK session manifest.",
+    )
+    copilot_sdk_validate_parser.add_argument("--manifest", type=Path, required=True)
+    copilot_sdk_validate_parser.add_argument(
+        "--allow-missing-ticket",
+        action="store_true",
+        help="Do not require paths.ticket to exist.",
+    )
+    copilot_sdk_validate_parser.add_argument(
+        "--allow-missing-workspace",
+        action="store_true",
+        help="Do not require workspace_root to exist.",
+    )
+    copilot_sdk_validate_parser.set_defaults(func=run_copilot_sdk_validate)
+
+    copilot_sdk_start_parser = copilot_sdk_subparsers.add_parser(
+        "start",
+        help="Create an SDK-owned session, send the prompt, and record events.",
+    )
+    add_copilot_sdk_turn_args(copilot_sdk_start_parser)
+    copilot_sdk_start_parser.set_defaults(func=run_copilot_sdk_start)
+
+    copilot_sdk_resume_parser = copilot_sdk_subparsers.add_parser(
+        "resume-send",
+        help="Resume an SDK-owned session, send the prompt, and record events.",
+    )
+    add_copilot_sdk_turn_args(copilot_sdk_resume_parser)
+    copilot_sdk_resume_parser.set_defaults(func=run_copilot_sdk_resume_send)
+
+    copilot_sdk_nudge_parser = copilot_sdk_subparsers.add_parser(
+        "nudge",
+        help="Resume an SDK-owned session, send a nudge, and record nudge evidence.",
+    )
+    add_copilot_sdk_turn_args(copilot_sdk_nudge_parser)
+    copilot_sdk_nudge_parser.add_argument("--nudge-text", required=True)
+    copilot_sdk_nudge_parser.set_defaults(func=run_copilot_sdk_nudge)
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -898,7 +953,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--mode",
         default="agent-workbench-local-supervisor",
     )
-    supervisor_document_audit_summary_parser.add_argument("--code-command", default="code")
+    supervisor_document_audit_summary_parser.add_argument(
+        "--code-command", default="code"
+    )
     supervisor_document_audit_summary_parser.add_argument(
         "--bridge-prompt",
         default=None,
@@ -1212,6 +1269,24 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def add_copilot_sdk_turn_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--manifest", type=Path, required=True)
+    prompt_group = parser.add_mutually_exclusive_group()
+    prompt_group.add_argument("--prompt", default=None)
+    prompt_group.add_argument("--prompt-file", type=Path, default=None)
+    parser.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=None,
+        help="Override manifest control.stall_seconds for this turn.",
+    )
+    parser.add_argument(
+        "--no-update-manifest",
+        action="store_true",
+        help="Write event/status outputs without updating the manifest state.",
+    )
+
+
 def run_overview(_args: argparse.Namespace) -> int:
     parser = build_parser()
     parser.print_help()
@@ -1294,8 +1369,77 @@ def run_copilot_task_review(args: argparse.Namespace) -> int:
     print(f"wrote {args.output}")
     if args.json_output is not None:
         args.json_output.parent.mkdir(parents=True, exist_ok=True)
-        args.json_output.write_text(json.dumps(packet, indent=2) + "\n", encoding="utf-8")
+        args.json_output.write_text(
+            json.dumps(packet, indent=2) + "\n", encoding="utf-8"
+        )
         print(f"wrote {args.json_output}")
+    return 0
+
+
+def run_copilot_sdk_validate(args: argparse.Namespace) -> int:
+    try:
+        data = load_sdk_session_manifest(args.manifest)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_sdk_session_manifest(
+        data,
+        manifest_path=args.manifest,
+        require_existing_ticket=not args.allow_missing_ticket,
+        require_existing_workspace=not args.allow_missing_workspace,
+    )
+    if result.ok:
+        print(f"valid Copilot SDK session manifest: {args.manifest}")
+        for warning in result.warnings:
+            print(f"warning: {warning}", file=sys.stderr)
+        return 0
+    for error in result.errors:
+        print(f"error: {error}", file=sys.stderr)
+    return 1
+
+
+def run_copilot_sdk_start(args: argparse.Namespace) -> int:
+    return run_copilot_sdk_turn(args, resume=False, nudge_text=None)
+
+
+def run_copilot_sdk_resume_send(args: argparse.Namespace) -> int:
+    return run_copilot_sdk_turn(args, resume=True, nudge_text=None)
+
+
+def run_copilot_sdk_nudge(args: argparse.Namespace) -> int:
+    return run_copilot_sdk_turn(args, resume=True, nudge_text=args.nudge_text)
+
+
+def run_copilot_sdk_turn(
+    args: argparse.Namespace,
+    *,
+    resume: bool,
+    nudge_text: str | None,
+) -> int:
+    config = SdkTurnConfig(
+        manifest_path=args.manifest,
+        prompt_text=nudge_text or args.prompt,
+        prompt_path=args.prompt_file,
+        resume=resume,
+        nudge_text=nudge_text,
+        timeout_seconds=args.timeout_seconds,
+        update_manifest=not args.no_update_manifest,
+    )
+    try:
+        summary = asyncio.run(run_live_sdk_turn(config))
+    except (OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(
+        "session_id={session_id} status={status} events={events}".format(
+            session_id=summary.get("session_id", ""),
+            status=summary.get("latest_status", ""),
+            events=summary.get("event_count", 0),
+        )
+    )
+    if summary.get("blocker"):
+        print(f"blocker={summary['blocker']}")
+        return 2
     return 0
 
 
@@ -1384,7 +1528,9 @@ def run_behavior_synthesize(args: argparse.Namespace) -> int:
     args.output.write_text(markdown, encoding="utf-8")
     print(f"wrote {args.output}")
     args.json_output.parent.mkdir(parents=True, exist_ok=True)
-    args.json_output.write_text(json.dumps(synthesis, indent=2) + "\n", encoding="utf-8")
+    args.json_output.write_text(
+        json.dumps(synthesis, indent=2) + "\n", encoding="utf-8"
+    )
     print(f"wrote {args.json_output}")
     return 0
 
@@ -1809,7 +1955,10 @@ def run_supervisor_budget_validate(args: argparse.Namespace) -> int:
 
 def require_valid_budget_record(path: Path | None) -> bool:
     if path is None:
-        print("error: --budget-record is required for live/economics supervisor runs", file=sys.stderr)
+        print(
+            "error: --budget-record is required for live/economics supervisor runs",
+            file=sys.stderr,
+        )
         return False
     try:
         data = load_budget_declaration(path)

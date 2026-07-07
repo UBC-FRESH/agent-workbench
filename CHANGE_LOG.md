@@ -1809,3 +1809,15 @@ issues, pull requests, and closeout comments.
   control, event/status vocabulary, nudge evidence, and P70/P108 resume gates.
 - Kept FEMIC P108 as the dogfood target while making P70 resume conditional on
   verified SDK create, resume, monitor, and same-session nudge behavior.
+
+## 2026-07-07 - Added P71.2 SDK session runtime commands
+
+- Added `src/agent_workbench/copilot_sdk_bridge.py` with SDK session manifest
+  validation, create/resume/send orchestration, event JSONL capture, status
+  summary writing, nudge logging, and a live adapter that imports the Copilot
+  SDK only when a live session command runs.
+- Added `agent-workbench copilot-sdk validate`, `start`, `resume-send`, and
+  `nudge` command surfaces that operate from the P71 manifest and fail closed on
+  invalid session state.
+- Added focused fake-adapter tests for create and resume/nudge flows before
+  attempting FEMIC P108 dogfood against a live SDK session.

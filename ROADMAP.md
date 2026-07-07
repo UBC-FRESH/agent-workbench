@@ -3156,19 +3156,19 @@ Out of scope:
 
 Planned tasks:
 
-- [ ] P71.1 SDK remote-control contract (#467)
-  - [ ] Add the phase planning note, SDK session manifest template, event/status
+- [x] P71.1 SDK remote-control contract (#467)
+  - [x] Add the phase planning note, SDK session manifest template, event/status
         vocabulary, and P70/P108 resume gates.
-  - [ ] Define the difference between SDK-owned sessions and archived VS Code
+  - [x] Define the difference between SDK-owned sessions and archived VS Code
         Chat sessions.
-  - [ ] Define the evidence required before a run can count as monitored,
+  - [x] Define the evidence required before a run can count as monitored,
         nudged, blocked, or accepted for dogfood.
-- [ ] P71.2 SDK session runtime commands (#468)
-  - [ ] Add a reusable SDK bridge module with create, resume, send, and event
+- [x] P71.2 SDK session runtime commands (#468)
+  - [x] Add a reusable SDK bridge module with create, resume, send, and event
         capture primitives.
-  - [ ] Add CLI commands that operate from the manifest and fail closed when the
+  - [x] Add CLI commands that operate from the manifest and fail closed when the
         session state is missing or ambiguous.
-  - [ ] Cover the runtime path with fake-SDK tests before live dogfood.
+  - [x] Cover the runtime path with fake-SDK tests before live dogfood.
 - [ ] P71.3 Monitoring, stall detection, and nudge commands (#469)
   - [ ] Summarize SDK events into coordinator-readable status records.
   - [ ] Detect quiet stalls, repeated non-progress, blockers, and completion
