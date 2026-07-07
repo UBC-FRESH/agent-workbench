@@ -1796,3 +1796,26 @@ issues, pull requests, and closeout comments.
 - Merged P69 PR #460 and verified parent issue #454 closed.
 - Synced the roadmap status map so P66 through P69 are marked complete on
   `main`, leaving P70 as the next planned dogfood lane.
+
+## 2026-07-07 - Activated P70 FEMIC P108 repair dogfood
+
+- Created P70 parent issue #461 and child issues #462 through #465 on
+  `feature/p70-femic-p108-repair-dogfood`.
+- Updated `ROADMAP.md` so P70 is the active Agent Workbench phase and the stale
+  P69 section status is complete.
+- Added `planning/phase70_femic_p108_repair_dogfood.md` to record the
+  coordinator-owned setup boundary, budget/stop-rule expectations, planned P108
+  cleanup ticket set, and acceptance notes before any FEMIC repair work starts.
+
+## 2026-07-07 - Completed P70.1 dogfood setup
+
+- Audited current FEMIC P108 evidence: branch
+  `feature/p108-tsa23-instance-bootstrap-delegation`, open parent issue #302,
+  open PR #303, and the parent `CHANGE_LOG.md` P108 ordering/encoding defect.
+- Selected Ticket A, the `CHANGE_LOG.md` ordering and mojibake repair, as the
+  first bounded task-level controller dogfood target.
+- Wrote ignored Ticket A controller artifacts under `runtime/agent_jobs/` and
+  validated the manifest with
+  `.\.venv\Scripts\python.exe -m agent_workbench copilot task-validate`.
+- Recorded the local worker-model inventory caveat: `ollama` is not available
+  on this shell, so the manifest requires model verification before launch.

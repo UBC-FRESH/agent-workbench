@@ -78,7 +78,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Complete |
 | P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Complete |
 | P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Complete |
-| P70 FEMIC P108 repair dogfood | TBD | `feature/p70-femic-p108-repair-dogfood` | Planned |
+| P70 FEMIC P108 repair dogfood | #461 | `feature/p70-femic-p108-repair-dogfood` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3044,7 +3044,7 @@ Parent issue: #454
 
 Branch: `feature/p69-behavior-analytics-from-archives`
 
-Status: active
+Status: complete
 
 Goal: mine archived Copilot sessions for reusable delegation behavior metrics.
 
@@ -3081,11 +3081,11 @@ Closeout boundary:
 
 ## Phase 70: FEMIC P108 Repair Dogfood
 
-Parent issue: TBD
+Parent issue: #461
 
 Branch: `feature/p70-femic-p108-repair-dogfood`
 
-Status: planned
+Status: active
 
 Goal: test the task-level delegation controller on real P108 cleanup tasks in
 FEMIC, while keeping coordinator authority over final PR merge and parent issue
@@ -3093,24 +3093,25 @@ closure.
 
 Planned tasks:
 
-- [ ] P70.1 Dogfood setup
-  - [ ] Select the P108 cleanup branch/PR state as the target.
-  - [ ] Declare a budget and stop rule before any paid-coordinator monitoring.
-  - [ ] Generate one child-task ticket at a time through the P66 protocol.
-  - [ ] Require P65 archive capture for every Copilot-backed task.
-- [ ] P70.2 Cleanup ticket set
-  - [ ] Ticket A: repair `CHANGE_LOG.md` ordering and encoding damage.
+- [x] P70.1 Dogfood setup (#462)
+  - [x] Select the P108 cleanup branch/PR state as the target.
+  - [x] Declare a budget and stop rule before any paid-coordinator monitoring.
+  - [x] Generate one child-task ticket at a time through the P66 protocol.
+  - [x] Require P65 archive capture for every Copilot-backed task.
+- [ ] P70.2 Cleanup ticket set (#463)
+  - [ ] Ticket A: repair `CHANGE_LOG.md` ordering and encoding damage
+        (controller-ready ticket prepared by P70.1).
   - [ ] Ticket B: reconcile parent roadmap versus instance roadmap completion
         state.
   - [ ] Ticket C: repair stale P108 supervisor result-report claims.
   - [ ] Ticket D: verify PR #303 and child issue checklist consistency.
   - [ ] Ticket E: produce final coordinator review packet.
-- [ ] P70.3 Controller evaluation
+- [ ] P70.3 Controller evaluation (#464)
   - [ ] Measure stall count, nudge count, tool-call count, result validity, and
         coordinator repair burden per ticket.
   - [ ] Compare task-level behavior to the whole-phase P108 run.
   - [ ] Record whether child-task tickets reduce drift and stale-report defects.
-- [ ] P70.4 Scale decision
+- [ ] P70.4 Scale decision (#465)
   - [ ] Decide whether to use task-level Copilot supervision for the next real
         FEMIC or CLEWS development phase.
   - [ ] Record remaining risks and required controller improvements.
