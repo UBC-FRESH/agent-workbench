@@ -3178,14 +3178,14 @@ Planned tasks:
   - [x] Use FEMIC P108 as the target task lane for controlled SDK-owned runs.
   - [x] Capture create/resume, monitor, and nudge evidence from live sessions.
   - [x] Verify any worker claim against the FEMIC worktree before accepting it.
-- [ ] P71.5 Evidence synthesis and P70 resume decision (#471)
-  - [ ] Summarize the bridge evidence and remaining SDK limitations.
-  - [ ] Record whether P70 can resume with SDK-owned remote control.
-  - [ ] Synchronize roadmap, changelog, issue comments, and PR closeout.
+- [x] P71.5 Evidence synthesis and P70 resume decision (#471)
+  - [x] Summarize the bridge evidence and remaining SDK limitations.
+  - [x] Record whether P70 can resume with SDK-owned remote control.
+  - [x] Synchronize roadmap, changelog, issue comments, and PR closeout.
 
 Closeout boundary:
 
-- [ ] Run focused SDK bridge tests.
-- [ ] Run `git diff --check`.
-- [ ] Dogfood at least one FEMIC P108 session or record the exact live blocker.
-- [ ] Update `CHANGE_LOG.md` and GitHub issues.
+- [x] Run focused SDK bridge tests.
+- [x] Run `git diff --check`.
+- [x] Dogfood at least one FEMIC P108 session or record the exact live blocker.
+- [x] Update `CHANGE_LOG.md` and GitHub issues.

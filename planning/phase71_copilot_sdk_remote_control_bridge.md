@@ -79,3 +79,15 @@ The first live P71.4 dogfood run used FEMIC P108 as the target task lane and an 
 The worker produced an `accepted-candidate` result for a narrow FEMIC `CHANGE_LOG.md` ordering repair. Supervisor verification found that only `CHANGE_LOG.md` changed, `git diff --check -- CHANGE_LOG.md` passed, and the change moved the detailed P108 entry beside the existing July 5 P108 entry. The verified FEMIC repair was committed and pushed to PR #303 as `181cb16` (`P108 repair changelog entry ordering`).
 
 The run exposed two bridge lessons. First, `empty` SDK mode cannot be used without an explicit tool allowlist; live dogfood used `agent` mode after the bridge recorded the exact failure. Second, SDK sessions should carry a manifest-controlled working directory so future runs do not depend on prompt-level path instructions alone. P71.4 therefore tightened the live adapter to support `working_directory` and the SDK built-in isolated tool allowlist.
+
+## P71.5 Resume Decision
+
+P70 can resume after P71 merges. The recommended P70 lane is now SDK-owned first: create a runtime manifest per FEMIC P108 child task, launch with `agent-workbench copilot-sdk start`, monitor with `agent-workbench copilot-sdk monitor`, send same-session directives with `agent-workbench copilot-sdk nudge`, and verify any candidate work from the FEMIC worktree before committing or accepting it.
+
+VS Code Chat archives remain useful evidence, but they should not be treated as the primary remote-control mechanism for P70. The P70 parked branch can be resumed by applying or recreating the parked P70 setup on top of the merged P71 bridge and replacing `code chat` nudges with SDK-owned session manifests.
+
+Known residual limitations:
+
+- The bridge is validated against the installed local SDK and provider configuration, not every Copilot SDK release.
+- `empty` mode requires explicit tool allowlists; tasks needing filesystem tools should use a mode/tool profile that exposes the required tools and should pin `working_directory`.
+- The monitor classifier is deterministic and conservative; supervisor verification remains required before accepting worker claims.

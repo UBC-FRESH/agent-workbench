@@ -1853,3 +1853,16 @@ issues, pull requests, and closeout comments.
 - Tightened the SDK bridge live adapter to support manifest-controlled
   `working_directory` and SDK built-in isolated tool allowlists for future
   dogfood runs.
+
+## 2026-07-07 - Closed P71 Copilot SDK remote-control bridge
+
+- Synthesized the P71 evidence: SDK-owned sessions can now be created,
+  monitored, resumed, nudged, and reviewed through Agent Workbench manifests and
+  ignored event/status artifacts.
+- Recorded the P70 resume decision: Agent Workbench P70 can resume using the
+  SDK-owned bridge for further FEMIC P108 dogfood, with VS Code Chat archives
+  kept as evidence-only fallback rather than the primary remote-control path.
+- Verified phase closeout with focused SDK/controller tests, full `pytest`,
+  focused `ruff check`, and `git diff --check`; `mypy` and `pre-commit` were
+  unavailable because this repo venv lacks `mypy` and the repo has no
+  `.pre-commit-config.yaml`.
