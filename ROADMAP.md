@@ -3174,10 +3174,10 @@ Planned tasks:
   - [x] Detect quiet stalls, repeated non-progress, blockers, and completion
         candidates.
   - [x] Send a same-session nudge/directive and record the exact nudge evidence.
-- [ ] P71.4 FEMIC P108 dogfood runs (#470)
-  - [ ] Use FEMIC P108 as the target task lane for controlled SDK-owned runs.
-  - [ ] Capture create/resume, monitor, and nudge evidence from live sessions.
-  - [ ] Verify any worker claim against the FEMIC worktree before accepting it.
+- [x] P71.4 FEMIC P108 dogfood runs (#470)
+  - [x] Use FEMIC P108 as the target task lane for controlled SDK-owned runs.
+  - [x] Capture create/resume, monitor, and nudge evidence from live sessions.
+  - [x] Verify any worker claim against the FEMIC worktree before accepting it.
 - [ ] P71.5 Evidence synthesis and P70 resume decision (#471)
   - [ ] Summarize the bridge evidence and remaining SDK limitations.
   - [ ] Record whether P70 can resume with SDK-owned remote control.

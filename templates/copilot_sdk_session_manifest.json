@@ -14,7 +14,9 @@
     "model": "",
     "permission_mode": "operator-configured",
     "mode": "empty",
-    "base_directory": "runtime/copilot_sdk_home/p71-example-run"
+    "base_directory": "runtime/copilot_sdk_home/p71-example-run",
+    "available_tools": "default",
+    "working_directory": ""
   },
   "paths": {
     "ticket": "runtime/agent_jobs/p71_example_ticket.md",

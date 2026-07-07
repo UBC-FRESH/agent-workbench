@@ -71,3 +71,11 @@ FEMIC P108 dogfood work must not be treated as complete by P71 alone. The bridge
 3. Add create, resume, send, monitor, and nudge command surfaces.
 4. Run one bounded FEMIC P108 dogfood session through the SDK bridge.
 5. Summarize whether P70 can resume, needs a narrower bridge repair, or should fall back to archive-only Copilot Chat supervision.
+
+## P71.4 Dogfood Evidence
+
+The first live P71.4 dogfood run used FEMIC P108 as the target task lane and an ignored SDK manifest under `runtime/p71_femic_p108_sdk/`. The bridge created SDK session `cc98e2df-20da-4dca-8b95-c7a1f7348fd1`, captured event logs, wrote status summaries, and later sent a same-session nudge through `agent-workbench copilot-sdk nudge`.
+
+The worker produced an `accepted-candidate` result for a narrow FEMIC `CHANGE_LOG.md` ordering repair. Supervisor verification found that only `CHANGE_LOG.md` changed, `git diff --check -- CHANGE_LOG.md` passed, and the change moved the detailed P108 entry beside the existing July 5 P108 entry. The verified FEMIC repair was committed and pushed to PR #303 as `181cb16` (`P108 repair changelog entry ordering`).
+
+The run exposed two bridge lessons. First, `empty` SDK mode cannot be used without an explicit tool allowlist; live dogfood used `agent` mode after the bridge recorded the exact failure. Second, SDK sessions should carry a manifest-controlled working directory so future runs do not depend on prompt-level path instructions alone. P71.4 therefore tightened the live adapter to support `working_directory` and the SDK built-in isolated tool allowlist.

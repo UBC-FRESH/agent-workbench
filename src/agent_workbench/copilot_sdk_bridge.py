@@ -797,7 +797,6 @@ class LiveCopilotSdkAdapter:
         sdk = manifest.get("sdk", {})
         kwargs: dict[str, Any] = {
             "on_permission_request": self.permission_handler.approve_all,
-            "available_tools": [],
         }
         model = str(sdk.get("model", "")).strip()
         if model:
@@ -805,6 +804,18 @@ class LiveCopilotSdkAdapter:
         provider_config = sdk.get("provider_config")
         if isinstance(provider_config, dict):
             kwargs["provider"] = provider_config
+        working_directory = str(sdk.get("working_directory", "")).strip()
+        if working_directory:
+            kwargs["working_directory"] = working_directory
+        available_tools = sdk.get("available_tools", "default")
+        if isinstance(available_tools, list):
+            kwargs["available_tools"] = available_tools
+        elif available_tools == "none":
+            kwargs["available_tools"] = []
+        elif available_tools == "builtin-isolated":
+            from copilot import BUILTIN_TOOLS_ISOLATED, ToolSet
+
+            kwargs["available_tools"] = ToolSet().add_builtin(BUILTIN_TOOLS_ISOLATED)
         return kwargs
 
 

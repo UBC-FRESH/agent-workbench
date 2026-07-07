@@ -82,6 +82,8 @@ def write_manifest_fixture(tmp_path: Path, *, session_id: str = "") -> Path:
             "permission_mode": "operator-configured",
             "mode": "empty",
             "base_directory": "runtime/copilot_sdk_home/p71-test-run",
+            "available_tools": "default",
+            "working_directory": "",
         },
         "paths": {
             "ticket": "ticket.md",

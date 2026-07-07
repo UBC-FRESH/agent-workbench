@@ -1834,3 +1834,22 @@ issues, pull requests, and closeout comments.
 - Added synthetic event-log tests for completion candidates, repeated
   non-progress, and repeated-nudge stop rules, plus an ignored runtime CLI smoke
   for monitor and nudge-plan output.
+
+## 2026-07-07 - Completed P71.4 FEMIC P108 SDK dogfood
+
+- Ran a live SDK-owned Copilot session for FEMIC P108 using ignored manifest
+  `runtime/p71_femic_p108_sdk/manifest.json`; the bridge created session
+  `cc98e2df-20da-4dca-8b95-c7a1f7348fd1`, captured SDK events, and wrote
+  monitor summaries under ignored runtime storage.
+- Verified the worker-produced candidate independently: only FEMIC
+  `CHANGE_LOG.md` changed, `git diff --check -- CHANGE_LOG.md` passed, and the
+  change repaired the P108 changelog entry ordering.
+- Sent a same-session SDK nudge after the initial run using
+  `agent-workbench copilot-sdk nudge`; the bridge recorded the nudge and
+  re-monitored the same session without introducing additional FEMIC changes.
+- Committed and pushed the verified FEMIC repair to PR #303 as
+  `181cb16` (`P108 repair changelog entry ordering`), while leaving FEMIC P108
+  merge and issue closeout outside P71 authority.
+- Tightened the SDK bridge live adapter to support manifest-controlled
+  `working_directory` and SDK built-in isolated tool allowlists for future
+  dogfood runs.
