@@ -1821,3 +1821,16 @@ issues, pull requests, and closeout comments.
   invalid session state.
 - Added focused fake-adapter tests for create and resume/nudge flows before
   attempting FEMIC P108 dogfood against a live SDK session.
+
+## 2026-07-07 - Added P71.3 SDK monitor and nudge planning
+
+- Extended `src/agent_workbench/copilot_sdk_bridge.py` with SDK event-log and
+  nudge-log readers, status classification, repeated-nonprogress detection,
+  repeated-nudge stop rules, monitor summaries, and public-safe Markdown
+  rendering.
+- Added `agent-workbench copilot-sdk monitor` and `nudge-plan` so a coordinator
+  can inspect SDK-owned session state and produce the next directive without
+  reading raw event logs manually.
+- Added synthetic event-log tests for completion candidates, repeated
+  non-progress, and repeated-nudge stop rules, plus an ignored runtime CLI smoke
+  for monitor and nudge-plan output.

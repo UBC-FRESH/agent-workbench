@@ -284,6 +284,268 @@ def event_errors(events: list[dict[str, Any]]) -> list[str]:
     return errors
 
 
+def load_sdk_event_jsonl(path: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    if not path.exists():
+        return records
+    for line_number, line in enumerate(
+        path.read_text(encoding="utf-8-sig").splitlines(), 1
+    ):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        try:
+            value = json.loads(stripped)
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                f"line {line_number}: invalid SDK event JSON: {exc}"
+            ) from exc
+        if not isinstance(value, dict):
+            raise ValueError(f"line {line_number}: SDK event record must be an object")
+        records.append(value)
+    return records
+
+
+def count_nudge_records(path: Path) -> int:
+    if not path.exists():
+        return 0
+    count = 0
+    for line_number, line in enumerate(
+        path.read_text(encoding="utf-8-sig").splitlines(), 1
+    ):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        try:
+            value = json.loads(stripped)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"line {line_number}: invalid nudge JSON: {exc}") from exc
+        if not isinstance(value, dict):
+            raise ValueError(f"line {line_number}: nudge record must be an object")
+        count += 1
+    return count
+
+
+def monitor_sdk_session(
+    manifest_path: Path,
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    manifest = load_sdk_session_manifest(manifest_path)
+    validation = validate_sdk_session_manifest(
+        manifest,
+        manifest_path=manifest_path,
+        require_existing_ticket=False,
+        require_existing_workspace=False,
+    )
+    base = manifest_path.parent
+    event_log = resolve_manifest_path(base, manifest["paths"]["event_log"])
+    nudge_log = resolve_manifest_path(base, manifest["paths"]["nudge_log"])
+    if event_log is None or nudge_log is None:
+        raise ValueError("event_log and nudge_log paths are required")
+    events = load_sdk_event_jsonl(event_log)
+    nudge_count = count_nudge_records(nudge_log)
+    summary = summarize_sdk_events(
+        manifest,
+        events,
+        validation=validation,
+        nudge_count=nudge_count,
+        now=now,
+    )
+    status_summary = resolve_manifest_path(base, manifest["paths"]["status_summary"])
+    if status_summary is not None:
+        status_summary.parent.mkdir(parents=True, exist_ok=True)
+        status_summary.write_text(
+            json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+        )
+    return summary
+
+
+def summarize_sdk_events(
+    manifest: dict[str, Any],
+    events: list[dict[str, Any]],
+    *,
+    validation: SdkBridgeValidation,
+    nudge_count: int,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    now = now or datetime.now(timezone.utc)
+    event_types = [str(event.get("type", "")) for event in events]
+    latest_event_at = latest_event_timestamp(manifest, events)
+    age_seconds = event_age_seconds(latest_event_at, now)
+    control = manifest.get("control", {})
+    stall_seconds = int(control.get("stall_seconds", 0))
+    max_nudges = int(control.get("max_nudges", 0))
+    stop_rule_triggered = max_nudges > 0 and nudge_count >= max_nudges
+    observed_errors = event_errors(events)
+    latest_status = classify_sdk_status(
+        manifest,
+        events,
+        validation=validation,
+        observed_errors=observed_errors,
+        age_seconds=age_seconds,
+        stop_rule_triggered=stop_rule_triggered,
+    )
+    return {
+        "generated_utc": utc_now(),
+        "run_id": manifest.get("run_id", ""),
+        "phase": manifest.get("phase", ""),
+        "governing_issue": manifest.get("governing_issue", ""),
+        "child_issue": manifest.get("child_issue", ""),
+        "session_id": manifest.get("sdk", {}).get("session_id", ""),
+        "event_count": len(events),
+        "event_types": event_types,
+        "last_event_type": event_types[-1] if event_types else "",
+        "latest_event_at": latest_event_at,
+        "age_seconds": age_seconds,
+        "stall_seconds": stall_seconds,
+        "nudge_count": nudge_count,
+        "max_nudges": max_nudges,
+        "stop_rule_triggered": stop_rule_triggered,
+        "latest_status": latest_status,
+        "observed_errors": observed_errors,
+        "validation_ok": validation.ok,
+        "validation_errors": validation.errors,
+        "validation_warnings": validation.warnings,
+        "recommended_coordinator_action": recommend_sdk_action(
+            latest_status, stop_rule_triggered
+        ),
+        "recommended_nudge": suggest_sdk_nudge(latest_status, stop_rule_triggered),
+    }
+
+
+def latest_event_timestamp(
+    manifest: dict[str, Any], events: list[dict[str, Any]]
+) -> str:
+    for event in reversed(events):
+        timestamp = event.get("timestamp")
+        if isinstance(timestamp, str) and timestamp.strip():
+            return timestamp
+    state = manifest.get("state", {})
+    if isinstance(state, dict):
+        timestamp = state.get("latest_event_at")
+        if isinstance(timestamp, str):
+            return timestamp
+    return ""
+
+
+def event_age_seconds(timestamp: str, now: datetime) -> int | None:
+    if not timestamp:
+        return None
+    parsed = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return max(0, int((now - parsed.astimezone(timezone.utc)).total_seconds()))
+
+
+def classify_sdk_status(
+    manifest: dict[str, Any],
+    events: list[dict[str, Any]],
+    *,
+    validation: SdkBridgeValidation,
+    observed_errors: list[str],
+    age_seconds: int | None,
+    stop_rule_triggered: bool,
+) -> str:
+    if not validation.ok or observed_errors:
+        return "blocked"
+    if stop_rule_triggered:
+        return "quiet_stall"
+    control = manifest.get("control", {})
+    stall_seconds = int(control.get("stall_seconds", 0))
+    event_types = [str(event.get("type", "")) for event in events]
+    if "session.idle" in event_types and "assistant.message" in event_types:
+        return "completion_candidate"
+    if repeated_nonprogress(events, int(control.get("nonprogress_event_limit", 0))):
+        return "nonprogress_stall"
+    if age_seconds is not None and stall_seconds > 0 and age_seconds > stall_seconds:
+        return "quiet_stall"
+    if not events:
+        return "monitoring"
+    return "active"
+
+
+def repeated_nonprogress(events: list[dict[str, Any]], limit: int) -> bool:
+    if limit <= 1 or len(events) < limit:
+        return False
+    tail = events[-limit:]
+    signatures = [json.dumps(event.get("data", {}), sort_keys=True) for event in tail]
+    types = [str(event.get("type", "")) for event in tail]
+    return len(set(types)) == 1 and len(set(signatures)) == 1
+
+
+def recommend_sdk_action(latest_status: str, stop_rule_triggered: bool) -> str:
+    if stop_rule_triggered:
+        return "stop-and-review"
+    if latest_status == "completion_candidate":
+        return "verify-result-or-blocker"
+    if latest_status == "blocked":
+        return "inspect-blocker"
+    if latest_status in {"quiet_stall", "nonprogress_stall"}:
+        return "send-sdk-nudge"
+    if latest_status == "monitoring":
+        return "wait"
+    return "continue-monitoring"
+
+
+def suggest_sdk_nudge(latest_status: str, stop_rule_triggered: bool) -> str:
+    if stop_rule_triggered:
+        return (
+            "Stop this SDK session lane and write the blocker file. The repeated-nudge "
+            "stop rule has triggered; do not continue until the coordinator reviews "
+            "the event log, nudge log, status summary, result, and blocker."
+        )
+    if latest_status == "quiet_stall":
+        return (
+            "You stalled. Continue the assigned task from the last concrete action. "
+            "If you cannot proceed, write the blocker file with the exact blocker."
+        )
+    if latest_status == "nonprogress_stall":
+        return (
+            "Stop repeating status. Take the next concrete action for the assigned "
+            "task now, or write the blocker file with the exact reason you cannot."
+        )
+    if latest_status == "blocked":
+        return "No nudge yet. Inspect the blocker/error evidence and decide repair or abandon."
+    if latest_status == "completion_candidate":
+        return (
+            "No nudge needed. Verify the result or blocker file against the worktree."
+        )
+    return "No nudge needed. Continue monitoring."
+
+
+def render_sdk_monitor_markdown(summary: dict[str, Any]) -> str:
+    lines = [
+        "# Copilot SDK Session Monitor",
+        "",
+        f"- run_id: `{summary.get('run_id', '')}`",
+        f"- session_id: `{summary.get('session_id', '')}`",
+        f"- latest_status: `{summary.get('latest_status', '')}`",
+        f"- recommended_coordinator_action: `{summary.get('recommended_coordinator_action', '')}`",
+        f"- event_count: {summary.get('event_count', 0)}",
+        f"- last_event_type: `{summary.get('last_event_type', '')}`",
+        f"- age_seconds: `{summary.get('age_seconds', '')}`",
+        f"- nudge_count: {summary.get('nudge_count', 0)}",
+        f"- stop_rule_triggered: `{summary.get('stop_rule_triggered', False)}`",
+        "",
+        "## Recommended Nudge",
+        "",
+        str(summary.get("recommended_nudge", "")),
+        "",
+    ]
+    errors = summary.get("observed_errors", [])
+    if errors:
+        lines.extend(["## Observed Errors", ""])
+        lines.extend(f"- {error}" for error in errors)
+        lines.append("")
+    validation_errors = summary.get("validation_errors", [])
+    if validation_errors:
+        lines.extend(["## Validation Errors", ""])
+        lines.extend(f"- {error}" for error in validation_errors)
+        lines.append("")
+    return "\n".join(lines)
+
+
 async def run_sdk_turn(config: SdkTurnConfig, adapter: SdkAdapter) -> dict[str, Any]:
     manifest = load_sdk_session_manifest(config.manifest_path)
     validation = validate_sdk_session_manifest(

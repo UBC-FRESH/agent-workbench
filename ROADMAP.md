@@ -3169,11 +3169,11 @@ Planned tasks:
   - [x] Add CLI commands that operate from the manifest and fail closed when the
         session state is missing or ambiguous.
   - [x] Cover the runtime path with fake-SDK tests before live dogfood.
-- [ ] P71.3 Monitoring, stall detection, and nudge commands (#469)
-  - [ ] Summarize SDK events into coordinator-readable status records.
-  - [ ] Detect quiet stalls, repeated non-progress, blockers, and completion
+- [x] P71.3 Monitoring, stall detection, and nudge commands (#469)
+  - [x] Summarize SDK events into coordinator-readable status records.
+  - [x] Detect quiet stalls, repeated non-progress, blockers, and completion
         candidates.
-  - [ ] Send a same-session nudge/directive and record the exact nudge evidence.
+  - [x] Send a same-session nudge/directive and record the exact nudge evidence.
 - [ ] P71.4 FEMIC P108 dogfood runs (#470)
   - [ ] Use FEMIC P108 as the target task lane for controlled SDK-owned runs.
   - [ ] Capture create/resume, monitor, and nudge evidence from live sessions.

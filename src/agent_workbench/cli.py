@@ -51,6 +51,8 @@ from .copilot_task_controller import (
 from .copilot_sdk_bridge import (
     SdkTurnConfig,
     load_sdk_session_manifest,
+    monitor_sdk_session,
+    render_sdk_monitor_markdown,
     run_live_sdk_turn,
     validate_sdk_session_manifest,
 )
@@ -311,6 +313,25 @@ def build_parser() -> argparse.ArgumentParser:
     add_copilot_sdk_turn_args(copilot_sdk_nudge_parser)
     copilot_sdk_nudge_parser.add_argument("--nudge-text", required=True)
     copilot_sdk_nudge_parser.set_defaults(func=run_copilot_sdk_nudge)
+
+    copilot_sdk_monitor_parser = copilot_sdk_subparsers.add_parser(
+        "monitor",
+        help="Summarize SDK event/nudge logs and classify current session state.",
+    )
+    copilot_sdk_monitor_parser.add_argument("--manifest", type=Path, required=True)
+    copilot_sdk_monitor_parser.add_argument("--output", type=Path, default=None)
+    copilot_sdk_monitor_parser.add_argument(
+        "--markdown-output", type=Path, default=None
+    )
+    copilot_sdk_monitor_parser.set_defaults(func=run_copilot_sdk_monitor)
+
+    copilot_sdk_nudge_plan_parser = copilot_sdk_subparsers.add_parser(
+        "nudge-plan",
+        help="Render the recommended nudge text from the current SDK monitor state.",
+    )
+    copilot_sdk_nudge_plan_parser.add_argument("--manifest", type=Path, required=True)
+    copilot_sdk_nudge_plan_parser.add_argument("--output", type=Path, required=True)
+    copilot_sdk_nudge_plan_parser.set_defaults(func=run_copilot_sdk_nudge_plan)
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1441,6 +1462,46 @@ def run_copilot_sdk_turn(
         print(f"blocker={summary['blocker']}")
         return 2
     return 0
+
+
+def run_copilot_sdk_monitor(args: argparse.Namespace) -> int:
+    try:
+        summary = monitor_sdk_session(args.manifest)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        print(f"wrote {args.output}")
+    if args.markdown_output is not None:
+        args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+        args.markdown_output.write_text(
+            render_sdk_monitor_markdown(summary), encoding="utf-8"
+        )
+        print(f"wrote {args.markdown_output}")
+    print(
+        "session_id={session_id} status={status} action={action}".format(
+            session_id=summary.get("session_id", ""),
+            status=summary.get("latest_status", ""),
+            action=summary.get("recommended_coordinator_action", ""),
+        )
+    )
+    return 2 if summary.get("stop_rule_triggered") else 0
+
+
+def run_copilot_sdk_nudge_plan(args: argparse.Namespace) -> int:
+    try:
+        summary = monitor_sdk_session(args.manifest)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(
+        str(summary.get("recommended_nudge", "")) + "\n", encoding="utf-8"
+    )
+    print(f"wrote {args.output}")
+    return 2 if summary.get("stop_rule_triggered") else 0
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:

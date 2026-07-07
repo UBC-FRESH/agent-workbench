@@ -8,6 +8,7 @@ from typing import Any
 from agent_workbench.copilot_sdk_bridge import (
     SdkTurnConfig,
     load_sdk_session_manifest,
+    monitor_sdk_session,
     run_sdk_turn,
     validate_sdk_session_manifest,
 )
@@ -175,3 +176,56 @@ def test_run_sdk_turn_resumes_session_and_records_nudge(tmp_path: Path) -> None:
     assert summary["latest_status"] == "completion_candidate"
     nudge_records = (tmp_path / "run.nudges.jsonl").read_text(encoding="utf-8")
     assert "You stalled" in nudge_records
+
+
+def test_monitor_sdk_session_classifies_completion_candidate(tmp_path: Path) -> None:
+    manifest_path = write_manifest_fixture(tmp_path, session_id="sdk-session-existing")
+    events = [
+        {
+            "timestamp": "2026-07-07T00:00:00+00:00",
+            "type": "assistant.message",
+            "data": {},
+        },
+        {"timestamp": "2026-07-07T00:00:01+00:00", "type": "session.idle", "data": {}},
+    ]
+    (tmp_path / "run.sdk_events.jsonl").write_text(
+        "\n".join(json.dumps(event) for event in events) + "\n",
+        encoding="utf-8",
+    )
+
+    summary = monitor_sdk_session(manifest_path)
+
+    assert summary["latest_status"] == "completion_candidate"
+    assert summary["recommended_coordinator_action"] == "verify-result-or-blocker"
+
+
+def test_monitor_sdk_session_classifies_repeated_nonprogress(tmp_path: Path) -> None:
+    manifest_path = write_manifest_fixture(tmp_path, session_id="sdk-session-existing")
+    event = {
+        "timestamp": "2026-07-07T00:00:00+00:00",
+        "type": "assistant.message",
+        "data": {"content": "still thinking"},
+    }
+    (tmp_path / "run.sdk_events.jsonl").write_text(
+        "\n".join(json.dumps(event) for _ in range(5)) + "\n",
+        encoding="utf-8",
+    )
+
+    summary = monitor_sdk_session(manifest_path)
+
+    assert summary["latest_status"] == "nonprogress_stall"
+    assert "Stop repeating status" in summary["recommended_nudge"]
+
+
+def test_monitor_sdk_session_triggers_repeated_nudge_stop_rule(tmp_path: Path) -> None:
+    manifest_path = write_manifest_fixture(tmp_path, session_id="sdk-session-existing")
+    nudge = {"timestamp": "2026-07-07T00:00:00+00:00", "nudge_text": "continue"}
+    (tmp_path / "run.nudges.jsonl").write_text(
+        json.dumps(nudge) + "\n" + json.dumps(nudge) + "\n",
+        encoding="utf-8",
+    )
+
+    summary = monitor_sdk_session(manifest_path)
+
+    assert summary["stop_rule_triggered"]
+    assert summary["recommended_coordinator_action"] == "stop-and-review"
