@@ -1796,3 +1796,73 @@ issues, pull requests, and closeout comments.
 - Merged P69 PR #460 and verified parent issue #454 closed.
 - Synced the roadmap status map so P66 through P69 are marked complete on
   `main`, leaving P70 as the next planned dogfood lane.
+
+## 2026-07-07 - Activated P71 Copilot SDK remote-control bridge
+
+- Parked Agent Workbench P70 (#461) after the initial FEMIC P108 dogfood setup
+  exposed that the VS Code Chat archive path cannot reliably nudge a specific
+  stalled session.
+- Created P71 parent issue #466 and child issues #467 through #471 on
+  `feature/p71-copilot-sdk-remote-control-bridge`.
+- Added `planning/phase71_copilot_sdk_remote_control_bridge.md` and
+  `templates/copilot_sdk_session_manifest.json` to define SDK-owned session
+  control, event/status vocabulary, nudge evidence, and P70/P108 resume gates.
+- Kept FEMIC P108 as the dogfood target while making P70 resume conditional on
+  verified SDK create, resume, monitor, and same-session nudge behavior.
+
+## 2026-07-07 - Added P71.2 SDK session runtime commands
+
+- Added `src/agent_workbench/copilot_sdk_bridge.py` with SDK session manifest
+  validation, create/resume/send orchestration, event JSONL capture, status
+  summary writing, nudge logging, and a live adapter that imports the Copilot
+  SDK only when a live session command runs.
+- Added `agent-workbench copilot-sdk validate`, `start`, `resume-send`, and
+  `nudge` command surfaces that operate from the P71 manifest and fail closed on
+  invalid session state.
+- Added focused fake-adapter tests for create and resume/nudge flows before
+  attempting FEMIC P108 dogfood against a live SDK session.
+
+## 2026-07-07 - Added P71.3 SDK monitor and nudge planning
+
+- Extended `src/agent_workbench/copilot_sdk_bridge.py` with SDK event-log and
+  nudge-log readers, status classification, repeated-nonprogress detection,
+  repeated-nudge stop rules, monitor summaries, and public-safe Markdown
+  rendering.
+- Added `agent-workbench copilot-sdk monitor` and `nudge-plan` so a coordinator
+  can inspect SDK-owned session state and produce the next directive without
+  reading raw event logs manually.
+- Added synthetic event-log tests for completion candidates, repeated
+  non-progress, and repeated-nudge stop rules, plus an ignored runtime CLI smoke
+  for monitor and nudge-plan output.
+
+## 2026-07-07 - Completed P71.4 FEMIC P108 SDK dogfood
+
+- Ran a live SDK-owned Copilot session for FEMIC P108 using ignored manifest
+  `runtime/p71_femic_p108_sdk/manifest.json`; the bridge created session
+  `cc98e2df-20da-4dca-8b95-c7a1f7348fd1`, captured SDK events, and wrote
+  monitor summaries under ignored runtime storage.
+- Verified the worker-produced candidate independently: only FEMIC
+  `CHANGE_LOG.md` changed, `git diff --check -- CHANGE_LOG.md` passed, and the
+  change repaired the P108 changelog entry ordering.
+- Sent a same-session SDK nudge after the initial run using
+  `agent-workbench copilot-sdk nudge`; the bridge recorded the nudge and
+  re-monitored the same session without introducing additional FEMIC changes.
+- Committed and pushed the verified FEMIC repair to PR #303 as
+  `181cb16` (`P108 repair changelog entry ordering`), while leaving FEMIC P108
+  merge and issue closeout outside P71 authority.
+- Tightened the SDK bridge live adapter to support manifest-controlled
+  `working_directory` and SDK built-in isolated tool allowlists for future
+  dogfood runs.
+
+## 2026-07-07 - Closed P71 Copilot SDK remote-control bridge
+
+- Synthesized the P71 evidence: SDK-owned sessions can now be created,
+  monitored, resumed, nudged, and reviewed through Agent Workbench manifests and
+  ignored event/status artifacts.
+- Recorded the P70 resume decision: Agent Workbench P70 can resume using the
+  SDK-owned bridge for further FEMIC P108 dogfood, with VS Code Chat archives
+  kept as evidence-only fallback rather than the primary remote-control path.
+- Verified phase closeout with focused SDK/controller tests, full `pytest`,
+  focused `ruff check`, and `git diff --check`; `mypy` and `pre-commit` were
+  unavailable because this repo venv lacks `mypy` and the repo has no
+  `.pre-commit-config.yaml`.

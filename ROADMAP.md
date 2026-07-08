@@ -78,7 +78,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Complete |
 | P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Complete |
 | P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Complete |
-| P70 FEMIC P108 repair dogfood | TBD | `feature/p70-femic-p108-repair-dogfood` | Planned |
+| P70 FEMIC P108 repair dogfood | #461 | `feature/p70-femic-p108-repair-dogfood` | Parked |
+| P71 Copilot SDK remote-control bridge | #466 | `feature/p71-copilot-sdk-remote-control-bridge` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3044,7 +3045,7 @@ Parent issue: #454
 
 Branch: `feature/p69-behavior-analytics-from-archives`
 
-Status: active
+Status: complete
 
 Goal: mine archived Copilot sessions for reusable delegation behavior metrics.
 
@@ -3081,23 +3082,28 @@ Closeout boundary:
 
 ## Phase 70: FEMIC P108 Repair Dogfood
 
-Parent issue: TBD
+Parent issue: #461
 
 Branch: `feature/p70-femic-p108-repair-dogfood`
 
-Status: planned
+Status: parked
 
 Goal: test the task-level delegation controller on real P108 cleanup tasks in
 FEMIC, while keeping coordinator authority over final PR merge and parent issue
 closure.
 
+Pause note: P70 is parked while P71 builds SDK-owned Copilot remote-control
+capabilities. FEMIC P108 remains the dogfood target for P71 live testing; P70
+resumes only after P71 records whether the bridge can create stable sessions,
+monitor them, detect stalls, and send mid-job nudges with verifiable evidence.
+
 Planned tasks:
 
-- [ ] P70.1 Dogfood setup
-  - [ ] Select the P108 cleanup branch/PR state as the target.
-  - [ ] Declare a budget and stop rule before any paid-coordinator monitoring.
-  - [ ] Generate one child-task ticket at a time through the P66 protocol.
-  - [ ] Require P65 archive capture for every Copilot-backed task.
+- [x] P70.1 Dogfood setup (#462)
+  - [x] Select the P108 cleanup branch/PR state as the target.
+  - [x] Declare a budget and stop rule before any paid-coordinator monitoring.
+  - [x] Generate one child-task ticket at a time through the P66 protocol.
+  - [x] Require P65 archive capture for every Copilot-backed task.
 - [ ] P70.2 Cleanup ticket set
   - [ ] Ticket A: repair `CHANGE_LOG.md` ordering and encoding damage.
   - [ ] Ticket B: reconcile parent roadmap versus instance roadmap completion
@@ -3116,3 +3122,70 @@ Planned tasks:
   - [ ] Record remaining risks and required controller improvements.
   - [ ] Keep final P108 merge/parent closure under coordinator/maintainer
         authority.
+
+## Phase 71: Copilot SDK Remote-Control Bridge
+
+Parent issue: #466
+
+Branch: `feature/p71-copilot-sdk-remote-control-bridge`
+
+Status: active
+
+Goal: replace brittle VS Code Chat session driving with an SDK-owned bridge that
+can create resumable Copilot sessions, monitor event streams in near real time,
+detect stalls, and send explicit nudges or ad hoc directives to the same
+session.
+
+Scope:
+
+- SDK-owned session manifests, event logs, status summaries, and nudge records.
+- Runtime commands for session creation, resume/reconnect, prompt send, monitor,
+  nudge, and review.
+- FEMIC P108 dogfood runs as the first live evidence source.
+- Public-safe tracked contracts, with raw transcripts and SDK event payloads
+  stored only under ignored local runtime paths.
+
+Out of scope:
+
+- Closing FEMIC P108, merging FEMIC PR #303, or claiming P108 repair success.
+- Reopening P70 until P71 produces enough bridge evidence for a scale decision.
+- Treating arbitrary VS Code Chat transcript artifacts as controllable SDK
+  sessions.
+- Publishing private prompts, raw transcripts, credentials, endpoints, or
+  machine-specific paths.
+
+Planned tasks:
+
+- [x] P71.1 SDK remote-control contract (#467)
+  - [x] Add the phase planning note, SDK session manifest template, event/status
+        vocabulary, and P70/P108 resume gates.
+  - [x] Define the difference between SDK-owned sessions and archived VS Code
+        Chat sessions.
+  - [x] Define the evidence required before a run can count as monitored,
+        nudged, blocked, or accepted for dogfood.
+- [x] P71.2 SDK session runtime commands (#468)
+  - [x] Add a reusable SDK bridge module with create, resume, send, and event
+        capture primitives.
+  - [x] Add CLI commands that operate from the manifest and fail closed when the
+        session state is missing or ambiguous.
+  - [x] Cover the runtime path with fake-SDK tests before live dogfood.
+- [x] P71.3 Monitoring, stall detection, and nudge commands (#469)
+  - [x] Summarize SDK events into coordinator-readable status records.
+  - [x] Detect quiet stalls, repeated non-progress, blockers, and completion
+        candidates.
+  - [x] Send a same-session nudge/directive and record the exact nudge evidence.
+- [x] P71.4 FEMIC P108 dogfood runs (#470)
+  - [x] Use FEMIC P108 as the target task lane for controlled SDK-owned runs.
+  - [x] Capture create/resume, monitor, and nudge evidence from live sessions.
+  - [x] Verify any worker claim against the FEMIC worktree before accepting it.
+- [x] P71.5 Evidence synthesis and P70 resume decision (#471)
+  - [x] Summarize the bridge evidence and remaining SDK limitations.
+  - [x] Record whether P70 can resume with SDK-owned remote control.
+  - [x] Synchronize roadmap, changelog, issue comments, and PR closeout.
+
+Closeout boundary:
+
+- [x] Run focused SDK bridge tests.
+- [x] Run `git diff --check`.
+- [x] Dogfood at least one FEMIC P108 session or record the exact live blocker.
+- [x] Update `CHANGE_LOG.md` and GitHub issues.
