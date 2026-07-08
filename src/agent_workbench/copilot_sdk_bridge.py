@@ -806,7 +806,10 @@ class LiveCopilotSdkAdapter:
             kwargs["provider"] = provider_config
         working_directory = str(sdk.get("working_directory", "")).strip()
         if working_directory:
-            kwargs["working_directory"] = working_directory
+            working_directory_path = Path(working_directory)
+            if not working_directory_path.is_absolute():
+                working_directory_path = working_directory_path.resolve()
+            kwargs["working_directory"] = str(working_directory_path)
         available_tools = sdk.get("available_tools", "default")
         if isinstance(available_tools, list):
             kwargs["available_tools"] = available_tools

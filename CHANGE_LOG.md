@@ -1889,3 +1889,20 @@ issues, pull requests, and closeout comments.
   focused `ruff check`, and `git diff --check`; `mypy` and `pre-commit` were
   unavailable because this repo venv lacks `mypy` and the repo has no
   `.pre-commit-config.yaml`.
+
+## 2026-07-08 - Resumed P70 with SDK-owned TSA23 Ticket B
+
+- Merged the completed P71 SDK remote-control bridge back into the parked P70
+  branch and marked P70 active again with P71 complete.
+- Prepared and launched ignored SDK manifest
+  `runtime/p70_ticket_b_tsa23_instance_roadmap/manifest.json` for P70.2 Ticket
+  B, using FEMIC P108 and the TSA23 instance as the target lane.
+- Ran SDK session `cdba1e8b-5173-4676-bacc-081e18d9eec8`; the worker produced
+  an accepted candidate that reconciled `external/femic-tsa23-instance/ROADMAP.md`
+  with closed FEMIC issues #300 and #301.
+- Supervisor verification confirmed the instance diff, added an instance
+  changelog note, committed and pushed instance commit `282da67`, and updated
+  FEMIC PR #303 with parent commit `b60dbd5`.
+- Fixed the SDK bridge live adapter so relative manifest `working_directory`
+  values are resolved to absolute paths at launch time while keeping manifests
+  public-safe.

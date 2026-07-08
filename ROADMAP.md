@@ -3108,8 +3108,10 @@ Planned tasks:
   - [x] Ticket A: repair `CHANGE_LOG.md` ordering and encoding damage
         (completed during P71 SDK dogfood and verified as FEMIC commit
         `181cb16` on PR #303).
-  - [ ] Ticket B: reconcile parent roadmap versus instance roadmap completion
-        state.
+  - [x] Ticket B: reconcile parent roadmap versus instance roadmap completion
+        state (completed with SDK session
+        `cdba1e8b-5173-4676-bacc-081e18d9eec8`, instance commit `282da67`,
+        and parent FEMIC commit `b60dbd5` on PR #303).
   - [ ] Ticket C: repair stale P108 supervisor result-report claims.
   - [ ] Ticket D: verify PR #303 and child issue checklist consistency.
   - [ ] Ticket E: produce final coordinator review packet.

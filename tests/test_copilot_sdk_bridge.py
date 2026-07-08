@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from agent_workbench.copilot_sdk_bridge import (
+    LiveCopilotSdkAdapter,
     SdkTurnConfig,
     load_sdk_session_manifest,
     monitor_sdk_session,
@@ -231,3 +232,19 @@ def test_monitor_sdk_session_triggers_repeated_nudge_stop_rule(tmp_path: Path) -
 
     assert summary["stop_rule_triggered"]
     assert summary["recommended_coordinator_action"] == "stop-and-review"
+
+
+def test_live_adapter_resolves_relative_working_directory(tmp_path: Path) -> None:
+    adapter = LiveCopilotSdkAdapter()
+    adapter.permission_handler = type(
+        "PermissionHandler",
+        (),
+        {"approve_all": object()},
+    )
+    manifest_path = write_manifest_fixture(tmp_path)
+    manifest = load_sdk_session_manifest(manifest_path)
+    manifest["sdk"]["working_directory"] = "."
+
+    kwargs = adapter._session_kwargs(manifest)
+
+    assert Path(str(kwargs["working_directory"])).is_absolute()

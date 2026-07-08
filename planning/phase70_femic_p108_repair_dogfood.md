@@ -74,3 +74,11 @@ Ticket A was completed while P70 was parked by the P71 SDK remote-control bridge
 P70 resumes after P71 with SDK-owned sessions as the primary delegation path. New P70 tickets should use ignored `copilot-sdk` manifests, `agent-workbench copilot-sdk start`, `monitor`, `nudge-plan`, and `nudge`, then coordinator-owned verification of the FEMIC or TSA23 instance worktree before any commit or acceptance.
 
 The next active target is Ticket B: reconcile the parent FEMIC P108 roadmap/issue state with the TSA23 instance roadmap completion state. The intended worker scope is to inspect the parent P108 surfaces, inspect `external/femic-tsa23-instance/ROADMAP.md`, propose or apply only the smallest roadmap/status correction, and stop before any parent PR merge or issue closure.
+
+## P70.2 Ticket B Result
+
+Ticket B ran through SDK session `cdba1e8b-5173-4676-bacc-081e18d9eec8` using ignored manifest `runtime/p70_ticket_b_tsa23_instance_roadmap/manifest.json`. The worker inspected FEMIC issue #300, issue #301, the parent P108 roadmap state, and the TSA23 instance roadmap, then updated only `external/femic-tsa23-instance/ROADMAP.md`.
+
+Supervisor verification accepted the candidate after confirming the instance diff marked P108.4 and P108.5 complete, extended the Phase 0 range to P108.2-P108.5, and passed `git diff --check`. The coordinator added an instance changelog note, committed and pushed TSA23 instance commit `282da67`, then updated the parent FEMIC submodule pointer and changelog in PR #303 as commit `b60dbd5`.
+
+The live run exposed one bridge improvement: SDK `working_directory` must be absolute at session creation, but manifests should remain public-safe. The bridge now resolves relative manifest working-directory values at launch time.
