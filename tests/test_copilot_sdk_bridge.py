@@ -10,6 +10,8 @@ from agent_workbench.copilot_sdk_bridge import (
     SdkTurnConfig,
     load_sdk_session_manifest,
     monitor_sdk_session,
+    render_sdk_transcript_from_manifest,
+    render_sdk_transcript_markdown,
     run_sdk_turn,
     validate_sdk_session_manifest,
 )
@@ -232,6 +234,99 @@ def test_monitor_sdk_session_triggers_repeated_nudge_stop_rule(tmp_path: Path) -
 
     assert summary["stop_rule_triggered"]
     assert summary["recommended_coordinator_action"] == "stop-and-review"
+
+
+def test_render_sdk_transcript_omits_system_by_default(tmp_path: Path) -> None:
+    manifest_path = write_manifest_fixture(tmp_path, session_id="sdk-session-existing")
+    events = [
+        {
+            "timestamp": "2026-07-07T00:00:00+00:00",
+            "type": "system.message",
+            "data": {"content": "system prompt"},
+        },
+        {
+            "timestamp": "2026-07-07T00:00:01+00:00",
+            "type": "user.message",
+            "data": {"content": "Do the assigned task."},
+        },
+        {
+            "timestamp": "2026-07-07T00:00:02+00:00",
+            "type": "assistant.message",
+            "data": {"content": "I will inspect the worktree."},
+        },
+        {
+            "timestamp": "2026-07-07T00:00:03+00:00",
+            "type": "tool.execution_start",
+            "data": {
+                "tool_name": "powershell",
+                "tool_call_id": "call-1",
+                "arguments": {"command": "git status"},
+            },
+        },
+        {
+            "timestamp": "2026-07-07T00:00:04+00:00",
+            "type": "tool.execution_complete",
+            "data": {
+                "tool_call_id": "call-1",
+                "success": True,
+                "result": {
+                    "contents": [
+                        {
+                            "cwd": "workspace",
+                            "exit_code": 0,
+                            "output_preview": "clean",
+                        }
+                    ]
+                },
+            },
+        },
+    ]
+    (tmp_path / "run.sdk_events.jsonl").write_text(
+        "\n".join(json.dumps(event) for event in events) + "\n",
+        encoding="utf-8",
+    )
+
+    transcript, summary = render_sdk_transcript_from_manifest(manifest_path)
+
+    assert summary.entry_count == 4
+    assert summary.system_message_count == 1
+    assert not summary.system_messages_included
+    assert "system prompt" not in transcript
+    assert "Coordinator -> Copilot worker" in transcript
+    assert "I will inspect the worktree." in transcript
+    assert "Tool start: powershell" in transcript
+    assert "exit_code: 0" in transcript
+
+
+def test_render_sdk_transcript_can_include_system_and_exclude_tools() -> None:
+    manifest = {
+        "run_id": "p71-test-run",
+        "sdk": {"session_id": "sdk-session-existing"},
+    }
+    events = [
+        {"timestamp": "t0", "type": "system.message", "data": {"content": "system"}},
+        {"timestamp": "t1", "type": "user.message", "data": {"content": "prompt"}},
+        {
+            "timestamp": "t2",
+            "type": "tool.execution_start",
+            "data": {"tool_name": "powershell"},
+        },
+    ]
+
+    transcript, summary = render_sdk_transcript_markdown(
+        manifest,
+        events,
+        include_system=True,
+        include_tools=False,
+        max_text_chars=4000,
+    )
+
+    assert summary.entry_count == 2
+    assert summary.system_messages_included
+    assert not summary.tool_events_included
+    assert "system" in transcript
+    assert "prompt" in transcript
+    assert "Tool start" not in transcript
 
 
 def test_live_adapter_resolves_relative_working_directory(tmp_path: Path) -> None:

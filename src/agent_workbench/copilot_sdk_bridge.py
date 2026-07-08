@@ -85,6 +85,21 @@ class SdkTurnConfig:
     update_manifest: bool = True
 
 
+@dataclass(frozen=True)
+class SdkTranscriptSummary:
+    run_id: str
+    session_id: str
+    event_count: int
+    entry_count: int
+    user_message_count: int
+    assistant_message_count: int
+    tool_event_count: int
+    permission_event_count: int
+    system_message_count: int
+    system_messages_included: bool
+    tool_events_included: bool
+
+
 class SdkSession(Protocol):
     session_id: str
 
@@ -544,6 +559,385 @@ def render_sdk_monitor_markdown(summary: dict[str, Any]) -> str:
         lines.extend(f"- {error}" for error in validation_errors)
         lines.append("")
     return "\n".join(lines)
+
+
+def render_sdk_transcript_from_manifest(
+    manifest_path: Path,
+    *,
+    include_system: bool = False,
+    include_tools: bool = True,
+    max_text_chars: int = 4000,
+) -> tuple[str, SdkTranscriptSummary]:
+    manifest = load_sdk_session_manifest(manifest_path)
+    base = manifest_path.parent
+    event_log = resolve_manifest_path(base, manifest["paths"]["event_log"])
+    if event_log is None:
+        raise ValueError("paths.event_log is required")
+    events = load_sdk_event_jsonl(event_log)
+    return render_sdk_transcript_markdown(
+        manifest,
+        events,
+        include_system=include_system,
+        include_tools=include_tools,
+        max_text_chars=max_text_chars,
+        source_event_log=str(manifest["paths"]["event_log"]),
+    )
+
+
+def render_sdk_transcript_markdown(
+    manifest: dict[str, Any],
+    events: list[dict[str, Any]],
+    *,
+    include_system: bool = False,
+    include_tools: bool = True,
+    max_text_chars: int = 4000,
+    source_event_log: str = "",
+) -> tuple[str, SdkTranscriptSummary]:
+    entries = extract_sdk_transcript_entries(
+        events,
+        include_system=include_system,
+        include_tools=include_tools,
+        max_text_chars=max_text_chars,
+    )
+    counts = count_sdk_transcript_events(events)
+    summary = SdkTranscriptSummary(
+        run_id=str(manifest.get("run_id", "")),
+        session_id=str(manifest.get("sdk", {}).get("session_id", "")),
+        event_count=len(events),
+        entry_count=len(entries),
+        user_message_count=counts["user_message_count"],
+        assistant_message_count=counts["assistant_message_count"],
+        tool_event_count=counts["tool_event_count"],
+        permission_event_count=counts["permission_event_count"],
+        system_message_count=counts["system_message_count"],
+        system_messages_included=include_system,
+        tool_events_included=include_tools,
+    )
+    lines = [
+        "# Copilot SDK Human-Readable Transcript",
+        "",
+        f"- run_id: `{summary.run_id}`",
+        f"- session_id: `{summary.session_id}`",
+        f"- event_count: {summary.event_count}",
+        f"- transcript_entries: {summary.entry_count}",
+        f"- user_messages: {summary.user_message_count}",
+        f"- assistant_messages: {summary.assistant_message_count}",
+        f"- tool_events: {summary.tool_event_count}",
+        f"- permission_events: {summary.permission_event_count}",
+        f"- system_messages: {summary.system_message_count}",
+        f"- system_messages_included: `{summary.system_messages_included}`",
+        f"- tool_events_included: `{summary.tool_events_included}`",
+    ]
+    if source_event_log:
+        lines.append(f"- source_event_log: `{source_event_log}`")
+    lines.extend(
+        [
+            "",
+            "System messages are omitted by default because they are usually large "
+            "runtime instructions rather than coordinator/worker conversation. Rerun "
+            "with `--include-system` when that context is needed for local review.",
+            "",
+        ]
+    )
+    if not entries:
+        lines.extend(["No transcript entries matched the selected filters.", ""])
+        return "\n".join(lines), summary
+
+    for index, entry in enumerate(entries, 1):
+        lines.extend(
+            [
+                f"## {index:03d}. {entry['role']}",
+                "",
+                f"- timestamp: `{entry.get('timestamp', '')}`",
+                f"- event_type: `{entry.get('event_type', '')}`",
+            ]
+        )
+        if entry.get("turn_id"):
+            lines.append(f"- turn_id: `{entry['turn_id']}`")
+        if entry.get("tool_call_id"):
+            lines.append(f"- tool_call_id: `{entry['tool_call_id']}`")
+        if entry.get("status"):
+            lines.append(f"- status: `{entry['status']}`")
+        lines.extend(["", markdown_code_block(str(entry.get("content", ""))), ""])
+    return "\n".join(lines), summary
+
+
+def extract_sdk_transcript_entries(
+    events: list[dict[str, Any]],
+    *,
+    include_system: bool,
+    include_tools: bool,
+    max_text_chars: int,
+) -> list[dict[str, str]]:
+    entries: list[dict[str, str]] = []
+    for event in events:
+        event_type = str(event.get("type", ""))
+        data = event.get("data")
+        if not isinstance(data, dict):
+            data = {}
+
+        if event_type == "system.message":
+            if include_system:
+                entries.append(
+                    transcript_entry(
+                        role="System",
+                        event=event,
+                        content=truncate_text(message_content(data), max_text_chars),
+                    )
+                )
+            continue
+
+        if event_type == "user.message":
+            entries.append(
+                transcript_entry(
+                    role="Coordinator -> Copilot worker",
+                    event=event,
+                    content=truncate_text(user_message_content(data), max_text_chars),
+                )
+            )
+            continue
+
+        if event_type == "assistant.message":
+            entries.append(
+                transcript_entry(
+                    role="Copilot worker",
+                    event=event,
+                    content=truncate_text(
+                        assistant_message_content(data), max_text_chars
+                    ),
+                )
+            )
+            continue
+
+        if not include_tools:
+            continue
+
+        if event_type == "tool.execution_start":
+            entries.append(
+                transcript_entry(
+                    role=f"Tool start: {tool_name(data)}",
+                    event=event,
+                    content=truncate_text(tool_start_content(data), max_text_chars),
+                )
+            )
+            continue
+
+        if event_type == "tool.execution_partial_result":
+            entries.append(
+                transcript_entry(
+                    role="Tool partial result",
+                    event=event,
+                    content=truncate_text(
+                        str(data.get("partial_output", "")), max_text_chars
+                    ),
+                )
+            )
+            continue
+
+        if event_type == "tool.execution_complete":
+            entries.append(
+                transcript_entry(
+                    role=f"Tool complete: {tool_complete_status(data)}",
+                    event=event,
+                    content=truncate_text(tool_complete_content(data), max_text_chars),
+                    status=tool_complete_status(data),
+                )
+            )
+            continue
+
+        if event_type == "permission.requested":
+            entries.append(
+                transcript_entry(
+                    role="Permission requested",
+                    event=event,
+                    content=truncate_text(
+                        permission_request_content(data), max_text_chars
+                    ),
+                )
+            )
+            continue
+
+        if event_type == "permission.completed":
+            entries.append(
+                transcript_entry(
+                    role="Permission completed",
+                    event=event,
+                    content=truncate_text(
+                        permission_completed_content(data), max_text_chars
+                    ),
+                )
+            )
+    return entries
+
+
+def transcript_entry(
+    *,
+    role: str,
+    event: dict[str, Any],
+    content: str,
+    status: str = "",
+) -> dict[str, str]:
+    data = event.get("data")
+    if not isinstance(data, dict):
+        data = {}
+    return {
+        "role": role,
+        "timestamp": str(event.get("timestamp", "")),
+        "event_type": str(event.get("type", "")),
+        "turn_id": str(data.get("turn_id", "")),
+        "tool_call_id": str(data.get("tool_call_id", "")),
+        "status": status,
+        "content": content,
+    }
+
+
+def count_sdk_transcript_events(events: list[dict[str, Any]]) -> dict[str, int]:
+    counts = {
+        "user_message_count": 0,
+        "assistant_message_count": 0,
+        "tool_event_count": 0,
+        "permission_event_count": 0,
+        "system_message_count": 0,
+    }
+    for event in events:
+        event_type = str(event.get("type", ""))
+        if event_type == "user.message":
+            counts["user_message_count"] += 1
+        elif event_type == "assistant.message":
+            counts["assistant_message_count"] += 1
+        elif event_type.startswith("tool.execution_"):
+            counts["tool_event_count"] += 1
+        elif event_type.startswith("permission."):
+            counts["permission_event_count"] += 1
+        elif event_type == "system.message":
+            counts["system_message_count"] += 1
+    return counts
+
+
+def message_content(data: dict[str, Any]) -> str:
+    content = data.get("content")
+    return str(content) if content is not None else ""
+
+
+def user_message_content(data: dict[str, Any]) -> str:
+    content = message_content(data)
+    transformed = data.get("transformed_content")
+    if isinstance(transformed, str) and transformed and transformed != content:
+        if content and content in transformed:
+            metadata = transformed.replace(content, "", 1).strip()
+            if metadata:
+                return f"{content}\n\nTransformed metadata:\n{metadata}"
+            return content
+        if content:
+            return f"{content}\n\nTransformed content:\n{transformed}"
+        return transformed
+    return content
+
+
+def assistant_message_content(data: dict[str, Any]) -> str:
+    content = message_content(data)
+    tool_requests = data.get("tool_requests")
+    if tool_requests:
+        rendered_requests = compact_json(tool_requests)
+        if content:
+            return f"{content}\n\nTool requests:\n{rendered_requests}"
+        return f"Tool requests:\n{rendered_requests}"
+    return content or "[assistant message had no text content]"
+
+
+def tool_name(data: dict[str, Any]) -> str:
+    return str(data.get("tool_name") or data.get("mcp_tool_name") or "tool")
+
+
+def tool_start_content(data: dict[str, Any]) -> str:
+    pieces = [f"tool_name: {tool_name(data)}"]
+    arguments = data.get("arguments")
+    if arguments:
+        pieces.append("arguments:")
+        pieces.append(compact_json(arguments))
+    shell_info = data.get("shell_tool_info")
+    if shell_info:
+        pieces.append("shell_tool_info:")
+        pieces.append(compact_json(shell_info))
+    return "\n".join(pieces)
+
+
+def tool_complete_status(data: dict[str, Any]) -> str:
+    if data.get("success") is True:
+        return "success"
+    if data.get("success") is False:
+        return "failure"
+    return "complete"
+
+
+def tool_complete_content(data: dict[str, Any]) -> str:
+    result = data.get("result")
+    if isinstance(result, dict):
+        contents = result.get("contents")
+        if isinstance(contents, list) and contents:
+            rendered = []
+            for item in contents:
+                if not isinstance(item, dict):
+                    continue
+                if "cwd" in item:
+                    rendered.append(f"cwd: {item.get('cwd', '')}")
+                if "exit_code" in item:
+                    rendered.append(f"exit_code: {item.get('exit_code', '')}")
+                output = item.get("output_preview")
+                if output:
+                    rendered.append(str(output))
+            if rendered:
+                return "\n".join(rendered)
+        for field in ("content", "detailed_content"):
+            value = result.get(field)
+            if value:
+                return str(value)
+        return compact_json(result)
+    if result:
+        return str(result)
+    error = data.get("error")
+    return str(error) if error else "[tool completed without result content]"
+
+
+def permission_request_content(data: dict[str, Any]) -> str:
+    request = data.get("permission_request")
+    if isinstance(request, dict):
+        command = request.get("full_command_text")
+        intention = request.get("intention")
+        parts = []
+        if intention:
+            parts.append(f"intention: {intention}")
+        if command:
+            parts.append(f"command: {command}")
+        if parts:
+            return "\n".join(parts)
+        return compact_json(request)
+    return compact_json(data)
+
+
+def permission_completed_content(data: dict[str, Any]) -> str:
+    result = data.get("result")
+    if result:
+        return compact_json(result)
+    return "permission completed"
+
+
+def truncate_text(text: str, max_chars: int) -> str:
+    if max_chars <= 0 or len(text) <= max_chars:
+        return text
+    omitted = len(text) - max_chars
+    return f"{text[:max_chars]}\n\n[truncated {omitted} characters]"
+
+
+def compact_json(value: Any) -> str:
+    return json.dumps(safe_jsonable(value), indent=2, sort_keys=True)
+
+
+def markdown_code_block(text: str) -> str:
+    fence = "```"
+    while fence in text:
+        fence += "`"
+    return f"{fence}text\n{text}\n{fence}"
 
 
 async def run_sdk_turn(config: SdkTurnConfig, adapter: SdkAdapter) -> dict[str, Any]:

@@ -3116,6 +3116,9 @@ Planned tasks:
   - [ ] Ticket D: verify PR #303 and child issue checklist consistency.
   - [ ] Ticket E: produce final coordinator review packet.
 - [ ] P70.3 Controller evaluation (#464)
+  - [x] Add a human-readable SDK transcript renderer so coordinator-supervisor
+        and supervisor-worker conversation evidence can be audited before
+        behavior scoring.
   - [ ] Measure stall count, nudge count, tool-call count, result validity, and
         coordinator repair burden per ticket.
   - [ ] Compare task-level behavior to the whole-phase P108 run.

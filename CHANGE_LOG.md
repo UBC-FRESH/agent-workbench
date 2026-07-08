@@ -1906,3 +1906,17 @@ issues, pull requests, and closeout comments.
 - Fixed the SDK bridge live adapter so relative manifest `working_directory`
   values are resolved to absolute paths at launch time while keeping manifests
   public-safe.
+
+## 2026-07-08 - Added SDK transcript rendering for P70 review
+
+- Added `agent-workbench copilot-sdk transcript`, which reads a session
+  manifest's SDK event JSONL and renders a human-readable Markdown transcript
+  of coordinator messages, Copilot worker replies, tool activity, and permission
+  events.
+- Kept raw `system.message` payloads omitted by default to avoid burying the
+  conversation in runtime instructions, with `--include-system` available for
+  local-only audit when needed.
+- Generated the first ignored transcript for
+  `runtime/p70_ticket_b_tsa23_instance_roadmap/manifest.json` so P70 Ticket B
+  conversation evidence can be reviewed alongside the existing status and
+  result summaries.

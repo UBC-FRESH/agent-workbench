@@ -82,3 +82,5 @@ Ticket B ran through SDK session `cdba1e8b-5173-4676-bacc-081e18d9eec8` using ig
 Supervisor verification accepted the candidate after confirming the instance diff marked P108.4 and P108.5 complete, extended the Phase 0 range to P108.2-P108.5, and passed `git diff --check`. The coordinator added an instance changelog note, committed and pushed TSA23 instance commit `282da67`, then updated the parent FEMIC submodule pointer and changelog in PR #303 as commit `b60dbd5`.
 
 The live run exposed one bridge improvement: SDK `working_directory` must be absolute at session creation, but manifests should remain public-safe. The bridge now resolves relative manifest working-directory values at launch time.
+
+Ticket B also exposed an evaluation gap: `run.sdk_events.jsonl` contains the raw `user.message`, `assistant.message`, tool, and permission events, but the file is not readable as a conversation. P70.3 therefore adds `agent-workbench copilot-sdk transcript` to render an ignored Markdown transcript from any SDK session manifest, with raw `system.message` events omitted by default and available through an explicit flag for local review.

@@ -53,6 +53,7 @@ from .copilot_sdk_bridge import (
     load_sdk_session_manifest,
     monitor_sdk_session,
     render_sdk_monitor_markdown,
+    render_sdk_transcript_from_manifest,
     run_live_sdk_turn,
     validate_sdk_session_manifest,
 )
@@ -332,6 +333,30 @@ def build_parser() -> argparse.ArgumentParser:
     copilot_sdk_nudge_plan_parser.add_argument("--manifest", type=Path, required=True)
     copilot_sdk_nudge_plan_parser.add_argument("--output", type=Path, required=True)
     copilot_sdk_nudge_plan_parser.set_defaults(func=run_copilot_sdk_nudge_plan)
+
+    copilot_sdk_transcript_parser = copilot_sdk_subparsers.add_parser(
+        "transcript",
+        help="Render a human-readable transcript from an SDK event log.",
+    )
+    copilot_sdk_transcript_parser.add_argument("--manifest", type=Path, required=True)
+    copilot_sdk_transcript_parser.add_argument("--output", type=Path, required=True)
+    copilot_sdk_transcript_parser.add_argument(
+        "--include-system",
+        action="store_true",
+        help="Include raw system.message events in the transcript.",
+    )
+    copilot_sdk_transcript_parser.add_argument(
+        "--exclude-tools",
+        action="store_true",
+        help="Omit tool and permission events; render only chat messages.",
+    )
+    copilot_sdk_transcript_parser.add_argument(
+        "--max-text-chars",
+        type=int,
+        default=4000,
+        help="Maximum characters retained per transcript entry; 0 disables truncation.",
+    )
+    copilot_sdk_transcript_parser.set_defaults(func=run_copilot_sdk_transcript)
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1502,6 +1527,33 @@ def run_copilot_sdk_nudge_plan(args: argparse.Namespace) -> int:
     )
     print(f"wrote {args.output}")
     return 2 if summary.get("stop_rule_triggered") else 0
+
+
+def run_copilot_sdk_transcript(args: argparse.Namespace) -> int:
+    try:
+        transcript, summary = render_sdk_transcript_from_manifest(
+            args.manifest,
+            include_system=args.include_system,
+            include_tools=not args.exclude_tools,
+            max_text_chars=args.max_text_chars,
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(transcript, encoding="utf-8")
+    print(f"wrote {args.output}")
+    print(
+        "session_id={session_id} entries={entries} user_messages={users} "
+        "assistant_messages={assistants} tool_events={tools}".format(
+            session_id=summary.session_id,
+            entries=summary.entry_count,
+            users=summary.user_message_count,
+            assistants=summary.assistant_message_count,
+            tools=summary.tool_event_count,
+        )
+    )
+    return 0
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:
