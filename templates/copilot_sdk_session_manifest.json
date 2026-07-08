@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "run_id": "p71-example-run",
+  "phase": "P71",
+  "governing_issue": 466,
+  "child_issue": 470,
+  "target_project": "femic",
+  "target_task": "FEMIC P108 bounded dogfood ticket",
+  "workspace_root": "../femic",
+  "sdk": {
+    "provider": "github-copilot-sdk",
+    "session_id": "",
+    "resumable": true,
+    "model": "",
+    "permission_mode": "operator-configured",
+    "mode": "empty",
+    "base_directory": "runtime/copilot_sdk_home/p71-example-run",
+    "available_tools": "default",
+    "working_directory": ""
+  },
+  "paths": {
+    "ticket": "runtime/agent_jobs/p71_example_ticket.md",
+    "result": "runtime/agent_jobs/p71_example_result.md",
+    "blocker": "runtime/agent_jobs/p71_example_blocker.md",
+    "heartbeat": "runtime/agent_jobs/p71_example.heartbeat.jsonl",
+    "event_log": "runtime/agent_jobs/p71_example.sdk_events.jsonl",
+    "status_summary": "runtime/agent_jobs/p71_example.sdk_status.json",
+    "nudge_log": "runtime/agent_jobs/p71_example.nudges.jsonl"
+  },
+  "control": {
+    "stall_seconds": 300,
+    "nonprogress_event_limit": 5,
+    "max_nudges": 2,
+    "max_retries": 1,
+    "stop_condition": "worker writes result or blocker file, or bridge records blocked state"
+  },
+  "state": {
+    "latest_status": "created",
+    "latest_event_at": "",
+    "latest_nudge_at": "",
+    "accepted_candidate": false
+  },
+  "privacy": {
+    "raw_events_local_only": true,
+    "publish_sanitized_summary_only": true
+  }
+}

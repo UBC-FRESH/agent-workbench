@@ -67,4 +67,10 @@ The manifest validated with:
 .\.venv\Scripts\python.exe -m agent_workbench copilot task-validate --manifest runtime\agent_jobs\p70_ticket_a_changelog_ordering_manifest.json
 ```
 
-The local shell does not currently expose `ollama`, so the Ticket A manifest intentionally uses `ollama/VERIFY_BEFORE_LAUNCH` and the ticket requires live worker-model inventory verification before any Copilot-backed launch.
+Ticket A was completed while P70 was parked by the P71 SDK remote-control bridge dogfood run. The SDK-owned session produced a FEMIC `CHANGE_LOG.md` ordering repair, the coordinator verified the diff directly, and the repair was committed to FEMIC PR #303 as `181cb16`.
+
+## P70 Resume After P71
+
+P70 resumes after P71 with SDK-owned sessions as the primary delegation path. New P70 tickets should use ignored `copilot-sdk` manifests, `agent-workbench copilot-sdk start`, `monitor`, `nudge-plan`, and `nudge`, then coordinator-owned verification of the FEMIC or TSA23 instance worktree before any commit or acceptance.
+
+The next active target is Ticket B: reconcile the parent FEMIC P108 roadmap/issue state with the TSA23 instance roadmap completion state. The intended worker scope is to inspect the parent P108 surfaces, inspect `external/femic-tsa23-instance/ROADMAP.md`, propose or apply only the smallest roadmap/status correction, and stop before any parent PR merge or issue closure.

@@ -1,0 +1,93 @@
+# Phase 71: Copilot SDK Remote-Control Bridge
+
+Phase 71 parks Agent Workbench P70 and builds the missing control layer for SDK-owned Copilot sessions. FEMIC P108 remains the dogfood target, but P70 does not resume until the bridge can prove same-session create, resume, monitor, and nudge behavior from durable evidence.
+
+## Governing Issues
+
+- Parent phase issue: #466
+- P71.1 SDK remote-control contract: #467
+- P71.2 SDK session runtime commands: #468
+- P71.3 Monitoring, stall detection, and nudge commands: #469
+- P71.4 FEMIC P108 dogfood runs: #470
+- P71.5 Evidence synthesis and P70 resume decision: #471
+
+## Current Problem
+
+The P70 attempt exposed a control gap. Existing Agent Workbench tooling can generate bounded tickets, archive VS Code Copilot Chat logs, validate heartbeats, suggest nudges, and review result files. It cannot reliably inject a nudge into a specific already-running VS Code Chat session, and transcript archives are evidence artifacts rather than a remote-control API.
+
+The SDK path must therefore own the session lifecycle. A P71 run counts only when the session was created or resumed through the bridge, the bridge captured its own event stream or polling evidence, and any nudge was sent through the same SDK-owned session identity.
+
+## Session Ownership Contract
+
+An SDK-owned session is a session whose stable identifier is recorded in a P71 manifest and whose lifecycle is controlled by the bridge. The bridge may create a new session, resume an existing SDK-owned session, send prompts or directives, capture events, and produce status summaries. A VS Code Chat session discovered from workspace storage is archive evidence only unless it was also created and controlled through the SDK bridge.
+
+Every live run must record:
+
+- a public-safe run id;
+- the workspace root as a repo-relative or operator-supplied path;
+- the target task and governing issue;
+- the SDK session id or resumable session key;
+- the prompt, nudge, result, blocker, heartbeat, event-log, and status-summary paths;
+- the expected stop condition;
+- the supervisor budget or retry limit;
+- whether raw events may be kept locally;
+- the latest observed state and timestamp.
+
+## Status Vocabulary
+
+- `created`: the bridge created a new SDK-owned session and recorded the session id.
+- `resumed`: the bridge reattached to a previously recorded SDK-owned session.
+- `prompt_sent`: the initial task directive was sent to the session.
+- `monitoring`: the bridge is actively polling or streaming events.
+- `active`: recent events show useful work or a requested tool/action sequence.
+- `quiet_stall`: no new event or heartbeat arrived within the configured threshold.
+- `nonprogress_stall`: events continue, but the summarized state repeats without advancing the checklist or producing new evidence.
+- `nudge_sent`: a same-session directive was sent after a stall or supervisor decision.
+- `blocked`: the session reported or demonstrated a concrete blocker that needs supervisor action.
+- `completion_candidate`: the session claims completion or writes a result file.
+- `accepted_candidate`: supervisor verification found the expected artifact or change.
+- `rejected_candidate`: supervisor verification found missing, wrong, or unverifiable work.
+
+## P70 And FEMIC P108 Gates
+
+P70 remains parked until P71 produces one of these outcomes:
+
+- bridge-proven path: create or resume an SDK-owned session, monitor it, send at least one same-session directive when needed, and verify the resulting FEMIC P108 artifact or blocker;
+- documented blocker: record the exact SDK limitation, exception, or missing API that prevents same-session control, with local evidence paths and a decision about whether to return to VS Code Chat archive-only workflows.
+
+FEMIC P108 dogfood work must not be treated as complete by P71 alone. The bridge can produce candidate repairs or blockers, but coordinator-owned FEMIC verification, commit decisions, PR #303 status, and issue #302 closeout stay outside P71.
+
+## Evidence Rules
+
+- Raw SDK events, chat text, and transcripts stay in ignored local runtime paths.
+- Tracked notes may contain sanitized status summaries, command names, path shapes, issue numbers, and verification outcomes.
+- A worker prose response is not accepted until the supervisor checks the FEMIC worktree, relevant files, GitHub issue/PR state, or command output.
+- Any live retry must cite the previous run id and the precise defect or missing evidence it is trying to repair.
+
+## Implementation Sequence
+
+1. Land this contract and `templates/copilot_sdk_session_manifest.json`.
+2. Add manifest validation and fake-SDK unit tests.
+3. Add create, resume, send, monitor, and nudge command surfaces.
+4. Run one bounded FEMIC P108 dogfood session through the SDK bridge.
+5. Summarize whether P70 can resume, needs a narrower bridge repair, or should fall back to archive-only Copilot Chat supervision.
+
+## P71.4 Dogfood Evidence
+
+The first live P71.4 dogfood run used FEMIC P108 as the target task lane and an ignored SDK manifest under `runtime/p71_femic_p108_sdk/`. The bridge created SDK session `cc98e2df-20da-4dca-8b95-c7a1f7348fd1`, captured event logs, wrote status summaries, and later sent a same-session nudge through `agent-workbench copilot-sdk nudge`.
+
+The worker produced an `accepted-candidate` result for a narrow FEMIC `CHANGE_LOG.md` ordering repair. Supervisor verification found that only `CHANGE_LOG.md` changed, `git diff --check -- CHANGE_LOG.md` passed, and the change moved the detailed P108 entry beside the existing July 5 P108 entry. The verified FEMIC repair was committed and pushed to PR #303 as `181cb16` (`P108 repair changelog entry ordering`).
+
+The run exposed two bridge lessons. First, `empty` SDK mode cannot be used without an explicit tool allowlist; live dogfood used `agent` mode after the bridge recorded the exact failure. Second, SDK sessions should carry a manifest-controlled working directory so future runs do not depend on prompt-level path instructions alone. P71.4 therefore tightened the live adapter to support `working_directory` and the SDK built-in isolated tool allowlist.
+
+## P71.5 Resume Decision
+
+P70 can resume after P71 merges. The recommended P70 lane is now SDK-owned first: create a runtime manifest per FEMIC P108 child task, launch with `agent-workbench copilot-sdk start`, monitor with `agent-workbench copilot-sdk monitor`, send same-session directives with `agent-workbench copilot-sdk nudge`, and verify any candidate work from the FEMIC worktree before committing or accepting it.
+
+VS Code Chat archives remain useful evidence, but they should not be treated as the primary remote-control mechanism for P70. The P70 parked branch can be resumed by applying or recreating the parked P70 setup on top of the merged P71 bridge and replacing `code chat` nudges with SDK-owned session manifests.
+
+Known residual limitations:
+
+- The bridge is validated against the installed local SDK and provider configuration, not every Copilot SDK release.
+- `empty` mode requires explicit tool allowlists; tasks needing filesystem tools should use a mode/tool profile that exposes the required tools and should pin `working_directory`.
+- The monitor classifier is deterministic and conservative; supervisor verification remains required before accepting worker claims.
