@@ -3133,14 +3133,22 @@ Planned tasks:
         child issues #297-#301 are closed, parent issue #302 remains open, and
         P70.3 should score Ticket D's SDK `model.call_failure` separately from
         result validity).
-- [ ] P70.3 Controller evaluation (#464)
+- [x] P70.3 Controller evaluation (#464)
   - [x] Add full and compact human-readable SDK transcript renderers so
         coordinator-supervisor and supervisor-worker conversation evidence can
         be audited before behavior scoring.
-  - [ ] Measure stall count, nudge count, tool-call count, result validity, and
+  - [x] Measure stall count, nudge count, tool-call count, result validity, and
         coordinator repair burden per ticket.
-  - [ ] Compare task-level behavior to the whole-phase P108 run.
-  - [ ] Record whether child-task tickets reduce drift and stale-report defects.
+  - [x] Compare task-level behavior to the whole-phase P108 run.
+  - [x] Record whether child-task tickets reduce drift and stale-report defects.
+
+P70.3 evaluation result: the task-level SDK controller is a net improvement
+over the whole-phase P108 run for bounded cleanup/review work. Ticket-level
+runs reduced manual stall nudges and made stale-report defects independently
+reviewable, but Ticket D proved controller scoring must separate result
+validity from session health because a correct result can coexist with an SDK
+`model.call_failure`. The full evaluation is recorded under ignored runtime
+storage at `runtime/p70_controller_evaluation/controller_evaluation.md`.
 - [ ] P70.4 Scale decision (#465)
   - [ ] Decide whether to use task-level Copilot supervision for the next real
         FEMIC or CLEWS development phase.

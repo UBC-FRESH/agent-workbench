@@ -1989,3 +1989,16 @@ issues, pull requests, and closeout comments.
 - Marked P70.2 complete and recorded that P70.3 controller evaluation should
   score Ticket D's SDK `model.call_failure` separately from the independently
   verified result content.
+
+## 2026-07-09 - Completed P70.3 controller evaluation
+
+- Wrote the P70.3 controller evaluation under ignored runtime storage at
+  `runtime/p70_controller_evaluation/controller_evaluation.md`.
+- Compared Ticket B/C/D SDK metrics against the archived whole-phase P108 run,
+  including event counts, tool starts, permission requests, subagent events,
+  custom-agent evidence events, custom-tool mentions, nudges, and observed SDK
+  errors.
+- Recorded the controller decision: task-level SDK delegation is a net
+  improvement for bounded cleanup/review tickets, but controller scoring must
+  separate result validity from session health because Ticket D produced a
+  correct result while the SDK emitted a `model.call_failure`.
