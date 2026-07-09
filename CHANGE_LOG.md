@@ -2149,3 +2149,15 @@ issues, pull requests, and closeout comments.
 - Opened stacked PR #482 from `feature/p74-foundrytk-profile-optimization` to
   `feature/p73-standard-agent-profile-catalog`.
 - Updated `ROADMAP.md` so the P74 tracker row references PR #482.
+
+## 2026-07-09 - Activated P75 live overlay-selected SDK run battery
+
+- Created branch `feature/p75-live-overlay-sdk-run-battery`.
+- Opened parent issue #485 and child issues #489, #486, #487, and #488 for
+  P75.1 through P75.4.
+- Added `planning/phase75_live_overlay_sdk_run_battery.md` to define the
+  matched live-run comparison shape, evidence contract, scoring boundary,
+  budget/stop-rule placeholder, and FoundryTK follow-on decision boundary.
+- Updated `ROADMAP.md` with the P75 tracker row and active phase section so
+  comparable live SDK evidence collection can start before any deeper
+  FoundryTK integration work.
