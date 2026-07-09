@@ -50,3 +50,16 @@ Each row should include:
 - warnings and errors from public-safe profile validation.
 
 Rows must exclude raw transcript text, full prompts, private paths, credentials, and machine-specific values. JSONL is the interchange format; Markdown is only a coordinator preview.
+
+## P74.3 Integration Decision
+
+FoundryTK should remain outside the runtime bridge for now. The immediate role is external evaluation guidance using the local profile optimization plan and public-safe evaluation dataset rows.
+
+Deeper integration is deferred:
+
+- optional tool provider: wait until local dataset rows and profile-run summaries are stable across multiple live runs;
+- model-selection evidence source: wait for matched profile/model/overlay comparisons;
+- trace/evaluation runner: wait until privacy boundaries and row schema are validated against real traces;
+- prompt optimization, agent optimizer, or fine-tuning: wait until controller/session health is stable enough that optimization is measuring worker behavior rather than bridge/provider failure.
+
+Before any optimization work, require at least three comparable live SDK runs using named P73 overlays, controller-health versus result-validity scoring, public-safe evaluation rows, compact transcript review, and an explicit treatment comparison plan.

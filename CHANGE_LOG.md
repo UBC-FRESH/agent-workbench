@@ -2121,3 +2121,17 @@ issues, pull requests, and closeout comments.
   `runtime/p74_foundrytk_profile_optimization/`, using the P73 overlay replay
   and P70 Ticket D controller-health evidence.
 - The dataset excludes raw transcript text and private paths.
+
+## 2026-07-09 - Completed P74 FoundryTK integration decision
+
+- Recorded the P74.3 integration decision under ignored runtime evidence at
+  `runtime/p74_foundrytk_profile_optimization/p74_3_integration_decision.md`.
+- Decided to keep FoundryTK outside the Agent Workbench runtime bridge for now
+  and use it as external evaluation guidance only.
+- Deferred optional tool-provider, model-selection, trace/evaluation runner,
+  prompt-optimization, agent-optimizer, and model-customization work until
+  comparable live overlay-selected SDK runs, controller-health scoring,
+  public-safe evaluation rows, compact transcript review, and an explicit
+  treatment comparison plan exist.
+- Marked P74 complete repo-side; GitHub issue/PR hygiene remains pending while
+  `gh` is unavailable in the current restricted shell.

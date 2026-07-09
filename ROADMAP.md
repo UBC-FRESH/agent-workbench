@@ -82,7 +82,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
 | P73 Standard Agent Workbench profile catalog | #480 / PR #483 | `feature/p73-standard-agent-profile-catalog` | Complete |
-| P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Active |
+| P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3408,8 +3408,8 @@ Parent issue: TBD
 
 Branch: `feature/p74-foundrytk-profile-optimization`
 
-Status: active
-Status note: active repo-side; GitHub issue creation is pending because `gh`
+Status: complete
+Status note: complete repo-side; GitHub issue creation is pending because `gh`
 is unavailable in the current restricted shell.
 
 Goal: evaluate whether FoundryTK and related evaluation tooling can improve
@@ -3459,8 +3459,18 @@ runtime evidence at
 with preview
 `runtime/p74_foundrytk_profile_optimization/profile_evaluation_dataset.md`.
 The dataset excludes raw transcript text and private paths.
-- [ ] P74.3 FoundryTK integration decision
-  - [ ] Decide whether FoundryTK should remain external guidance, become an
+- [x] P74.3 FoundryTK integration decision
+  - [x] Decide whether FoundryTK should remain external guidance, become an
         optional tool provider, or provide trace/evaluation runner integration.
-  - [ ] Record prerequisites before any prompt optimization, agent optimizer,
+  - [x] Record prerequisites before any prompt optimization, agent optimizer,
         or model fine-tuning work.
+
+P74.3 result: recorded the integration decision under ignored runtime evidence
+at
+`runtime/p74_foundrytk_profile_optimization/p74_3_integration_decision.md`.
+Decision: keep FoundryTK outside the Agent Workbench runtime bridge for now and
+use it as external evaluation guidance only. Optional tool-provider,
+model-selection, trace/evaluation runner, prompt-optimization, agent-optimizer,
+or fine-tuning work requires comparable live overlay-selected SDK runs,
+controller-health versus result-validity scoring, public-safe evaluation rows,
+compact transcript review, and an explicit treatment comparison plan.
