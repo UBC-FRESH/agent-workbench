@@ -78,7 +78,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Complete |
 | P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Complete |
 | P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Complete |
-| P70 FEMIC P108 repair dogfood | #461 | `feature/p70-femic-p108-repair-dogfood` | Complete |
+| P70 FEMIC P108 repair dogfood | #461 / PR #484 | `feature/p70-femic-p108-repair-dogfood` | Complete |
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
 | P73 Standard Agent Workbench profile catalog | TBD | `feature/p73-standard-agent-profile-catalog` | Planned |

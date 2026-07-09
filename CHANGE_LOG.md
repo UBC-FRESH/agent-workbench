@@ -2018,3 +2018,9 @@ issues, pull requests, and closeout comments.
   and tool-aware evidence schema before FoundryTK optimization exploration.
 - Preserved the FEMIC authority boundary: P70 does not merge PR #303 and does
   not close parent issue #302.
+
+## 2026-07-09 - Opened P70 pull request
+
+- Opened PR #484 from `feature/p70-femic-p108-repair-dogfood` to `main` to
+  land the completed P70/P72 branch train.
+- Updated `ROADMAP.md` so the P70 tracker row references PR #484.
