@@ -2075,3 +2075,15 @@ issues, pull requests, and closeout comments.
   `runtime/p73_profile_run_evidence/`; Ticket D correctly classifies controller
   health as `error`, preserving the P70 split between result validity and
   controller/session health.
+
+## 2026-07-09 - Completed P73 standard profile catalog
+
+- Replayed a bounded profile/overlay SDK artifact using selected profile
+  `agent-workbench-local-supervisor`, task overlay `release-readiness-review`,
+  and the conservative Agent Workbench SDK tools.
+- Verified the profile-run summary reports selected profile, selected overlay,
+  custom tools, conversation-shape evidence, `controller_health=healthy`, and
+  `result_status=accepted-candidate`.
+- Recorded the P73 scale recommendation under ignored runtime evidence at
+  `runtime/p73_overlay_replay/p73_4_scale_recommendation.md`.
+- Marked P73 complete and kept FoundryTK runtime integration deferred to P74.

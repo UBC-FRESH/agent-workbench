@@ -81,7 +81,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P70 FEMIC P108 repair dogfood | #461 / PR #484 | `feature/p70-femic-p108-repair-dogfood` | Complete |
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
-| P73 Standard Agent Workbench profile catalog | #480 | `feature/p73-standard-agent-profile-catalog` | Active |
+| P73 Standard Agent Workbench profile catalog | #480 | `feature/p73-standard-agent-profile-catalog` | Complete |
 | P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -3321,7 +3321,7 @@ Parent issue: #480
 
 Branch: `feature/p73-standard-agent-profile-catalog`
 
-Status: active
+Status: complete
 
 Goal: turn the P72 bridge into a curated profile catalog with standard
 model-role wrappers and task overlays that can be selected reliably by
@@ -3382,12 +3382,25 @@ as ignored baseline evidence; Ticket D correctly classifies controller health
 as `error`, preserving the P70 result-validity versus controller-health split.
 Older P70 result artifacts without an exact `Final status:` line leave
 `result_status` blank instead of inventing a status.
-- [ ] P73.4 Dogfood and scale recommendation
-  - [ ] Run or replay one bounded task with a selected standard profile and
+- [x] P73.4 Dogfood and scale recommendation
+  - [x] Run or replay one bounded task with a selected standard profile and
         task overlay.
-  - [ ] Record whether the catalog improves profile selection reliability and
+  - [x] Record whether the catalog improves profile selection reliability and
         coordinator review burden.
-  - [ ] Keep FoundryTK runtime integration deferred to P74.
+  - [x] Keep FoundryTK runtime integration deferred to P74.
+
+P73.4 result: replayed a bounded SDK run artifact with selected profile
+`agent-workbench-local-supervisor`, task overlay `release-readiness-review`,
+and the conservative Agent Workbench custom tools. The profile-run summary
+reported `controller_health=healthy`, `result_status=accepted-candidate`, one
+custom-agent event, and one subagent event. The scale recommendation is stored
+under ignored runtime evidence at
+`runtime/p73_overlay_replay/p73_4_scale_recommendation.md`. Recommendation:
+use the standard profile catalog for future bounded SDK delegation runs because
+profile source paths, selected profile, task overlay, custom tools, and
+profile/tool coverage are validated before the run and summarized afterward.
+Coordinator authority remains required for result acceptance, issue closure,
+PR merge, and release actions. FoundryTK remains deferred to P74.
 
 ## Phase 74: FoundryTK Profile Optimization Exploration
 
