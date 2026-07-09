@@ -1934,6 +1934,7 @@ issues, pull requests, and closeout comments.
 
 ## 2026-07-09 - Activated P72 Copilot SDK custom agent profiles
 
+- Opened stacked PR #479 from P72 onto the active P70 branch.
 - Added P72/P73/P74 planning notes and roadmap entries for SDK custom-agent
   profiles, the standard Agent Workbench profile catalog, and later FoundryTK
   profile optimization exploration.
