@@ -82,7 +82,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
 | P73 Standard Agent Workbench profile catalog | #480 / PR #483 | `feature/p73-standard-agent-profile-catalog` | Complete |
-| P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Planned |
+| P74 FoundryTK profile optimization | #481 / PR #482 | `feature/p74-foundrytk-profile-optimization` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3404,11 +3404,13 @@ PR merge, and release actions. FoundryTK remains deferred to P74.
 
 ## Phase 74: FoundryTK Profile Optimization Exploration
 
-Parent issue: TBD
+Parent issue: #481
 
 Branch: `feature/p74-foundrytk-profile-optimization`
 
-Status: planned
+Status: complete
+Status note: complete repo-side; GitHub parent issue #481 was created after
+`gh` access returned.
 
 Goal: evaluate whether FoundryTK and related evaluation tooling can improve
 Agent Workbench model/profile selection, prompt optimization, trace review, and
@@ -3421,3 +3423,54 @@ Planned scope:
   provider, model-selection evidence source, and trace/evaluation runner.
 - Define reliability, work quality, efficiency, and conversation-shape metrics
   before any model customization work.
+
+Planned tasks:
+
+- [x] P74.1 Local evaluation scaffold
+  - [x] Add a FoundryTK-style profile optimization plan renderer that consumes
+        P73 profile-run evidence without adding a FoundryTK runtime dependency.
+  - [x] Define reliability, work quality, efficiency, and conversation-shape
+        dimensions in the rendered plan.
+  - [x] Render an ignored P74 plan from P73 overlay replay evidence and P70
+        Ticket D controller-health evidence.
+
+P74.1 result: added `agent-workbench foundrytk profile-optimization-plan`,
+which summarizes one or more SDK manifests through the P73 profile-run evidence
+schema and renders a public-safe FoundryTK-facing optimization plan. The first
+plan artifact is stored at
+`runtime/p74_foundrytk_profile_optimization/profile_optimization_plan.md`; it
+correctly recommends stabilizing controller/session health before prompt or
+model optimization because the comparison includes P70 Ticket D's
+`controller_health=error` evidence.
+- [x] P74.2 Evaluation dataset contract
+  - [x] Define the public-safe row schema for profile/overlay/model comparison
+        runs.
+  - [x] Map local evidence fields to potential Foundry evaluation inputs
+        without requiring Azure resources.
+  - [x] Keep raw transcript text and private paths out of evaluation datasets.
+
+P74.2 result: added `agent-workbench foundrytk profile-evaluation-dataset`,
+which writes public-safe JSONL rows and a Markdown preview from SDK manifests.
+Rows include selected profile, task overlays, custom tools, controller health,
+result status, and nested reliability, work-quality, efficiency, and
+conversation-shape metrics. The first two-row dataset is stored under ignored
+runtime evidence at
+`runtime/p74_foundrytk_profile_optimization/profile_evaluation_dataset.jsonl`
+with preview
+`runtime/p74_foundrytk_profile_optimization/profile_evaluation_dataset.md`.
+The dataset excludes raw transcript text and private paths.
+- [x] P74.3 FoundryTK integration decision
+  - [x] Decide whether FoundryTK should remain external guidance, become an
+        optional tool provider, or provide trace/evaluation runner integration.
+  - [x] Record prerequisites before any prompt optimization, agent optimizer,
+        or model fine-tuning work.
+
+P74.3 result: recorded the integration decision under ignored runtime evidence
+at
+`runtime/p74_foundrytk_profile_optimization/p74_3_integration_decision.md`.
+Decision: keep FoundryTK outside the Agent Workbench runtime bridge for now and
+use it as external evaluation guidance only. Optional tool-provider,
+model-selection, trace/evaluation runner, prompt-optimization, agent-optimizer,
+or fine-tuning work requires comparable live overlay-selected SDK runs,
+controller-health versus result-validity scoring, public-safe evaluation rows,
+compact transcript review, and an explicit treatment comparison plan.

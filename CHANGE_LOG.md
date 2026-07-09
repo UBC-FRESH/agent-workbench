@@ -2093,3 +2093,59 @@ issues, pull requests, and closeout comments.
 - Opened stacked PR #483 from `feature/p73-standard-agent-profile-catalog` to
   `feature/p70-femic-p108-repair-dogfood`.
 - Updated `ROADMAP.md` so the P73 tracker row references PR #483.
+
+## 2026-07-09 - Activated P74 FoundryTK profile optimization
+
+- Created branch `feature/p74-foundrytk-profile-optimization` from the completed
+  P73 profile catalog branch.
+- Added `agent-workbench foundrytk profile-optimization-plan`, a local
+  FoundryTK-style planning command that consumes P73 profile-run evidence and
+  renders public-safe optimization guidance without adding a FoundryTK runtime
+  dependency or changing the Copilot SDK bridge.
+- Defined reliability, work quality, efficiency, and conversation-shape
+  dimensions in the rendered plan.
+- Rendered ignored P74 evidence at
+  `runtime/p74_foundrytk_profile_optimization/profile_optimization_plan.md`;
+  the plan correctly recommends stabilizing controller/session health before
+  prompt or model optimization because P70 Ticket D contributes
+  `controller_health=error` evidence.
+
+## 2026-07-09 - Added P74 profile evaluation dataset contract
+
+- Added `agent-workbench foundrytk profile-evaluation-dataset`, which writes
+  public-safe JSONL rows and a Markdown preview from SDK manifests without
+  requiring Azure resources or FoundryTK runtime integration.
+- The row schema maps local profile-run evidence into reliability,
+  work-quality, efficiency, and conversation-shape dimensions.
+- Rendered an ignored two-row dataset and preview under
+  `runtime/p74_foundrytk_profile_optimization/`, using the P73 overlay replay
+  and P70 Ticket D controller-health evidence.
+- The dataset excludes raw transcript text and private paths.
+
+## 2026-07-09 - Completed P74 FoundryTK integration decision
+
+- Recorded the P74.3 integration decision under ignored runtime evidence at
+  `runtime/p74_foundrytk_profile_optimization/p74_3_integration_decision.md`.
+- Decided to keep FoundryTK outside the Agent Workbench runtime bridge for now
+  and use it as external evaluation guidance only.
+- Deferred optional tool-provider, model-selection, trace/evaluation runner,
+  prompt-optimization, agent-optimizer, and model-customization work until
+  comparable live overlay-selected SDK runs, controller-health scoring,
+  public-safe evaluation rows, compact transcript review, and an explicit
+  treatment comparison plan exist.
+- Marked P74 complete repo-side; GitHub issue/PR hygiene was still pending at
+  that point because `gh` was unavailable in the restricted shell.
+
+## 2026-07-09 - Reconciled P74 GitHub issue tracking
+
+- Created GitHub parent issue #481 for P74 after `gh` access returned.
+- Updated `ROADMAP.md` so the P74 tracker row and phase section reference
+  issue #481 instead of `TBD`.
+- Left P74 implementation status unchanged: repo-side work is complete and
+  FoundryTK remains external evaluation guidance only.
+
+## 2026-07-09 - Opened P74 pull request
+
+- Opened stacked PR #482 from `feature/p74-foundrytk-profile-optimization` to
+  `feature/p73-standard-agent-profile-catalog`.
+- Updated `ROADMAP.md` so the P74 tracker row references PR #482.
