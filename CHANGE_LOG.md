@@ -1961,3 +1961,19 @@ issues, pull requests, and closeout comments.
   future SDK runs expose selected custom-agent profile configuration in monitor
   and transcript artifacts even when the SDK does not emit that event itself.
 - Merged PR #479 into the active P70 branch and marked P72 complete.
+
+## 2026-07-09 - Ran P70 Ticket D PR consistency dogfood
+
+- Merged the completed P72 custom-agent bridge into the active P70 branch and
+  closed the P72 parent issue.
+- Ran P70 Ticket D with selected profile `agent-workbench-local-supervisor` in
+  SDK session `b44c04bb-2414-4175-9208-e773747f48f7`.
+- The worker produced a PR #303 and P108 issue consistency result. Coordinator
+  verification confirmed that PR #303 is open, non-draft, mergeable, targets
+  `main`, has expected head branch `feature/p108-tsa23-instance-bootstrap-delegation`,
+  and has passing `build` and `package-release-checks` with `deploy` skipped.
+- Verified that P108 child issues #297-#301 are closed, parent issue #302 is
+  open, and FEMIC `ROADMAP.md` agrees with those issue states.
+- Recorded Ticket D as useful verified evidence but not a clean controller run:
+  the SDK emitted a `model.call_failure` XML syntax error, so the bridge marked
+  the session blocked despite a substantively correct result file.

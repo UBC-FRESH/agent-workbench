@@ -3115,8 +3115,18 @@ Planned tasks:
         state (completed with SDK session
         `cdba1e8b-5173-4676-bacc-081e18d9eec8`, instance commit `282da67`,
         and parent FEMIC commit `b60dbd5` on PR #303).
-  - [ ] Ticket C: repair stale P108 supervisor result-report claims.
-  - [ ] Ticket D: verify PR #303 and child issue checklist consistency.
+  - [x] Ticket C: repair stale P108 supervisor result-report claims
+        (completed with selected profile `agent-workbench-local-supervisor`,
+        SDK session `6ebd387b-b23a-4ff1-8e22-5abc46a2cba0`, and
+        coordinator-verified repair of the ignored FEMIC P108 supervisor result
+        report).
+  - [x] Ticket D: verify PR #303 and child issue checklist consistency
+        (completed with selected profile `agent-workbench-local-supervisor`,
+        SDK session `b44c04bb-2414-4175-9208-e773747f48f7`, and coordinator
+        verification that PR #303 is open/non-draft/mergeable, child issues
+        #297-#301 are closed, and parent issue #302 remains open; counted as
+        `needs-supervisor-review` for controller scoring because the SDK emitted
+        a `model.call_failure` XML syntax error).
   - [ ] Ticket E: produce final coordinator review packet.
 - [ ] P70.3 Controller evaluation (#464)
   - [x] Add full and compact human-readable SDK transcript renderers so
