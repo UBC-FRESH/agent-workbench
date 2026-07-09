@@ -2087,3 +2087,9 @@ issues, pull requests, and closeout comments.
 - Recorded the P73 scale recommendation under ignored runtime evidence at
   `runtime/p73_overlay_replay/p73_4_scale_recommendation.md`.
 - Marked P73 complete and kept FoundryTK runtime integration deferred to P74.
+
+## 2026-07-09 - Opened P73 pull request
+
+- Opened stacked PR #483 from `feature/p73-standard-agent-profile-catalog` to
+  `feature/p70-femic-p108-repair-dogfood`.
+- Updated `ROADMAP.md` so the P73 tracker row references PR #483.
