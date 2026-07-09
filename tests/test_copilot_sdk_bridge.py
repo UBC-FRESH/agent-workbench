@@ -485,6 +485,7 @@ def test_agent_profiles_event_records_manifest_resolved_profiles(
         "source_paths": [str(profile_path)],
         "selected": "worker",
         "custom_tools": ["agent_workbench_run_context"],
+        "task_overlay": {"name": "release-readiness-review"},
     }
 
     event = agent_profiles_event(manifest)
@@ -495,6 +496,8 @@ def test_agent_profiles_event_records_manifest_resolved_profiles(
     assert event["data"]["selected_agent"] == "worker"
     assert event["data"]["custom_agents"][0]["name"] == "worker"
     assert event["data"]["custom_tools"] == ["agent_workbench_run_context"]
+    assert event["data"]["task_overlay_names"] == ["release-readiness-review"]
+    assert len(event["data"]["task_overlay_paths"]) == 1
 
 
 class FakeRawSdkSession:

@@ -9,6 +9,7 @@ from agent_workbench.cli import (
     run_copilot_sdk_profile_validate,
 )
 from agent_workbench.copilot_agent_profiles import (
+    STANDARD_TASK_OVERLAYS,
     TASK_OVERLAY_HEADING,
     render_agent_profiles_markdown,
     resolve_agent_profiles,
@@ -171,6 +172,50 @@ def test_render_agent_profiles_markdown_is_public_safe_preview(tmp_path: Path) -
     assert "Repair only the listed defects." not in preview
 
 
+def test_named_standard_task_overlay_appends_to_selected_profile_only(
+    tmp_path: Path,
+) -> None:
+    first = tmp_path / "first.agent.md"
+    second = tmp_path / "second.agent.md"
+    write_profile(first, name="first", body="First prompt.")
+    write_profile(second, name="second", body="Second prompt.")
+    manifest = manifest_with_profile(tmp_path, first)
+    manifest["sdk"]["agent_profiles"]["source_paths"] = [str(first), str(second)]
+    manifest["sdk"]["agent_profiles"]["selected"] = "second"
+    manifest["sdk"]["agent_profiles"]["task_overlay"] = {
+        "name": "documentation-expansion"
+    }
+
+    resolved = resolve_agent_profiles(
+        manifest, manifest_path=tmp_path / "manifest.json"
+    )
+
+    assert resolved.ok, resolved.errors
+    assert resolved.task_overlay_names == ("documentation-expansion",)
+    assert len(resolved.task_overlay_paths) == 1
+    first_agent, second_agent = resolved.custom_agents
+    assert TASK_OVERLAY_HEADING not in first_agent["prompt"]
+    assert TASK_OVERLAY_HEADING in second_agent["prompt"]
+    assert "Documentation Expansion Overlay" in second_agent["prompt"]
+    assert "Documentation Expansion Overlay" not in second.read_text(encoding="utf-8")
+
+
+def test_unknown_standard_task_overlay_reports_available_names(tmp_path: Path) -> None:
+    profile_path = tmp_path / "worker.agent.md"
+    write_profile(profile_path)
+    manifest = manifest_with_profile(tmp_path, profile_path)
+    manifest["sdk"]["agent_profiles"]["task_overlay"] = {"name": "missing-overlay"}
+
+    resolved = resolve_agent_profiles(
+        manifest, manifest_path=tmp_path / "manifest.json"
+    )
+
+    assert not resolved.ok
+    assert any("missing-overlay" in error for error in resolved.errors)
+    assert any("repair-list-execution" in error for error in resolved.errors)
+    assert "release-readiness-review" in STANDARD_TASK_OVERLAYS
+
+
 def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
     result = tmp_path / "result.md"
     result.write_text(
@@ -246,4 +291,5 @@ def test_profile_cli_validate_and_render(tmp_path: Path, capsys: object) -> None
     assert validate_code == 0
     assert render_code == 0
     assert "profiles=1 selected=worker" in captured.out
+    assert "task_overlays=" in captured.out
     assert output.exists()

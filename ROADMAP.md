@@ -81,7 +81,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P70 FEMIC P108 repair dogfood | #461 / PR #484 | `feature/p70-femic-p108-repair-dogfood` | Complete |
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
-| P73 Standard Agent Workbench profile catalog | TBD | `feature/p73-standard-agent-profile-catalog` | Planned |
+| P73 Standard Agent Workbench profile catalog | #480 | `feature/p73-standard-agent-profile-catalog` | Active |
 | P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -3317,11 +3317,11 @@ Closeout boundary:
 
 ## Phase 73: Standard Agent Workbench Profile Catalog
 
-Parent issue: TBD
+Parent issue: #480
 
 Branch: `feature/p73-standard-agent-profile-catalog`
 
-Status: planned
+Status: active
 
 Goal: turn the P72 bridge into a curated profile catalog with standard
 model-role wrappers and task overlays that can be selected reliably by
@@ -3336,6 +3336,39 @@ Planned scope:
   implementation, debugging, systematic refactors, documentation expansion,
   notebook/example authoring, and release-readiness review.
 - Treat tools as a first-class profile dimension with explicit validation.
+
+Planned tasks:
+
+- [x] P73.1 Catalog activation and overlay registry
+  - [x] Open parent issue #480 and activate the P73 branch.
+  - [x] Add checked-in standard task overlays that can be referenced by manifest.
+  - [x] Resolve named and path-based overlays without modifying source profiles.
+  - [x] Validate standard profile and overlay references from the CLI.
+
+P73.1 result: added the standard overlay registry under
+`.github/agents/overlays/`, including repair-list execution, new Python module
+implementation, existing-code debugging, systematic refactor/sweep,
+documentation expansion, notebook/example authoring, and release-readiness
+review. SDK manifests can now resolve `sdk.agent_profiles.task_overlay.name`,
+`names`, `path`, `paths`, and `text` into the selected profile prompt without
+editing the source `.agent.md` files. `profile-validate`, `profile-render`, and
+the synthetic `session.custom_agents_updated` event now expose selected overlay
+metadata for coordinator review.
+- [ ] P73.2 Profile/tool catalog validation
+  - [ ] Report standard profile coverage and explicit tool declarations.
+  - [ ] Validate profile-declared tools against built-in tools and registered
+        Agent Workbench custom tools.
+  - [ ] Add public-safe catalog preview output for coordinator review.
+- [ ] P73.3 Profile-run evidence summary
+  - [ ] Summarize selected profile, overlay, custom tools, transcript shape,
+        result status, and controller health from SDK manifests/events.
+  - [ ] Reuse P70/P72 evidence as the first comparison baseline.
+- [ ] P73.4 Dogfood and scale recommendation
+  - [ ] Run or replay one bounded task with a selected standard profile and
+        task overlay.
+  - [ ] Record whether the catalog improves profile selection reliability and
+        coordinator review burden.
+  - [ ] Keep FoundryTK runtime integration deferred to P74.
 
 ## Phase 74: FoundryTK Profile Optimization Exploration
 

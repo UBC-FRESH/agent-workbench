@@ -2024,3 +2024,27 @@ issues, pull requests, and closeout comments.
 - Opened PR #484 from `feature/p70-femic-p108-repair-dogfood` to `main` to
   land the completed P70/P72 branch train.
 - Updated `ROADMAP.md` so the P70 tracker row references PR #484.
+
+## 2026-07-09 - Activated P73 standard profile catalog
+
+- Opened parent issue #480 and created branch
+  `feature/p73-standard-agent-profile-catalog`.
+- Activated the roadmap phase for standard Agent Workbench profile catalog
+  work, including reusable task overlays, profile/tool catalog validation,
+  profile-run evidence summaries, and bounded dogfood before any P74 FoundryTK
+  optimization exploration.
+
+## 2026-07-09 - Completed P73.1 overlay registry
+
+- Added checked-in standard task overlays under `.github/agents/overlays/` for
+  repair-list execution, new Python module implementation, existing-code
+  debugging, systematic refactor/sweep, documentation expansion,
+  notebook/example authoring, and release-readiness review.
+- Extended `sdk.agent_profiles.task_overlay` resolution to support named
+  standard overlays, path-based overlays, and literal text overlays while
+  appending the resolved overlay only to the selected SDK profile prompt.
+- Added overlay metadata to `profile-validate`, `profile-render`, and the
+  synthetic `session.custom_agents_updated` evidence event.
+- Verified P73.1 with focused profile/SDK bridge tests and a local
+  `profile-validate`/`profile-render` smoke manifest using
+  `release-readiness-review`.

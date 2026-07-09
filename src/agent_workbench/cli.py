@@ -1622,10 +1622,11 @@ def run_copilot_sdk_profile_validate(args: argparse.Namespace) -> int:
         print(f"error: {error}", file=sys.stderr)
     print(
         "profiles={profiles} selected={selected} custom_tools={tools} "
-        "warnings={warnings} errors={errors}".format(
+        "task_overlays={overlays} warnings={warnings} errors={errors}".format(
             profiles=len(resolved.custom_agents),
             selected=resolved.selected_agent or "",
             tools=len(resolved.custom_tool_names),
+            overlays=",".join(resolved.task_overlay_names) or "",
             warnings=len(resolved.warnings),
             errors=len(resolved.errors),
         )

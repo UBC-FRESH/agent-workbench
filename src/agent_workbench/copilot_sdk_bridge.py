@@ -1380,6 +1380,8 @@ def agent_profiles_event(manifest: dict[str, Any]) -> dict[str, Any] | None:
             ],
             "source_paths": [str(path) for path in resolved.source_paths],
             "custom_tools": list(resolved.custom_tool_names),
+            "task_overlay_names": list(resolved.task_overlay_names),
+            "task_overlay_paths": [str(path) for path in resolved.task_overlay_paths],
             "custom_agents_local_only": resolved.custom_agents_local_only,
             "include_sub_agent_streaming_events": (
                 resolved.include_sub_agent_streaming_events
