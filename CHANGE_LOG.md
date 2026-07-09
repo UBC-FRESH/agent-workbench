@@ -1960,3 +1960,4 @@ issues, pull requests, and closeout comments.
 - Added a manifest-derived `session.custom_agents_updated` evidence event so
   future SDK runs expose selected custom-agent profile configuration in monitor
   and transcript artifacts even when the SDK does not emit that event itself.
+- Merged PR #479 into the active P70 branch and marked P72 complete.

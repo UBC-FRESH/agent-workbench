@@ -80,7 +80,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Complete |
 | P70 FEMIC P108 repair dogfood | #461 | `feature/p70-femic-p108-repair-dogfood` | Active |
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
-| P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Active |
+| P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
 | P73 Standard Agent Workbench profile catalog | TBD | `feature/p73-standard-agent-profile-catalog` | Planned |
 | P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Planned |
 
@@ -3206,7 +3206,7 @@ Parent issue: #473
 
 Branch: `feature/p72-sdk-custom-agent-profiles`
 
-Status: active
+Status: complete
 
 Goal: upgrade the SDK-owned Copilot bridge so sessions can be launched and
 resumed with explicit custom agent profiles, selected agent names, default
@@ -3281,6 +3281,7 @@ Closeout boundary:
       the P70 Ticket B baseline.
 - [x] Update `CHANGE_LOG.md`.
 - [x] Update GitHub issues.
+- [x] Merge PR #479 into the active P70 branch.
 
 ## Phase 73: Standard Agent Workbench Profile Catalog
 
