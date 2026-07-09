@@ -2143,3 +2143,9 @@ issues, pull requests, and closeout comments.
   issue #481 instead of `TBD`.
 - Left P74 implementation status unchanged: repo-side work is complete and
   FoundryTK remains external evaluation guidance only.
+
+## 2026-07-09 - Opened P74 pull request
+
+- Opened stacked PR #482 from `feature/p74-foundrytk-profile-optimization` to
+  `feature/p73-standard-agent-profile-catalog`.
+- Updated `ROADMAP.md` so the P74 tracker row references PR #482.

@@ -82,7 +82,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
 | P73 Standard Agent Workbench profile catalog | #480 / PR #483 | `feature/p73-standard-agent-profile-catalog` | Complete |
-| P74 FoundryTK profile optimization | #481 | `feature/p74-foundrytk-profile-optimization` | Complete |
+| P74 FoundryTK profile optimization | #481 / PR #482 | `feature/p74-foundrytk-profile-optimization` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
