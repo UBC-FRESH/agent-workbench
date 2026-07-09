@@ -42,6 +42,10 @@ from .budget import (
 )
 from .comparison import render_eval_comparison
 from .copilot_archive import CopilotArchiveConfig, archive_copilot_session
+from .copilot_agent_profiles import (
+    render_agent_profiles_markdown,
+    resolve_agent_profiles,
+)
 from .copilot_task_controller import (
     generate_prompt_file,
     load_run_manifest,
@@ -364,6 +368,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="Maximum characters retained per transcript entry; 0 disables truncation.",
     )
     copilot_sdk_transcript_parser.set_defaults(func=run_copilot_sdk_transcript)
+
+    copilot_sdk_profile_validate_parser = copilot_sdk_subparsers.add_parser(
+        "profile-validate",
+        help="Validate Copilot SDK custom agent profiles declared by a manifest.",
+    )
+    copilot_sdk_profile_validate_parser.add_argument(
+        "--manifest", type=Path, required=True
+    )
+    copilot_sdk_profile_validate_parser.set_defaults(
+        func=run_copilot_sdk_profile_validate
+    )
+
+    copilot_sdk_profile_render_parser = copilot_sdk_subparsers.add_parser(
+        "profile-render",
+        help="Write a public-safe resolved custom agent profile preview.",
+    )
+    copilot_sdk_profile_render_parser.add_argument(
+        "--manifest", type=Path, required=True
+    )
+    copilot_sdk_profile_render_parser.add_argument("--output", type=Path, required=True)
+    copilot_sdk_profile_render_parser.set_defaults(func=run_copilot_sdk_profile_render)
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1582,6 +1607,44 @@ def run_copilot_sdk_transcript(args: argparse.Namespace) -> int:
         )
     )
     return 0
+
+
+def run_copilot_sdk_profile_validate(args: argparse.Namespace) -> int:
+    try:
+        manifest = load_sdk_session_manifest(args.manifest)
+        resolved = resolve_agent_profiles(manifest, manifest_path=args.manifest)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    for warning in resolved.warnings:
+        print(f"warning: {warning}", file=sys.stderr)
+    for error in resolved.errors:
+        print(f"error: {error}", file=sys.stderr)
+    print(
+        "profiles={profiles} selected={selected} custom_tools={tools} "
+        "warnings={warnings} errors={errors}".format(
+            profiles=len(resolved.custom_agents),
+            selected=resolved.selected_agent or "",
+            tools=len(resolved.custom_tool_names),
+            warnings=len(resolved.warnings),
+            errors=len(resolved.errors),
+        )
+    )
+    return 0 if resolved.ok else 1
+
+
+def run_copilot_sdk_profile_render(args: argparse.Namespace) -> int:
+    try:
+        manifest = load_sdk_session_manifest(args.manifest)
+        resolved = resolve_agent_profiles(manifest, manifest_path=args.manifest)
+        preview = render_agent_profiles_markdown(resolved)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(preview, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0 if resolved.ok else 1
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:

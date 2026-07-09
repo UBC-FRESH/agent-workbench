@@ -1931,3 +1931,22 @@ issues, pull requests, and closeout comments.
   full per-event text in expandable Markdown details.
 - Regenerated P70 Ticket B transcript evidence with a compact local artifact
   under `runtime/p70_ticket_b_tsa23_instance_roadmap/`.
+
+## 2026-07-09 - Activated P72 Copilot SDK custom agent profiles
+
+- Added P72/P73/P74 planning notes and roadmap entries for SDK custom-agent
+  profiles, the standard Agent Workbench profile catalog, and later FoundryTK
+  profile optimization exploration.
+- Extended SDK session manifests with `sdk.agent_profiles`, including profile
+  source paths, selected agent, default-agent config, local-only custom agents,
+  subagent streaming, task overlays, and custom Agent Workbench tools.
+- Added `.agent.md` profile parsing, validation, public-safe profile rendering,
+  SDK create/resume kwargs pass-through, and custom-agent/subagent transcript
+  evidence.
+- Added conservative Agent Workbench SDK tools for run context, result contract,
+  and result validation, with focused tests covering profile parsing, bridge
+  kwargs, resume behavior, transcript metadata, and tool validation.
+- Verified the implementation with focused P72 tests, full `pytest`, `ruff
+  check`, `git diff --check`, and a local `profile-validate`/`profile-render`
+  smoke against the standard supervisor profile; `mypy` remains unavailable in
+  the repo venv and the repo has no pre-commit config.

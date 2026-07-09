@@ -80,6 +80,9 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Complete |
 | P70 FEMIC P108 repair dogfood | #461 | `feature/p70-femic-p108-repair-dogfood` | Active |
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
+| P72 Copilot SDK custom agent profiles | #473 | `feature/p72-sdk-custom-agent-profiles` | Active |
+| P73 Standard Agent Workbench profile catalog | TBD | `feature/p73-standard-agent-profile-catalog` | Planned |
+| P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3196,3 +3199,115 @@ Closeout boundary:
 - [x] Run `git diff --check`.
 - [x] Dogfood at least one FEMIC P108 session or record the exact live blocker.
 - [x] Update `CHANGE_LOG.md` and GitHub issues.
+
+## Phase 72: Copilot SDK Custom Agent Profiles
+
+Parent issue: #473
+
+Branch: `feature/p72-sdk-custom-agent-profiles`
+
+Status: active
+
+Goal: upgrade the SDK-owned Copilot bridge so sessions can be launched and
+resumed with explicit custom agent profiles, selected agent names, default
+agent controls, subagent streaming, and conservative Agent Workbench custom
+tools.
+
+Scope:
+
+- Manifest-driven `sdk.agent_profiles` configuration.
+- `.agent.md` profile parsing shared with VS Code custom-agent experiments.
+- SDK create/resume kwargs for `custom_agents`, `agent`, `default_agent`,
+  `custom_agents_local_only`, `include_sub_agent_streaming_events`, and
+  custom tools.
+- Profile validation/rendering CLI commands.
+- Custom-agent and subagent event evidence in monitor and transcript views.
+
+Out of scope:
+
+- Standardizing every profile/model-role combination; that is P73.
+- Pulling FoundryTK into the runtime bridge; that is P74 exploration.
+- Claiming FEMIC P108 repair quality without P70 coordinator verification.
+
+Planned tasks:
+
+- [x] P72.1 Profile planning and manifest contract (#475)
+  - [x] Add the P72 planning note and issue mapping.
+  - [x] Extend the SDK manifest template with `sdk.agent_profiles`.
+  - [x] Define public-safe profile, overlay, and custom-tool boundaries.
+- [x] P72.2 Profile parser and resolver (#474)
+  - [x] Parse `.agent.md` frontmatter and Markdown body with PyYAML.
+  - [x] Map SDK-supported fields and preserve unsupported VS Code-only fields
+        in validation output.
+  - [x] Validate selected agents, required names, non-empty prompts, task
+        overlays, and profile tool coverage.
+- [x] P72.3 SDK bridge launch integration (#476)
+  - [x] Pass resolved custom-agent kwargs through live session creation.
+  - [x] Pass resolved custom-agent kwargs through live session resume.
+  - [x] Register conservative Agent Workbench custom SDK tools from the
+        manifest.
+- [x] P72.4 Profile CLI and transcript evidence (#478)
+  - [x] Add `agent-workbench copilot-sdk profile-validate`.
+  - [x] Add `agent-workbench copilot-sdk profile-render`.
+  - [x] Count and render `session.custom_agents_updated`, `subagent.*`, and
+        assistant messages with agent metadata.
+- [ ] P72.5 Custom tool registry and verification (#477)
+  - [x] Add read-only/validation tools for run context, result contract, and
+        result validation.
+  - [x] Cover parser, bridge kwargs, transcript, and tool behavior with focused
+        tests.
+  - [ ] Run one P70 Ticket C or later FEMIC dogfood task with
+        `agent-workbench-local-supervisor` selected.
+  - [ ] Compare behavior against P70 Ticket B baseline.
+
+Closeout boundary:
+
+- [x] Run focused P72 tests.
+- [x] Run full `pytest`.
+- [x] Run `ruff format`, `ruff check`, and `git diff --check`.
+- [x] Smoke-test `profile-validate` and `profile-render` on an ignored runtime
+      manifest.
+- [x] Update `CHANGE_LOG.md`.
+- [x] Update GitHub issues.
+
+## Phase 73: Standard Agent Workbench Profile Catalog
+
+Parent issue: TBD
+
+Branch: `feature/p73-standard-agent-profile-catalog`
+
+Status: planned
+
+Goal: turn the P72 bridge into a curated profile catalog with standard
+model-role wrappers and task overlays that can be selected reliably by
+manifest.
+
+Planned scope:
+
+- Keep `.github/agents/*.agent.md` as the canonical editable profile format.
+- Standardize supervisor, auditor, strict-worker, and strict-worker-variant
+  profiles.
+- Add role/task overlays for repair-list execution, new Python module
+  implementation, debugging, systematic refactors, documentation expansion,
+  notebook/example authoring, and release-readiness review.
+- Treat tools as a first-class profile dimension with explicit validation.
+
+## Phase 74: FoundryTK Profile Optimization Exploration
+
+Parent issue: TBD
+
+Branch: `feature/p74-foundrytk-profile-optimization`
+
+Status: planned
+
+Goal: evaluate whether FoundryTK and related evaluation tooling can improve
+Agent Workbench model/profile selection, prompt optimization, trace review, and
+delegated workflow efficiency.
+
+Planned scope:
+
+- Keep FoundryTK out of the P72/P73 runtime bridge.
+- Investigate FoundryTK as external evaluation guidance, optional tool/MCP
+  provider, model-selection evidence source, and trace/evaluation runner.
+- Define reliability, work quality, efficiency, and conversation-shape metrics
+  before any model customization work.
