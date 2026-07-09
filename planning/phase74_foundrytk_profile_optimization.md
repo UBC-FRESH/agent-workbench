@@ -1,0 +1,24 @@
+# Phase 74: FoundryTK Profile Optimization Exploration
+
+Phase 74 keeps FoundryTK outside the first custom-agent bridge implementation and treats it as an evaluation and optimization lane. The question is whether model/profile customization can improve delegated Agent Workbench workflows beyond prompt and message-structure tuning alone.
+
+## Exploration Questions
+
+- Can FoundryTK help select, evaluate, or optimize model/profile combinations for Agent Workbench roles?
+- Can it provide external evaluation guidance, optional tools, model-selection evidence, or trace/evaluation runners without becoming part of the critical P72 bridge path?
+- Can role-specific model or prompt optimization improve reliability, work quality, efficiency, and conversation shape in delegated workflows?
+
+## Design Evidence
+
+The built-in AI agent expert profile from the local VS Code extension is useful design evidence because it combines role-specific instructions with tools for model guidance, prompt improvement, tracing, and evaluation. Agent Workbench should study that pattern without copying private machine paths or assuming the extension profile is an Agent Workbench runtime dependency.
+
+## Evaluation Dimensions
+
+- reliability: follows authority boundaries, writes required artifacts, avoids drift, and stops cleanly;
+- work quality: fewer supervisor repairs, better evidence, and better code or documentation output;
+- efficiency: useful work per token, time, GPU-watt, and coordinator intervention;
+- conversation shape: compact transcripts show the right agents having the right conversation.
+
+## Boundary
+
+No FoundryTK dependency should be added to P72 or P73. Phase 74 starts only after the bridge can reliably launch profile-selected SDK sessions and collect comparable transcript/result evidence.

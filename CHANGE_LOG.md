@@ -1931,3 +1931,32 @@ issues, pull requests, and closeout comments.
   full per-event text in expandable Markdown details.
 - Regenerated P70 Ticket B transcript evidence with a compact local artifact
   under `runtime/p70_ticket_b_tsa23_instance_roadmap/`.
+
+## 2026-07-09 - Activated P72 Copilot SDK custom agent profiles
+
+- Opened stacked PR #479 from P72 onto the active P70 branch.
+- Added P72/P73/P74 planning notes and roadmap entries for SDK custom-agent
+  profiles, the standard Agent Workbench profile catalog, and later FoundryTK
+  profile optimization exploration.
+- Extended SDK session manifests with `sdk.agent_profiles`, including profile
+  source paths, selected agent, default-agent config, local-only custom agents,
+  subagent streaming, task overlays, and custom Agent Workbench tools.
+- Added `.agent.md` profile parsing, validation, public-safe profile rendering,
+  SDK create/resume kwargs pass-through, and custom-agent/subagent transcript
+  evidence.
+- Added conservative Agent Workbench SDK tools for run context, result contract,
+  and result validation, with focused tests covering profile parsing, bridge
+  kwargs, resume behavior, transcript metadata, and tool validation.
+- Verified the implementation with focused P72 tests, full `pytest`, `ruff
+  check`, `git diff --check`, and a local `profile-validate`/`profile-render`
+  smoke against the standard supervisor profile; `mypy` remains unavailable in
+  the repo venv and the repo has no pre-commit config.
+- Dogfooded P72.5 on P70 Ticket C with selected profile
+  `agent-workbench-local-supervisor` in SDK session
+  `6ebd387b-b23a-4ff1-8e22-5abc46a2cba0`; the run repaired the ignored FEMIC
+  P108 supervisor result report, used subagent events and the custom
+  `agent_workbench_validate_result` tool, and produced a comparison against the
+  Ticket B baseline under ignored runtime storage.
+- Added a manifest-derived `session.custom_agents_updated` evidence event so
+  future SDK runs expose selected custom-agent profile configuration in monitor
+  and transcript artifacts even when the SDK does not emit that event itself.

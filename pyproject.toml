@@ -21,6 +21,7 @@ classifiers = [
   "Topic :: Software Development :: Quality Assurance"
 ]
 dependencies = [
+  "PyYAML>=6",
   "pypdf>=5"
 ]
 

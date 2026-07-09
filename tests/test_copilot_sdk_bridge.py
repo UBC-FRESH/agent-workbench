@@ -8,6 +8,7 @@ from typing import Any
 from agent_workbench.copilot_sdk_bridge import (
     LiveCopilotSdkAdapter,
     SdkTurnConfig,
+    agent_profiles_event,
     load_sdk_session_manifest,
     monitor_sdk_session,
     render_sdk_compact_transcript_markdown,
@@ -407,3 +408,173 @@ def test_live_adapter_resolves_relative_working_directory(tmp_path: Path) -> Non
     kwargs = adapter._session_kwargs(manifest)
 
     assert Path(str(kwargs["working_directory"])).is_absolute()
+
+
+def test_live_adapter_passes_custom_agent_kwargs(tmp_path: Path) -> None:
+    profile_path = tmp_path / "worker.agent.md"
+    profile_path.write_text(
+        "\n".join(
+            [
+                "---",
+                "name: worker",
+                "description: Worker profile.",
+                "model: qwen3.6",
+                "tools: ['read', 'agent_workbench_run_context']",
+                "---",
+                "",
+                "Do the assigned work.",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    manifest_path = write_manifest_fixture(tmp_path)
+    manifest = load_sdk_session_manifest(manifest_path)
+    manifest["_manifest_path"] = str(manifest_path)
+    manifest["sdk"]["available_tools"] = ["read"]
+    manifest["sdk"]["agent_profiles"] = {
+        "source_paths": [str(profile_path)],
+        "selected": "worker",
+        "default_agent": {"excluded_tools": ["terminal"]},
+        "custom_agents_local_only": True,
+        "include_sub_agent_streaming_events": True,
+        "custom_tools": ["agent_workbench_run_context"],
+        "task_overlay": {"text": "Use the result contract tool before finishing."},
+    }
+    adapter = LiveCopilotSdkAdapter()
+    adapter.permission_handler = type(
+        "PermissionHandler",
+        (),
+        {"approve_all": object()},
+    )
+
+    kwargs = adapter._session_kwargs(manifest)
+
+    assert kwargs["agent"] == "worker"
+    assert kwargs["default_agent"] == {"excluded_tools": ["terminal"]}
+    assert kwargs["custom_agents_local_only"] is True
+    assert kwargs["include_sub_agent_streaming_events"] is True
+    assert kwargs["custom_agents"][0]["name"] == "worker"
+    assert "Use the result contract tool" in kwargs["custom_agents"][0]["prompt"]
+    assert len(kwargs["tools"]) == 1
+    assert "agent_workbench_run_context" in kwargs["available_tools"]
+
+
+def test_agent_profiles_event_records_manifest_resolved_profiles(
+    tmp_path: Path,
+) -> None:
+    profile_path = tmp_path / "worker.agent.md"
+    profile_path.write_text(
+        "\n".join(
+            [
+                "---",
+                "name: worker",
+                "description: Worker profile.",
+                "model: qwen3.6",
+                "tools: ['read', 'agent_workbench_run_context']",
+                "---",
+                "",
+                "Do the assigned work.",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    manifest_path = write_manifest_fixture(tmp_path)
+    manifest = load_sdk_session_manifest(manifest_path)
+    manifest["_manifest_path"] = str(manifest_path)
+    manifest["sdk"]["agent_profiles"] = {
+        "source_paths": [str(profile_path)],
+        "selected": "worker",
+        "custom_tools": ["agent_workbench_run_context"],
+    }
+
+    event = agent_profiles_event(manifest)
+
+    assert event is not None
+    assert event["type"] == "session.custom_agents_updated"
+    assert event["data"]["emitted_by"] == "agent-workbench"
+    assert event["data"]["selected_agent"] == "worker"
+    assert event["data"]["custom_agents"][0]["name"] == "worker"
+    assert event["data"]["custom_tools"] == ["agent_workbench_run_context"]
+
+
+class FakeRawSdkSession:
+    id = "sdk-session-existing"
+
+    def __init__(self) -> None:
+        self.handlers: list[Any] = []
+
+    def on(self, handler: Any) -> None:
+        self.handlers.append(handler)
+
+
+class FakeSdkClient:
+    def __init__(self) -> None:
+        self.resume_kwargs: dict[str, Any] = {}
+
+    async def start(self) -> None:
+        return None
+
+    async def stop(self) -> None:
+        return None
+
+    async def resume_session(self, session_id: str, **kwargs: Any) -> FakeRawSdkSession:
+        self.resume_kwargs = {"session_id": session_id, **kwargs}
+        return FakeRawSdkSession()
+
+
+def test_live_adapter_resume_passes_session_kwargs(tmp_path: Path) -> None:
+    manifest_path = write_manifest_fixture(tmp_path, session_id="sdk-session-existing")
+    manifest = load_sdk_session_manifest(manifest_path)
+    manifest["sdk"]["model"] = "qwen3.6"
+    adapter = LiveCopilotSdkAdapter()
+    adapter.client = FakeSdkClient()
+    adapter.permission_handler = type(
+        "PermissionHandler",
+        (),
+        {"approve_all": object()},
+    )
+
+    session = asyncio.run(adapter.resume_session(manifest, lambda _event: None))
+
+    assert session.session_id == "sdk-session-existing"
+    assert adapter.client.resume_kwargs["session_id"] == "sdk-session-existing"
+    assert adapter.client.resume_kwargs["model"] == "qwen3.6"
+
+
+def test_transcript_counts_custom_agent_and_subagent_events() -> None:
+    manifest = {
+        "run_id": "p72-test-run",
+        "sdk": {"session_id": "sdk-session-existing"},
+    }
+    events = [
+        {
+            "timestamp": "t1",
+            "type": "session.custom_agents_updated",
+            "data": {"custom_agents": [{"name": "worker"}]},
+        },
+        {
+            "timestamp": "t2",
+            "type": "assistant.message",
+            "data": {"content": "working", "agent_name": "worker"},
+        },
+        {
+            "timestamp": "t3",
+            "type": "subagent.started",
+            "data": {"content": "auditor started", "subagent_name": "auditor"},
+        },
+    ]
+
+    transcript, summary = render_sdk_compact_transcript_markdown(
+        manifest,
+        events,
+        include_system=False,
+        include_tools=True,
+        max_text_chars=4000,
+    )
+
+    assert summary.custom_agent_event_count == 1
+    assert summary.subagent_event_count == 1
+    assert summary.agent_metadata_message_count == 1
+    assert "Custom agents updated" in transcript
+    assert "Copilot worker (worker)" in transcript
+    assert "Subagent event (auditor)" in transcript
