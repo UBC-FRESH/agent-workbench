@@ -2133,5 +2133,13 @@ issues, pull requests, and closeout comments.
   comparable live overlay-selected SDK runs, controller-health scoring,
   public-safe evaluation rows, compact transcript review, and an explicit
   treatment comparison plan exist.
-- Marked P74 complete repo-side; GitHub issue/PR hygiene remains pending while
-  `gh` is unavailable in the current restricted shell.
+- Marked P74 complete repo-side; GitHub issue/PR hygiene was still pending at
+  that point because `gh` was unavailable in the restricted shell.
+
+## 2026-07-09 - Reconciled P74 GitHub issue tracking
+
+- Created GitHub parent issue #481 for P74 after `gh` access returned.
+- Updated `ROADMAP.md` so the P74 tracker row and phase section reference
+  issue #481 instead of `TBD`.
+- Left P74 implementation status unchanged: repo-side work is complete and
+  FoundryTK remains external evaluation guidance only.
