@@ -3107,7 +3107,7 @@ Planned tasks:
   - [x] Declare a budget and stop rule before any paid-coordinator monitoring.
   - [x] Generate one child-task ticket at a time through the P66 protocol.
   - [x] Require P65 archive capture for every Copilot-backed task.
-- [ ] P70.2 Cleanup ticket set (#463)
+- [x] P70.2 Cleanup ticket set (#463)
   - [x] Ticket A: repair `CHANGE_LOG.md` ordering and encoding damage
         (completed during P71 SDK dogfood and verified as FEMIC commit
         `181cb16` on PR #303).
@@ -3127,7 +3127,12 @@ Planned tasks:
         #297-#301 are closed, and parent issue #302 remains open; counted as
         `needs-supervisor-review` for controller scoring because the SDK emitted
         a `model.call_failure` XML syntax error).
-  - [ ] Ticket E: produce final coordinator review packet.
+  - [x] Ticket E: produce final coordinator review packet (completed as
+        `runtime/p70_ticket_e_final_review_packet/review_packet.md`, with
+        coordinator verification that PR #303 remains open/non-draft/mergeable,
+        child issues #297-#301 are closed, parent issue #302 remains open, and
+        P70.3 should score Ticket D's SDK `model.call_failure` separately from
+        result validity).
 - [ ] P70.3 Controller evaluation (#464)
   - [x] Add full and compact human-readable SDK transcript renderers so
         coordinator-supervisor and supervisor-worker conversation evidence can
