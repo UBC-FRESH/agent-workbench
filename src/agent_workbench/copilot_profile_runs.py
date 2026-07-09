@@ -45,10 +45,18 @@ class ProfileRunEvidence:
         return not self.errors
 
 
-def summarize_profile_run(manifest_path: Path) -> ProfileRunEvidence:
+def summarize_profile_run(
+    manifest_path: Path,
+    *,
+    repo_root: Path | None = None,
+) -> ProfileRunEvidence:
     manifest = load_sdk_session_manifest(manifest_path)
     base = manifest_path.parent
-    resolved = resolve_agent_profiles(manifest, manifest_path=manifest_path)
+    resolved = resolve_agent_profiles(
+        manifest,
+        manifest_path=manifest_path,
+        repo_root=repo_root,
+    )
     errors = list(resolved.errors)
     warnings = list(resolved.warnings)
     paths = manifest.get("paths", {})

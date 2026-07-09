@@ -88,6 +88,10 @@ from .experiments import (
     synthesize_experiment_markdown,
     validate_experiment_record,
 )
+from .foundry_profile_optimization import (
+    build_profile_optimization_plan,
+    render_profile_optimization_plan_markdown,
+)
 from .graph import (
     FreshForgeGraphUnavailable,
     load_graph_document,
@@ -423,6 +427,36 @@ def build_parser() -> argparse.ArgumentParser:
     copilot_sdk_profile_run_parser.add_argument("--manifest", type=Path, required=True)
     copilot_sdk_profile_run_parser.add_argument("--output", type=Path, required=True)
     copilot_sdk_profile_run_parser.set_defaults(func=run_copilot_sdk_profile_run)
+
+    foundrytk_parser = subparsers.add_parser(
+        "foundrytk",
+        help="Plan FoundryTK-style profile optimization experiments.",
+    )
+    foundrytk_subparsers = foundrytk_parser.add_subparsers(
+        dest="foundrytk_command",
+        required=True,
+    )
+    foundrytk_profile_plan_parser = foundrytk_subparsers.add_parser(
+        "profile-optimization-plan",
+        help="Render a public-safe profile optimization plan from SDK manifests.",
+    )
+    foundrytk_profile_plan_parser.add_argument(
+        "--manifest",
+        type=Path,
+        action="append",
+        required=True,
+        help="SDK session manifest path. May be repeated.",
+    )
+    foundrytk_profile_plan_parser.add_argument(
+        "--repo-root",
+        type=Path,
+        default=None,
+        help="Repository root for resolving standard Agent Workbench profiles and overlays.",
+    )
+    foundrytk_profile_plan_parser.add_argument("--output", type=Path, required=True)
+    foundrytk_profile_plan_parser.set_defaults(
+        func=run_foundrytk_profile_optimization_plan
+    )
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1733,6 +1767,29 @@ def run_copilot_sdk_profile_run(args: argparse.Namespace) -> int:
     )
     print(f"wrote {args.output}")
     return 0 if evidence.ok else 1
+
+
+def run_foundrytk_profile_optimization_plan(args: argparse.Namespace) -> int:
+    try:
+        plan = build_profile_optimization_plan(
+            args.manifest,
+            repo_root=args.repo_root,
+        )
+        preview = render_profile_optimization_plan_markdown(plan)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(preview, encoding="utf-8")
+    print(
+        "runs={runs} valid={valid} recommendation={recommendation}".format(
+            runs=len(plan.runs),
+            valid=plan.ok,
+            recommendation=plan.recommendation,
+        )
+    )
+    print(f"wrote {args.output}")
+    return 0 if plan.ok else 1
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:

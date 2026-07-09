@@ -82,7 +82,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
 | P73 Standard Agent Workbench profile catalog | #480 / PR #483 | `feature/p73-standard-agent-profile-catalog` | Complete |
-| P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Planned |
+| P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3408,7 +3408,9 @@ Parent issue: TBD
 
 Branch: `feature/p74-foundrytk-profile-optimization`
 
-Status: planned
+Status: active
+Status note: active repo-side; GitHub issue creation is pending because `gh`
+is unavailable in the current restricted shell.
 
 Goal: evaluate whether FoundryTK and related evaluation tooling can improve
 Agent Workbench model/profile selection, prompt optimization, trace review, and
@@ -3421,3 +3423,33 @@ Planned scope:
   provider, model-selection evidence source, and trace/evaluation runner.
 - Define reliability, work quality, efficiency, and conversation-shape metrics
   before any model customization work.
+
+Planned tasks:
+
+- [x] P74.1 Local evaluation scaffold
+  - [x] Add a FoundryTK-style profile optimization plan renderer that consumes
+        P73 profile-run evidence without adding a FoundryTK runtime dependency.
+  - [x] Define reliability, work quality, efficiency, and conversation-shape
+        dimensions in the rendered plan.
+  - [x] Render an ignored P74 plan from P73 overlay replay evidence and P70
+        Ticket D controller-health evidence.
+
+P74.1 result: added `agent-workbench foundrytk profile-optimization-plan`,
+which summarizes one or more SDK manifests through the P73 profile-run evidence
+schema and renders a public-safe FoundryTK-facing optimization plan. The first
+plan artifact is stored at
+`runtime/p74_foundrytk_profile_optimization/profile_optimization_plan.md`; it
+correctly recommends stabilizing controller/session health before prompt or
+model optimization because the comparison includes P70 Ticket D's
+`controller_health=error` evidence.
+- [ ] P74.2 Evaluation dataset contract
+  - [ ] Define the public-safe row schema for profile/overlay/model comparison
+        runs.
+  - [ ] Map local evidence fields to potential Foundry evaluation inputs
+        without requiring Azure resources.
+  - [ ] Keep raw transcript text and private paths out of evaluation datasets.
+- [ ] P74.3 FoundryTK integration decision
+  - [ ] Decide whether FoundryTK should remain external guidance, become an
+        optional tool provider, or provide trace/evaluation runner integration.
+  - [ ] Record prerequisites before any prompt optimization, agent optimizer,
+        or model fine-tuning work.

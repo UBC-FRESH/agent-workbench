@@ -22,3 +22,16 @@ The built-in AI agent expert profile from the local VS Code extension is useful 
 ## Boundary
 
 No FoundryTK dependency should be added to P72 or P73. Phase 74 starts only after the bridge can reliably launch profile-selected SDK sessions and collect comparable transcript/result evidence.
+
+## P74.1 Local Evaluation Scaffold
+
+The first implementation step is local-only. Agent Workbench should render a FoundryTK-facing optimization plan from existing SDK manifests and P73 profile-run evidence without provisioning Azure resources, adding FoundryTK as a dependency, or changing the Copilot SDK bridge.
+
+The plan must:
+
+- list compared runs, selected profiles, selected overlays, custom tools, controller health, result status, and conversation-shape counts;
+- define reliability, work quality, efficiency, and conversation-shape dimensions before any optimization work;
+- recommend controller/session-health stabilization before prompt/model optimization when any compared run has controller errors;
+- keep raw transcript text, private paths, prompts, credentials, and machine-specific values out of the rendered output.
+
+FoundryTK integration remains a later decision after local evidence rows are stable.

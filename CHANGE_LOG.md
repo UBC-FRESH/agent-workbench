@@ -2093,3 +2093,19 @@ issues, pull requests, and closeout comments.
 - Opened stacked PR #483 from `feature/p73-standard-agent-profile-catalog` to
   `feature/p70-femic-p108-repair-dogfood`.
 - Updated `ROADMAP.md` so the P73 tracker row references PR #483.
+
+## 2026-07-09 - Activated P74 FoundryTK profile optimization
+
+- Created branch `feature/p74-foundrytk-profile-optimization` from the completed
+  P73 profile catalog branch.
+- Added `agent-workbench foundrytk profile-optimization-plan`, a local
+  FoundryTK-style planning command that consumes P73 profile-run evidence and
+  renders public-safe optimization guidance without adding a FoundryTK runtime
+  dependency or changing the Copilot SDK bridge.
+- Defined reliability, work quality, efficiency, and conversation-shape
+  dimensions in the rendered plan.
+- Rendered ignored P74 evidence at
+  `runtime/p74_foundrytk_profile_optimization/profile_optimization_plan.md`;
+  the plan correctly recommends stabilizing controller/session health before
+  prompt or model optimization because P70 Ticket D contributes
+  `controller_health=error` evidence.
