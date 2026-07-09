@@ -2002,3 +2002,19 @@ issues, pull requests, and closeout comments.
   improvement for bounded cleanup/review tickets, but controller scoring must
   separate result validity from session health because Ticket D produced a
   correct result while the SDK emitted a `model.call_failure`.
+
+## 2026-07-09 - Completed P70 scale decision
+
+- Wrote the P70.4 scale decision under ignored runtime storage at
+  `runtime/p70_scale_decision/scale_decision.md`.
+- Accepted task-level SDK Copilot supervision as the default candidate for
+  bounded cleanup/review lanes with explicit result or blocker artifacts,
+  coordinator verification, ignored raw runtime evidence, and compact
+  transcript review.
+- Kept broad multi-day implementation phases out of scope for default SDK
+  delegation until controller-health scoring, failure taxonomy, profile metrics,
+  and conservative tool-safety evidence improve.
+- Recorded that P73 should precede P74: stabilize the standard profile catalog
+  and tool-aware evidence schema before FoundryTK optimization exploration.
+- Preserved the FEMIC authority boundary: P70 does not merge PR #303 and does
+  not close parent issue #302.

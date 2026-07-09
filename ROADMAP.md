@@ -78,7 +78,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Complete |
 | P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Complete |
 | P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Complete |
-| P70 FEMIC P108 repair dogfood | #461 | `feature/p70-femic-p108-repair-dogfood` | Active |
+| P70 FEMIC P108 repair dogfood | #461 | `feature/p70-femic-p108-repair-dogfood` | Complete |
 | P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
 | P73 Standard Agent Workbench profile catalog | TBD | `feature/p73-standard-agent-profile-catalog` | Planned |
@@ -3089,7 +3089,7 @@ Parent issue: #461
 
 Branch: `feature/p70-femic-p108-repair-dogfood`
 
-Status: active
+Status: complete
 
 Goal: test the task-level delegation controller on real P108 cleanup tasks in
 FEMIC, while keeping coordinator authority over final PR merge and parent issue
@@ -3149,12 +3149,21 @@ reviewable, but Ticket D proved controller scoring must separate result
 validity from session health because a correct result can coexist with an SDK
 `model.call_failure`. The full evaluation is recorded under ignored runtime
 storage at `runtime/p70_controller_evaluation/controller_evaluation.md`.
-- [ ] P70.4 Scale decision (#465)
-  - [ ] Decide whether to use task-level Copilot supervision for the next real
+- [x] P70.4 Scale decision (#465)
+  - [x] Decide whether to use task-level Copilot supervision for the next real
         FEMIC or CLEWS development phase.
-  - [ ] Record remaining risks and required controller improvements.
-  - [ ] Keep final P108 merge/parent closure under coordinator/maintainer
+  - [x] Record remaining risks and required controller improvements.
+  - [x] Keep final P108 merge/parent closure under coordinator/maintainer
         authority.
+
+P70.4 scale decision: use task-level SDK Copilot supervision by default for
+bounded cleanup/review lanes with explicit result or blocker artifacts,
+coordinator verification, ignored raw runtime evidence, and compact transcript
+review. Do not yet use it as the default for broad multi-day implementation
+phases. The next implementation tranche should activate P73 before P74 so the
+standard profile catalog and tool-aware evidence schema stabilize before
+FoundryTK optimization work begins. FEMIC PR #303 merge and parent issue #302
+closure remain outside P70 and require coordinator/maintainer authority.
 
 ## Phase 71: Copilot SDK Remote-Control Bridge
 
