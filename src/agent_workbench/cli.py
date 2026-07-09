@@ -89,7 +89,10 @@ from .experiments import (
     validate_experiment_record,
 )
 from .foundry_profile_optimization import (
+    build_profile_evaluation_dataset,
     build_profile_optimization_plan,
+    render_profile_evaluation_dataset_jsonl,
+    render_profile_evaluation_dataset_markdown,
     render_profile_optimization_plan_markdown,
 )
 from .graph import (
@@ -457,6 +460,31 @@ def build_parser() -> argparse.ArgumentParser:
     foundrytk_profile_plan_parser.set_defaults(
         func=run_foundrytk_profile_optimization_plan
     )
+
+    foundrytk_dataset_parser = foundrytk_subparsers.add_parser(
+        "profile-evaluation-dataset",
+        help="Render public-safe profile evaluation dataset rows from SDK manifests.",
+    )
+    foundrytk_dataset_parser.add_argument(
+        "--manifest",
+        type=Path,
+        action="append",
+        required=True,
+        help="SDK session manifest path. May be repeated.",
+    )
+    foundrytk_dataset_parser.add_argument(
+        "--repo-root",
+        type=Path,
+        default=None,
+        help="Repository root for resolving standard Agent Workbench profiles and overlays.",
+    )
+    foundrytk_dataset_parser.add_argument("--jsonl-output", type=Path, required=True)
+    foundrytk_dataset_parser.add_argument(
+        "--markdown-output",
+        type=Path,
+        required=True,
+    )
+    foundrytk_dataset_parser.set_defaults(func=run_foundrytk_profile_dataset)
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1790,6 +1818,32 @@ def run_foundrytk_profile_optimization_plan(args: argparse.Namespace) -> int:
     )
     print(f"wrote {args.output}")
     return 0 if plan.ok else 1
+
+
+def run_foundrytk_profile_dataset(args: argparse.Namespace) -> int:
+    try:
+        dataset = build_profile_evaluation_dataset(
+            args.manifest,
+            repo_root=args.repo_root,
+        )
+        jsonl = render_profile_evaluation_dataset_jsonl(dataset)
+        markdown = render_profile_evaluation_dataset_markdown(dataset)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.jsonl_output.parent.mkdir(parents=True, exist_ok=True)
+    args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+    args.jsonl_output.write_text(jsonl, encoding="utf-8")
+    args.markdown_output.write_text(markdown, encoding="utf-8")
+    print(
+        "rows={rows} valid={valid} jsonl={jsonl} markdown={markdown}".format(
+            rows=len(dataset.rows),
+            valid=dataset.ok,
+            jsonl=args.jsonl_output,
+            markdown=args.markdown_output,
+        )
+    )
+    return 0 if dataset.ok else 1
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:

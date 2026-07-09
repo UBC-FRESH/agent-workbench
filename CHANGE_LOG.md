@@ -2109,3 +2109,15 @@ issues, pull requests, and closeout comments.
   the plan correctly recommends stabilizing controller/session health before
   prompt or model optimization because P70 Ticket D contributes
   `controller_health=error` evidence.
+
+## 2026-07-09 - Added P74 profile evaluation dataset contract
+
+- Added `agent-workbench foundrytk profile-evaluation-dataset`, which writes
+  public-safe JSONL rows and a Markdown preview from SDK manifests without
+  requiring Azure resources or FoundryTK runtime integration.
+- The row schema maps local profile-run evidence into reliability,
+  work-quality, efficiency, and conversation-shape dimensions.
+- Rendered an ignored two-row dataset and preview under
+  `runtime/p74_foundrytk_profile_optimization/`, using the P73 overlay replay
+  and P70 Ticket D controller-health evidence.
+- The dataset excludes raw transcript text and private paths.

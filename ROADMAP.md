@@ -3442,12 +3442,23 @@ plan artifact is stored at
 correctly recommends stabilizing controller/session health before prompt or
 model optimization because the comparison includes P70 Ticket D's
 `controller_health=error` evidence.
-- [ ] P74.2 Evaluation dataset contract
-  - [ ] Define the public-safe row schema for profile/overlay/model comparison
+- [x] P74.2 Evaluation dataset contract
+  - [x] Define the public-safe row schema for profile/overlay/model comparison
         runs.
-  - [ ] Map local evidence fields to potential Foundry evaluation inputs
+  - [x] Map local evidence fields to potential Foundry evaluation inputs
         without requiring Azure resources.
-  - [ ] Keep raw transcript text and private paths out of evaluation datasets.
+  - [x] Keep raw transcript text and private paths out of evaluation datasets.
+
+P74.2 result: added `agent-workbench foundrytk profile-evaluation-dataset`,
+which writes public-safe JSONL rows and a Markdown preview from SDK manifests.
+Rows include selected profile, task overlays, custom tools, controller health,
+result status, and nested reliability, work-quality, efficiency, and
+conversation-shape metrics. The first two-row dataset is stored under ignored
+runtime evidence at
+`runtime/p74_foundrytk_profile_optimization/profile_evaluation_dataset.jsonl`
+with preview
+`runtime/p74_foundrytk_profile_optimization/profile_evaluation_dataset.md`.
+The dataset excludes raw transcript text and private paths.
 - [ ] P74.3 FoundryTK integration decision
   - [ ] Decide whether FoundryTK should remain external guidance, become an
         optional tool provider, or provide trace/evaluation runner integration.

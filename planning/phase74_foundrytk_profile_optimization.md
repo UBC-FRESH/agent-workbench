@@ -35,3 +35,18 @@ The plan must:
 - keep raw transcript text, private paths, prompts, credentials, and machine-specific values out of the rendered output.
 
 FoundryTK integration remains a later decision after local evidence rows are stable.
+
+## P74.2 Evaluation Dataset Contract
+
+The second implementation step creates a public-safe dataset shape that could later feed Foundry evaluation, trace analysis, or profile/model comparison tools. This remains local-only and does not require Azure resources.
+
+Each row should include:
+
+- run identity: `run_id`, `phase`, selected profile, selected task overlays, and custom tools;
+- reliability fields: controller health, required result-status presence, custom-agent events, and subagent events;
+- work-quality fields: result status and whether the result is an accepted candidate;
+- efficiency fields: event count, assistant messages, tool events, and permission events;
+- conversation-shape fields: user/assistant message counts, custom-agent events, subagent events, and agent-metadata messages;
+- warnings and errors from public-safe profile validation.
+
+Rows must exclude raw transcript text, full prompts, private paths, credentials, and machine-specific values. JSONL is the interchange format; Markdown is only a coordinator preview.

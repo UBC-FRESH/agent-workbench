@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from .copilot_profile_runs import ProfileRunEvidence, summarize_profile_run
 
@@ -24,6 +25,15 @@ class ProfileOptimizationPlan:
     @property
     def ok(self) -> bool:
         return all(run.ok for run in self.runs)
+
+
+@dataclass(frozen=True)
+class ProfileEvaluationDataset:
+    rows: tuple[dict[str, Any], ...]
+
+    @property
+    def ok(self) -> bool:
+        return all(not row.get("errors") for row in self.rows)
 
 
 def build_profile_optimization_plan(
@@ -133,3 +143,108 @@ def render_profile_optimization_plan_markdown(
 
 def render_values(values: tuple[str, ...]) -> str:
     return ", ".join(values) if values else "(none)"
+
+
+def build_profile_evaluation_dataset(
+    manifest_paths: list[Path] | tuple[Path, ...],
+    *,
+    repo_root: Path | None = None,
+) -> ProfileEvaluationDataset:
+    runs = tuple(
+        summarize_profile_run(path, repo_root=repo_root) for path in manifest_paths
+    )
+    return ProfileEvaluationDataset(rows=tuple(evaluation_row(run) for run in runs))
+
+
+def evaluation_row(run: ProfileRunEvidence) -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "run_id": run.run_id,
+        "phase": run.phase,
+        "selected_agent": run.selected_agent,
+        "task_overlays": list(run.task_overlays),
+        "custom_tools": list(run.custom_tools),
+        "latest_status": run.latest_status,
+        "controller_health": run.controller_health,
+        "result_status": run.result_status,
+        "reliability": {
+            "controller_health": run.controller_health,
+            "has_required_result_status": bool(run.result_status),
+            "custom_agent_events": run.custom_agent_events,
+            "subagent_events": run.subagent_events,
+        },
+        "work_quality": {
+            "result_status": run.result_status,
+            "accepted_candidate": run.result_status == "accepted-candidate",
+        },
+        "efficiency": {
+            "event_count": run.event_count,
+            "assistant_messages": run.assistant_messages,
+            "tool_events": run.tool_events,
+            "permission_events": run.permission_events,
+        },
+        "conversation_shape": {
+            "user_messages": run.user_messages,
+            "assistant_messages": run.assistant_messages,
+            "custom_agent_events": run.custom_agent_events,
+            "subagent_events": run.subagent_events,
+            "agent_metadata_messages": run.agent_metadata_messages,
+        },
+        "errors": list(run.errors),
+        "warnings": list(run.warnings),
+    }
+
+
+def render_profile_evaluation_dataset_jsonl(
+    dataset: ProfileEvaluationDataset,
+) -> str:
+    import json
+
+    return "\n".join(json.dumps(row, sort_keys=True) for row in dataset.rows) + (
+        "\n" if dataset.rows else ""
+    )
+
+
+def render_profile_evaluation_dataset_markdown(
+    dataset: ProfileEvaluationDataset,
+) -> str:
+    lines = [
+        "# Profile Evaluation Dataset Preview",
+        "",
+        f"- valid: `{dataset.ok}`",
+        f"- rows: {len(dataset.rows)}",
+        f"- dimensions: {', '.join(EVALUATION_DIMENSIONS)}",
+        "- raw_transcripts_included: `False`",
+        "- private_paths_included: `False`",
+        "",
+        "## Rows",
+        "",
+    ]
+    if not dataset.rows:
+        lines.extend(["No rows.", ""])
+        return "\n".join(lines)
+    for row in dataset.rows:
+        lines.extend(
+            [
+                f"### {row.get('run_id') or '(unknown run)'}",
+                "",
+                f"- selected_agent: `{row.get('selected_agent', '')}`",
+                f"- task_overlays: {render_list(row.get('task_overlays', []))}",
+                f"- controller_health: `{row.get('controller_health', '')}`",
+                f"- result_status: `{row.get('result_status', '')}`",
+                f"- event_count: {row.get('efficiency', {}).get('event_count', 0)}",
+                f"- assistant_messages: {row.get('efficiency', {}).get('assistant_messages', 0)}",
+                f"- tool_events: {row.get('efficiency', {}).get('tool_events', 0)}",
+                f"- permission_events: {row.get('efficiency', {}).get('permission_events', 0)}",
+                f"- errors: {len(row.get('errors', []))}",
+                f"- warnings: {len(row.get('warnings', []))}",
+                "",
+            ]
+        )
+    return "\n".join(lines)
+
+
+def render_list(values: Any) -> str:
+    if not isinstance(values, list) or not values:
+        return "(none)"
+    return ", ".join(str(value) for value in values)

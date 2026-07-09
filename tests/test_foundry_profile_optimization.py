@@ -4,9 +4,15 @@ import json
 from argparse import Namespace
 from pathlib import Path
 
-from agent_workbench.cli import run_foundrytk_profile_optimization_plan
+from agent_workbench.cli import (
+    run_foundrytk_profile_dataset,
+    run_foundrytk_profile_optimization_plan,
+)
 from agent_workbench.foundry_profile_optimization import (
+    build_profile_evaluation_dataset,
     build_profile_optimization_plan,
+    render_profile_evaluation_dataset_jsonl,
+    render_profile_evaluation_dataset_markdown,
     render_profile_optimization_plan_markdown,
 )
 
@@ -161,3 +167,47 @@ def test_foundrytk_profile_optimization_cli_writes_plan(
     assert exit_code == 0
     assert "runs=1 valid=True" in captured.out
     assert output.exists()
+
+
+def test_profile_evaluation_dataset_is_public_safe_jsonl(tmp_path: Path) -> None:
+    manifest = write_manifest(tmp_path / "run", run_id="dataset-run")
+
+    dataset = build_profile_evaluation_dataset([manifest], repo_root=REPO_ROOT)
+    jsonl = render_profile_evaluation_dataset_jsonl(dataset)
+    markdown = render_profile_evaluation_dataset_markdown(dataset)
+    row = json.loads(jsonl)
+
+    assert dataset.ok
+    assert row["schema_version"] == 1
+    assert row["run_id"] == "dataset-run"
+    assert row["selected_agent"] == "worker"
+    assert row["task_overlays"] == ["release-readiness-review"]
+    assert row["reliability"]["controller_health"] == "healthy"
+    assert row["work_quality"]["accepted_candidate"] is True
+    assert row["efficiency"]["event_count"] == 2
+    assert row["conversation_shape"]["assistant_messages"] == 1
+    assert "# Profile Evaluation Dataset Preview" in markdown
+    assert "Do the work." not in markdown
+
+
+def test_foundrytk_profile_dataset_cli_writes_outputs(
+    tmp_path: Path, capsys: object
+) -> None:
+    manifest = write_manifest(tmp_path / "run", run_id="dataset-cli-run")
+    jsonl_output = tmp_path / "dataset.jsonl"
+    markdown_output = tmp_path / "dataset.md"
+
+    exit_code = run_foundrytk_profile_dataset(
+        Namespace(
+            manifest=[manifest],
+            repo_root=REPO_ROOT,
+            jsonl_output=jsonl_output,
+            markdown_output=markdown_output,
+        )
+    )
+
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert "rows=1 valid=True" in captured.out
+    assert jsonl_output.exists()
+    assert markdown_output.exists()
