@@ -10,6 +10,7 @@ from agent_workbench.copilot_sdk_bridge import (
     SdkTurnConfig,
     load_sdk_session_manifest,
     monitor_sdk_session,
+    render_sdk_compact_transcript_markdown,
     render_sdk_transcript_from_manifest,
     render_sdk_transcript_markdown,
     run_sdk_turn,
@@ -327,6 +328,69 @@ def test_render_sdk_transcript_can_include_system_and_exclude_tools() -> None:
     assert "system" in transcript
     assert "prompt" in transcript
     assert "Tool start" not in transcript
+
+
+def test_render_sdk_compact_transcript_collapses_full_payloads() -> None:
+    manifest = {
+        "run_id": "p71-test-run",
+        "sdk": {"session_id": "sdk-session-existing"},
+    }
+    events = [
+        {
+            "timestamp": "t1",
+            "type": "user.message",
+            "data": {"content": "# Ticket\n\nDo the assigned task."},
+        },
+        {
+            "timestamp": "t2",
+            "type": "assistant.message",
+            "data": {"content": "I will inspect the worktree."},
+        },
+        {
+            "timestamp": "t3",
+            "type": "tool.execution_start",
+            "data": {
+                "tool_name": "powershell",
+                "tool_call_id": "call-1",
+                "arguments": {"command": "git status"},
+            },
+        },
+        {
+            "timestamp": "t4",
+            "type": "tool.execution_complete",
+            "data": {
+                "tool_call_id": "call-1",
+                "success": True,
+                "result": {
+                    "contents": [
+                        {
+                            "cwd": "workspace",
+                            "exit_code": 0,
+                            "output_preview": "working tree clean",
+                        }
+                    ]
+                },
+            },
+        },
+    ]
+
+    transcript, summary = render_sdk_compact_transcript_markdown(
+        manifest,
+        events,
+        include_system=False,
+        include_tools=True,
+        max_text_chars=4000,
+    )
+
+    assert summary.entry_count == 4
+    assert "# Copilot SDK Compact Transcript" in transcript
+    assert "Ticket" in transcript
+    assert "`git status`" in transcript
+    assert "`success` - working tree clean" in transcript
+    assert "<details>" in transcript
+    assert (
+        "<summary>Full tool.execution_complete event (call-1)</summary>" in transcript
+    )
 
 
 def test_live_adapter_resolves_relative_working_directory(tmp_path: Path) -> None:

@@ -1920,3 +1920,14 @@ issues, pull requests, and closeout comments.
   `runtime/p70_ticket_b_tsa23_instance_roadmap/manifest.json` so P70 Ticket B
   conversation evidence can be reviewed alongside the existing status and
   result summaries.
+
+## 2026-07-09 - Added compact SDK transcript view
+
+- Extended `agent-workbench copilot-sdk transcript` with `--compact-output` so
+  one run can write both the full audit transcript and a second compact
+  chat-pane-style transcript.
+- The compact view keeps user messages, Copilot worker replies, tool actions,
+  statuses, and short output signals visible by default, while preserving the
+  full per-event text in expandable Markdown details.
+- Regenerated P70 Ticket B transcript evidence with a compact local artifact
+  under `runtime/p70_ticket_b_tsa23_instance_roadmap/`.

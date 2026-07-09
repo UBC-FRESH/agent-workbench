@@ -52,6 +52,7 @@ from .copilot_sdk_bridge import (
     SdkTurnConfig,
     load_sdk_session_manifest,
     monitor_sdk_session,
+    render_sdk_compact_transcript_from_manifest,
     render_sdk_monitor_markdown,
     render_sdk_transcript_from_manifest,
     run_live_sdk_turn,
@@ -340,6 +341,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     copilot_sdk_transcript_parser.add_argument("--manifest", type=Path, required=True)
     copilot_sdk_transcript_parser.add_argument("--output", type=Path, required=True)
+    copilot_sdk_transcript_parser.add_argument(
+        "--compact-output",
+        type=Path,
+        default=None,
+        help="Optional second Markdown transcript with compact chat-pane-style summaries.",
+    )
     copilot_sdk_transcript_parser.add_argument(
         "--include-system",
         action="store_true",
@@ -1543,6 +1550,27 @@ def run_copilot_sdk_transcript(args: argparse.Namespace) -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(transcript, encoding="utf-8")
     print(f"wrote {args.output}")
+    if args.compact_output is not None:
+        try:
+            compact_transcript, compact_summary = (
+                render_sdk_compact_transcript_from_manifest(
+                    args.manifest,
+                    include_system=args.include_system,
+                    include_tools=not args.exclude_tools,
+                    max_text_chars=args.max_text_chars,
+                )
+            )
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        args.compact_output.parent.mkdir(parents=True, exist_ok=True)
+        args.compact_output.write_text(compact_transcript, encoding="utf-8")
+        print(
+            "wrote {path} compact_entries={entries}".format(
+                path=args.compact_output,
+                entries=compact_summary.entry_count,
+            )
+        )
     print(
         "session_id={session_id} entries={entries} user_messages={users} "
         "assistant_messages={assistants} tool_events={tools}".format(

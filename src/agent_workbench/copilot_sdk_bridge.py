@@ -6,6 +6,7 @@ import asyncio
 import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from html import escape
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -584,6 +585,29 @@ def render_sdk_transcript_from_manifest(
     )
 
 
+def render_sdk_compact_transcript_from_manifest(
+    manifest_path: Path,
+    *,
+    include_system: bool = False,
+    include_tools: bool = True,
+    max_text_chars: int = 4000,
+) -> tuple[str, SdkTranscriptSummary]:
+    manifest = load_sdk_session_manifest(manifest_path)
+    base = manifest_path.parent
+    event_log = resolve_manifest_path(base, manifest["paths"]["event_log"])
+    if event_log is None:
+        raise ValueError("paths.event_log is required")
+    events = load_sdk_event_jsonl(event_log)
+    return render_sdk_compact_transcript_markdown(
+        manifest,
+        events,
+        include_system=include_system,
+        include_tools=include_tools,
+        max_text_chars=max_text_chars,
+        source_event_log=str(manifest["paths"]["event_log"]),
+    )
+
+
 def render_sdk_transcript_markdown(
     manifest: dict[str, Any],
     events: list[dict[str, Any]],
@@ -659,6 +683,90 @@ def render_sdk_transcript_markdown(
         if entry.get("status"):
             lines.append(f"- status: `{entry['status']}`")
         lines.extend(["", markdown_code_block(str(entry.get("content", ""))), ""])
+    return "\n".join(lines), summary
+
+
+def render_sdk_compact_transcript_markdown(
+    manifest: dict[str, Any],
+    events: list[dict[str, Any]],
+    *,
+    include_system: bool = False,
+    include_tools: bool = True,
+    max_text_chars: int = 4000,
+    source_event_log: str = "",
+) -> tuple[str, SdkTranscriptSummary]:
+    entries = extract_sdk_transcript_entries(
+        events,
+        include_system=include_system,
+        include_tools=include_tools,
+        max_text_chars=max_text_chars,
+    )
+    counts = count_sdk_transcript_events(events)
+    summary = SdkTranscriptSummary(
+        run_id=str(manifest.get("run_id", "")),
+        session_id=str(manifest.get("sdk", {}).get("session_id", "")),
+        event_count=len(events),
+        entry_count=len(entries),
+        user_message_count=counts["user_message_count"],
+        assistant_message_count=counts["assistant_message_count"],
+        tool_event_count=counts["tool_event_count"],
+        permission_event_count=counts["permission_event_count"],
+        system_message_count=counts["system_message_count"],
+        system_messages_included=include_system,
+        tool_events_included=include_tools,
+    )
+    lines = [
+        "# Copilot SDK Compact Transcript",
+        "",
+        f"- run_id: `{summary.run_id}`",
+        f"- session_id: `{summary.session_id}`",
+        f"- event_count: {summary.event_count}",
+        f"- compact_entries: {summary.entry_count}",
+        f"- user_messages: {summary.user_message_count}",
+        f"- assistant_messages: {summary.assistant_message_count}",
+        f"- tool_events: {summary.tool_event_count}",
+        f"- permission_events: {summary.permission_event_count}",
+        f"- system_messages: {summary.system_message_count}",
+        f"- system_messages_included: `{summary.system_messages_included}`",
+        f"- tool_events_included: `{summary.tool_events_included}`",
+    ]
+    if source_event_log:
+        lines.append(f"- source_event_log: `{source_event_log}`")
+    lines.extend(
+        [
+            "",
+            "Default view is intentionally terse: each entry shows only the visible "
+            "chat-pane signal, while full event text is kept in expandable details.",
+            "",
+        ]
+    )
+    if not entries:
+        lines.extend(["No transcript entries matched the selected filters.", ""])
+        return "\n".join(lines), summary
+
+    for index, entry in enumerate(entries, 1):
+        summary_text = compact_entry_summary(entry)
+        lines.extend(
+            [
+                f"## {index:03d}. {entry['role']}",
+                "",
+                f"{summary_text}",
+                "",
+                "<details>",
+                f"<summary>{escape(compact_details_label(entry))}</summary>",
+                "",
+                f"- timestamp: `{entry.get('timestamp', '')}`",
+                f"- event_type: `{entry.get('event_type', '')}`",
+            ]
+        )
+        if entry.get("turn_id"):
+            lines.append(f"- turn_id: `{entry['turn_id']}`")
+        if entry.get("tool_call_id"):
+            lines.append(f"- tool_call_id: `{entry['tool_call_id']}`")
+        if entry.get("status"):
+            lines.append(f"- status: `{entry['status']}`")
+        lines.extend(["", markdown_code_block(str(entry.get("content", ""))), ""])
+        lines.extend(["</details>", ""])
     return "\n".join(lines), summary
 
 
@@ -938,6 +1046,71 @@ def markdown_code_block(text: str) -> str:
     while fence in text:
         fence += "`"
     return f"{fence}text\n{text}\n{fence}"
+
+
+def compact_entry_summary(entry: dict[str, str]) -> str:
+    role = entry.get("role", "")
+    content = entry.get("content", "")
+    if role.startswith("Tool start"):
+        command = compact_value_after_key(content, '"command":')
+        if command:
+            return f"`{command}`"
+    if role.startswith("Permission requested"):
+        command = compact_value_after_key(content, "command:")
+        if command:
+            return f"Permission requested for `{command}`"
+    if role.startswith("Tool complete"):
+        status = entry.get("status", "") or "complete"
+        signal = first_signal_line(
+            content,
+            skip_prefixes=("cwd:", "exit_code:", "tool_name:", "arguments:"),
+        )
+        if signal:
+            return f"`{status}` - {truncate_text(collapse_whitespace(signal), 180)}"
+        return f"`{status}`"
+    signal = first_signal_line(content)
+    if not signal:
+        return "_No visible text content._"
+    return truncate_text(collapse_whitespace(strip_markdown_heading(signal)), 220)
+
+
+def compact_details_label(entry: dict[str, str]) -> str:
+    event_type = entry.get("event_type", "")
+    tool_call_id = entry.get("tool_call_id", "")
+    if tool_call_id:
+        return f"Full {event_type} event ({tool_call_id})"
+    return f"Full {event_type} event"
+
+
+def compact_value_after_key(text: str, key: str) -> str:
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith(key):
+            continue
+        value = stripped.removeprefix(key).strip()
+        return value.strip('",')
+    return ""
+
+
+def first_signal_line(text: str, *, skip_prefixes: tuple[str, ...] = ()) -> str:
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if any(stripped.startswith(prefix) for prefix in skip_prefixes):
+            continue
+        if stripped in {"arguments:", "shell_tool_info:", "Transformed metadata:"}:
+            continue
+        return stripped
+    return ""
+
+
+def strip_markdown_heading(text: str) -> str:
+    return text.lstrip("#").strip()
+
+
+def collapse_whitespace(text: str) -> str:
+    return " ".join(text.split())
 
 
 async def run_sdk_turn(config: SdkTurnConfig, adapter: SdkAdapter) -> dict[str, Any]:

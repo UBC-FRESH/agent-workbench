@@ -84,3 +84,5 @@ Supervisor verification accepted the candidate after confirming the instance dif
 The live run exposed one bridge improvement: SDK `working_directory` must be absolute at session creation, but manifests should remain public-safe. The bridge now resolves relative manifest working-directory values at launch time.
 
 Ticket B also exposed an evaluation gap: `run.sdk_events.jsonl` contains the raw `user.message`, `assistant.message`, tool, and permission events, but the file is not readable as a conversation. P70.3 therefore adds `agent-workbench copilot-sdk transcript` to render an ignored Markdown transcript from any SDK session manifest, with raw `system.message` events omitted by default and available through an explicit flag for local review.
+
+The transcript command also supports `--compact-output` for a second, super-compact Markdown view that approximates the default Copilot/Codex chat-window information load: each visible entry shows the user/assistant/tool signal first, while full message and tool payloads remain available in expandable details.
