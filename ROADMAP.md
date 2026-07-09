@@ -3514,21 +3514,21 @@ Out of scope:
 
 Planned tasks:
 
-- [ ] P75.1 Run matrix, budget, and stop-rule activation (#489)
-  - [ ] Select one bounded reusable task suitable for matched profile/model
-        comparison.
-  - [ ] Choose the P75 factors: P73 profiles, named overlays, model lanes,
+- [x] P75.1 Run matrix, budget, and stop-rule activation (#489)
+  - [x] Select bounded reusable task families suitable for matched
+        profile/overlay comparison.
+  - [x] Choose the P75 factors: P73 profiles, named overlays, model lanes,
         task families, and repetition or retry lanes.
-  - [ ] Declare fixed versus exploratory factors, blocking variables,
+  - [x] Declare fixed versus exploratory factors, blocking variables,
         randomization or rotation order, replication count, and planned minimum
         analyzable sample size.
-  - [ ] Preserve replication before breadth if budget or operational limits
+  - [x] Preserve replication before breadth if budget or operational limits
         require narrowing the matrix.
-  - [ ] Define manifest, result, status, profile-run summary, dataset, compact
+  - [x] Define manifest, result, status, profile-run summary, dataset, compact
         transcript, and optional heartbeat evidence paths.
-  - [ ] Declare supervisor budget and repeated-blocker stop rules before any
+  - [x] Declare supervisor budget and repeated-blocker stop rules before any
         live run.
-  - [ ] Define how result validity and controller/session health will be
+  - [x] Define how result validity and controller/session health will be
         scored independently.
 - [ ] P75.2 Live SDK run execution and evidence capture (#486)
   - [ ] Launch each run from the selected manifests.

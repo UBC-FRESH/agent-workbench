@@ -2174,3 +2174,15 @@ issues, pull requests, and closeout comments.
   P75 should preserve replication before breadth and report underpowered or
   stopped batteries as design/infrastructure evidence rather than profile/model
   recommendations.
+
+## 2026-07-09 - Completed P75.1 factorial run battery design
+
+- Defined the activated P75 run battery as a 24-run balanced matrix across two
+  profiles, two named overlays, two task families, and three repetitions per
+  treatment cell.
+- Held the model lane fixed as `operator-configured-copilot-sdk` because local
+  worker inventory was not available from the active shell, preserving
+  replication instead of adding an unverifiable model factor.
+- Declared smoke-gate, minimum analyzable sample, blocking variables,
+  randomized run order, runtime evidence paths, scoring boundaries, and stop
+  rules before live SDK execution.
