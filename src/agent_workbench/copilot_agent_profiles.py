@@ -62,6 +62,21 @@ STANDARD_TASK_OVERLAYS = {
     "release-readiness-review": STANDARD_TASK_OVERLAY_DIR
     / "release-readiness-review.md",
 }
+STANDARD_AGENT_PROFILE_DIR = Path(".github/agents")
+STANDARD_AGENT_PROFILES = {
+    "agent-workbench-local-supervisor": (
+        STANDARD_AGENT_PROFILE_DIR / "agent-workbench-local-supervisor.agent.md"
+    ),
+    "agent-workbench-result-auditor": (
+        STANDARD_AGENT_PROFILE_DIR / "agent-workbench-result-auditor.agent.md"
+    ),
+    "qwen3-coder-strict-worker": (
+        STANDARD_AGENT_PROFILE_DIR / "qwen3-coder-strict-worker.agent.md"
+    ),
+    "qwen3-coder-next-strict-worker": (
+        STANDARD_AGENT_PROFILE_DIR / "qwen3-coder-next-strict-worker.agent.md"
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -222,6 +237,30 @@ class TaskOverlayResolution:
     paths: tuple[Path, ...] = ()
 
 
+@dataclass(frozen=True)
+class ProfileCatalogEntry:
+    name: str
+    path: Path
+    exists: bool
+    model: str = ""
+    tools: tuple[str, ...] = ()
+    unsupported_fields: tuple[str, ...] = ()
+    prompt_chars: int = 0
+    errors: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class ProfileCatalogValidation:
+    profiles: tuple[ProfileCatalogEntry, ...] = ()
+    overlays: tuple[tuple[str, Path, bool], ...] = ()
+    warnings: tuple[str, ...] = ()
+    errors: tuple[str, ...] = ()
+
+    @property
+    def ok(self) -> bool:
+        return not self.errors
+
+
 def load_agent_profile_document(path: Path) -> AgentProfileDocument:
     text = path.read_text(encoding="utf-8-sig")
     if not text.startswith("---"):
@@ -243,6 +282,100 @@ def load_agent_profile_document(path: Path) -> AgentProfileDocument:
         frontmatter=frontmatter,
         prompt=prompt.strip(),
         unsupported_fields=unsupported,
+    )
+
+
+def validate_standard_profile_catalog(
+    *,
+    repo_root: Path | None = None,
+) -> ProfileCatalogValidation:
+    root = repo_root or find_repo_root(Path.cwd())
+    warnings: list[str] = []
+    errors: list[str] = []
+    entries: list[ProfileCatalogEntry] = []
+    for name, relative_path in STANDARD_AGENT_PROFILES.items():
+        path = root / relative_path
+        if not path.exists():
+            message = f"standard profile missing: {name} ({relative_path})"
+            errors.append(message)
+            entries.append(
+                ProfileCatalogEntry(
+                    name=name,
+                    path=path,
+                    exists=False,
+                    errors=(message,),
+                )
+            )
+            continue
+        try:
+            document = load_agent_profile_document(path)
+        except ValueError as exc:
+            message = f"{relative_path}: {exc}"
+            errors.append(message)
+            entries.append(
+                ProfileCatalogEntry(
+                    name=name,
+                    path=path,
+                    exists=True,
+                    errors=(message,),
+                )
+            )
+            continue
+        agent = agent_config_from_document(document)
+        entry_errors: list[str] = []
+        actual_name = str(agent.get("name", "")).strip()
+        if actual_name != name:
+            entry_errors.append(
+                f"{relative_path}: expected name {name}, found {actual_name or '(empty)'}"
+            )
+        prompt = str(agent.get("prompt", "")).strip()
+        if not prompt:
+            entry_errors.append(f"{relative_path}: profile body prompt is empty")
+        raw_tools = agent.get("tools", [])
+        tools = (
+            tuple(str(tool).strip() for tool in raw_tools)
+            if isinstance(raw_tools, list)
+            else ()
+        )
+        validate_profile_tool_coverage(
+            [agent],
+            custom_tool_names=list(AGENT_WORKBENCH_PROFILE_TOOLS),
+            errors=entry_errors,
+        )
+        if not isinstance(raw_tools, list):
+            entry_errors.append(f"{relative_path}: tools must be a list")
+        if document.unsupported_fields:
+            warnings.append(
+                "{path}: unsupported profile fields retained for validation only: {fields}".format(
+                    path=relative_path,
+                    fields=", ".join(document.unsupported_fields),
+                )
+            )
+        errors.extend(entry_errors)
+        entries.append(
+            ProfileCatalogEntry(
+                name=name,
+                path=path,
+                exists=True,
+                model=str(agent.get("model", "")),
+                tools=tools,
+                unsupported_fields=document.unsupported_fields,
+                prompt_chars=len(prompt),
+                errors=tuple(entry_errors),
+            )
+        )
+    overlays: list[tuple[str, Path, bool]] = []
+    for name, relative_path in STANDARD_TASK_OVERLAYS.items():
+        path = root / relative_path
+        exists = path.exists()
+        overlays.append((name, path, exists))
+        if not exists:
+            errors.append(f"standard task overlay missing: {name} ({relative_path})")
+    return ProfileCatalogValidation(
+        profiles=tuple(entries),
+        overlays=tuple(overlays),
+        warnings=tuple(warnings),
+        errors=tuple(errors),
     )
 
 
@@ -529,6 +662,60 @@ def render_agent_profiles_markdown(resolved: ResolvedAgentProfiles) -> str:
             lines.append(f"- unsupported_fields: {', '.join(unsupported)}")
         lines.append("")
     return "\n".join(lines)
+
+
+def render_profile_catalog_markdown(validation: ProfileCatalogValidation) -> str:
+    lines = [
+        "# Agent Workbench Profile Catalog Preview",
+        "",
+        f"- valid: `{validation.ok}`",
+        f"- standard_profiles: {len(validation.profiles)}",
+        f"- standard_overlays: {len(validation.overlays)}",
+        f"- warnings: {len(validation.warnings)}",
+        f"- errors: {len(validation.errors)}",
+        "",
+    ]
+    if validation.errors:
+        lines.extend(["## Errors", ""])
+        lines.extend(f"- {error}" for error in validation.errors)
+        lines.append("")
+    if validation.warnings:
+        lines.extend(["## Warnings", ""])
+        lines.extend(f"- {warning}" for warning in validation.warnings)
+        lines.append("")
+    lines.extend(["## Standard Profiles", ""])
+    for entry in validation.profiles:
+        lines.extend(
+            [
+                f"### {entry.name}",
+                "",
+                f"- exists: `{entry.exists}`",
+                f"- path: `{repo_relative_display(entry.path)}`",
+                f"- model: `{entry.model}`",
+                f"- tools: {render_list(list(entry.tools))}",
+                f"- unsupported_fields: {render_list(list(entry.unsupported_fields))}",
+                f"- prompt_chars: {entry.prompt_chars}",
+                f"- errors: {len(entry.errors)}",
+                "",
+            ]
+        )
+    lines.extend(["## Standard Task Overlays", ""])
+    for name, path, exists in validation.overlays:
+        lines.extend(
+            [
+                f"- `{name}`: exists=`{exists}`, path=`{repo_relative_display(path)}`",
+            ]
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def repo_relative_display(path: Path) -> str:
+    try:
+        root = find_repo_root(path)
+        return path.resolve().relative_to(root).as_posix()
+    except ValueError:
+        return str(path)
 
 
 def render_list(value: Any) -> str:

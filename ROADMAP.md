@@ -3354,11 +3354,19 @@ review. SDK manifests can now resolve `sdk.agent_profiles.task_overlay.name`,
 editing the source `.agent.md` files. `profile-validate`, `profile-render`, and
 the synthetic `session.custom_agents_updated` event now expose selected overlay
 metadata for coordinator review.
-- [ ] P73.2 Profile/tool catalog validation
-  - [ ] Report standard profile coverage and explicit tool declarations.
-  - [ ] Validate profile-declared tools against built-in tools and registered
+- [x] P73.2 Profile/tool catalog validation
+  - [x] Report standard profile coverage and explicit tool declarations.
+  - [x] Validate profile-declared tools against built-in tools and registered
         Agent Workbench custom tools.
-  - [ ] Add public-safe catalog preview output for coordinator review.
+  - [x] Add public-safe catalog preview output for coordinator review.
+
+P73.2 result: added a standard profile catalog validator and public-safe
+Markdown preview for the four canonical `.github/agents/*.agent.md` profiles
+and seven task overlays. The `copilot-sdk catalog-validate` command reports
+profile count, overlay count, warnings, errors, declared models, explicit tool
+sets, unsupported VS Code-only frontmatter fields, and prompt character counts
+without exposing full prompt text. Profile-declared tools are validated against
+known SDK built-ins and the Agent Workbench custom tool registry.
 - [ ] P73.3 Profile-run evidence summary
   - [ ] Summarize selected profile, overlay, custom tools, transcript shape,
         result status, and controller health from SDK manifests/events.

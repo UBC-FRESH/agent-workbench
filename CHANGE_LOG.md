@@ -2048,3 +2048,16 @@ issues, pull requests, and closeout comments.
 - Verified P73.1 with focused profile/SDK bridge tests and a local
   `profile-validate`/`profile-render` smoke manifest using
   `release-readiness-review`.
+
+## 2026-07-09 - Completed P73.2 profile catalog validation
+
+- Added a standard profile catalog validator for the four canonical
+  `.github/agents/*.agent.md` profiles and the seven checked-in task overlays.
+- Added `agent-workbench copilot-sdk catalog-validate` with optional
+  public-safe Markdown preview output for coordinator review.
+- The catalog preview reports loaded profiles, selected models, explicit tool
+  declarations, unsupported VS Code-only frontmatter fields, prompt character
+  counts, overlay availability, warnings, and errors without exposing full
+  prompt text.
+- Verified profile-declared tools against known SDK built-ins and the Agent
+  Workbench custom tool registry.
