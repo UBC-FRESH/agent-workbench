@@ -3367,10 +3367,21 @@ profile count, overlay count, warnings, errors, declared models, explicit tool
 sets, unsupported VS Code-only frontmatter fields, and prompt character counts
 without exposing full prompt text. Profile-declared tools are validated against
 known SDK built-ins and the Agent Workbench custom tool registry.
-- [ ] P73.3 Profile-run evidence summary
-  - [ ] Summarize selected profile, overlay, custom tools, transcript shape,
+- [x] P73.3 Profile-run evidence summary
+  - [x] Summarize selected profile, overlay, custom tools, transcript shape,
         result status, and controller health from SDK manifests/events.
-  - [ ] Reuse P70/P72 evidence as the first comparison baseline.
+  - [x] Reuse P70/P72 evidence as the first comparison baseline.
+
+P73.3 result: added `copilot-sdk profile-run-summary`, which reads an SDK
+manifest, event log, status summary, and result/blocker paths to produce a
+public-safe profile-run evidence packet. The packet reports selected profile,
+task overlays, custom tools, transcript-shape counts, latest controller status,
+controller health, and result/blocker final status when the artifact follows
+the current `Final status:` contract. P70 Ticket C and Ticket D were rendered
+as ignored baseline evidence; Ticket D correctly classifies controller health
+as `error`, preserving the P70 result-validity versus controller-health split.
+Older P70 result artifacts without an exact `Final status:` line leave
+`result_status` blank instead of inventing a status.
 - [ ] P73.4 Dogfood and scale recommendation
   - [ ] Run or replay one bounded task with a selected standard profile and
         task overlay.

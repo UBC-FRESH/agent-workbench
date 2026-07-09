@@ -2061,3 +2061,17 @@ issues, pull requests, and closeout comments.
   prompt text.
 - Verified profile-declared tools against known SDK built-ins and the Agent
   Workbench custom tool registry.
+
+## 2026-07-09 - Completed P73.3 profile-run evidence summary
+
+- Added `agent-workbench copilot-sdk profile-run-summary` to produce public-safe
+  profile-run evidence from an SDK manifest, event log, status summary, and
+  result/blocker artifacts.
+- The summary reports selected profile, selected task overlays, custom tools,
+  transcript-shape counts, latest controller status, controller health, and
+  result/blocker final status when the artifact follows the current
+  `Final status:` contract.
+- Rendered ignored baseline evidence for P70 Ticket C and Ticket D under
+  `runtime/p73_profile_run_evidence/`; Ticket D correctly classifies controller
+  health as `error`, preserving the P70 split between result validity and
+  controller/session health.
