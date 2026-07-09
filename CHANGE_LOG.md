@@ -2161,3 +2161,16 @@ issues, pull requests, and closeout comments.
 - Updated `ROADMAP.md` with the P75 tracker row and active phase section so
   comparable live SDK evidence collection can start before any deeper
   FoundryTK integration work.
+
+## 2026-07-09 - Tightened P75 empirical design requirements
+
+- Clarified that three comparable live SDK runs are only the minimum smoke gate
+  for the evidence pipeline, not a sufficient empirical sample for profile,
+  overlay, or model-selection decisions.
+- Required P75.1 to define a factorial design with declared factors,
+  fixed-versus-exploratory distinctions, blocking variables, randomization or
+  rotation order, replication count, and sample-size rationale.
+- Added the rule that if budget or operational limits force a narrower matrix,
+  P75 should preserve replication before breadth and report underpowered or
+  stopped batteries as design/infrastructure evidence rather than profile/model
+  recommendations.

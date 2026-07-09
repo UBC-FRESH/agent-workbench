@@ -3494,9 +3494,11 @@ Planned scope:
   and public-safe dataset shape across the live runs.
 - Use P73-selected profiles and named task overlays so profile and overlay
   choices are visible before and after each run.
-- Capture at least three comparable live SDK run attempts unless the first two
-  attempts expose the same controller/provider blocker and trigger the
-  paid-supervisor stop rule.
+- Treat three comparable live SDK run attempts as the minimum smoke gate for
+  the evidence pipeline, not as the intended empirical sample size.
+- Design and run a factorial battery with declared factors, replication,
+  blocking or randomization, and a sample-size rationale large enough to inform
+  the next development decision unless the documented stop rule fires.
 - Score result validity separately from controller/session health.
 - Render public-safe profile-run summaries and P74 evaluation dataset rows from
   live evidence before making any FoundryTK follow-on decision.
@@ -3515,7 +3517,13 @@ Planned tasks:
 - [ ] P75.1 Run matrix, budget, and stop-rule activation (#489)
   - [ ] Select one bounded reusable task suitable for matched profile/model
         comparison.
-  - [ ] Choose the P73 profile and named overlay combinations to compare.
+  - [ ] Choose the P75 factors: P73 profiles, named overlays, model lanes,
+        task families, and repetition or retry lanes.
+  - [ ] Declare fixed versus exploratory factors, blocking variables,
+        randomization or rotation order, replication count, and planned minimum
+        analyzable sample size.
+  - [ ] Preserve replication before breadth if budget or operational limits
+        require narrowing the matrix.
   - [ ] Define manifest, result, status, profile-run summary, dataset, compact
         transcript, and optional heartbeat evidence paths.
   - [ ] Declare supervisor budget and repeated-blocker stop rules before any
@@ -3547,4 +3555,5 @@ Planned tasks:
 
 Activation note: P75 starts from P74's integration decision. FoundryTK remains
 external guidance until P75 produces enough matched live SDK evidence to justify
-a narrower next lane.
+a narrower next lane. Underpowered or stopped batteries must be reported as
+design or infrastructure evidence, not as profile/model recommendations.

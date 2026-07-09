@@ -22,19 +22,44 @@ model-selection decisions?
 - Selected P73 profile and named task overlay recorded before and after every
   run.
 
-## Initial Run Matrix
+## Factorial Design Requirement
 
-P75.1 will finalize the matrix before live sessions start. The starting target
-is at least three comparable live SDK run attempts:
+P75.1 must produce a real factorial experiment design before live sessions
+start. Three comparable runs are only the minimum smoke gate that proves the
+evidence pipeline works; three runs are not enough to support a profile,
+overlay, or model-selection recommendation.
 
-- baseline selected profile with one named overlay;
-- alternate selected profile or model role with the same named overlay;
-- repeat or contrast run that tests whether the observed behavior is stable
-  enough to compare.
+The design must declare:
 
-The matrix may stop after two attempts only if the same controller/provider
-blocker repeats and the recorded P75 stop rule says further paid-supervisor
-coordination would be wasteful.
+- factors: selected profile, named task overlay, model role or model family,
+  task family, and retry or repetition lane where applicable;
+- fixed factors versus exploratory factors;
+- blocking variables, such as task family, run order, controller version,
+  worker host inventory, and provider/session condition;
+- replication count per treatment cell;
+- randomization or rotation order so run order does not masquerade as a model
+  or profile effect;
+- planned minimum analyzable sample size and the rationale for that number;
+- interim checkpoints that are allowed to stop the battery for repeated
+  infrastructure failure without pretending the empirical comparison is
+  complete;
+- which comparisons are confirmatory enough to inform the next development
+  step and which are only exploratory.
+
+The initial target should be large enough to estimate repeatability and
+interaction signals, not just produce one anecdote per profile. A reasonable
+starting shape is a balanced matrix with repeated cells across at least:
+
+- two selected profiles or model-role wrappers;
+- two named overlays or task families;
+- two model lanes when the live configured inventory supports them;
+- three or more repetitions for each treatment cell that remains in scope after
+  the P75.1 budget gate.
+
+If that full matrix is too expensive or operationally noisy, P75.1 must narrow
+the factors explicitly and preserve replication before launching live runs. The
+phase should prefer a smaller factorial design with enough repeats to be useful
+over a broad one-pass tour that cannot inform the next development decision.
 
 ## Evidence Contract
 
@@ -69,11 +94,15 @@ controller run with weak result content is not a quality success.
 P75.1 must declare the concrete budget before launching live runs. Default
 activation boundary:
 
-- run at most three planned live attempts before the first comparison decision;
+- run at least the declared pilot smoke gate before any full-battery launch;
+- run the declared factorial matrix unless the documented budget or stop rule
+  fires;
 - allow one bounded repair/retry only when the previous failure teaches a
   concrete manifest, prompt, or controller fix;
 - stop after two repeated controller/provider failures in the same lane and
-  record the blocker instead of chasing a cleaner run.
+  record the blocker instead of chasing a cleaner run;
+- never convert a stopped or underpowered battery into a profile/model
+  recommendation; report it as infrastructure or design evidence instead.
 
 ## Follow-On Decision
 
