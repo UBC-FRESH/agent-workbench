@@ -3251,14 +3251,24 @@ Planned tasks:
   - [x] Add `agent-workbench copilot-sdk profile-render`.
   - [x] Count and render `session.custom_agents_updated`, `subagent.*`, and
         assistant messages with agent metadata.
-- [ ] P72.5 Custom tool registry and verification (#477)
+- [x] P72.5 Custom tool registry and verification (#477)
   - [x] Add read-only/validation tools for run context, result contract, and
         result validation.
   - [x] Cover parser, bridge kwargs, transcript, and tool behavior with focused
         tests.
-  - [ ] Run one P70 Ticket C or later FEMIC dogfood task with
+  - [x] Run one P70 Ticket C or later FEMIC dogfood task with
         `agent-workbench-local-supervisor` selected.
-  - [ ] Compare behavior against P70 Ticket B baseline.
+  - [x] Compare behavior against P70 Ticket B baseline.
+
+P72.5 live evidence: Ticket C ran as SDK session
+`6ebd387b-b23a-4ff1-8e22-5abc46a2cba0` against the ignored FEMIC P108
+supervisor result report. Compared with Ticket B, Ticket C produced visible
+subagent events, invoked the custom `agent_workbench_validate_result` tool, and
+recorded a manifest-derived custom-agent evidence event for
+`agent-workbench-local-supervisor`. Coordinator verification confirmed the
+target report no longer contains the placeholder PR URL, reports child issues
+#297-#301 closed, reports parent issue #302 open, and reports PR #303 open and
+mergeable.
 
 Closeout boundary:
 
@@ -3267,6 +3277,8 @@ Closeout boundary:
 - [x] Run `ruff format`, `ruff check`, and `git diff --check`.
 - [x] Smoke-test `profile-validate` and `profile-render` on an ignored runtime
       manifest.
+- [x] Dogfood a selected custom-agent profile on P70 Ticket C and compare it to
+      the P70 Ticket B baseline.
 - [x] Update `CHANGE_LOG.md`.
 - [x] Update GitHub issues.
 

@@ -51,3 +51,9 @@ Broad mutating Agent Workbench-specific tools stay out of P72. Mutating behavior
 - Unit-test transcript accounting for `session.custom_agents_updated`, `subagent.*`, and assistant messages carrying agent metadata.
 - Smoke-test `profile-validate` and `profile-render` against an ignored runtime manifest using the standard local supervisor profile.
 - Keep live FEMIC dogfood as P70 evidence rather than claiming P72 alone proves downstream task quality.
+
+## P72.5 Dogfood Evidence
+
+P70 Ticket C ran through SDK session `6ebd387b-b23a-4ff1-8e22-5abc46a2cba0` with `agent-workbench-local-supervisor` selected. The run repaired the ignored FEMIC P108 supervisor result report by replacing the stale PR placeholder with PR #303, preserving the open parent issue #302 state, and recording the closed child issue set #297-#301.
+
+Compared with P70 Ticket B, Ticket C produced visible subagent events, invoked the custom `agent_workbench_validate_result` tool, and after a bridge patch recorded a manifest-derived `session.custom_agents_updated` event so compact transcripts expose the selected profile. The comparison artifact remains ignored under `runtime/p70_ticket_c_p108_result_report/comparison.md`.

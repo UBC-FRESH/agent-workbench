@@ -1951,3 +1951,12 @@ issues, pull requests, and closeout comments.
   check`, `git diff --check`, and a local `profile-validate`/`profile-render`
   smoke against the standard supervisor profile; `mypy` remains unavailable in
   the repo venv and the repo has no pre-commit config.
+- Dogfooded P72.5 on P70 Ticket C with selected profile
+  `agent-workbench-local-supervisor` in SDK session
+  `6ebd387b-b23a-4ff1-8e22-5abc46a2cba0`; the run repaired the ignored FEMIC
+  P108 supervisor result report, used subagent events and the custom
+  `agent_workbench_validate_result` tool, and produced a comparison against the
+  Ticket B baseline under ignored runtime storage.
+- Added a manifest-derived `session.custom_agents_updated` evidence event so
+  future SDK runs expose selected custom-agent profile configuration in monitor
+  and transcript artifacts even when the SDK does not emit that event itself.

@@ -8,6 +8,7 @@ from typing import Any
 from agent_workbench.copilot_sdk_bridge import (
     LiveCopilotSdkAdapter,
     SdkTurnConfig,
+    agent_profiles_event,
     load_sdk_session_manifest,
     monitor_sdk_session,
     render_sdk_compact_transcript_markdown,
@@ -456,6 +457,44 @@ def test_live_adapter_passes_custom_agent_kwargs(tmp_path: Path) -> None:
     assert "Use the result contract tool" in kwargs["custom_agents"][0]["prompt"]
     assert len(kwargs["tools"]) == 1
     assert "agent_workbench_run_context" in kwargs["available_tools"]
+
+
+def test_agent_profiles_event_records_manifest_resolved_profiles(
+    tmp_path: Path,
+) -> None:
+    profile_path = tmp_path / "worker.agent.md"
+    profile_path.write_text(
+        "\n".join(
+            [
+                "---",
+                "name: worker",
+                "description: Worker profile.",
+                "model: qwen3.6",
+                "tools: ['read', 'agent_workbench_run_context']",
+                "---",
+                "",
+                "Do the assigned work.",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    manifest_path = write_manifest_fixture(tmp_path)
+    manifest = load_sdk_session_manifest(manifest_path)
+    manifest["_manifest_path"] = str(manifest_path)
+    manifest["sdk"]["agent_profiles"] = {
+        "source_paths": [str(profile_path)],
+        "selected": "worker",
+        "custom_tools": ["agent_workbench_run_context"],
+    }
+
+    event = agent_profiles_event(manifest)
+
+    assert event is not None
+    assert event["type"] == "session.custom_agents_updated"
+    assert event["data"]["emitted_by"] == "agent-workbench"
+    assert event["data"]["selected_agent"] == "worker"
+    assert event["data"]["custom_agents"][0]["name"] == "worker"
+    assert event["data"]["custom_tools"] == ["agent_workbench_run_context"]
 
 
 class FakeRawSdkSession:

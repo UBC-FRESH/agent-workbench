@@ -1265,6 +1265,9 @@ async def run_sdk_turn(config: SdkTurnConfig, adapter: SdkAdapter) -> dict[str, 
 
     prompt = load_prompt(config, manifest)
     events: list[dict[str, Any]] = []
+    profile_event = agent_profiles_event(manifest)
+    if profile_event is not None:
+        events.append(profile_event)
     idle = asyncio.Event()
 
     def on_event(event: Any) -> None:
@@ -1353,6 +1356,36 @@ def build_status_summary(
         "validation_ok": validation.ok,
         "validation_warnings": validation.warnings,
         "observed_errors": event_errors(events),
+    }
+
+
+def agent_profiles_event(manifest: dict[str, Any]) -> dict[str, Any] | None:
+    resolved = resolve_agent_profiles(manifest)
+    if not resolved.has_profile_block:
+        return None
+    return {
+        "timestamp": utc_now(),
+        "type": "session.custom_agents_updated",
+        "data": {
+            "emitted_by": "agent-workbench",
+            "source": "sdk.agent_profiles",
+            "selected_agent": resolved.selected_agent,
+            "custom_agents": [
+                {
+                    "name": str(agent.get("name", "")),
+                    "model": str(agent.get("model", "")),
+                    "tools": agent.get("tools", []),
+                }
+                for agent in resolved.custom_agents
+            ],
+            "source_paths": [str(path) for path in resolved.source_paths],
+            "custom_tools": list(resolved.custom_tool_names),
+            "custom_agents_local_only": resolved.custom_agents_local_only,
+            "include_sub_agent_streaming_events": (
+                resolved.include_sub_agent_streaming_events
+            ),
+            "warnings": list(resolved.warnings),
+        },
     }
 
 
