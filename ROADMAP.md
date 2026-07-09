@@ -78,8 +78,11 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P67 Heartbeat and nudge protocol | #437 | `feature/p67-heartbeat-nudge-protocol` | Complete |
 | P68 Copilot task controller v0 | #448 | `feature/p68-copilot-task-controller-v0` | Complete |
 | P69 Behavior analytics from archives | #454 | `feature/p69-behavior-analytics-from-archives` | Complete |
-| P70 FEMIC P108 repair dogfood | #461 | `feature/p70-femic-p108-repair-dogfood` | Parked |
-| P71 Copilot SDK remote-control bridge | #466 | `feature/p71-copilot-sdk-remote-control-bridge` | Active |
+| P70 FEMIC P108 repair dogfood | #461 / PR #484 | `feature/p70-femic-p108-repair-dogfood` | Complete |
+| P71 Copilot SDK remote-control bridge | #466 / PR #472 | `feature/p71-copilot-sdk-remote-control-bridge` | Complete |
+| P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
+| P73 Standard Agent Workbench profile catalog | TBD | `feature/p73-standard-agent-profile-catalog` | Planned |
+| P74 FoundryTK profile optimization | TBD | `feature/p74-foundrytk-profile-optimization` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3086,16 +3089,16 @@ Parent issue: #461
 
 Branch: `feature/p70-femic-p108-repair-dogfood`
 
-Status: parked
+Status: complete
 
 Goal: test the task-level delegation controller on real P108 cleanup tasks in
 FEMIC, while keeping coordinator authority over final PR merge and parent issue
 closure.
 
-Pause note: P70 is parked while P71 builds SDK-owned Copilot remote-control
-capabilities. FEMIC P108 remains the dogfood target for P71 live testing; P70
-resumes only after P71 records whether the bridge can create stable sessions,
-monitor them, detect stalls, and send mid-job nudges with verifiable evidence.
+Resume note: P71 delivered and merged the SDK-owned Copilot remote-control
+bridge. P70 now resumes with SDK session manifests, `copilot-sdk start`,
+`monitor`, `nudge-plan`, and `nudge` as the primary delegation path. VS Code
+Chat archives remain evidence-only fallback material.
 
 Planned tasks:
 
@@ -3104,24 +3107,63 @@ Planned tasks:
   - [x] Declare a budget and stop rule before any paid-coordinator monitoring.
   - [x] Generate one child-task ticket at a time through the P66 protocol.
   - [x] Require P65 archive capture for every Copilot-backed task.
-- [ ] P70.2 Cleanup ticket set
-  - [ ] Ticket A: repair `CHANGE_LOG.md` ordering and encoding damage.
-  - [ ] Ticket B: reconcile parent roadmap versus instance roadmap completion
-        state.
-  - [ ] Ticket C: repair stale P108 supervisor result-report claims.
-  - [ ] Ticket D: verify PR #303 and child issue checklist consistency.
-  - [ ] Ticket E: produce final coordinator review packet.
-- [ ] P70.3 Controller evaluation
-  - [ ] Measure stall count, nudge count, tool-call count, result validity, and
+- [x] P70.2 Cleanup ticket set (#463)
+  - [x] Ticket A: repair `CHANGE_LOG.md` ordering and encoding damage
+        (completed during P71 SDK dogfood and verified as FEMIC commit
+        `181cb16` on PR #303).
+  - [x] Ticket B: reconcile parent roadmap versus instance roadmap completion
+        state (completed with SDK session
+        `cdba1e8b-5173-4676-bacc-081e18d9eec8`, instance commit `282da67`,
+        and parent FEMIC commit `b60dbd5` on PR #303).
+  - [x] Ticket C: repair stale P108 supervisor result-report claims
+        (completed with selected profile `agent-workbench-local-supervisor`,
+        SDK session `6ebd387b-b23a-4ff1-8e22-5abc46a2cba0`, and
+        coordinator-verified repair of the ignored FEMIC P108 supervisor result
+        report).
+  - [x] Ticket D: verify PR #303 and child issue checklist consistency
+        (completed with selected profile `agent-workbench-local-supervisor`,
+        SDK session `b44c04bb-2414-4175-9208-e773747f48f7`, and coordinator
+        verification that PR #303 is open/non-draft/mergeable, child issues
+        #297-#301 are closed, and parent issue #302 remains open; counted as
+        `needs-supervisor-review` for controller scoring because the SDK emitted
+        a `model.call_failure` XML syntax error).
+  - [x] Ticket E: produce final coordinator review packet (completed as
+        `runtime/p70_ticket_e_final_review_packet/review_packet.md`, with
+        coordinator verification that PR #303 remains open/non-draft/mergeable,
+        child issues #297-#301 are closed, parent issue #302 remains open, and
+        P70.3 should score Ticket D's SDK `model.call_failure` separately from
+        result validity).
+- [x] P70.3 Controller evaluation (#464)
+  - [x] Add full and compact human-readable SDK transcript renderers so
+        coordinator-supervisor and supervisor-worker conversation evidence can
+        be audited before behavior scoring.
+  - [x] Measure stall count, nudge count, tool-call count, result validity, and
         coordinator repair burden per ticket.
-  - [ ] Compare task-level behavior to the whole-phase P108 run.
-  - [ ] Record whether child-task tickets reduce drift and stale-report defects.
-- [ ] P70.4 Scale decision
-  - [ ] Decide whether to use task-level Copilot supervision for the next real
+  - [x] Compare task-level behavior to the whole-phase P108 run.
+  - [x] Record whether child-task tickets reduce drift and stale-report defects.
+
+P70.3 evaluation result: the task-level SDK controller is a net improvement
+over the whole-phase P108 run for bounded cleanup/review work. Ticket-level
+runs reduced manual stall nudges and made stale-report defects independently
+reviewable, but Ticket D proved controller scoring must separate result
+validity from session health because a correct result can coexist with an SDK
+`model.call_failure`. The full evaluation is recorded under ignored runtime
+storage at `runtime/p70_controller_evaluation/controller_evaluation.md`.
+- [x] P70.4 Scale decision (#465)
+  - [x] Decide whether to use task-level Copilot supervision for the next real
         FEMIC or CLEWS development phase.
-  - [ ] Record remaining risks and required controller improvements.
-  - [ ] Keep final P108 merge/parent closure under coordinator/maintainer
+  - [x] Record remaining risks and required controller improvements.
+  - [x] Keep final P108 merge/parent closure under coordinator/maintainer
         authority.
+
+P70.4 scale decision: use task-level SDK Copilot supervision by default for
+bounded cleanup/review lanes with explicit result or blocker artifacts,
+coordinator verification, ignored raw runtime evidence, and compact transcript
+review. Do not yet use it as the default for broad multi-day implementation
+phases. The next implementation tranche should activate P73 before P74 so the
+standard profile catalog and tool-aware evidence schema stabilize before
+FoundryTK optimization work begins. FEMIC PR #303 merge and parent issue #302
+closure remain outside P70 and require coordinator/maintainer authority.
 
 ## Phase 71: Copilot SDK Remote-Control Bridge
 
@@ -3129,7 +3171,7 @@ Parent issue: #466
 
 Branch: `feature/p71-copilot-sdk-remote-control-bridge`
 
-Status: active
+Status: complete
 
 Goal: replace brittle VS Code Chat session driving with an SDK-owned bridge that
 can create resumable Copilot sessions, monitor event streams in near real time,
@@ -3189,3 +3231,128 @@ Closeout boundary:
 - [x] Run `git diff --check`.
 - [x] Dogfood at least one FEMIC P108 session or record the exact live blocker.
 - [x] Update `CHANGE_LOG.md` and GitHub issues.
+
+## Phase 72: Copilot SDK Custom Agent Profiles
+
+Parent issue: #473
+
+Branch: `feature/p72-sdk-custom-agent-profiles`
+
+Status: complete
+
+Goal: upgrade the SDK-owned Copilot bridge so sessions can be launched and
+resumed with explicit custom agent profiles, selected agent names, default
+agent controls, subagent streaming, and conservative Agent Workbench custom
+tools.
+
+Scope:
+
+- Manifest-driven `sdk.agent_profiles` configuration.
+- `.agent.md` profile parsing shared with VS Code custom-agent experiments.
+- SDK create/resume kwargs for `custom_agents`, `agent`, `default_agent`,
+  `custom_agents_local_only`, `include_sub_agent_streaming_events`, and
+  custom tools.
+- Profile validation/rendering CLI commands.
+- Custom-agent and subagent event evidence in monitor and transcript views.
+
+Out of scope:
+
+- Standardizing every profile/model-role combination; that is P73.
+- Pulling FoundryTK into the runtime bridge; that is P74 exploration.
+- Claiming FEMIC P108 repair quality without P70 coordinator verification.
+
+Planned tasks:
+
+- [x] P72.1 Profile planning and manifest contract (#475)
+  - [x] Add the P72 planning note and issue mapping.
+  - [x] Extend the SDK manifest template with `sdk.agent_profiles`.
+  - [x] Define public-safe profile, overlay, and custom-tool boundaries.
+- [x] P72.2 Profile parser and resolver (#474)
+  - [x] Parse `.agent.md` frontmatter and Markdown body with PyYAML.
+  - [x] Map SDK-supported fields and preserve unsupported VS Code-only fields
+        in validation output.
+  - [x] Validate selected agents, required names, non-empty prompts, task
+        overlays, and profile tool coverage.
+- [x] P72.3 SDK bridge launch integration (#476)
+  - [x] Pass resolved custom-agent kwargs through live session creation.
+  - [x] Pass resolved custom-agent kwargs through live session resume.
+  - [x] Register conservative Agent Workbench custom SDK tools from the
+        manifest.
+- [x] P72.4 Profile CLI and transcript evidence (#478)
+  - [x] Add `agent-workbench copilot-sdk profile-validate`.
+  - [x] Add `agent-workbench copilot-sdk profile-render`.
+  - [x] Count and render `session.custom_agents_updated`, `subagent.*`, and
+        assistant messages with agent metadata.
+- [x] P72.5 Custom tool registry and verification (#477)
+  - [x] Add read-only/validation tools for run context, result contract, and
+        result validation.
+  - [x] Cover parser, bridge kwargs, transcript, and tool behavior with focused
+        tests.
+  - [x] Run one P70 Ticket C or later FEMIC dogfood task with
+        `agent-workbench-local-supervisor` selected.
+  - [x] Compare behavior against P70 Ticket B baseline.
+
+P72.5 live evidence: Ticket C ran as SDK session
+`6ebd387b-b23a-4ff1-8e22-5abc46a2cba0` against the ignored FEMIC P108
+supervisor result report. Compared with Ticket B, Ticket C produced visible
+subagent events, invoked the custom `agent_workbench_validate_result` tool, and
+recorded a manifest-derived custom-agent evidence event for
+`agent-workbench-local-supervisor`. Coordinator verification confirmed the
+target report no longer contains the placeholder PR URL, reports child issues
+#297-#301 closed, reports parent issue #302 open, and reports PR #303 open and
+mergeable.
+
+Closeout boundary:
+
+- [x] Run focused P72 tests.
+- [x] Run full `pytest`.
+- [x] Run `ruff format`, `ruff check`, and `git diff --check`.
+- [x] Smoke-test `profile-validate` and `profile-render` on an ignored runtime
+      manifest.
+- [x] Dogfood a selected custom-agent profile on P70 Ticket C and compare it to
+      the P70 Ticket B baseline.
+- [x] Update `CHANGE_LOG.md`.
+- [x] Update GitHub issues.
+- [x] Merge PR #479 into the active P70 branch.
+
+## Phase 73: Standard Agent Workbench Profile Catalog
+
+Parent issue: TBD
+
+Branch: `feature/p73-standard-agent-profile-catalog`
+
+Status: planned
+
+Goal: turn the P72 bridge into a curated profile catalog with standard
+model-role wrappers and task overlays that can be selected reliably by
+manifest.
+
+Planned scope:
+
+- Keep `.github/agents/*.agent.md` as the canonical editable profile format.
+- Standardize supervisor, auditor, strict-worker, and strict-worker-variant
+  profiles.
+- Add role/task overlays for repair-list execution, new Python module
+  implementation, debugging, systematic refactors, documentation expansion,
+  notebook/example authoring, and release-readiness review.
+- Treat tools as a first-class profile dimension with explicit validation.
+
+## Phase 74: FoundryTK Profile Optimization Exploration
+
+Parent issue: TBD
+
+Branch: `feature/p74-foundrytk-profile-optimization`
+
+Status: planned
+
+Goal: evaluate whether FoundryTK and related evaluation tooling can improve
+Agent Workbench model/profile selection, prompt optimization, trace review, and
+delegated workflow efficiency.
+
+Planned scope:
+
+- Keep FoundryTK out of the P72/P73 runtime bridge.
+- Investigate FoundryTK as external evaluation guidance, optional tool/MCP
+  provider, model-selection evidence source, and trace/evaluation runner.
+- Define reliability, work quality, efficiency, and conversation-shape metrics
+  before any model customization work.

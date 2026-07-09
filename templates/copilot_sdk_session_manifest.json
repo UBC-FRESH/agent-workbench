@@ -16,7 +16,26 @@
     "mode": "empty",
     "base_directory": "runtime/copilot_sdk_home/p71-example-run",
     "available_tools": "default",
-    "working_directory": ""
+    "working_directory": "",
+    "agent_profiles": {
+      "source_paths": [
+        ".github/agents/agent-workbench-local-supervisor.agent.md"
+      ],
+      "selected": "agent-workbench-local-supervisor",
+      "default_agent": {
+        "excluded_tools": []
+      },
+      "custom_agents_local_only": true,
+      "include_sub_agent_streaming_events": true,
+      "custom_tools": [
+        "agent_workbench_run_context",
+        "agent_workbench_result_contract",
+        "agent_workbench_validate_result"
+      ],
+      "task_overlay": {
+        "text": ""
+      }
+    }
   },
   "paths": {
     "ticket": "runtime/agent_jobs/p71_example_ticket.md",

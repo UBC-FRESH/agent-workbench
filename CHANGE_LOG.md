@@ -1797,6 +1797,29 @@ issues, pull requests, and closeout comments.
 - Synced the roadmap status map so P66 through P69 are marked complete on
   `main`, leaving P70 as the next planned dogfood lane.
 
+## 2026-07-07 - Activated P70 FEMIC P108 repair dogfood
+
+- Created P70 parent issue #461 and child issues #462 through #465 on
+  `feature/p70-femic-p108-repair-dogfood`.
+- Updated `ROADMAP.md` so P70 is the active Agent Workbench phase and the stale
+  P69 section status is complete.
+- Added `planning/phase70_femic_p108_repair_dogfood.md` to record the
+  coordinator-owned setup boundary, budget/stop-rule expectations, planned P108
+  cleanup ticket set, and acceptance notes before any FEMIC repair work starts.
+
+## 2026-07-07 - Completed P70.1 dogfood setup
+
+- Audited current FEMIC P108 evidence: branch
+  `feature/p108-tsa23-instance-bootstrap-delegation`, open parent issue #302,
+  open PR #303, and the parent `CHANGE_LOG.md` P108 ordering/encoding defect.
+- Selected Ticket A, the `CHANGE_LOG.md` ordering and mojibake repair, as the
+  first bounded task-level controller dogfood target.
+- Wrote ignored Ticket A controller artifacts under `runtime/agent_jobs/` and
+  validated the manifest with
+  `.\.venv\Scripts\python.exe -m agent_workbench copilot task-validate`.
+- Recorded the local worker-model inventory caveat: `ollama` is not available
+  on this shell, so the manifest requires model verification before launch.
+
 ## 2026-07-07 - Activated P71 Copilot SDK remote-control bridge
 
 - Parked Agent Workbench P70 (#461) after the initial FEMIC P108 dogfood setup
@@ -1866,3 +1889,138 @@ issues, pull requests, and closeout comments.
   focused `ruff check`, and `git diff --check`; `mypy` and `pre-commit` were
   unavailable because this repo venv lacks `mypy` and the repo has no
   `.pre-commit-config.yaml`.
+
+## 2026-07-08 - Resumed P70 with SDK-owned TSA23 Ticket B
+
+- Merged the completed P71 SDK remote-control bridge back into the parked P70
+  branch and marked P70 active again with P71 complete.
+- Prepared and launched ignored SDK manifest
+  `runtime/p70_ticket_b_tsa23_instance_roadmap/manifest.json` for P70.2 Ticket
+  B, using FEMIC P108 and the TSA23 instance as the target lane.
+- Ran SDK session `cdba1e8b-5173-4676-bacc-081e18d9eec8`; the worker produced
+  an accepted candidate that reconciled `external/femic-tsa23-instance/ROADMAP.md`
+  with closed FEMIC issues #300 and #301.
+- Supervisor verification confirmed the instance diff, added an instance
+  changelog note, committed and pushed instance commit `282da67`, and updated
+  FEMIC PR #303 with parent commit `b60dbd5`.
+- Fixed the SDK bridge live adapter so relative manifest `working_directory`
+  values are resolved to absolute paths at launch time while keeping manifests
+  public-safe.
+
+## 2026-07-08 - Added SDK transcript rendering for P70 review
+
+- Added `agent-workbench copilot-sdk transcript`, which reads a session
+  manifest's SDK event JSONL and renders a human-readable Markdown transcript
+  of coordinator messages, Copilot worker replies, tool activity, and permission
+  events.
+- Kept raw `system.message` payloads omitted by default to avoid burying the
+  conversation in runtime instructions, with `--include-system` available for
+  local-only audit when needed.
+- Generated the first ignored transcript for
+  `runtime/p70_ticket_b_tsa23_instance_roadmap/manifest.json` so P70 Ticket B
+  conversation evidence can be reviewed alongside the existing status and
+  result summaries.
+
+## 2026-07-09 - Added compact SDK transcript view
+
+- Extended `agent-workbench copilot-sdk transcript` with `--compact-output` so
+  one run can write both the full audit transcript and a second compact
+  chat-pane-style transcript.
+- The compact view keeps user messages, Copilot worker replies, tool actions,
+  statuses, and short output signals visible by default, while preserving the
+  full per-event text in expandable Markdown details.
+- Regenerated P70 Ticket B transcript evidence with a compact local artifact
+  under `runtime/p70_ticket_b_tsa23_instance_roadmap/`.
+
+## 2026-07-09 - Activated P72 Copilot SDK custom agent profiles
+
+- Opened stacked PR #479 from P72 onto the active P70 branch.
+- Added P72/P73/P74 planning notes and roadmap entries for SDK custom-agent
+  profiles, the standard Agent Workbench profile catalog, and later FoundryTK
+  profile optimization exploration.
+- Extended SDK session manifests with `sdk.agent_profiles`, including profile
+  source paths, selected agent, default-agent config, local-only custom agents,
+  subagent streaming, task overlays, and custom Agent Workbench tools.
+- Added `.agent.md` profile parsing, validation, public-safe profile rendering,
+  SDK create/resume kwargs pass-through, and custom-agent/subagent transcript
+  evidence.
+- Added conservative Agent Workbench SDK tools for run context, result contract,
+  and result validation, with focused tests covering profile parsing, bridge
+  kwargs, resume behavior, transcript metadata, and tool validation.
+- Verified the implementation with focused P72 tests, full `pytest`, `ruff
+  check`, `git diff --check`, and a local `profile-validate`/`profile-render`
+  smoke against the standard supervisor profile; `mypy` remains unavailable in
+  the repo venv and the repo has no pre-commit config.
+- Dogfooded P72.5 on P70 Ticket C with selected profile
+  `agent-workbench-local-supervisor` in SDK session
+  `6ebd387b-b23a-4ff1-8e22-5abc46a2cba0`; the run repaired the ignored FEMIC
+  P108 supervisor result report, used subagent events and the custom
+  `agent_workbench_validate_result` tool, and produced a comparison against the
+  Ticket B baseline under ignored runtime storage.
+- Added a manifest-derived `session.custom_agents_updated` evidence event so
+  future SDK runs expose selected custom-agent profile configuration in monitor
+  and transcript artifacts even when the SDK does not emit that event itself.
+- Merged PR #479 into the active P70 branch and marked P72 complete.
+
+## 2026-07-09 - Ran P70 Ticket D PR consistency dogfood
+
+- Merged the completed P72 custom-agent bridge into the active P70 branch and
+  closed the P72 parent issue.
+- Ran P70 Ticket D with selected profile `agent-workbench-local-supervisor` in
+  SDK session `b44c04bb-2414-4175-9208-e773747f48f7`.
+- The worker produced a PR #303 and P108 issue consistency result. Coordinator
+  verification confirmed that PR #303 is open, non-draft, mergeable, targets
+  `main`, has expected head branch `feature/p108-tsa23-instance-bootstrap-delegation`,
+  and has passing `build` and `package-release-checks` with `deploy` skipped.
+- Verified that P108 child issues #297-#301 are closed, parent issue #302 is
+  open, and FEMIC `ROADMAP.md` agrees with those issue states.
+- Recorded Ticket D as useful verified evidence but not a clean controller run:
+  the SDK emitted a `model.call_failure` XML syntax error, so the bridge marked
+  the session blocked despite a substantively correct result file.
+
+## 2026-07-09 - Completed P70.2 cleanup ticket set
+
+- Produced the Ticket E final coordinator review packet under ignored runtime
+  storage at `runtime/p70_ticket_e_final_review_packet/review_packet.md`.
+- Synthesized Tickets A-D and confirmed the current FEMIC P108 review state:
+  PR #303 is open, non-draft, mergeable, targets `main`, and has expected
+  status checks; child issues #297-#301 are closed; parent issue #302 remains
+  open by design.
+- Marked P70.2 complete and recorded that P70.3 controller evaluation should
+  score Ticket D's SDK `model.call_failure` separately from the independently
+  verified result content.
+
+## 2026-07-09 - Completed P70.3 controller evaluation
+
+- Wrote the P70.3 controller evaluation under ignored runtime storage at
+  `runtime/p70_controller_evaluation/controller_evaluation.md`.
+- Compared Ticket B/C/D SDK metrics against the archived whole-phase P108 run,
+  including event counts, tool starts, permission requests, subagent events,
+  custom-agent evidence events, custom-tool mentions, nudges, and observed SDK
+  errors.
+- Recorded the controller decision: task-level SDK delegation is a net
+  improvement for bounded cleanup/review tickets, but controller scoring must
+  separate result validity from session health because Ticket D produced a
+  correct result while the SDK emitted a `model.call_failure`.
+
+## 2026-07-09 - Completed P70 scale decision
+
+- Wrote the P70.4 scale decision under ignored runtime storage at
+  `runtime/p70_scale_decision/scale_decision.md`.
+- Accepted task-level SDK Copilot supervision as the default candidate for
+  bounded cleanup/review lanes with explicit result or blocker artifacts,
+  coordinator verification, ignored raw runtime evidence, and compact
+  transcript review.
+- Kept broad multi-day implementation phases out of scope for default SDK
+  delegation until controller-health scoring, failure taxonomy, profile metrics,
+  and conservative tool-safety evidence improve.
+- Recorded that P73 should precede P74: stabilize the standard profile catalog
+  and tool-aware evidence schema before FoundryTK optimization exploration.
+- Preserved the FEMIC authority boundary: P70 does not merge PR #303 and does
+  not close parent issue #302.
+
+## 2026-07-09 - Opened P70 pull request
+
+- Opened PR #484 from `feature/p70-femic-p108-repair-dogfood` to `main` to
+  land the completed P70/P72 branch train.
+- Updated `ROADMAP.md` so the P70 tracker row references PR #484.
