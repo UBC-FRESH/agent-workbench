@@ -44,7 +44,13 @@ from .comparison import render_eval_comparison
 from .copilot_archive import CopilotArchiveConfig, archive_copilot_session
 from .copilot_agent_profiles import (
     render_agent_profiles_markdown,
+    render_profile_catalog_markdown,
     resolve_agent_profiles,
+    validate_standard_profile_catalog,
+)
+from .copilot_profile_runs import (
+    render_profile_run_evidence_markdown,
+    summarize_profile_run,
 )
 from .copilot_task_controller import (
     generate_prompt_file,
@@ -389,6 +395,34 @@ def build_parser() -> argparse.ArgumentParser:
     )
     copilot_sdk_profile_render_parser.add_argument("--output", type=Path, required=True)
     copilot_sdk_profile_render_parser.set_defaults(func=run_copilot_sdk_profile_render)
+
+    copilot_sdk_catalog_validate_parser = copilot_sdk_subparsers.add_parser(
+        "catalog-validate",
+        help="Validate and preview the standard Agent Workbench profile catalog.",
+    )
+    copilot_sdk_catalog_validate_parser.add_argument(
+        "--repo-root",
+        type=Path,
+        default=None,
+        help="Repository root containing .github/agents. Defaults to auto-detect.",
+    )
+    copilot_sdk_catalog_validate_parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Optional Markdown preview output path.",
+    )
+    copilot_sdk_catalog_validate_parser.set_defaults(
+        func=run_copilot_sdk_catalog_validate
+    )
+
+    copilot_sdk_profile_run_parser = copilot_sdk_subparsers.add_parser(
+        "profile-run-summary",
+        help="Summarize profile-selected SDK run evidence from a manifest.",
+    )
+    copilot_sdk_profile_run_parser.add_argument("--manifest", type=Path, required=True)
+    copilot_sdk_profile_run_parser.add_argument("--output", type=Path, required=True)
+    copilot_sdk_profile_run_parser.set_defaults(func=run_copilot_sdk_profile_run)
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1622,10 +1656,11 @@ def run_copilot_sdk_profile_validate(args: argparse.Namespace) -> int:
         print(f"error: {error}", file=sys.stderr)
     print(
         "profiles={profiles} selected={selected} custom_tools={tools} "
-        "warnings={warnings} errors={errors}".format(
+        "task_overlays={overlays} warnings={warnings} errors={errors}".format(
             profiles=len(resolved.custom_agents),
             selected=resolved.selected_agent or "",
             tools=len(resolved.custom_tool_names),
+            overlays=",".join(resolved.task_overlay_names) or "",
             warnings=len(resolved.warnings),
             errors=len(resolved.errors),
         )
@@ -1645,6 +1680,59 @@ def run_copilot_sdk_profile_render(args: argparse.Namespace) -> int:
     args.output.write_text(preview, encoding="utf-8")
     print(f"wrote {args.output}")
     return 0 if resolved.ok else 1
+
+
+def run_copilot_sdk_catalog_validate(args: argparse.Namespace) -> int:
+    try:
+        validation = validate_standard_profile_catalog(repo_root=args.repo_root)
+        preview = render_profile_catalog_markdown(validation)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    for warning in validation.warnings:
+        print(f"warning: {warning}", file=sys.stderr)
+    for error in validation.errors:
+        print(f"error: {error}", file=sys.stderr)
+    print(
+        "profiles={profiles} overlays={overlays} warnings={warnings} errors={errors}".format(
+            profiles=len(validation.profiles),
+            overlays=len(validation.overlays),
+            warnings=len(validation.warnings),
+            errors=len(validation.errors),
+        )
+    )
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(preview, encoding="utf-8")
+        print(f"wrote {args.output}")
+    return 0 if validation.ok else 1
+
+
+def run_copilot_sdk_profile_run(args: argparse.Namespace) -> int:
+    try:
+        evidence = summarize_profile_run(args.manifest)
+        preview = render_profile_run_evidence_markdown(evidence)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    for warning in evidence.warnings:
+        print(f"warning: {warning}", file=sys.stderr)
+    for error in evidence.errors:
+        print(f"error: {error}", file=sys.stderr)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(preview, encoding="utf-8")
+    print(
+        "selected={selected} overlays={overlays} controller_health={health} "
+        "result_status={result_status} events={events}".format(
+            selected=evidence.selected_agent,
+            overlays=",".join(evidence.task_overlays),
+            health=evidence.controller_health,
+            result_status=evidence.result_status,
+            events=evidence.event_count,
+        )
+    )
+    print(f"wrote {args.output}")
+    return 0 if evidence.ok else 1
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:

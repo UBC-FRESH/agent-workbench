@@ -5,13 +5,18 @@ from argparse import Namespace
 from pathlib import Path
 
 from agent_workbench.cli import (
+    run_copilot_sdk_catalog_validate,
     run_copilot_sdk_profile_render,
     run_copilot_sdk_profile_validate,
 )
 from agent_workbench.copilot_agent_profiles import (
+    STANDARD_AGENT_PROFILES,
+    STANDARD_TASK_OVERLAYS,
     TASK_OVERLAY_HEADING,
     render_agent_profiles_markdown,
+    render_profile_catalog_markdown,
     resolve_agent_profiles,
+    validate_standard_profile_catalog,
 )
 from agent_workbench.copilot_sdk_tools import (
     AGENT_WORKBENCH_TOOL_NAMES,
@@ -171,6 +176,52 @@ def test_render_agent_profiles_markdown_is_public_safe_preview(tmp_path: Path) -
     assert "Repair only the listed defects." not in preview
 
 
+def test_named_standard_task_overlay_appends_to_selected_profile_only(
+    tmp_path: Path,
+) -> None:
+    first = tmp_path / "first.agent.md"
+    second = tmp_path / "second.agent.md"
+    write_profile(first, name="first", body="First prompt.")
+    write_profile(second, name="second", body="Second prompt.")
+    manifest = manifest_with_profile(tmp_path, first)
+    manifest["sdk"]["agent_profiles"]["source_paths"] = [str(first), str(second)]
+    manifest["sdk"]["agent_profiles"]["selected"] = "second"
+    manifest["sdk"]["agent_profiles"]["task_overlay"] = {
+        "name": "documentation-expansion"
+    }
+    repo_root = Path(__file__).resolve().parents[1]
+
+    resolved = resolve_agent_profiles(
+        manifest, manifest_path=tmp_path / "manifest.json", repo_root=repo_root
+    )
+
+    assert resolved.ok, resolved.errors
+    assert resolved.task_overlay_names == ("documentation-expansion",)
+    assert len(resolved.task_overlay_paths) == 1
+    first_agent, second_agent = resolved.custom_agents
+    assert TASK_OVERLAY_HEADING not in first_agent["prompt"]
+    assert TASK_OVERLAY_HEADING in second_agent["prompt"]
+    assert "Documentation Expansion Overlay" in second_agent["prompt"]
+    assert "Documentation Expansion Overlay" not in second.read_text(encoding="utf-8")
+
+
+def test_unknown_standard_task_overlay_reports_available_names(tmp_path: Path) -> None:
+    profile_path = tmp_path / "worker.agent.md"
+    write_profile(profile_path)
+    manifest = manifest_with_profile(tmp_path, profile_path)
+    manifest["sdk"]["agent_profiles"]["task_overlay"] = {"name": "missing-overlay"}
+    repo_root = Path(__file__).resolve().parents[1]
+
+    resolved = resolve_agent_profiles(
+        manifest, manifest_path=tmp_path / "manifest.json", repo_root=repo_root
+    )
+
+    assert not resolved.ok
+    assert any("missing-overlay" in error for error in resolved.errors)
+    assert any("repair-list-execution" in error for error in resolved.errors)
+    assert "release-readiness-review" in STANDARD_TASK_OVERLAYS
+
+
 def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
     result = tmp_path / "result.md"
     result.write_text(
@@ -246,4 +297,45 @@ def test_profile_cli_validate_and_render(tmp_path: Path, capsys: object) -> None
     assert validate_code == 0
     assert render_code == 0
     assert "profiles=1 selected=worker" in captured.out
+    assert "task_overlays=" in captured.out
     assert output.exists()
+
+
+def test_standard_profile_catalog_validation_is_public_safe() -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+
+    validation = validate_standard_profile_catalog(repo_root=repo_root)
+    preview = render_profile_catalog_markdown(validation)
+
+    assert validation.ok, validation.errors
+    assert {entry.name for entry in validation.profiles} == set(STANDARD_AGENT_PROFILES)
+    assert {name for name, _path, exists in validation.overlays if exists} == set(
+        STANDARD_TASK_OVERLAYS
+    )
+    supervisor = next(
+        entry
+        for entry in validation.profiles
+        if entry.name == "agent-workbench-local-supervisor"
+    )
+    assert supervisor.model
+    assert "agent" in supervisor.tools
+    assert "# Agent Workbench Profile Catalog Preview" in preview
+    assert "prompt_chars:" in preview
+    assert "Your authority is below" not in preview
+
+
+def test_profile_catalog_cli_validate_writes_preview(
+    tmp_path: Path, capsys: object
+) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    output = tmp_path / "catalog_preview.md"
+
+    exit_code = run_copilot_sdk_catalog_validate(
+        Namespace(repo_root=repo_root, output=output)
+    )
+
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert "profiles=4 overlays=7" in captured.out
+    assert output.exists()
+    assert "agent-workbench-result-auditor" in output.read_text(encoding="utf-8")

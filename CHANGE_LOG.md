@@ -2024,3 +2024,72 @@ issues, pull requests, and closeout comments.
 - Opened PR #484 from `feature/p70-femic-p108-repair-dogfood` to `main` to
   land the completed P70/P72 branch train.
 - Updated `ROADMAP.md` so the P70 tracker row references PR #484.
+
+## 2026-07-09 - Activated P73 standard profile catalog
+
+- Opened parent issue #480 and created branch
+  `feature/p73-standard-agent-profile-catalog`.
+- Activated the roadmap phase for standard Agent Workbench profile catalog
+  work, including reusable task overlays, profile/tool catalog validation,
+  profile-run evidence summaries, and bounded dogfood before any P74 FoundryTK
+  optimization exploration.
+
+## 2026-07-09 - Completed P73.1 overlay registry
+
+- Added checked-in standard task overlays under `.github/agents/overlays/` for
+  repair-list execution, new Python module implementation, existing-code
+  debugging, systematic refactor/sweep, documentation expansion,
+  notebook/example authoring, and release-readiness review.
+- Extended `sdk.agent_profiles.task_overlay` resolution to support named
+  standard overlays, path-based overlays, and literal text overlays while
+  appending the resolved overlay only to the selected SDK profile prompt.
+- Added overlay metadata to `profile-validate`, `profile-render`, and the
+  synthetic `session.custom_agents_updated` evidence event.
+- Verified P73.1 with focused profile/SDK bridge tests and a local
+  `profile-validate`/`profile-render` smoke manifest using
+  `release-readiness-review`.
+
+## 2026-07-09 - Completed P73.2 profile catalog validation
+
+- Added a standard profile catalog validator for the four canonical
+  `.github/agents/*.agent.md` profiles and the seven checked-in task overlays.
+- Added `agent-workbench copilot-sdk catalog-validate` with optional
+  public-safe Markdown preview output for coordinator review.
+- The catalog preview reports loaded profiles, selected models, explicit tool
+  declarations, unsupported VS Code-only frontmatter fields, prompt character
+  counts, overlay availability, warnings, and errors without exposing full
+  prompt text.
+- Verified profile-declared tools against known SDK built-ins and the Agent
+  Workbench custom tool registry.
+
+## 2026-07-09 - Completed P73.3 profile-run evidence summary
+
+- Added `agent-workbench copilot-sdk profile-run-summary` to produce public-safe
+  profile-run evidence from an SDK manifest, event log, status summary, and
+  result/blocker artifacts.
+- The summary reports selected profile, selected task overlays, custom tools,
+  transcript-shape counts, latest controller status, controller health, and
+  result/blocker final status when the artifact follows the current
+  `Final status:` contract.
+- Rendered ignored baseline evidence for P70 Ticket C and Ticket D under
+  `runtime/p73_profile_run_evidence/`; Ticket D correctly classifies controller
+  health as `error`, preserving the P70 split between result validity and
+  controller/session health.
+
+## 2026-07-09 - Completed P73 standard profile catalog
+
+- Replayed a bounded profile/overlay SDK artifact using selected profile
+  `agent-workbench-local-supervisor`, task overlay `release-readiness-review`,
+  and the conservative Agent Workbench SDK tools.
+- Verified the profile-run summary reports selected profile, selected overlay,
+  custom tools, conversation-shape evidence, `controller_health=healthy`, and
+  `result_status=accepted-candidate`.
+- Recorded the P73 scale recommendation under ignored runtime evidence at
+  `runtime/p73_overlay_replay/p73_4_scale_recommendation.md`.
+- Marked P73 complete and kept FoundryTK runtime integration deferred to P74.
+
+## 2026-07-09 - Opened P73 pull request
+
+- Opened stacked PR #483 from `feature/p73-standard-agent-profile-catalog` to
+  `feature/p70-femic-p108-repair-dogfood`.
+- Updated `ROADMAP.md` so the P73 tracker row references PR #483.
