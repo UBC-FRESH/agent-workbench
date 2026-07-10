@@ -70,6 +70,7 @@ agent-workbench graph render --input templates/workbench_templates/freshforge_pr
 agent-workbench graph decide --input templates/workbench_templates/freshforge_proposal_assist_graph.json --output runtime/graph_decisions/freshforge_proposal_assist.md --agent-metadata
 agent-workbench foundrytk profile-evaluation-aggregate --dataset runtime/profile_evaluation_dataset.jsonl --json-output runtime/profile_evaluation_aggregate.json --markdown-output runtime/profile_evaluation_aggregate.md
 agent-workbench foundrytk profile-contract-repair-plan --aggregate runtime/profile_evaluation_aggregate.json --json-output runtime/profile_contract_repair_plan.json --markdown-output runtime/profile_contract_repair_plan.md
+agent-workbench foundrytk profile-evidence-review-ticket --manifest runtime/profile_review_manifest.json --json-output runtime/profile_review_contract.json --ticket-output runtime/profile_review_ticket.md
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in

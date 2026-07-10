@@ -109,6 +109,11 @@ def build_agent_workbench_sdk_tools(
 def run_context_payload(manifest: dict[str, Any]) -> dict[str, Any]:
     paths = manifest.get("paths", {})
     control = manifest.get("control", {})
+    public_paths = {
+        key: value
+        for key, value in paths.items()
+        if isinstance(key, str) and isinstance(value, str) and value
+    }
     return {
         "run_id": manifest.get("run_id", ""),
         "phase": manifest.get("phase", ""),
@@ -124,6 +129,7 @@ def run_context_payload(manifest: dict[str, Any]) -> dict[str, Any]:
             "blocker": paths.get("blocker", ""),
             "heartbeat": paths.get("heartbeat", ""),
         },
+        "artifact_paths": public_paths,
     }
 
 

@@ -13,6 +13,7 @@ from agent_workbench.copilot_agent_profiles import (
     STANDARD_AGENT_PROFILES,
     STANDARD_TASK_OVERLAYS,
     TASK_OVERLAY_HEADING,
+    load_agent_profile_document,
     render_agent_profiles_markdown,
     render_profile_catalog_markdown,
     resolve_agent_profiles,
@@ -269,6 +270,7 @@ def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
     assert validate_agent_workbench_tool_names(["missing_tool"]) == ["missing_tool"]
     context = run_context_payload(manifest)
     assert context["run_id"] == "p72-test-run"
+    assert context["artifact_paths"]["result"] == "result.md"
     contract = result_contract_payload(manifest)
     assert "accepted-candidate" in contract["required_final_statuses"]
     assert contract["write_tool"] == "agent_workbench_write_result"
@@ -409,3 +411,16 @@ def test_profile_catalog_cli_validate_writes_preview(
     assert "profiles=4 overlays=7" in captured.out
     assert output.exists()
     assert "agent-workbench-result-auditor" in output.read_text(encoding="utf-8")
+
+
+def test_result_auditor_profile_documents_primary_mode_contract() -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    profile_path = repo_root / STANDARD_AGENT_PROFILES["agent-workbench-result-auditor"]
+
+    document = load_agent_profile_document(profile_path)
+
+    assert "When you are the selected primary profile" in document.prompt
+    assert "agent_workbench_result_contract" in document.prompt
+    assert "agent_workbench_write_result" in document.prompt
+    assert "profile-evidence-review" in document.prompt
+    assert "do not spawn subagents" in document.prompt

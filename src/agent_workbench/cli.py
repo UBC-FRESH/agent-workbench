@@ -126,6 +126,11 @@ from .pilot import (
     scaffold_pilot_pack,
 )
 from .policy import tune_policy
+from .profile_evidence_review import (
+    build_profile_evidence_review_contract,
+    render_profile_evidence_review_contract_json,
+    render_profile_evidence_review_ticket,
+)
 from .roles import (
     load_role_record,
     render_role_markdown,
@@ -530,6 +535,35 @@ def build_parser() -> argparse.ArgumentParser:
     )
     foundrytk_repair_plan_parser.set_defaults(
         func=run_foundrytk_profile_contract_repair_plan
+    )
+
+    foundrytk_evidence_ticket_parser = foundrytk_subparsers.add_parser(
+        "profile-evidence-review-ticket",
+        help="Render a repaired profile-evidence-review ticket from an SDK manifest.",
+    )
+    foundrytk_evidence_ticket_parser.add_argument(
+        "--manifest",
+        type=Path,
+        required=True,
+        help="SDK manifest with a pre-existing review subject path.",
+    )
+    foundrytk_evidence_ticket_parser.add_argument(
+        "--ticket-output",
+        type=Path,
+        required=True,
+    )
+    foundrytk_evidence_ticket_parser.add_argument(
+        "--json-output",
+        type=Path,
+        required=True,
+    )
+    foundrytk_evidence_ticket_parser.add_argument(
+        "--allow-missing-subject",
+        action="store_true",
+        help="Render even when the declared review subject does not exist.",
+    )
+    foundrytk_evidence_ticket_parser.set_defaults(
+        func=run_foundrytk_profile_evidence_review_ticket
     )
 
     heartbeat_parser = subparsers.add_parser(
@@ -1941,6 +1975,35 @@ def run_foundrytk_profile_contract_repair_plan(args: argparse.Namespace) -> int:
     print(f"wrote {args.json_output}")
     print(f"wrote {args.markdown_output}")
     return 0 if plan.ok else 1
+
+
+def run_foundrytk_profile_evidence_review_ticket(args: argparse.Namespace) -> int:
+    try:
+        manifest = load_sdk_session_manifest(args.manifest)
+        contract = build_profile_evidence_review_contract(
+            manifest,
+            manifest_path=args.manifest,
+            require_existing_subject=not args.allow_missing_subject,
+        )
+        json_text = render_profile_evidence_review_contract_json(contract)
+        ticket = render_profile_evidence_review_ticket(contract)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.json_output.parent.mkdir(parents=True, exist_ok=True)
+    args.json_output.write_text(json_text, encoding="utf-8")
+    args.ticket_output.parent.mkdir(parents=True, exist_ok=True)
+    args.ticket_output.write_text(ticket, encoding="utf-8")
+    print(
+        "valid={valid} task_family={task_family} review_subject={review_subject}".format(
+            valid=contract.ok,
+            task_family=contract.task_family,
+            review_subject=contract.review_subject_path,
+        )
+    )
+    print(f"wrote {args.json_output}")
+    print(f"wrote {args.ticket_output}")
+    return 0 if contract.ok else 1
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:
