@@ -218,6 +218,7 @@ def test_custom_tools_are_attached_to_selected_agent_only(tmp_path: Path) -> Non
     manifest["sdk"]["agent_profiles"]["selected"] = "second"
     manifest["sdk"]["agent_profiles"]["custom_tools"] = [
         "agent_workbench_run_context",
+        "agent_workbench_review_subject",
         "agent_workbench_write_result",
     ]
 
@@ -229,6 +230,7 @@ def test_custom_tools_are_attached_to_selected_agent_only(tmp_path: Path) -> Non
     first_agent, second_agent = resolved.custom_agents
     assert "agent_workbench_write_result" not in first_agent["tools"]
     assert "agent_workbench_run_context" in second_agent["tools"]
+    assert "agent_workbench_review_subject" in second_agent["tools"]
     assert "agent_workbench_write_result" in second_agent["tools"]
 
 

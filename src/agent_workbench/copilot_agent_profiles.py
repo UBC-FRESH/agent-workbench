@@ -43,6 +43,7 @@ KNOWN_BUILTIN_PROFILE_TOOLS = {
 AGENT_WORKBENCH_PROFILE_TOOLS = {
     "agent_workbench_run_context",
     "agent_workbench_result_contract",
+    "agent_workbench_review_subject",
     "agent_workbench_write_result",
     "agent_workbench_validate_result",
 }
