@@ -128,7 +128,12 @@ def count_status_failures(statuses: dict[object, object]) -> int:
         status = str(key).lower()
         if status in ("failed", "failure", "error", "cancelled", "canceled"):
             try:
-                count += int(value)
+                if isinstance(value, (int, float)):
+                    count += int(value)
+                elif isinstance(value, (str, bytes, bytearray)):
+                    count += int(value)
+                else:
+                    count += 1
             except (TypeError, ValueError):
                 count += 1
     return count

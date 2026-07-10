@@ -27,9 +27,21 @@ dependencies = [
 
 [project.optional-dependencies]
 graph = ["freshforge>=0.1.0a5"]
+dev = [
+  "github-copilot-sdk>=1.0.5",
+  "mypy>=2.2",
+  "pre-commit>=4.6",
+  "pytest>=9.1",
+  "ruff>=0.15",
+  "types-PyYAML>=6.0"
+]
 
 [project.scripts]
 agent-workbench = "agent_workbench.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[[tool.mypy.overrides]]
+module = ["freshforge.validation"]
+ignore_missing_imports = true

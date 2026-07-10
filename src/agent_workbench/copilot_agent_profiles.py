@@ -542,43 +542,43 @@ def load_task_overlay(
     names: list[str] = []
     paths: list[Path] = []
     for name in task_overlay_names_from_value(overlay.get("name"), errors=errors):
-        text, path = load_standard_task_overlay(
+        standard_text, standard_path = load_standard_task_overlay(
             name, repo_root=repo_root, errors=errors
         )
-        if text:
-            fragments.append(text)
+        if standard_text:
+            fragments.append(standard_text)
             names.append(name)
-            paths.append(path)
+            paths.append(standard_path)
     for name in task_overlay_names_from_value(overlay.get("names"), errors=errors):
-        text, path = load_standard_task_overlay(
+        standard_text, standard_path = load_standard_task_overlay(
             name, repo_root=repo_root, errors=errors
         )
-        if text:
-            fragments.append(text)
+        if standard_text:
+            fragments.append(standard_text)
             names.append(name)
-            paths.append(path)
-    for path in task_overlay_paths_from_value(overlay.get("path"), errors=errors):
-        overlay_path = resolve_source_path(path, base=base, repo_root=repo_root)
+            paths.append(standard_path)
+    for raw_path in task_overlay_paths_from_value(overlay.get("path"), errors=errors):
+        overlay_path = resolve_source_path(raw_path, base=base, repo_root=repo_root)
         if overlay_path.exists():
             fragments.append(overlay_path.read_text(encoding="utf-8-sig").strip())
             paths.append(overlay_path)
         else:
             errors.append(
-                f"sdk.agent_profiles.task_overlay.path does not exist: {path}"
+                f"sdk.agent_profiles.task_overlay.path does not exist: {raw_path}"
             )
-    for path in task_overlay_paths_from_value(overlay.get("paths"), errors=errors):
-        overlay_path = resolve_source_path(path, base=base, repo_root=repo_root)
+    for raw_path in task_overlay_paths_from_value(overlay.get("paths"), errors=errors):
+        overlay_path = resolve_source_path(raw_path, base=base, repo_root=repo_root)
         if overlay_path.exists():
             fragments.append(overlay_path.read_text(encoding="utf-8-sig").strip())
             paths.append(overlay_path)
         else:
             errors.append(
-                f"sdk.agent_profiles.task_overlay.path does not exist: {path}"
+                f"sdk.agent_profiles.task_overlay.path does not exist: {raw_path}"
             )
-    text = overlay.get("text")
-    if isinstance(text, str) and text.strip():
-        fragments.append(text.strip())
-    elif text is not None:
+    overlay_text = overlay.get("text")
+    if isinstance(overlay_text, str) and overlay_text.strip():
+        fragments.append(overlay_text.strip())
+    elif overlay_text is not None:
         errors.append("sdk.agent_profiles.task_overlay.text must be a string")
     return TaskOverlayResolution(
         text="\n\n".join(fragment for fragment in fragments if fragment),

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .evidence import find_private_values
 
@@ -47,6 +47,7 @@ def build_agent_workbench_sdk_tools(
     from copilot import define_tool
     from pydantic import BaseModel, Field
 
+    define_tool_any = cast(Any, define_tool)
     base = manifest_path.parent if manifest_path is not None else Path.cwd()
 
     class ValidateResultParams(BaseModel):
@@ -57,7 +58,7 @@ def build_agent_workbench_sdk_tools(
         content: str = Field(description="Markdown result or blocker content.")
 
     tool_by_name: dict[str, Any] = {
-        "agent_workbench_run_context": define_tool(
+        "agent_workbench_run_context": define_tool_any(
             name="agent_workbench_run_context",
             description="Return public-safe Agent Workbench run context.",
             params_type=None,
@@ -65,7 +66,7 @@ def build_agent_workbench_sdk_tools(
                 run_context_payload(manifest), sort_keys=True
             ),
         ),
-        "agent_workbench_result_contract": define_tool(
+        "agent_workbench_result_contract": define_tool_any(
             name="agent_workbench_result_contract",
             description="Return the required result and blocker contract for this run.",
             params_type=None,
@@ -73,7 +74,7 @@ def build_agent_workbench_sdk_tools(
                 result_contract_payload(manifest), sort_keys=True
             ),
         ),
-        "agent_workbench_review_subject": define_tool(
+        "agent_workbench_review_subject": define_tool_any(
             name="agent_workbench_review_subject",
             description=(
                 "Resolve and read the declared profile-evidence-review subject. "
@@ -84,7 +85,7 @@ def build_agent_workbench_sdk_tools(
                 review_subject_payload(manifest, base=base), sort_keys=True
             ),
         ),
-        "agent_workbench_write_result": define_tool(
+        "agent_workbench_write_result": define_tool_any(
             name="agent_workbench_write_result",
             description=(
                 "Write the manifest result or blocker file. Only declared result "
@@ -101,7 +102,7 @@ def build_agent_workbench_sdk_tools(
                 sort_keys=True,
             ),
         ),
-        "agent_workbench_validate_result": define_tool(
+        "agent_workbench_validate_result": define_tool_any(
             name="agent_workbench_validate_result",
             description="Validate a result or blocker file against the manifest contract.",
             params_type=ValidateResultParams,

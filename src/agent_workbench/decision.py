@@ -150,6 +150,10 @@ def decide_task(data: dict[str, Any]) -> DecisionResult:
     risk = normalized_lower(data["risk"])
     model = str(data["model"]).strip()
     profile_status = profile_status_from_input(data)
+    if profile_status is None:
+        raise DecisionInputError(
+            "provide `model_profile_status` or `model_profile_path`"
+        )
     authority_level = normalized_authority(data["authority_level"])
     economics = parse_economics(data.get("economics", {}))
 
