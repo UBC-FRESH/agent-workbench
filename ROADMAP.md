@@ -89,6 +89,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P78 Profile evidence review contract repair | #501 | `feature/p78-profile-evidence-review-contract` | Complete |
 | P79 Repaired profile-evidence-review battery design | #507 | `feature/p79-repaired-profile-review-battery` | Complete |
 | P80 Repaired profile-evidence-review battery execution | #512 | `feature/p80-repaired-profile-review-execution` | Complete |
+| P81 Controller/session health gate for live SDK batteries | #518 | `feature/p81-controller-session-health-gate` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3930,3 +3931,72 @@ error rows, including repeated provider quota-exceeded errors, so
 repaired profile-evidence-review behavior conclusion was drawn. The next lane
 is controller/session health repair or quota recovery before another repaired
 battery.
+
+## Phase 81: Controller/Session Health Gate
+
+Parent issue: #518
+
+Branch: `feature/p81-controller-session-health-gate`
+
+Status: completed
+
+Goal: add a deterministic public-safe controller/session health gate before
+live SDK batteries.
+
+Planned scope:
+
+- Define the P81 health-gate contract and its public-safety boundary.
+- Implement a `copilot-sdk health-gate` command over existing SDK manifests,
+  status summaries, and event logs.
+- Keep controller/session health separate from worker result quality.
+- Dogfood the gate against P80 smoke evidence.
+- Decide whether the next lane is a full repaired battery rerun after health
+  recovery or further SDK summary/health-contract repair.
+
+Out of scope:
+
+- Contacting the live provider as part of the health gate.
+- Retrying the P80 repaired battery.
+- Reducing the repaired battery sample size below the P79/P80 design.
+- Tracking raw transcripts, prompts, worker answers, provider URLs, headers,
+  credentials, or personal paths.
+
+Planned tasks:
+
+- [x] P81.1 Health-gate contract (#519)
+  - [x] Add a planning note tying P81 to P80's quota/controller-health evidence.
+  - [x] Define required inputs, outputs, public-safety boundaries, and
+        go/no-go semantics.
+  - [x] Record that a failed health gate blocks full repaired-battery
+        execution without weakening the factorial design.
+- [x] P81.2 Deterministic health-gate command (#520)
+  - [x] Add `copilot-sdk health-gate`.
+  - [x] Read existing status summaries and SDK event logs without provider
+        contact.
+  - [x] Emit public-safe JSON and Markdown reports.
+  - [x] Classify go/no-go from manifest validity, missing evidence,
+        controller/provider errors, and repeated error signatures.
+- [x] P81.3 P80 smoke-evidence dogfood (#521)
+  - [x] Run the health gate over P80 smoke manifests under ignored runtime
+        evidence.
+  - [x] Confirm the gate blocks continuation because of repeated quota/provider
+        errors.
+  - [x] Promote only sanitized counts, classifications, recommendations, and
+        artifact paths to tracked docs.
+- [x] P81.4 Closeout and next-lane decision (#522)
+  - [x] Run focused validation.
+  - [x] Prepare child issue and PR closeout evidence.
+  - [x] Record whether the next lane is a repaired 48-row battery rerun or
+        continued controller/session repair.
+
+Activation note: P81 is an execution-quality repair phase. It protects the
+larger repaired profile-evidence-review factorial design by making provider and
+controller health a deterministic go/no-go check before another live SDK
+battery.
+
+Completion note: P81 added `agent-workbench copilot-sdk health-gate` and
+dogfooded it against the 12 P80 smoke manifests. The gate returned `no-go`
+with 9 healthy rows, 3 controller-error rows, and repeated sanitized
+`quota_exceeded` signatures across 3 rows. P81 confirms that the next empirical
+lane remains the full P79/P80 repaired 48-row battery only after
+controller/session quota health recovers and the health gate can pass.

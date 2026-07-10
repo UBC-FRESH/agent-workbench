@@ -48,6 +48,11 @@ from .copilot_agent_profiles import (
     resolve_agent_profiles,
     validate_standard_profile_catalog,
 )
+from .copilot_health_gate import (
+    build_health_gate_report,
+    health_gate_report_to_jsonable,
+    render_health_gate_markdown,
+)
 from .copilot_profile_runs import (
     render_profile_run_evidence_markdown,
     summarize_profile_run,
@@ -443,6 +448,35 @@ def build_parser() -> argparse.ArgumentParser:
     copilot_sdk_profile_run_parser.add_argument("--manifest", type=Path, required=True)
     copilot_sdk_profile_run_parser.add_argument("--output", type=Path, required=True)
     copilot_sdk_profile_run_parser.set_defaults(func=run_copilot_sdk_profile_run)
+
+    copilot_sdk_health_gate_parser = copilot_sdk_subparsers.add_parser(
+        "health-gate",
+        help="Render a controller/session health go/no-go report from SDK manifests.",
+    )
+    copilot_sdk_health_gate_parser.add_argument(
+        "--manifest",
+        type=Path,
+        action="append",
+        required=True,
+        help="SDK session manifest path. May be repeated.",
+    )
+    copilot_sdk_health_gate_parser.add_argument(
+        "--required-count",
+        type=int,
+        default=None,
+        help="Optional minimum manifest count required for a go decision.",
+    )
+    copilot_sdk_health_gate_parser.add_argument(
+        "--json-output",
+        type=Path,
+        required=True,
+    )
+    copilot_sdk_health_gate_parser.add_argument(
+        "--markdown-output",
+        type=Path,
+        required=True,
+    )
+    copilot_sdk_health_gate_parser.set_defaults(func=run_copilot_sdk_health_gate)
 
     foundrytk_parser = subparsers.add_parser(
         "foundrytk",
@@ -1875,6 +1909,38 @@ def run_copilot_sdk_profile_run(args: argparse.Namespace) -> int:
     )
     print(f"wrote {args.output}")
     return 0 if evidence.ok else 1
+
+
+def run_copilot_sdk_health_gate(args: argparse.Namespace) -> int:
+    try:
+        report = build_health_gate_report(
+            args.manifest,
+            required_count=args.required_count,
+        )
+        json_payload = health_gate_report_to_jsonable(report)
+        markdown = render_health_gate_markdown(report)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.json_output.parent.mkdir(parents=True, exist_ok=True)
+    args.json_output.write_text(
+        json.dumps(json_payload, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+    args.markdown_output.write_text(markdown, encoding="utf-8")
+    print(
+        "decision={decision} manifests={manifests} controller_health={health} "
+        "repeated_errors={errors}".format(
+            decision=report.decision,
+            manifests=len(report.rows),
+            health=report.controller_health,
+            errors=report.repeated_error_signatures,
+        )
+    )
+    print(f"wrote {args.json_output}")
+    print(f"wrote {args.markdown_output}")
+    return 0 if report.go else 2
 
 
 def run_foundrytk_profile_optimization_plan(args: argparse.Namespace) -> int:
