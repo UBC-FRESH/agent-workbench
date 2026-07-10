@@ -2390,3 +2390,15 @@ issues, pull requests, and closeout comments.
 - Recorded that the next empirical lane remains the full P79/P80 repaired
   48-row battery only after controller/session quota health recovers and the
   health gate can pass.
+
+## 2026-07-10 - Activated P82 health-gated repaired battery
+
+- Created branch `feature/p82-health-gated-repaired-battery`.
+- Opened parent issue #524 and child issues #525, #526, #527, and #528 for
+  P82.1 through P82.4.
+- Added `planning/phase82_health_gated_repaired_battery.md` to define the
+  live health preflight, full 48-row repaired battery boundary, 36-row minimum
+  analyzable threshold, evidence outputs, and stop rules.
+- Recorded that P82 should execute the full repaired battery only after a live
+  P81 health gate passes and should not replace the battery with another
+  underpowered smoke.

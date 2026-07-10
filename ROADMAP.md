@@ -90,6 +90,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P79 Repaired profile-evidence-review battery design | #507 | `feature/p79-repaired-profile-review-battery` | Complete |
 | P80 Repaired profile-evidence-review battery execution | #512 | `feature/p80-repaired-profile-review-execution` | Complete |
 | P81 Controller/session health gate for live SDK batteries | #518 | `feature/p81-controller-session-health-gate` | Complete |
+| P82 Health-gated repaired profile-evidence-review battery | #524 | `feature/p82-health-gated-repaired-battery` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -4000,3 +4001,76 @@ with 9 healthy rows, 3 controller-error rows, and repeated sanitized
 `quota_exceeded` signatures across 3 rows. P81 confirms that the next empirical
 lane remains the full P79/P80 repaired 48-row battery only after
 controller/session quota health recovers and the health gate can pass.
+
+## Phase 82: Health-Gated Repaired Battery Execution
+
+Parent issue: #524
+
+Branch: `feature/p82-health-gated-repaired-battery`
+
+Status: active
+
+Goal: execute the full repaired profile-evidence-review battery only after a
+live P81 health gate passes.
+
+Planned scope:
+
+- Scaffold a fresh ignored P82 runtime from the P79 repaired 48-row matrix.
+- Run a dedicated live SDK health probe and classify it with
+  `copilot-sdk health-gate`.
+- Execute the full 48-row repaired battery only if the health probe passes.
+- Stop on repeated controller/provider health failures without reducing the
+  sample size.
+- Render profile-evaluation dataset, aggregate, and repair-plan outputs when
+  execution evidence supports them.
+- Decide whether repaired profile-evidence-review is stable enough for
+  model-lane expansion or still needs targeted repair.
+
+Out of scope:
+
+- Treating a health probe as profile behavior evidence.
+- Replacing the full battery with another underpowered smoke.
+- Drawing repaired-profile behavior conclusions from fewer than 36 analyzable
+  rows.
+- Tracking raw transcripts, prompts, worker answers, provider URLs, headers,
+  credentials, or personal paths.
+
+Planned tasks:
+
+- [ ] P82.1 Scaffold and validate execution runtime (#525)
+  - [ ] Create a fresh ignored P82 runtime from the P79 repaired 48-row matrix.
+  - [ ] Update phase, run IDs, governing issue, child issue, seed, paths, and
+        SDK homes for P82.
+  - [ ] Preserve 48 rows across the declared profile, overlay, and stratum
+        factors.
+  - [ ] Validate generated manifests before any live provider call.
+  - [ ] Inspect generated scaffold artifacts for public-safety issues.
+- [ ] P82.2 Live health preflight (#526)
+  - [ ] Run a dedicated live SDK health probe that is not profile behavior
+        evidence.
+  - [ ] Render status, monitor, transcript, and profile summary artifacts.
+  - [ ] Run `copilot-sdk health-gate` over the probe evidence.
+  - [ ] Continue to the full battery only if the gate returns `go`.
+  - [ ] If the gate returns `no-go`, stop and record controller/session health
+        evidence without weakening the battery design.
+- [ ] P82.3 Full repaired 48-row battery execution (#527)
+  - [ ] Execute all 48 repaired matrix rows only after health preflight passes.
+  - [ ] Capture SDK events, status summaries, monitor summaries, compact
+        transcripts, profile summaries, and result/blocker artifacts.
+  - [ ] Apply repeated controller/provider stop rules without silently
+        narrowing the design.
+  - [ ] Preserve the 36-row minimum analyzable threshold with balanced stratum
+        coverage before any repaired-profile behavior claim.
+- [ ] P82.4 Aggregate evidence and next-lane decision (#528)
+  - [ ] Render the P74/P76-compatible profile-evaluation dataset, aggregate
+        summary, and P77-style repair plan when enough execution evidence
+        exists.
+  - [ ] Keep controller/session health separate from worker result validity.
+  - [ ] Compare repaired profile-evidence-review result validity against the
+        P75 baseline only when the 36-row threshold is met.
+  - [ ] Decide whether the next lane is model expansion, targeted repair, or
+        continued controller/session health repair.
+
+Activation note: P82 is a health-gated full-battery execution phase. The live
+health probe answers whether it is worth spending the full 48-row battery now;
+it is not a substitute empirical sample.
