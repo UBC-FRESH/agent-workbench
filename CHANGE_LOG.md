@@ -2467,3 +2467,23 @@ issues, pull requests, and closeout comments.
   boundary.
 - Recorded that P84 should verify live worker use of
   `agent_workbench_review_subject` before another full repaired battery.
+
+## 2026-07-10 - Completed P84 review-subject live access probe
+
+- Generated a one-run P84 live probe from the P82/P75 evidence chain under
+  ignored runtime storage at `runtime/p84_review_subject_live_access_probe/`.
+- Repaired the profile-tool allowlist so `agent_workbench_review_subject`
+  validates in SDK custom agent profiles, and added regression coverage.
+- Validated the P84 manifest and profile/tool declaration before live
+  execution.
+- Ran one live `profile-evidence-review` SDK probe with
+  `agent-workbench-local-supervisor` and the `existing-code-debugging` overlay.
+- The live run reached `completion_candidate` after 70 events, produced an
+  `accepted-candidate` result, and did not produce a blocker artifact.
+- Event evidence showed `agent_workbench_review_subject` was requested once and
+  executed once; the worker result also stated that the declared subject was
+  resolved through the review-subject tool rather than filesystem search.
+- Recorded the next lane as a return to a health-gated repaired
+  profile-evidence-review battery using the P83/P84 access repair, while
+  keeping P84 itself classified as access evidence rather than repaired
+  behavior evidence.
