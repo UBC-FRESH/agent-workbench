@@ -69,6 +69,7 @@ agent-workbench graph validate --input templates/workbench_templates/agentic_wor
 agent-workbench graph render --input templates/workbench_templates/freshforge_proposal_assist_graph.json --output runtime/graph_render/freshforge_proposal_assist.md --agent-metadata
 agent-workbench graph decide --input templates/workbench_templates/freshforge_proposal_assist_graph.json --output runtime/graph_decisions/freshforge_proposal_assist.md --agent-metadata
 agent-workbench foundrytk profile-evaluation-aggregate --dataset runtime/profile_evaluation_dataset.jsonl --json-output runtime/profile_evaluation_aggregate.json --markdown-output runtime/profile_evaluation_aggregate.md
+agent-workbench foundrytk profile-contract-repair-plan --aggregate runtime/profile_evaluation_aggregate.json --json-output runtime/profile_contract_repair_plan.json --markdown-output runtime/profile_contract_repair_plan.md
 ```
 
 Raw tickets, manifests, model outputs, and provider inputs should stay in

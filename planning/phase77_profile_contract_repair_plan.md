@@ -78,3 +78,39 @@ values. Private-looking values in copied aggregate fields should fail closed.
 - P77.3: Dogfood the plan on the P75 aggregate summary and record the next
   implementation lane (#499).
 
+## P77 Outcome
+
+P77 added `agent-workbench foundrytk profile-contract-repair-plan`. The command
+reads public-safe aggregate JSON from
+`agent-workbench foundrytk profile-evaluation-aggregate` and writes:
+
+- a Markdown repair plan;
+- a JSON repair plan.
+
+The plan preserves the P75 scoring boundary between controller health and
+result validity. It ranks weak treatment cells by blocker-heavy and
+review-heavy result outcomes, summarizes task-family and selected-profile
+repair targets, and rejects private-looking values in both JSON values and
+grouping keys before rendering outputs.
+
+Dogfooding on the P75 aggregate summary produced
+`runtime/p77_profile_contract_repair_plan/p75_contract_repair_plan.md` and
+`runtime/p77_profile_contract_repair_plan/p75_contract_repair_plan.json`.
+The plan found:
+
+- controller health: 24 healthy rows;
+- result status: 9 accepted-candidate, 11 needs-supervisor-review, 4 blocked;
+- top task-family target: `profile-evidence-review`, with 2
+  accepted-candidate, 6 needs-supervisor-review, 4 blocked, and accepted rate
+  0.167;
+- top profile target: `agent-workbench-result-auditor`, with 2
+  accepted-candidate, 7 needs-supervisor-review, 3 blocked, and accepted rate
+  0.167;
+- top weak treatment cell: `agent-workbench-result-auditor` /
+  `release-readiness-review` / `profile-evidence-review`, with 0 accepted, 1
+  needs-supervisor-review, and 2 blocked rows.
+
+The next implementation lane should repair profile-evidence-review fixtures
+and result-auditor-as-primary behavior before another live battery. The next
+live evidence pass should rerun a matched replicated battery on the repaired
+cells before model-lane expansion or FoundryTK runtime integration.

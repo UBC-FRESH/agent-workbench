@@ -3684,18 +3684,18 @@ Planned tasks:
   - [x] Define input contract, output contract, privacy boundary, and
         closeout criteria.
   - [x] Tie the next-lane rationale to the P75/P76 aggregate evidence.
-- [ ] P77.2 Repair-plan command and tests (#498)
-  - [ ] Add a command that reads aggregate JSON.
-  - [ ] Write Markdown and JSON repair-plan outputs.
-  - [ ] Rank weak treatment cells and summarize task/profile repair targets.
-  - [ ] Preserve public-safe output boundaries.
-  - [ ] Add focused tests.
-- [ ] P77.3 P75 aggregate dogfood and closeout (#499)
-  - [ ] Render ignored runtime repair-plan outputs from the P75 aggregate
+- [x] P77.2 Repair-plan command and tests (#498)
+  - [x] Add a command that reads aggregate JSON.
+  - [x] Write Markdown and JSON repair-plan outputs.
+  - [x] Rank weak treatment cells and summarize task/profile repair targets.
+  - [x] Preserve public-safe output boundaries.
+  - [x] Add focused tests.
+- [x] P77.3 P75 aggregate dogfood and closeout (#499)
+  - [x] Render ignored runtime repair-plan outputs from the P75 aggregate
         summary when available.
-  - [ ] Inspect the repair plan for public-safe content and decision
+  - [x] Inspect the repair plan for public-safe content and decision
         usefulness.
-  - [ ] Update roadmap/changelog/planning with the resulting next-lane
+  - [x] Update roadmap/changelog/planning with the resulting next-lane
         recommendation.
   - [ ] Close out through normal issue/PR hygiene.
 
@@ -3704,3 +3704,16 @@ repair is the highest-value lane. The immediate value is a deterministic
 repair-plan artifact over existing public-safe evidence, not another live run.
 The expected implementation target after P77 is profile-evidence-review task
 contract hardening and result-auditor-as-primary behavior repair.
+
+Completion note: P77 added
+`agent-workbench foundrytk profile-contract-repair-plan`, which reads
+public-safe aggregate JSON and writes Markdown plus JSON repair plans.
+Dogfooding on the P75 aggregate summary ranked `profile-evidence-review` as
+the top task-family target and `agent-workbench-result-auditor` as the top
+profile target. The top weak treatment cell was
+`agent-workbench-result-auditor` / `release-readiness-review` /
+`profile-evidence-review`, with 0 accepted-candidate, 1
+needs-supervisor-review, and 2 blocked rows. The next roadmap lane should
+repair profile-evidence-review fixtures and result-auditor-as-primary behavior
+before another live battery, model-lane expansion, or FoundryTK runtime
+integration.

@@ -6,18 +6,23 @@ from pathlib import Path
 
 from agent_workbench.cli import (
     run_foundrytk_profile_aggregate,
+    run_foundrytk_profile_contract_repair_plan,
     run_foundrytk_profile_dataset,
     run_foundrytk_profile_optimization_plan,
 )
 from agent_workbench.foundry_profile_optimization import (
     build_profile_evaluation_aggregate,
     build_profile_evaluation_dataset,
+    build_profile_contract_repair_plan,
     build_profile_optimization_plan,
+    load_profile_evaluation_aggregate_json,
     load_profile_evaluation_dataset_jsonl,
     render_profile_evaluation_aggregate_json,
     render_profile_evaluation_aggregate_markdown,
     render_profile_evaluation_dataset_jsonl,
     render_profile_evaluation_dataset_markdown,
+    render_profile_contract_repair_plan_json,
+    render_profile_contract_repair_plan_markdown,
     render_profile_optimization_plan_markdown,
 )
 
@@ -405,5 +410,163 @@ def test_foundrytk_profile_aggregate_cli_writes_outputs(
     captured = capsys.readouterr()
     assert exit_code == 0
     assert "rows=1 valid=True" in captured.out
+    assert json_output.exists()
+    assert markdown_output.exists()
+
+
+def p75_like_aggregate_summary() -> dict[str, object]:
+    return {
+        "schema_version": 1,
+        "row_count": 24,
+        "controller_health": {"healthy": 24},
+        "result_status": {
+            "accepted-candidate": 9,
+            "blocked": 4,
+            "needs-supervisor-review": 11,
+        },
+        "by_task_family_result_status": {
+            "manifest-contract-audit": {
+                "accepted-candidate": 7,
+                "needs-supervisor-review": 5,
+            },
+            "profile-evidence-review": {
+                "accepted-candidate": 2,
+                "blocked": 4,
+                "needs-supervisor-review": 6,
+            },
+        },
+        "by_profile_result_status": {
+            "agent-workbench-local-supervisor": {
+                "accepted-candidate": 7,
+                "blocked": 1,
+                "needs-supervisor-review": 4,
+            },
+            "agent-workbench-result-auditor": {
+                "accepted-candidate": 2,
+                "blocked": 3,
+                "needs-supervisor-review": 7,
+            },
+        },
+        "treatment_cells": [
+            {
+                "selected_agent": "agent-workbench-local-supervisor",
+                "task_overlay": "existing-code-debugging",
+                "task_family": "manifest-contract-audit",
+                "rows": 3,
+                "result_status": {"accepted-candidate": 3},
+            },
+            {
+                "selected_agent": "agent-workbench-result-auditor",
+                "task_overlay": "release-readiness-review",
+                "task_family": "profile-evidence-review",
+                "rows": 3,
+                "result_status": {
+                    "blocked": 2,
+                    "needs-supervisor-review": 1,
+                },
+            },
+            {
+                "selected_agent": "agent-workbench-result-auditor",
+                "task_overlay": "existing-code-debugging",
+                "task_family": "profile-evidence-review",
+                "rows": 3,
+                "result_status": {
+                    "blocked": 1,
+                    "needs-supervisor-review": 2,
+                },
+            },
+            {
+                "selected_agent": "agent-workbench-local-supervisor",
+                "task_overlay": "release-readiness-review",
+                "task_family": "profile-evidence-review",
+                "rows": 3,
+                "result_status": {
+                    "accepted-candidate": 1,
+                    "needs-supervisor-review": 2,
+                },
+            },
+        ],
+    }
+
+
+def test_profile_contract_repair_plan_ranks_p75_weak_cells() -> None:
+    plan = build_profile_contract_repair_plan(p75_like_aggregate_summary())
+    markdown = render_profile_contract_repair_plan_markdown(plan)
+    payload = json.loads(render_profile_contract_repair_plan_json(plan))
+
+    assert plan.ok
+    assert payload["row_count"] == 24
+    assert payload["task_family_targets"][0]["name"] == "profile-evidence-review"
+    assert payload["profile_targets"][0]["name"] == "agent-workbench-result-auditor"
+    assert payload["weak_treatment_cells"][0]["selected_agent"] == (
+        "agent-workbench-result-auditor"
+    )
+    assert payload["weak_treatment_cells"][0]["task_overlay"] == (
+        "release-readiness-review"
+    )
+    assert payload["weak_treatment_cells"][0]["blocked"] == 2
+    assert "Repair profile-evidence-review fixtures" in payload["recommendation"]
+    assert "# Profile Contract Repair Plan" in markdown
+    assert "raw_transcripts_included: `False`" in markdown
+    assert "result-auditor-as-primary behavior" in markdown
+
+
+def test_profile_contract_repair_plan_handles_empty_evidence() -> None:
+    plan = build_profile_contract_repair_plan(
+        {
+            "schema_version": 1,
+            "row_count": 0,
+            "controller_health": {},
+            "result_status": {},
+            "by_task_family_result_status": {},
+            "by_profile_result_status": {},
+            "treatment_cells": [],
+        }
+    )
+
+    assert plan.ok
+    assert "Collect aggregate evidence" in plan.summary["recommendation"]
+    assert plan.summary["weak_treatment_cells"] == []
+
+
+def test_profile_contract_repair_plan_rejects_private_values(tmp_path: Path) -> None:
+    aggregate_path = tmp_path / "aggregate.json"
+    payload = p75_like_aggregate_summary()
+    payload["by_profile_result_status"] = {
+        r"C:\Users\somebody\agent": {"accepted-candidate": 1}
+    }
+    aggregate_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    try:
+        load_profile_evaluation_aggregate_json(aggregate_path)
+    except ValueError as exc:
+        assert "private-looking value" in str(exc)
+    else:
+        raise AssertionError("expected private-looking aggregate value to fail")
+
+
+def test_foundrytk_profile_contract_repair_plan_cli_writes_outputs(
+    tmp_path: Path, capsys: object
+) -> None:
+    aggregate_path = tmp_path / "aggregate.json"
+    json_output = tmp_path / "repair_plan.json"
+    markdown_output = tmp_path / "repair_plan.md"
+    aggregate_path.write_text(
+        json.dumps(p75_like_aggregate_summary()),
+        encoding="utf-8",
+    )
+
+    exit_code = run_foundrytk_profile_contract_repair_plan(
+        Namespace(
+            aggregate=aggregate_path,
+            json_output=json_output,
+            markdown_output=markdown_output,
+        )
+    )
+
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert "rows=24 valid=True" in captured.out
+    assert "weak_cells=3" in captured.out
     assert json_output.exists()
     assert markdown_output.exists()

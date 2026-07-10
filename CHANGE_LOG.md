@@ -2251,3 +2251,19 @@ issues, pull requests, and closeout comments.
 - Updated `ROADMAP.md` with P77 as the active next lane from P75/P76 evidence:
   deterministic task/profile contract repair planning before another live SDK
   battery, model-lane expansion, or FoundryTK runtime integration.
+
+## 2026-07-09 - Completed P77 profile contract repair plan
+
+- Added `agent-workbench foundrytk profile-contract-repair-plan`, which reads
+  public-safe profile evaluation aggregate JSON and writes Markdown plus JSON
+  repair plans.
+- The repair plan ranks weak treatment cells, task-family targets, and
+  selected-profile targets using blocker-heavy and review-heavy result-validity
+  counts while keeping controller health separate.
+- Added focused tests for P75-like weak-cell ranking, empty evidence,
+  private-looking aggregate grouping keys, and CLI output writing.
+- Dogfooded the command on the P75 aggregate summary under ignored runtime
+  evidence at `runtime/p77_profile_contract_repair_plan/`.
+- The P75 repair plan recommends profile-evidence-review fixture repair and
+  result-auditor-as-primary behavior repair before another live SDK battery,
+  model-lane expansion, or FoundryTK runtime integration.
