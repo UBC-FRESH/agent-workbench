@@ -83,6 +83,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P72 Copilot SDK custom agent profiles | #473 / PR #479 | `feature/p72-sdk-custom-agent-profiles` | Complete |
 | P73 Standard Agent Workbench profile catalog | #480 / PR #483 | `feature/p73-standard-agent-profile-catalog` | Complete |
 | P74 FoundryTK profile optimization | #481 / PR #482 | `feature/p74-foundrytk-profile-optimization` | Complete |
+| P75 Comparable live overlay-selected SDK run battery | #485 | `feature/p75-live-overlay-sdk-run-battery` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3474,3 +3475,92 @@ model-selection, trace/evaluation runner, prompt-optimization, agent-optimizer,
 or fine-tuning work requires comparable live overlay-selected SDK runs,
 controller-health versus result-validity scoring, public-safe evaluation rows,
 compact transcript review, and an explicit treatment comparison plan.
+
+## Phase 75: Comparable Live Overlay-Selected SDK Run Battery
+
+Parent issue: #485
+
+Branch: `feature/p75-live-overlay-sdk-run-battery`
+
+Status: complete
+
+Goal: collect comparable live SDK run evidence for Agent Workbench profiles
+using named P73 task overlays, then render P74-compatible public-safe
+evaluation rows before any deeper FoundryTK integration or optimization work.
+
+Planned scope:
+
+- Use the same bounded task, evidence contract, profile-run summary contract,
+  and public-safe dataset shape across the live runs.
+- Use P73-selected profiles and named task overlays so profile and overlay
+  choices are visible before and after each run.
+- Treat three comparable live SDK run attempts as the minimum smoke gate for
+  the evidence pipeline, not as the intended empirical sample size.
+- Design and run a factorial battery with declared factors, replication,
+  blocking or randomization, and a sample-size rationale large enough to inform
+  the next development decision unless the documented stop rule fires.
+- Score result validity separately from controller/session health.
+- Render public-safe profile-run summaries and P74 evaluation dataset rows from
+  live evidence before making any FoundryTK follow-on decision.
+
+Out of scope:
+
+- Adding FoundryTK as a runtime bridge dependency.
+- Provisioning Azure resources.
+- Installing new worker models.
+- Claiming broad model or profile superiority from too few matched runs.
+- Delegating GitHub mutation, PR merge, issue closure, or final acceptance to
+  worker agents.
+
+Planned tasks:
+
+- [x] P75.1 Run matrix, budget, and stop-rule activation (#489)
+  - [x] Select bounded reusable task families suitable for matched
+        profile/overlay comparison.
+  - [x] Choose the P75 factors: P73 profiles, named overlays, model lanes,
+        task families, and repetition or retry lanes.
+  - [x] Declare fixed versus exploratory factors, blocking variables,
+        randomization or rotation order, replication count, and planned minimum
+        analyzable sample size.
+  - [x] Preserve replication before breadth if budget or operational limits
+        require narrowing the matrix.
+  - [x] Define manifest, result, status, profile-run summary, dataset, compact
+        transcript, and optional heartbeat evidence paths.
+  - [x] Declare supervisor budget and repeated-blocker stop rules before any
+        live run.
+  - [x] Define how result validity and controller/session health will be
+        scored independently.
+- [x] P75.2 Live SDK run execution and evidence capture (#486)
+  - [x] Launch each run from the selected manifests.
+  - [x] Capture SDK event logs, status summaries, result or blocker files, and
+        compact transcript review artifacts.
+  - [x] Stop after the declared run count or repeated-blocker rule.
+  - [x] Verify worker result claims against actual artifacts before classifying
+        any run.
+- [x] P75.3 Public-safe dataset rendering and profile comparison (#487)
+  - [x] Render P74-compatible JSONL rows and Markdown preview from the P75 live
+        run manifests.
+  - [x] Compare reliability, work quality, efficiency, and conversation-shape
+        metrics.
+  - [x] Keep controller/session health separate from result validity.
+  - [x] Record evidence limits without broad model/profile superiority claims.
+- [x] P75.4 Scale decision and closeout (#488)
+  - [x] Decide whether FoundryTK remains external guidance or a narrower
+        follow-on integration lane is justified.
+  - [x] Name prerequisites for any optional tool-provider, trace/evaluation
+        runner, model-selection, prompt-optimization, agent-optimizer, or
+        fine-tuning follow-on work.
+  - [x] Synchronize roadmap, changelog, issue comments, and PR description.
+  - [x] Verify and close through the normal PR workflow.
+
+Activation note: P75 starts from P74's integration decision. FoundryTK remains
+external guidance until P75 produces enough matched live SDK evidence to justify
+a narrower next lane. Underpowered or stopped batteries must be reported as
+design or infrastructure evidence, not as profile/model recommendations.
+
+Completion note: P75 produced a 24-row analyzable dataset with healthy
+controller status for every row. Result validity was mixed: 9 accepted-candidate
+rows, 11 needs-supervisor-review rows, and 4 blocked rows. FoundryTK remains
+external guidance; the next useful lane is automated comparison summaries and
+clearer task/profile contracts over the public-safe local dataset, not runtime
+FoundryTK integration or model selection.

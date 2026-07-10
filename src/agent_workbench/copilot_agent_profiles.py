@@ -43,6 +43,7 @@ KNOWN_BUILTIN_PROFILE_TOOLS = {
 AGENT_WORKBENCH_PROFILE_TOOLS = {
     "agent_workbench_run_context",
     "agent_workbench_result_contract",
+    "agent_workbench_write_result",
     "agent_workbench_validate_result",
 }
 AGENT_PROFILES_BLOCK = "agent_profiles"
@@ -207,6 +208,11 @@ def resolve_agent_profiles(
 
     default_agent = resolve_default_agent(block, errors=errors, warnings=warnings)
     custom_tool_names = resolve_custom_tool_names(block, errors=errors)
+    custom_agents = attach_custom_tools_to_selected_agent(
+        custom_agents,
+        selected_agent=selected_agent,
+        custom_tool_names=custom_tool_names,
+    )
     validate_profile_tool_coverage(
         custom_agents,
         custom_tool_names=custom_tool_names,
@@ -419,6 +425,33 @@ def resolve_default_agent(
                 f"sdk.agent_profiles.default_agent.{field_name} is not passed to the SDK"
             )
     return default_agent
+
+
+def attach_custom_tools_to_selected_agent(
+    custom_agents: list[dict[str, Any]],
+    *,
+    selected_agent: str,
+    custom_tool_names: list[str],
+) -> list[dict[str, Any]]:
+    if not custom_tool_names:
+        return custom_agents
+    target = selected_agent
+    if not target and len(custom_agents) == 1:
+        target = str(custom_agents[0].get("name", ""))
+    updated_agents: list[dict[str, Any]] = []
+    for agent in custom_agents:
+        if str(agent.get("name", "")) != target:
+            updated_agents.append(agent)
+            continue
+        updated = dict(agent)
+        tools = updated.get("tools", [])
+        merged = list(tools) if isinstance(tools, list) else []
+        for tool_name in custom_tool_names:
+            if tool_name not in merged:
+                merged.append(tool_name)
+        updated["tools"] = merged
+        updated_agents.append(updated)
+    return updated_agents
 
 
 def resolve_custom_tool_names(block: dict[str, Any], *, errors: list[str]) -> list[str]:

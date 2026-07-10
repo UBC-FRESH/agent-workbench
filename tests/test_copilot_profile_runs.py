@@ -121,6 +121,20 @@ def test_profile_run_summary_extracts_public_safe_evidence(tmp_path: Path) -> No
     assert "ticket" not in markdown
 
 
+def test_profile_run_summary_accepts_markdown_heading_final_status(
+    tmp_path: Path,
+) -> None:
+    manifest_path = write_manifest(tmp_path)
+    (tmp_path / "result.md").write_text(
+        "# Final status: accepted-candidate\n\nSummary: done.\n",
+        encoding="utf-8",
+    )
+
+    evidence = summarize_profile_run(manifest_path)
+
+    assert evidence.result_status == "accepted-candidate"
+
+
 def test_profile_run_summary_cli_writes_preview(tmp_path: Path, capsys: object) -> None:
     manifest_path = write_manifest(tmp_path)
     output = tmp_path / "profile_run.md"

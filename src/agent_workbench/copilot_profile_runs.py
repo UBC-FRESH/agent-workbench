@@ -118,8 +118,9 @@ def first_existing_final_status(*paths: Path | None) -> str:
 
 def extract_final_status(text: str) -> str:
     for line in text.splitlines():
-        if line.lower().startswith("final status:"):
-            return line.split(":", 1)[1].strip()
+        normalized = line.lstrip("#").strip()
+        if normalized.lower().startswith("final status:"):
+            return normalized.split(":", 1)[1].strip()
     return ""
 
 

@@ -2149,3 +2149,66 @@ issues, pull requests, and closeout comments.
 - Opened stacked PR #482 from `feature/p74-foundrytk-profile-optimization` to
   `feature/p73-standard-agent-profile-catalog`.
 - Updated `ROADMAP.md` so the P74 tracker row references PR #482.
+
+## 2026-07-09 - Activated P75 live overlay-selected SDK run battery
+
+- Created branch `feature/p75-live-overlay-sdk-run-battery`.
+- Opened parent issue #485 and child issues #489, #486, #487, and #488 for
+  P75.1 through P75.4.
+- Added `planning/phase75_live_overlay_sdk_run_battery.md` to define the
+  matched live-run comparison shape, evidence contract, scoring boundary,
+  budget/stop-rule placeholder, and FoundryTK follow-on decision boundary.
+- Updated `ROADMAP.md` with the P75 tracker row and active phase section so
+  comparable live SDK evidence collection can start before any deeper
+  FoundryTK integration work.
+
+## 2026-07-09 - Tightened P75 empirical design requirements
+
+- Clarified that three comparable live SDK runs are only the minimum smoke gate
+  for the evidence pipeline, not a sufficient empirical sample for profile,
+  overlay, or model-selection decisions.
+- Required P75.1 to define a factorial design with declared factors,
+  fixed-versus-exploratory distinctions, blocking variables, randomization or
+  rotation order, replication count, and sample-size rationale.
+- Added the rule that if budget or operational limits force a narrower matrix,
+  P75 should preserve replication before breadth and report underpowered or
+  stopped batteries as design/infrastructure evidence rather than profile/model
+  recommendations.
+
+## 2026-07-09 - Completed P75.1 factorial run battery design
+
+- Defined the activated P75 run battery as a 24-run balanced matrix across two
+  profiles, two named overlays, two task families, and three repetitions per
+  treatment cell.
+- Held the model lane fixed as `operator-configured-copilot-sdk` because local
+  worker inventory was not available from the active shell, preserving
+  replication instead of adding an unverifiable model factor.
+- Declared smoke-gate, minimum analyzable sample, blocking variables,
+  randomized run order, runtime evidence paths, scoring boundaries, and stop
+  rules before live SDK execution.
+
+## 2026-07-09 - Added constrained SDK result writer for P75.2
+
+- Added `agent_workbench_write_result`, a Copilot SDK custom tool that can write
+  only the manifest-declared result or blocker file for a run.
+- The tool requires a `Final status:` line, accepts the P75 result-status
+  vocabulary, rejects private-looking content, and validates the artifact after
+  writing.
+- This repairs the live smoke-gate gap where selected profiles could produce
+  chat evidence but could not reliably create the required result artifact via
+  shell redirection or broad edit authority.
+
+## 2026-07-09 - Completed P75 live overlay-selected SDK run battery
+
+- Ran the full 24-row P75 matrix across two selected profiles, two named
+  overlays, two task families, and three repetitions per treatment cell.
+- Rendered monitor summaries, compact transcripts, profile-run summaries, a
+  P74-compatible JSONL dataset, a Markdown dataset preview, and a profile
+  optimization plan under ignored runtime evidence.
+- The public-safe dataset contains 24 analyzable rows with healthy controller
+  status for every row.
+- Result validity remained mixed: 9 accepted-candidate rows, 11
+  needs-supervisor-review rows, and 4 blocked rows.
+- Decided that FoundryTK remains external guidance; P75 supports automated
+  aggregate comparison summaries and clearer task/profile contracts as the next
+  lane, not runtime FoundryTK integration or model-selection claims.
