@@ -84,6 +84,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P73 Standard Agent Workbench profile catalog | #480 / PR #483 | `feature/p73-standard-agent-profile-catalog` | Complete |
 | P74 FoundryTK profile optimization | #481 / PR #482 | `feature/p74-foundrytk-profile-optimization` | Complete |
 | P75 Comparable live overlay-selected SDK run battery | #485 | `feature/p75-live-overlay-sdk-run-battery` | Complete |
+| P76 Profile evaluation aggregate comparison reports | #491 | `feature/p76-profile-evaluation-aggregate-reports` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3564,3 +3565,68 @@ rows, 11 needs-supervisor-review rows, and 4 blocked rows. FoundryTK remains
 external guidance; the next useful lane is automated comparison summaries and
 clearer task/profile contracts over the public-safe local dataset, not runtime
 FoundryTK integration or model selection.
+
+## Phase 76: Profile Evaluation Aggregate Comparison Reports
+
+Parent issue: #491
+
+Branch: `feature/p76-profile-evaluation-aggregate-reports`
+
+Status: active
+
+Goal: turn P75-style public-safe profile evaluation datasets into aggregate
+comparison reports that make profile, overlay, task-family, controller-health,
+result-validity, and conversation-shape patterns reproducible and actionable.
+
+Planned scope:
+
+- Add a CLI/report surface that consumes public-safe profile evaluation JSONL
+  rows from `agent-workbench foundrytk profile-evaluation-dataset`.
+- Aggregate by selected profile, task overlay, inferred task family,
+  controller health, result status, and conversation-shape counters.
+- Preserve the P75 scoring boundary: controller/session health is separate
+  from result validity.
+- Render Markdown and machine-readable summary outputs without raw transcript
+  text, prompts, credentials, private paths, endpoints, or machine-specific
+  values.
+- Use the P75 24-row dataset shape as the primary fixture.
+- Record whether the aggregate evidence points next to task/profile contract
+  repair, another replicated battery, model-lane expansion, or FoundryTK
+  integration.
+
+Out of scope:
+
+- Running another live SDK battery.
+- Adding FoundryTK as a runtime dependency.
+- Claiming model selection or profile superiority beyond the dataset evidence.
+- Introducing Azure or external evaluation services.
+
+Planned tasks:
+
+- [ ] P76.1 Aggregate report contract and roadmap activation (#492)
+  - [ ] Add the P76 planning note.
+  - [ ] Update the roadmap tracker and detailed phase section.
+  - [ ] Define input schema assumptions, grouping dimensions, summary outputs,
+        privacy boundaries, and closeout decision criteria.
+  - [ ] Record P75 evidence limits so P76 does not overclaim model or profile
+        superiority.
+- [ ] P76.2 Aggregate comparison CLI and tests (#493)
+  - [ ] Add a command that reads profile evaluation JSONL rows.
+  - [ ] Write Markdown and JSON summary outputs.
+  - [ ] Aggregate controller health, result status, profile, overlay,
+        task-family, and conversation-shape metrics.
+  - [ ] Preserve public-safe output boundaries.
+  - [ ] Add focused tests.
+- [ ] P76.3 P75 dataset dogfood report and next-lane decision (#494)
+  - [ ] Render ignored runtime aggregate outputs from the P75 dataset when
+        available.
+  - [ ] Inspect the aggregate report for public-safe content and decision
+        usefulness.
+  - [ ] Update roadmap/changelog/planning with the resulting next-lane
+        recommendation.
+  - [ ] Close out through normal issue/PR hygiene.
+
+Activation note: P76 starts from P75's scale decision. The immediate value is a
+reproducible summary layer over existing public-safe evidence, not another live
+run. Model-lane expansion and FoundryTK runtime integration remain blocked on
+stronger local aggregate evidence and verified multi-model inventory.
