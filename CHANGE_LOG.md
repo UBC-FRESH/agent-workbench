@@ -2583,3 +2583,24 @@ issues, pull requests, and closeout comments.
   missing-import override.
 - Verified `ruff format src tests`, `ruff check src tests`, `mypy src`,
   `pytest tests -q`, `pre-commit run --all-files`, and `git diff --check`.
+
+## 2026-07-10 - Activated P87 real-project ROI roadmap reset
+
+- Created P87 branch `feature/p87-real-project-roi-roadmap-reset`.
+- Opened P87-P92 parent issues #551 through #556 for the real-project ROI
+  tranche.
+- Marked P86 complete after PR #550 merged and parent issue #549 closed.
+- Added `planning/p87_p92_real_project_roi_roadmap.md` to reset the leading
+  roadmap edge around paid-supervisor cost per useful, source-backed unit of
+  real project work.
+- Recorded the evidence base from P55, P63, P85, and P86: document-indexing
+  remains the higher-ROI lane, P63 showed the recipe needs repair before scale,
+  P85 shows profile-evidence-review contract repair is no longer the blocking
+  product question, and P86 makes validation gates reproducible.
+- Added P87-P92 as the detailed first tranche and P93-P100 as the strategic
+  follow-on arc.
+- Parked future profile/model batteries unless they answer a direct
+  real-project ROI question.
+- Verified the planning-only change with `ruff format src tests`, `ruff check
+  src tests`, `mypy src`, `pytest tests -q`, `pre-commit run --all-files`, and
+  `git diff --check`.
