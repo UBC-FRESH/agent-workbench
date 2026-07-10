@@ -1,0 +1,71 @@
+{
+  "allowed_chunk_ids": [
+    "tsa23_2012_23tsdp12::pages_001_008",
+    "tsa23_2012_23tsdp12::pages_008_015",
+    "tsa23_2012_23tsdp12::pages_015_022",
+    "tsa23_2012_23tsdp12::pages_022_029",
+    "tsa23_2012_23tsdp12::pages_029_036",
+    "tsa23_2012_23tsdp12::pages_036_041"
+  ],
+  "allowed_object_types": [
+    "component_boundary",
+    "heading",
+    "appendix",
+    "table",
+    "figure",
+    "map",
+    "acronym",
+    "definition",
+    "cross_reference",
+    "section_summary",
+    "claim",
+    "assumption",
+    "constraint",
+    "policy_reference",
+    "model_input",
+    "numeric_value",
+    "scenario",
+    "sensitivity_test",
+    "decision_rationale",
+    "other"
+  ],
+  "contract_id": "p89_document_index_jsonl_validation_contract_v2",
+  "deterministic_repairs": [
+    "strip markdown fence lines",
+    "drop non-json preamble or trailing prose lines",
+    "trim surrounding whitespace",
+    "remove one trailing comma immediately before a JSON object close"
+  ],
+  "live_execution_allowed": false,
+  "non_repairable_defects": [
+    "unknown chunk_id after repair",
+    "wrong corpus_id",
+    "wrong document_id",
+    "wrong source_sha256",
+    "missing required field",
+    "invalid object_type",
+    "invalid review_status",
+    "non-numeric confidence"
+  ],
+  "phase": "P89",
+  "required_fields": [
+    "record_id",
+    "corpus_id",
+    "document_id",
+    "source_sha256",
+    "chunk_id",
+    "page_anchor",
+    "document_component",
+    "section_path",
+    "object_type",
+    "title",
+    "summary",
+    "source_quote",
+    "confidence",
+    "worker_model",
+    "review_status"
+  ],
+  "required_review_status": "raw_worker_candidate",
+  "schema_version": 1,
+  "source_slice": "p88_tsa23_2012_data_package_full_document_pages_001_041"
+}

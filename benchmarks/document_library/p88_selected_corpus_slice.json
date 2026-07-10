@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "phase": "P88",
-  "slice_id": "p88_tsa23_2012_data_package_pages_001_022",
+  "slice_id": "p88_tsa23_2012_data_package_full_document_pages_001_041",
   "status": "selected_for_p89_p92",
   "selection_date": "2026-07-10",
-  "selection_reason": "This slice preserves the P63 diagnostic source scope while allowing P89 to repair ticket shape, chunk-ID handling, and JSONL validation before any live repeat.",
+  "selection_reason": "This slice upgrades the P63 diagnostic source scope to the complete 2012 data package so P89-P92 can aim at one complete useful document-indexing unit while still repairing ticket shape, chunk-ID handling, and JSONL validation before any live repeat.",
   "corpus": {
     "corpus_id": "bc_tsr_tsa23_public_1995_present",
     "registry": "benchmarks/document_library/tsa23_tsr/corpus_registry.json",
@@ -25,13 +25,16 @@
   },
   "selected_scope": {
     "page_start": 1,
-    "page_end": 22,
-    "selected_chunk_count": 3,
-    "total_tracked_text_char_count": 58640,
+    "page_end": 41,
+    "selected_chunk_count": 6,
+    "total_tracked_text_char_count": 106859,
     "chunk_ids": [
       "tsa23_2012_23tsdp12::pages_001_008",
       "tsa23_2012_23tsdp12::pages_008_015",
-      "tsa23_2012_23tsdp12::pages_015_022"
+      "tsa23_2012_23tsdp12::pages_015_022",
+      "tsa23_2012_23tsdp12::pages_022_029",
+      "tsa23_2012_23tsdp12::pages_029_036",
+      "tsa23_2012_23tsdp12::pages_036_041"
     ],
     "chunks": [
       {
@@ -54,6 +57,27 @@
         "page_end": 22,
         "text_char_count": 18706,
         "text_sha256": "a12a88d3be0e2f210796f251c6a6e44fc9e07543fdfcd9f47722a933701a797e"
+      },
+      {
+        "chunk_id": "tsa23_2012_23tsdp12::pages_022_029",
+        "page_start": 22,
+        "page_end": 29,
+        "text_char_count": 16747,
+        "text_sha256": "112029e17bc8d50d3f9cd459433aaffecdf2dbb84c7b42a66288e9353adc6af4"
+      },
+      {
+        "chunk_id": "tsa23_2012_23tsdp12::pages_029_036",
+        "page_start": 29,
+        "page_end": 36,
+        "text_char_count": 19003,
+        "text_sha256": "38b8bef63b77710725ed204ac88d70f6e9ab4602971435c1ba7b32aa3118db03"
+      },
+      {
+        "chunk_id": "tsa23_2012_23tsdp12::pages_036_041",
+        "page_start": 36,
+        "page_end": 41,
+        "text_char_count": 12469,
+        "text_sha256": "5d44e9621d61b25ba74088043476a4f1d489a576388df9fb1aa098bc94bc48cf"
       }
     ]
   },
@@ -94,14 +118,17 @@
     "stop on any unknown chunk ID after deterministic repair",
     "stop on missing token spans",
     "stop on budget exceedance",
-    "stop before any broader page span, second attempt, added model lane, or direct-supervisor baseline without maintainer approval"
+    "stop before any second document, second attempt, added model lane, or direct-supervisor baseline without maintainer approval"
   ],
   "p89_handoff": {
     "ticket_shape": "smaller section-level tickets, not the P63 all-in-one shape",
     "chunk_id_enum": [
       "tsa23_2012_23tsdp12::pages_001_008",
       "tsa23_2012_23tsdp12::pages_008_015",
-      "tsa23_2012_23tsdp12::pages_015_022"
+      "tsa23_2012_23tsdp12::pages_015_022",
+      "tsa23_2012_23tsdp12::pages_022_029",
+      "tsa23_2012_23tsdp12::pages_029_036",
+      "tsa23_2012_23tsdp12::pages_036_041"
     ],
     "required_outputs": [
       "dry-run manifests",
@@ -112,7 +139,7 @@
     "not_authorized": [
       "live worker execution",
       "direct-supervisor baseline",
-      "full 2012 cycle expansion",
+      "second-document 2012 cycle expansion",
       "full TSA23 corpus expansion"
     ]
   },

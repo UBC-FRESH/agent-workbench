@@ -2620,3 +2620,32 @@ issues, pull requests, and closeout comments.
   gates are ready.
 - Recorded that P88 and P89 do not authorize live model execution; the first
   possible live run remains P92 after P89-P91 gates are satisfied.
+
+## 2026-07-10 - Amended P88 selected slice to full data package
+
+- Upgraded the selected P88/P89 corpus scope from the original three-chunk P63
+  repeat slice to the complete `tsa23_2012_23tsdp12` data package document.
+- Updated `benchmarks/document_library/p88_selected_corpus_slice.json` to cover
+  pages 1-41 across all six tracked chunks, with 106,859 tracked text
+  characters in ignored runtime chunk files.
+- Updated the P88 candidate registry and planning note so P89-P92 target one
+  complete useful document-indexing unit before any multi-document expansion.
+- Preserved the no-live-execution boundary: P89 remains dry-run/materialization
+  only, and any live run still requires later gates, one model/provider lane,
+  and maintainer-reviewed stop rules.
+
+## 2026-07-10 - Materialized P89 full-document recipe v2 dry run
+
+- Added `scripts/build_p89_document_indexing_recipe_v2.py` with deterministic
+  `materialize` and `validate-jsonl` commands.
+- Added `planning/phase89_document_indexing_recipe_v2.md`.
+- Materialized the full selected `tsa23_2012_23tsdp12` data package into 60
+  unique page/section units, two record passes, 120 ignored runtime worker
+  tickets, and 120 ignored empty candidate JSONL placeholders.
+- Added sanitized P89 tracked artifacts:
+  `p89_chunk_id_enum.json`, `p89_jsonl_validation_contract.json`,
+  `p89_validation_input_manifest.json`,
+  `p89_recipe_v2_materialization_manifest.json`, and
+  `p89_dry_run_materialization_summary.json`.
+- Added tests proving dry-run materialization stays sanitized, fenced/trailing
+  comma JSONL can be mechanically repaired, and unknown chunk IDs are rejected.

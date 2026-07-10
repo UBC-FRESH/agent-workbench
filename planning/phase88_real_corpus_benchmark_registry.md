@@ -5,20 +5,24 @@ real-project ROI tranche. It is a planning and registry phase only.
 
 ## Decision
 
-P88 selects `p88_tsa23_2012_data_package_pages_001_022` for P89-P92 follow-on
-work.
+P88 now selects `p88_tsa23_2012_data_package_full_document_pages_001_041` for
+P89-P92 follow-on work.
 
 The selected slice is the 2012 100 Mile House TSA data package
-`tsa23_2012_23tsdp12`, pages 1-22, represented by three tracked chunk records:
+`tsa23_2012_23tsdp12`, pages 1-41, represented by six tracked chunk records:
 
 - `tsa23_2012_23tsdp12::pages_001_008`;
-- `tsa23_2012_23tsdp12::pages_008_015`; and
-- `tsa23_2012_23tsdp12::pages_015_022`.
+- `tsa23_2012_23tsdp12::pages_008_015`;
+- `tsa23_2012_23tsdp12::pages_015_022`;
+- `tsa23_2012_23tsdp12::pages_022_029`;
+- `tsa23_2012_23tsdp12::pages_029_036`; and
+- `tsa23_2012_23tsdp12::pages_036_041`.
 
-This keeps the P63 source scope stable while changing the execution shape in
-P89. The next repeat should test smaller section-level tickets, explicit
-chunk-ID enums, deterministic JSONL validation, and deterministic repair before
-any live worker call.
+This is a deliberate amendment from the original P63 repeat slice. The product
+priority is now one complete useful document-indexing unit, not another
+partial-slice diagnostic. P89 still must change the execution shape before any
+live worker call: smaller section-level tickets, explicit chunk-ID enums,
+deterministic JSONL validation, and deterministic repair.
 
 ## Candidate Registry
 
@@ -29,30 +33,33 @@ Tracked registry artifacts:
 - `benchmarks/document_library/tsa23_tsr/corpus_registry.json`; and
 - `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23tsdp12.json`.
 
-P88 compared four candidates:
+P88 compared five candidates after the full-document amendment:
 
-1. the P63 repeat slice, selected for P89-P92;
-2. the full 2012 TSA23 cycle mini-corpus, deferred until recipe v2 works on the
+1. the full 2012 data package document, selected for P89-P92;
+2. the P63 repeat slice, retained as diagnostic evidence but superseded;
+3. the full 2012 TSA23 cycle mini-corpus, deferred until recipe v2 works on the
    repeat slice;
-3. the full 1995-present TSA23 corpus registry, deferred until scale and
+4. the full 1995-present TSA23 corpus registry, deferred until scale and
    index-usability phases; and
-4. an MP11-style repair-prepass seed, retained as design pressure but not
+5. an MP11-style repair-prepass seed, retained as design pressure but not
    selected because it is not represented as a complete tracked Agent Workbench
    corpus registry.
 
 ## Selection Rationale
 
-The selected P63 repeat slice is the best next corpus unit because it has:
+The selected full data package is the best next corpus unit because it has:
 
 - tracked source provenance and chunk metadata;
 - known P63 diagnostic evidence;
 - known failure modes: provider 524, fenced output, malformed JSONL, and one
   invalid chunk ID;
 - enough density to test document-indexing recipe v2; and
-- a bounded scope small enough for a strict one-attempt future live gate.
+- a complete single-document scope useful enough to justify continued
+  investment if the workflow can produce accepted records.
 
-The selected scope is deliberately not the full 2012 cycle or full TSA23
-registry. Those would create scale noise before P89 repairs the recipe shape.
+The selected scope is deliberately still not the full 2012 cycle or full TSA23
+registry. Those would create multi-document scale noise before P89 repairs the
+recipe shape.
 
 ## Budget Boundary
 
@@ -70,9 +77,9 @@ P92, and only after P89-P91 gates have produced:
 - a new or amended budget declaration; and
 - one named model/provider lane.
 
-The default maximum live attempts remains one. A second attempt, broader page
-span, added model lane, direct-supervisor baseline, or budget increase requires
-maintainer approval.
+The default maximum live attempts remains one. A second attempt, second
+document, added model lane, direct-supervisor baseline, or budget increase
+requires maintainer approval.
 
 No direct-supervisor baseline is allowed until a quality-valid delegated
 candidate exists.
@@ -82,8 +89,8 @@ candidate exists.
 P89 should consume `benchmarks/document_library/p88_selected_corpus_slice.json`
 as the source-of-truth scope.
 
-P89 must not widen the document scope. Its job is to repair the execution
-shape:
+P89 must consume the full selected document without widening to a second
+document. Its job is to repair the execution shape:
 
 - section-level tickets rather than the P63 all-in-one shape;
 - explicit chunk-ID enum validation;
