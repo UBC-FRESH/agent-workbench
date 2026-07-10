@@ -1,0 +1,29 @@
+{
+  "live_execution_allowed": false,
+  "p90_ready_inputs": [
+    "allowed chunk-ID enum",
+    "section-level runtime tickets",
+    "candidate JSONL placeholders",
+    "deterministic JSONL validation contract"
+  ],
+  "phase": "P89",
+  "record_passes": [
+    "content_metadata",
+    "structure"
+  ],
+  "schema_version": 1,
+  "section_count": 60,
+  "selected_chunk_count": 6,
+  "source_slice": "p88_tsa23_2012_data_package_full_document_pages_001_041",
+  "status": "dry_run_materialized_no_live_model_contact",
+  "stop_rules_preserved": [
+    "stop on provider or SDK model-call failure",
+    "stop on malformed or truncated JSONL above the deterministic repair threshold",
+    "stop on any unknown chunk ID after deterministic repair",
+    "stop on missing token spans",
+    "stop on budget exceedance",
+    "stop before any second document, second attempt, added model lane, or direct-supervisor baseline without maintainer approval"
+  ],
+  "summary_id": "p89_document_indexing_recipe_v2_dry_run",
+  "ticket_count": 120
+}

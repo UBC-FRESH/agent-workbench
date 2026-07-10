@@ -97,7 +97,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P86 Dev validation toolchain repair | #549 | `feature/p86-dev-validation-toolchain-repair` | Complete |
 | P87 Real-project ROI roadmap reset | #551 | `feature/p87-real-project-roi-roadmap-reset` | Complete |
 | P88 Real-corpus benchmark registry | #552 | `feature/p88-real-corpus-benchmark-registry` | Closeout |
-| P89 Document-indexing recipe v2 | #553 | `feature/p89-document-indexing-recipe-v2` | Planned |
+| P89 Document-indexing recipe v2 | #553 | `feature/p89-document-indexing-recipe-v2` | Closeout |
 | P90 Source-anchored repair and audit loop | #554 | `feature/p90-source-anchored-repair-audit` | Planned |
 | P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
 | P92 Packaged graph-shaped pilot | #556 | `feature/p92-packaged-graph-shaped-pilot` | Planned |
@@ -4460,11 +4460,12 @@ Completed tasks:
   - [x] Run full validation gates.
   - [x] Record the P89 handoff constraints from P88.
 
-P88 selected `p88_tsa23_2012_data_package_pages_001_022`: the 2012
-100 Mile House TSA data package `tsa23_2012_23tsdp12`, pages 1-22, represented
-by the three tracked chunks already used by P63. This preserves source-scope
-comparability while requiring P89 to change execution shape before any live
-repeat.
+P88 originally selected the P63 repeat slice, then P89.0 amended the source
+scope to `p88_tsa23_2012_data_package_full_document_pages_001_041`: the full
+2012 100 Mile House TSA data package `tsa23_2012_23tsdp12`, pages 1-41,
+represented by all six tracked chunks in the document manifest. This keeps one
+complete useful document-indexing unit in scope while still requiring P89 to
+change execution shape before any live repeat.
 
 Tracked P88 artifacts:
 
@@ -4483,7 +4484,7 @@ Parent issue: #553
 
 Branch: `feature/p89-document-indexing-recipe-v2`
 
-Status: planned
+Status: closeout
 
 Goal: build document-indexing recipe v2 from the P63 lessons.
 
@@ -4502,12 +4503,48 @@ Out of scope:
 - Supervisor audit loops.
 - Production index promotion.
 
-Activation tasks:
+Completed tasks:
 
-- [ ] P89.1 Recipe v2 ticket and manifest shape.
-- [ ] P89.2 Chunk-ID enum and validation contract.
-- [ ] P89.3 Deterministic JSONL repair path.
-- [ ] P89.4 Dry-run materialization and closeout.
+- [x] P89.0 Full-document TSA23 data package scope amendment (#567)
+  - [x] Update the P88 selected-slice artifact to cover pages 1-41 across all
+        six tracked chunks.
+  - [x] Update roadmap, changelog, and planning surfaces so the full-document
+        scope is explicit.
+  - [x] Preserve no-live-execution gates until P89 dry-run materialization and
+        validation pass.
+- [x] P89.1 Recipe v2 ticket and manifest shape (#563)
+  - [x] Add the P89 v2 materializer script.
+  - [x] Split the full selected data package into smaller section-level
+        runtime tickets.
+  - [x] Keep rendered tickets and raw source text under ignored `runtime/`.
+- [x] P89.2 Chunk-ID enum and validation contract (#564)
+  - [x] Generate an explicit six-value chunk-ID enum from the selected full
+        document.
+  - [x] Require generated tickets and candidate validation to use only the
+        selected chunk IDs.
+- [x] P89.3 Deterministic JSONL repair path (#565)
+  - [x] Add deterministic JSONL validation.
+  - [x] Repair only safe mechanical defects.
+  - [x] Reject unknown chunk IDs after repair.
+- [x] P89.4 Dry-run materialization and closeout (#566)
+  - [x] Materialize full-document dry-run artifacts without live model contact.
+  - [x] Add focused tests for materialization and JSONL validation/repair.
+  - [x] Update roadmap, changelog, planning note, issue state, and PR state.
+
+P89 materialized the full `tsa23_2012_23tsdp12` data package, pages 1-41, into
+60 unique page/section units and 120 ignored runtime ticket placeholders across
+`structure` and `content_metadata` passes. The tracked artifacts are sanitized:
+
+- `planning/phase89_document_indexing_recipe_v2.md`;
+- `benchmarks/document_library/p89_chunk_id_enum.json`;
+- `benchmarks/document_library/p89_jsonl_validation_contract.json`;
+- `benchmarks/document_library/p89_validation_input_manifest.json`;
+- `benchmarks/document_library/p89_recipe_v2_materialization_manifest.json`; and
+- `benchmarks/document_library/p89_dry_run_materialization_summary.json`.
+
+P89 still does not authorize live model execution. It leaves P90 with a
+full-document source scope, explicit chunk-ID enum, runtime ticket placeholders,
+candidate JSONL placeholders, and deterministic validation/repair contract.
 
 ## Phase 90: Source-Anchored Repair And Audit Loop
 

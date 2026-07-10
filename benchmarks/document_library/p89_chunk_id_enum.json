@@ -1,0 +1,58 @@
+{
+  "allowed_chunk_ids": [
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_001_008",
+      "page_end": 8,
+      "page_start": 1,
+      "text_char_count": 21045,
+      "text_sha256": "8ed2855531ad2ce126bc6b8c2ce4c6ca600d73b48fe8c9d7a4bff2eb0d0ec665"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_008_015",
+      "page_end": 15,
+      "page_start": 8,
+      "text_char_count": 18889,
+      "text_sha256": "9157a489d13d3862cc9264d6bbb1c0daeb74b2b802552021ade9c554f0151ba1"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_015_022",
+      "page_end": 22,
+      "page_start": 15,
+      "text_char_count": 18706,
+      "text_sha256": "a12a88d3be0e2f210796f251c6a6e44fc9e07543fdfcd9f47722a933701a797e"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_022_029",
+      "page_end": 29,
+      "page_start": 22,
+      "text_char_count": 16747,
+      "text_sha256": "112029e17bc8d50d3f9cd459433aaffecdf2dbb84c7b42a66288e9353adc6af4"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_029_036",
+      "page_end": 36,
+      "page_start": 29,
+      "text_char_count": 19003,
+      "text_sha256": "38b8bef63b77710725ed204ac88d70f6e9ab4602971435c1ba7b32aa3118db03"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_036_041",
+      "page_end": 41,
+      "page_start": 36,
+      "text_char_count": 12469,
+      "text_sha256": "5d44e9621d61b25ba74088043476a4f1d489a576388df9fb1aa098bc94bc48cf"
+    }
+  ],
+  "corpus_id": "bc_tsr_tsa23_public_1995_present",
+  "document_id": "tsa23_2012_23tsdp12",
+  "enum_id": "p89_allowed_chunk_ids",
+  "phase": "P89",
+  "public_safety": {
+    "provider_urls_or_headers_tracked": false,
+    "raw_text_tracked": false,
+    "raw_worker_outputs_tracked": false
+  },
+  "schema_version": 1,
+  "source_slice": "p88_tsa23_2012_data_package_full_document_pages_001_041",
+  "unknown_chunk_id_policy": "reject after deterministic repair"
+}
