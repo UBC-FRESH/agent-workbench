@@ -459,6 +459,51 @@ def test_live_adapter_passes_custom_agent_kwargs(tmp_path: Path) -> None:
     assert "agent_workbench_run_context" in kwargs["available_tools"]
 
 
+def test_live_adapter_adds_custom_tools_to_builtin_isolated_filter(
+    tmp_path: Path,
+) -> None:
+    profile_path = tmp_path / "worker.agent.md"
+    profile_path.write_text(
+        "\n".join(
+            [
+                "---",
+                "name: worker",
+                "description: Worker profile.",
+                "model: qwen3.6",
+                "tools: ['read']",
+                "---",
+                "",
+                "Do the assigned work.",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    manifest_path = write_manifest_fixture(tmp_path)
+    manifest = load_sdk_session_manifest(manifest_path)
+    manifest["_manifest_path"] = str(manifest_path)
+    manifest["sdk"]["available_tools"] = "builtin-isolated"
+    manifest["sdk"]["agent_profiles"] = {
+        "source_paths": [str(profile_path)],
+        "selected": "worker",
+        "custom_tools": [
+            "agent_workbench_run_context",
+            "agent_workbench_write_result",
+        ],
+    }
+    adapter = LiveCopilotSdkAdapter()
+    adapter.permission_handler = type(
+        "PermissionHandler",
+        (),
+        {"approve_all": object()},
+    )
+
+    kwargs = adapter._session_kwargs(manifest)
+
+    available = list(kwargs["available_tools"])
+    assert "custom:agent_workbench_run_context" in available
+    assert "custom:agent_workbench_write_result" in available
+
+
 def test_agent_profiles_event_records_manifest_resolved_profiles(
     tmp_path: Path,
 ) -> None:

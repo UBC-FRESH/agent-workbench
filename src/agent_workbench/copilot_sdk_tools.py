@@ -6,11 +6,21 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .evidence import find_private_values
+
 
 AGENT_WORKBENCH_TOOL_NAMES = (
     "agent_workbench_run_context",
     "agent_workbench_result_contract",
+    "agent_workbench_write_result",
     "agent_workbench_validate_result",
+)
+
+ALLOWED_FINAL_STATUSES = (
+    "accepted-candidate",
+    "rejected-candidate",
+    "blocked",
+    "needs-supervisor-review",
 )
 
 
@@ -41,6 +51,10 @@ def build_agent_workbench_sdk_tools(
     class ValidateResultParams(BaseModel):
         path: str = Field(description="Result or blocker path to validate.")
 
+    class WriteResultParams(BaseModel):
+        path: str = Field(description="Manifest result or blocker path to write.")
+        content: str = Field(description="Markdown result or blocker content.")
+
     tool_by_name: dict[str, Any] = {
         "agent_workbench_run_context": define_tool(
             name="agent_workbench_run_context",
@@ -56,6 +70,23 @@ def build_agent_workbench_sdk_tools(
             params_type=None,
             handler=lambda _params, _invocation: json.dumps(
                 result_contract_payload(manifest), sort_keys=True
+            ),
+        ),
+        "agent_workbench_write_result": define_tool(
+            name="agent_workbench_write_result",
+            description=(
+                "Write the manifest result or blocker file. Only declared result "
+                "and blocker paths are allowed."
+            ),
+            params_type=WriteResultParams,
+            handler=lambda params, _invocation: json.dumps(
+                write_result_payload(
+                    manifest,
+                    base=base,
+                    requested_path=params.path,
+                    content=params.content,
+                ),
+                sort_keys=True,
             ),
         ),
         "agent_workbench_validate_result": define_tool(
@@ -101,11 +132,9 @@ def result_contract_payload(manifest: dict[str, Any]) -> dict[str, Any]:
     return {
         "result_path": paths.get("result", ""),
         "blocker_path": paths.get("blocker", ""),
-        "required_final_statuses": [
-            "accepted-candidate",
-            "blocked",
-            "needs-supervisor-review",
-        ],
+        "write_tool": "agent_workbench_write_result",
+        "validate_tool": "agent_workbench_validate_result",
+        "required_final_statuses": list(ALLOWED_FINAL_STATUSES),
         "required_result_sections": [
             "Final status",
             "Summary",
@@ -120,6 +149,42 @@ def result_contract_payload(manifest: dict[str, Any]) -> dict[str, Any]:
             "Next required action",
         ],
     }
+
+
+def write_result_payload(
+    manifest: dict[str, Any],
+    *,
+    base: Path,
+    requested_path: str,
+    content: str,
+) -> dict[str, Any]:
+    allowed = allowed_result_paths(manifest, base=base)
+    candidate = resolve_result_path(requested_path, base=base)
+    errors: list[str] = []
+    if candidate not in allowed:
+        errors.append("path is not the manifest result or blocker path")
+    if len(content) > 100_000:
+        errors.append("content exceeds 100000 characters")
+    if "Final status:" not in content:
+        errors.append("missing 'Final status:' line")
+    if not any(status in content for status in ALLOWED_FINAL_STATUSES):
+        errors.append("missing allowed final status value")
+    for finding in find_private_values({"content": content}):
+        errors.append(f"private-looking value detected: {finding}")
+    if errors:
+        return {
+            "ok": False,
+            "path": str(candidate),
+            "errors": errors,
+        }
+
+    candidate.parent.mkdir(parents=True, exist_ok=True)
+    candidate.write_text(content.rstrip() + "\n", encoding="utf-8")
+    return validate_result_payload(
+        manifest,
+        base=base,
+        requested_path=requested_path,
+    )
 
 
 def validate_result_payload(
@@ -140,10 +205,7 @@ def validate_result_payload(
         text = candidate.read_text(encoding="utf-8-sig")
     if text and "Final status:" not in text:
         errors.append("missing 'Final status:' line")
-    if text and not any(
-        status in text
-        for status in ("accepted-candidate", "blocked", "needs-supervisor-review")
-    ):
+    if text and not any(status in text for status in ALLOWED_FINAL_STATUSES):
         errors.append("missing allowed final status value")
     return {
         "ok": not errors,

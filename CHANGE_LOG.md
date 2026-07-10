@@ -2186,3 +2186,14 @@ issues, pull requests, and closeout comments.
 - Declared smoke-gate, minimum analyzable sample, blocking variables,
   randomized run order, runtime evidence paths, scoring boundaries, and stop
   rules before live SDK execution.
+
+## 2026-07-09 - Added constrained SDK result writer for P75.2
+
+- Added `agent_workbench_write_result`, a Copilot SDK custom tool that can write
+  only the manifest-declared result or blocker file for a run.
+- The tool requires a `Final status:` line, accepts the P75 result-status
+  vocabulary, rejects private-looking content, and validates the artifact after
+  writing.
+- This repairs the live smoke-gate gap where selected profiles could produce
+  chat evidence but could not reliably create the required result artifact via
+  shell redirection or broad edit authority.

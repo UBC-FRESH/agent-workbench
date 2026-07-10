@@ -1597,6 +1597,12 @@ class LiveCopilotSdkAdapter:
                     if tool_name not in available:
                         available.append(tool_name)
                 kwargs["available_tools"] = available
+            else:
+                available_tools_filter = kwargs.get("available_tools")
+                add_custom = getattr(available_tools_filter, "add_custom", None)
+                if callable(add_custom):
+                    for tool_name in resolved_profiles.custom_tool_names:
+                        add_custom(tool_name)
         return kwargs
 
 

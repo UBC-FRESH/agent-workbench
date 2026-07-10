@@ -178,6 +178,17 @@ Per-run evidence paths:
 - compact transcript: `runtime/p75_live_overlay_sdk_run_battery/transcripts/{run_id}.compact.md`
 - profile summary: `runtime/p75_live_overlay_sdk_run_battery/profile_summaries/{run_id}.md`
 
+P75.2 instrumentation repair:
+
+- Live smoke rows showed that shell redirection and broad edit authority are
+  not reliable or appropriate result-capture mechanisms across selected
+  profiles.
+- The SDK manifest therefore exposes a constrained
+  `agent_workbench_write_result` custom tool for P75 runs. The tool may write
+  only the manifest-declared result or blocker path, requires a `Final status:`
+  line with an allowed status, rejects private-looking content, and validates
+  the written artifact.
+
 Public-safe aggregate outputs:
 
 - matrix: `runtime/p75_live_overlay_sdk_run_battery/p75_run_matrix.json`

@@ -24,6 +24,7 @@ from agent_workbench.copilot_sdk_tools import (
     run_context_payload,
     validate_agent_workbench_tool_names,
     validate_result_payload,
+    write_result_payload,
 )
 
 
@@ -205,6 +206,30 @@ def test_named_standard_task_overlay_appends_to_selected_profile_only(
     assert "Documentation Expansion Overlay" not in second.read_text(encoding="utf-8")
 
 
+def test_custom_tools_are_attached_to_selected_agent_only(tmp_path: Path) -> None:
+    first = tmp_path / "first.agent.md"
+    second = tmp_path / "second.agent.md"
+    write_profile(first, name="first", body="First prompt.")
+    write_profile(second, name="second", body="Second prompt.")
+    manifest = manifest_with_profile(tmp_path, first)
+    manifest["sdk"]["agent_profiles"]["source_paths"] = [str(first), str(second)]
+    manifest["sdk"]["agent_profiles"]["selected"] = "second"
+    manifest["sdk"]["agent_profiles"]["custom_tools"] = [
+        "agent_workbench_run_context",
+        "agent_workbench_write_result",
+    ]
+
+    resolved = resolve_agent_profiles(
+        manifest, manifest_path=tmp_path / "manifest.json"
+    )
+
+    assert resolved.ok, resolved.errors
+    first_agent, second_agent = resolved.custom_agents
+    assert "agent_workbench_write_result" not in first_agent["tools"]
+    assert "agent_workbench_run_context" in second_agent["tools"]
+    assert "agent_workbench_write_result" in second_agent["tools"]
+
+
 def test_unknown_standard_task_overlay_reports_available_names(tmp_path: Path) -> None:
     profile_path = tmp_path / "worker.agent.md"
     write_profile(profile_path)
@@ -246,6 +271,7 @@ def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
     assert context["run_id"] == "p72-test-run"
     contract = result_contract_payload(manifest)
     assert "accepted-candidate" in contract["required_final_statuses"]
+    assert contract["write_tool"] == "agent_workbench_write_result"
     validation = validate_result_payload(
         manifest,
         base=tmp_path,
@@ -260,6 +286,50 @@ def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
     )
     assert not blocked["ok"]
     assert "path is not the manifest result or blocker path" in blocked["errors"]
+
+
+def test_agent_workbench_write_result_tool_is_path_constrained(tmp_path: Path) -> None:
+    manifest = {
+        "paths": {"result": "result.md", "blocker": "blocker.md"},
+    }
+
+    written = write_result_payload(
+        manifest,
+        base=tmp_path,
+        requested_path="result.md",
+        content="Final status: accepted-candidate\n\nSummary: done\n",
+    )
+
+    assert written["ok"]
+    assert (tmp_path / "result.md").exists()
+
+    blocked = write_result_payload(
+        manifest,
+        base=tmp_path,
+        requested_path="other.md",
+        content="Final status: accepted-candidate\n\nSummary: done\n",
+    )
+
+    assert not blocked["ok"]
+    assert not (tmp_path / "other.md").exists()
+    assert "path is not the manifest result or blocker path" in blocked["errors"]
+
+
+def test_agent_workbench_write_result_rejects_invalid_content(tmp_path: Path) -> None:
+    manifest = {
+        "paths": {"result": "result.md", "blocker": "blocker.md"},
+    }
+
+    missing_status = write_result_payload(
+        manifest,
+        base=tmp_path,
+        requested_path="result.md",
+        content="Summary: done\n",
+    )
+
+    assert not missing_status["ok"]
+    assert not (tmp_path / "result.md").exists()
+    assert "missing 'Final status:' line" in missing_status["errors"]
 
 
 def test_profile_preview_can_be_serialized_to_manifest_sidecar(tmp_path: Path) -> None:
