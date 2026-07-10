@@ -2239,3 +2239,15 @@ issues, pull requests, and closeout comments.
   evidence at `runtime/p76_profile_evaluation_aggregate_reports/`.
 - The P75 aggregate report recommends task/profile contract repair before
   another live battery, model-lane expansion, or FoundryTK runtime integration.
+
+## 2026-07-09 - Activated P77 profile contract repair plan
+
+- Created branch `feature/p77-profile-contract-repair-plan`.
+- Opened parent issue #496 and child issues #497, #498, and #499 for P77.1
+  through P77.3.
+- Added `planning/phase77_profile_contract_repair_plan.md` to define the
+  repair-plan input contract, output contract, privacy boundary, and follow-on
+  decision boundary.
+- Updated `ROADMAP.md` with P77 as the active next lane from P75/P76 evidence:
+  deterministic task/profile contract repair planning before another live SDK
+  battery, model-lane expansion, or FoundryTK runtime integration.

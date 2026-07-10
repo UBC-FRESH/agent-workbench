@@ -85,6 +85,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P74 FoundryTK profile optimization | #481 / PR #482 | `feature/p74-foundrytk-profile-optimization` | Complete |
 | P75 Comparable live overlay-selected SDK run battery | #485 | `feature/p75-live-overlay-sdk-run-battery` | Complete |
 | P76 Profile evaluation aggregate comparison reports | #491 | `feature/p76-profile-evaluation-aggregate-reports` | Complete |
+| P77 Profile contract repair plan | #496 | `feature/p77-profile-contract-repair-plan` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3642,3 +3643,64 @@ rows. The next roadmap lane should prioritize task/profile contract repair,
 especially profile-evidence-review fixtures and result-auditor-as-primary
 behavior, before another live battery, model-lane expansion, or FoundryTK
 runtime integration.
+
+## Phase 77: Profile Contract Repair Plan
+
+Parent issue: #496
+
+Branch: `feature/p77-profile-contract-repair-plan`
+
+Status: active
+
+Goal: convert the P75/P76 aggregate evidence into a deterministic
+task/profile contract repair plan before spending on another live SDK battery.
+
+Planned scope:
+
+- Add a CLI/report surface that consumes P76 aggregate JSON summaries.
+- Rank weak profile/overlay/task-family treatment cells by blocked and
+  review-heavy outcomes.
+- Preserve the P75 scoring boundary: controller/session health is separate
+  from result validity.
+- Render public-safe Markdown and JSON repair-plan outputs without raw
+  transcript text, prompts, credentials, private paths, endpoints, or
+  machine-specific values.
+- Dogfood the command on the P75 aggregate summary under ignored runtime
+  evidence.
+- Use the resulting plan to name the next contract-repair implementation lane.
+
+Out of scope:
+
+- Running another live SDK battery.
+- Adding FoundryTK as a runtime dependency.
+- Provisioning Azure or external evaluation services.
+- Claiming model or profile superiority from the P75 dataset.
+
+Planned tasks:
+
+- [x] P77.1 Roadmap and planning activation (#497)
+  - [x] Add the P77 planning note.
+  - [x] Update the roadmap tracker and detailed phase section.
+  - [x] Define input contract, output contract, privacy boundary, and
+        closeout criteria.
+  - [x] Tie the next-lane rationale to the P75/P76 aggregate evidence.
+- [ ] P77.2 Repair-plan command and tests (#498)
+  - [ ] Add a command that reads aggregate JSON.
+  - [ ] Write Markdown and JSON repair-plan outputs.
+  - [ ] Rank weak treatment cells and summarize task/profile repair targets.
+  - [ ] Preserve public-safe output boundaries.
+  - [ ] Add focused tests.
+- [ ] P77.3 P75 aggregate dogfood and closeout (#499)
+  - [ ] Render ignored runtime repair-plan outputs from the P75 aggregate
+        summary when available.
+  - [ ] Inspect the repair plan for public-safe content and decision
+        usefulness.
+  - [ ] Update roadmap/changelog/planning with the resulting next-lane
+        recommendation.
+  - [ ] Close out through normal issue/PR hygiene.
+
+Activation note: P77 starts from P76's decision that task/profile contract
+repair is the highest-value lane. The immediate value is a deterministic
+repair-plan artifact over existing public-safe evidence, not another live run.
+The expected implementation target after P77 is profile-evidence-review task
+contract hardening and result-auditor-as-primary behavior repair.
