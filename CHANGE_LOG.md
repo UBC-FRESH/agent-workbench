@@ -2267,3 +2267,15 @@ issues, pull requests, and closeout comments.
 - The P75 repair plan recommends profile-evidence-review fixture repair and
   result-auditor-as-primary behavior repair before another live SDK battery,
   model-lane expansion, or FoundryTK runtime integration.
+
+## 2026-07-09 - Activated P78 profile evidence review contract repair
+
+- Created branch `feature/p78-profile-evidence-review-contract`.
+- Opened parent issue #501 and child issues #502, #503, #504, and #505 for
+  P78.1 through P78.4.
+- Added `planning/phase78_profile_evidence_review_contract.md` to define the
+  repaired review-subject input contract, ticket output contract, public-safety
+  boundary, and validation boundary.
+- Updated `ROADMAP.md` with P78 as the active next lane from P77 evidence:
+  repair profile-evidence-review fixtures and result-auditor-as-primary
+  behavior before another matched replicated live SDK battery.

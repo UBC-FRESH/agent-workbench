@@ -86,6 +86,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P75 Comparable live overlay-selected SDK run battery | #485 | `feature/p75-live-overlay-sdk-run-battery` | Complete |
 | P76 Profile evaluation aggregate comparison reports | #491 | `feature/p76-profile-evaluation-aggregate-reports` | Complete |
 | P77 Profile contract repair plan | #496 | `feature/p77-profile-contract-repair-plan` | Complete |
+| P78 Profile evidence review contract repair | #501 | `feature/p78-profile-evidence-review-contract` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3717,3 +3718,67 @@ needs-supervisor-review, and 2 blocked rows. The next roadmap lane should
 repair profile-evidence-review fixtures and result-auditor-as-primary behavior
 before another live battery, model-lane expansion, or FoundryTK runtime
 integration.
+
+## Phase 78: Profile Evidence Review Contract Repair
+
+Parent issue: #501
+
+Branch: `feature/p78-profile-evidence-review-contract`
+
+Status: active
+
+Goal: repair the profile-evidence-review task contract and
+result-auditor-as-primary behavior before another live SDK battery.
+
+Planned scope:
+
+- Add a manifest-backed profile-evidence-review contract and ticket renderer.
+- Require profile-evidence-review tasks to declare a pre-existing public-safe
+  review subject artifact.
+- Keep current-run result and blocker paths separate from the review subject.
+- Update the standard result-auditor profile so it behaves correctly when it
+  is the selected primary profile, not only a subagent.
+- Dogfood the repaired contract on a P75-style manifest using existing ignored
+  public-safe runtime evidence.
+
+Out of scope:
+
+- Running another live SDK battery.
+- Expanding model lanes.
+- Adding FoundryTK as a runtime dependency.
+- Claiming profile or model superiority.
+
+Planned tasks:
+
+- [x] P78.1 Roadmap and planning activation (#502)
+  - [x] Add the P78 planning note.
+  - [x] Update the roadmap tracker and detailed phase section.
+  - [x] Define the review-subject input contract and output contract.
+  - [x] Preserve the P77 evidence-backed rationale.
+- [ ] P78.2 Profile-evidence-review ticket contract (#503)
+  - [ ] Add code that identifies profile-evidence-review manifests.
+  - [ ] Require a pre-existing review subject path for that task family.
+  - [ ] Render a ticket that separates review subject evidence from current
+        run outputs.
+  - [ ] Add focused tests for valid, missing-subject, unsafe-subject, and CLI
+        output cases.
+- [ ] P78.3 Result-auditor primary-mode repair (#504)
+  - [ ] Update the standard result-auditor profile for selected-primary use.
+  - [ ] Require primary-mode runs to use Agent Workbench result contract and
+        result writer tools when available.
+  - [ ] Preserve read-only, no-GitHub, no-commit, and no-whole-job-completion
+        boundaries.
+  - [ ] Add or update catalog/profile tests as needed.
+- [ ] P78.4 Repaired contract dogfood and closeout (#505)
+  - [ ] Render ignored runtime ticket/contract artifacts from a repaired
+        P75-style manifest with a pre-existing review subject.
+  - [ ] Inspect generated artifacts for public-safe content and decision
+        usefulness.
+  - [ ] Update roadmap/changelog/planning with the resulting next-lane
+        recommendation.
+  - [ ] Close out through normal issue/PR hygiene.
+
+Activation note: P78 starts from P77's repair-plan recommendation. The target
+is not more sample volume yet; it is removing a known self-referential fixture
+defect so the next matched replicated live battery measures profile behavior
+rather than an avoidable task-contract ambiguity.
