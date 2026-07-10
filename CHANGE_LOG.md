@@ -2547,3 +2547,15 @@ issues, pull requests, and closeout comments.
 - Updated the aggregate recommendation so high-acceptance, no-blocker repaired
   batteries point to the next replicated comparison lane while preserving
   targeted audit of remaining needs-supervisor-review rows.
+
+## 2026-07-10 - Prepared P85 GitHub and PR closeout
+
+- Marked P85.5 repo-side complete after the repaired battery evaluation met the
+  minimum analyzable-row and balanced-cell thresholds.
+- Recorded that resumed closeout has authenticated `gh` access, replacing the
+  stale broken-shell note from the handoff session.
+- Prepared P85 for child issue closeout and PR merge with the empirical result:
+  48 analyzable rows, 47 accepted-candidate results, 1
+  needs-supervisor-review result, and 0 blocked results.
+- Kept the next lane focused on replicated comparison or model-lane evaluation,
+  with targeted audit of the remaining needs-supervisor-review row.

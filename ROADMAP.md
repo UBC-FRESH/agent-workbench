@@ -93,7 +93,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P82 Health-gated repaired profile-evidence-review battery | #524 | `feature/p82-health-gated-repaired-battery` | Complete |
 | P83 Review-subject access contract repair | #530 | `feature/p83-review-subject-access-contract` | Complete |
 | P84 Review-subject live access probe | #536 | `feature/p84-review-subject-live-access-probe` | Complete |
-| P85 Health-gated repaired profile-evidence-review battery rerun | #542 | `feature/p85-health-gated-repaired-battery-rerun` | Active |
+| P85 Health-gated repaired profile-evidence-review battery rerun | #542 | `feature/p85-health-gated-repaired-battery-rerun` | Closeout |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -4260,12 +4260,12 @@ Planned tasks:
   - [x] Render compact transcripts, profile summaries, monitor summaries, and
         execution progress under ignored runtime storage.
   - [x] Do not silently narrow the sample after partial failures.
-- [ ] P85.5 Battery evaluation and closeout (#543)
+- [x] P85.5 Battery evaluation and closeout (#543)
   - [x] Render the profile-evaluation dataset and aggregate report.
   - [x] Evaluate analyzable row count, final-status distribution, and balanced
         cell coverage.
   - [x] Compare repaired validity against P75 only if thresholds are met.
-  - [ ] Update roadmap, changelog, planning note, issues, and PR with the
+  - [x] Update roadmap, changelog, planning note, issues, and PR with the
         outcome.
 
 Activation note: P85 is the next empirical battery after P83/P84 repaired and
@@ -4278,4 +4278,4 @@ controller rows, 47 accepted-candidate results, 1 needs-supervisor-review
 result, and 0 blocked results. Compared with the P75 profile-evidence-review
 baseline, accepted rows increased from 2 to 47, blocked rows decreased from 4
 to 0, and needs-supervisor-review rows decreased from 6 to 1. GitHub issue/PR
-closeout remains pending in the current shell because `gh` is unavailable.
+closeout proceeds from the resumed session with authenticated `gh` access.
