@@ -278,3 +278,19 @@ supports a narrower next lane:
 
 No follow-on should be activated unless it cites concrete P75 dataset rows,
 controller-health evidence, result-validity evidence, and remaining caveats.
+
+## P75 Outcome
+
+P75 completed the declared 24-row battery. All rows reached healthy controller
+status and rendered public-safe P74-compatible dataset rows. Result validity was
+mixed: 9 accepted-candidate rows, 11 needs-supervisor-review rows, and 4 blocked
+rows.
+
+FoundryTK remains external guidance. P75 does not justify a runtime FoundryTK
+bridge dependency, model-selection claim, prompt optimization, agent optimizer,
+or fine-tuning lane because the model lane was fixed and several profile/task
+cells still produced review or blocker outcomes.
+
+The justified next lane is narrower: keep using the local profile-run dataset
+as an external evaluation source, add automated aggregate comparison summaries,
+and refine task/profile contracts before rerunning another replicated battery.

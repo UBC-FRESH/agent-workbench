@@ -2197,3 +2197,18 @@ issues, pull requests, and closeout comments.
 - This repairs the live smoke-gate gap where selected profiles could produce
   chat evidence but could not reliably create the required result artifact via
   shell redirection or broad edit authority.
+
+## 2026-07-09 - Completed P75 live overlay-selected SDK run battery
+
+- Ran the full 24-row P75 matrix across two selected profiles, two named
+  overlays, two task families, and three repetitions per treatment cell.
+- Rendered monitor summaries, compact transcripts, profile-run summaries, a
+  P74-compatible JSONL dataset, a Markdown dataset preview, and a profile
+  optimization plan under ignored runtime evidence.
+- The public-safe dataset contains 24 analyzable rows with healthy controller
+  status for every row.
+- Result validity remained mixed: 9 accepted-candidate rows, 11
+  needs-supervisor-review rows, and 4 blocked rows.
+- Decided that FoundryTK remains external guidance; P75 supports automated
+  aggregate comparison summaries and clearer task/profile contracts as the next
+  lane, not runtime FoundryTK integration or model-selection claims.
