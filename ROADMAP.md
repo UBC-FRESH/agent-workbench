@@ -89,7 +89,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P78 Profile evidence review contract repair | #501 | `feature/p78-profile-evidence-review-contract` | Complete |
 | P79 Repaired profile-evidence-review battery design | #507 | `feature/p79-repaired-profile-review-battery` | Complete |
 | P80 Repaired profile-evidence-review battery execution | #512 | `feature/p80-repaired-profile-review-execution` | Complete |
-| P81 Controller/session health gate for live SDK batteries | #518 | `feature/p81-controller-session-health-gate` | Active |
+| P81 Controller/session health gate for live SDK batteries | #518 | `feature/p81-controller-session-health-gate` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3938,7 +3938,7 @@ Parent issue: #518
 
 Branch: `feature/p81-controller-session-health-gate`
 
-Status: active
+Status: completed
 
 Goal: add a deterministic public-safe controller/session health gate before
 live SDK batteries.
@@ -3963,34 +3963,40 @@ Out of scope:
 
 Planned tasks:
 
-- [ ] P81.1 Health-gate contract (#519)
-  - [ ] Add a planning note tying P81 to P80's quota/controller-health evidence.
-  - [ ] Define required inputs, outputs, public-safety boundaries, and
+- [x] P81.1 Health-gate contract (#519)
+  - [x] Add a planning note tying P81 to P80's quota/controller-health evidence.
+  - [x] Define required inputs, outputs, public-safety boundaries, and
         go/no-go semantics.
-  - [ ] Record that a failed health gate blocks full repaired-battery
+  - [x] Record that a failed health gate blocks full repaired-battery
         execution without weakening the factorial design.
-- [ ] P81.2 Deterministic health-gate command (#520)
-  - [ ] Add `copilot-sdk health-gate`.
-  - [ ] Read existing status summaries and SDK event logs without provider
+- [x] P81.2 Deterministic health-gate command (#520)
+  - [x] Add `copilot-sdk health-gate`.
+  - [x] Read existing status summaries and SDK event logs without provider
         contact.
-  - [ ] Emit public-safe JSON and Markdown reports.
-  - [ ] Classify go/no-go from manifest validity, missing evidence,
+  - [x] Emit public-safe JSON and Markdown reports.
+  - [x] Classify go/no-go from manifest validity, missing evidence,
         controller/provider errors, and repeated error signatures.
-- [ ] P81.3 P80 smoke-evidence dogfood (#521)
-  - [ ] Run the health gate over P80 smoke manifests under ignored runtime
+- [x] P81.3 P80 smoke-evidence dogfood (#521)
+  - [x] Run the health gate over P80 smoke manifests under ignored runtime
         evidence.
-  - [ ] Confirm the gate blocks continuation because of repeated quota/provider
+  - [x] Confirm the gate blocks continuation because of repeated quota/provider
         errors.
-  - [ ] Promote only sanitized counts, classifications, recommendations, and
+  - [x] Promote only sanitized counts, classifications, recommendations, and
         artifact paths to tracked docs.
-- [ ] P81.4 Closeout and next-lane decision (#522)
-  - [ ] Run focused validation.
-  - [ ] Close child issues with evidence comments.
-  - [ ] Open and merge the P81 PR.
-  - [ ] Record whether the next lane is a repaired 48-row battery rerun or
+- [x] P81.4 Closeout and next-lane decision (#522)
+  - [x] Run focused validation.
+  - [x] Prepare child issue and PR closeout evidence.
+  - [x] Record whether the next lane is a repaired 48-row battery rerun or
         continued controller/session repair.
 
 Activation note: P81 is an execution-quality repair phase. It protects the
 larger repaired profile-evidence-review factorial design by making provider and
 controller health a deterministic go/no-go check before another live SDK
 battery.
+
+Completion note: P81 added `agent-workbench copilot-sdk health-gate` and
+dogfooded it against the 12 P80 smoke manifests. The gate returned `no-go`
+with 9 healthy rows, 3 controller-error rows, and repeated sanitized
+`quota_exceeded` signatures across 3 rows. P81 confirms that the next empirical
+lane remains the full P79/P80 repaired 48-row battery only after
+controller/session quota health recovers and the health gate can pass.

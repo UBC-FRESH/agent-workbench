@@ -2371,3 +2371,22 @@ issues, pull requests, and closeout comments.
   semantics, and next-lane rule.
 - Recorded that P81 should protect the P79/P80 repaired 48-row factorial design
   rather than reduce the sample size after P80's quota/controller-health stop.
+
+## 2026-07-10 - Completed P81 controller/session health gate
+
+- Added `agent-workbench copilot-sdk health-gate`, which reads existing SDK
+  manifests, status summaries, and event logs without contacting the live
+  provider.
+- The health gate writes public-safe JSON and Markdown reports with manifest
+  counts, controller-health counts, row go/block decisions, sanitized repeated
+  error signatures, and row-level reasons.
+- Added focused tests for healthy evidence, repeated quota errors, missing
+  status evidence, required-count shortfall, and CLI report generation.
+- Dogfooded the gate against the 12 P80 smoke manifests under ignored runtime
+  evidence at `runtime/p81_controller_session_health_gate/`.
+- The P80 smoke dogfood produced `decision=no-go`, 9 healthy rows, 3
+  controller-error rows, and repeated `quota_exceeded` signatures across 3
+  rows.
+- Recorded that the next empirical lane remains the full P79/P80 repaired
+  48-row battery only after controller/session quota health recovers and the
+  health gate can pass.

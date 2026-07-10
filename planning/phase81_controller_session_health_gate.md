@@ -83,3 +83,34 @@ P79/P80 repaired 48-row battery after controller/session quota health recovers.
 If P81 cannot produce a stable public-safe health decision from existing SDK
 artifacts, repair the health-gate inputs and SDK summary contract before
 another live battery.
+
+## Outcome
+
+P81 added `agent-workbench copilot-sdk health-gate`, a deterministic CLI report
+over existing SDK manifests, status summaries, and event logs.
+
+The command writes public-safe JSON and Markdown reports and exits with code
+`2` when the generated gate decision is `no-go`. The report keeps
+controller/session health separate from worker result quality by summarizing:
+
+- manifest count and optional required-count shortfall;
+- controller-health counts;
+- row-level go/block decisions;
+- sanitized repeated error signatures; and
+- public-safe row reasons.
+
+Dogfood against the 12 P80 smoke manifests wrote ignored artifacts under
+`runtime/p81_controller_session_health_gate/` and produced:
+
+- decision: `no-go`;
+- manifest count: 12;
+- required count: 12;
+- controller health: 9 healthy, 3 error;
+- repeated error signatures: `quota_exceeded` across 3 rows; and
+- no matched personal paths, provider URLs, GitHub-token strings, raw quota
+  messages, or request IDs in the rendered health-gate reports.
+
+P81 therefore confirms that the P80 stop was a controller/session health block,
+not repaired profile-evidence-review behavior evidence. The next empirical lane
+remains the full P79/P80 repaired 48-row battery only after controller/session
+quota health recovers and the health gate can pass.
