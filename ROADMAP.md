@@ -98,7 +98,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P87 Real-project ROI roadmap reset | #551 | `feature/p87-real-project-roi-roadmap-reset` | Complete |
 | P88 Real-corpus benchmark registry | #552 | `feature/p88-real-corpus-benchmark-registry` | Closeout |
 | P89 Document-indexing recipe v2 | #553 | `feature/p89-document-indexing-recipe-v2` | Closeout |
-| P90 Source-anchored repair and audit loop | #554 | `feature/p90-source-anchored-repair-audit` | Planned |
+| P90 Full-document candidate extraction run | #554 | `feature/p90-full-document-candidate-extraction` | Active |
 | P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
 | P92 Packaged graph-shaped pilot | #556 | `feature/p92-packaged-graph-shaped-pilot` | Planned |
 | P93 Second public corpus application | TBD | `feature/p93-second-public-corpus-application` | Planned |
@@ -4546,25 +4546,25 @@ P89 still does not authorize live model execution. It leaves P90 with a
 full-document source scope, explicit chunk-ID enum, runtime ticket placeholders,
 candidate JSONL placeholders, and deterministic validation/repair contract.
 
-## Phase 90: Source-Anchored Repair And Audit Loop
+## Phase 90: Full-Document Candidate Extraction Run
 
 Parent issue: #554
 
-Branch: `feature/p90-source-anchored-repair-audit`
+Branch: `feature/p90-full-document-candidate-extraction`
 
-Status: planned
+Status: active
 
-Goal: add the source-anchored repair and audit loop for document-indexing
-candidates.
+Goal: run actual worker extraction against the P89 full-document packet and
+produce candidate records before doing more audit/reporting design.
 
 Planned scope:
 
-- Add a local-worker repair-prepass ticket over candidate records plus compact
-  source excerpts.
-- Define supervisor audit classifications: accepted, repairable, rejected, and
-  needs-review.
-- Measure audit tokens and audit cost per accepted or repairable record.
-- Produce one bounded auditable calibration packet.
+- Run P89 section-level tickets against one named local worker lane.
+- Capture raw worker results and candidate JSONL under ignored `runtime/`.
+- Run deterministic JSONL validation and deterministic repair where possible.
+- Track only sanitized extraction summaries in `benchmarks/document_library/`.
+- Stop on provider failure, repeated format failure, invalid chunk IDs, missing
+  token evidence when needed, or budget/attempt boundary.
 
 Out of scope:
 
@@ -4572,13 +4572,31 @@ Out of scope:
 - Direct-supervisor baseline runs before a quality-valid delegated candidate
   exists.
 - Broad model comparisons.
+- Claiming accepted records before source audit.
 
 Activation tasks:
 
-- [ ] P90.1 Repair-prepass ticket.
-- [ ] P90.2 Audit classification packet.
-- [ ] P90.3 Audit token/economics record.
-- [ ] P90.4 Bounded calibration closeout.
+- [x] P90.0 Live extraction smoke over one complete section.
+  - [x] Run the P89 `structure` ticket for
+        `tsa23_2012_23tsdp12__pages_001_008__p004__s02`.
+  - [x] Run the matching `content_metadata` ticket.
+  - [x] Validate or deterministically repair candidate JSONL.
+  - [x] Track a sanitized smoke summary without raw source text or raw worker
+        output.
+- [ ] P90.1 Full-document extraction batch plan.
+- [ ] P90.2 Full-document extraction execution.
+- [ ] P90.3 Validation/repair summary and stop-rule decision.
+- [ ] P90.4 Candidate packet handoff for source audit.
+
+P90.0 actual extraction smoke produced
+`benchmarks/document_library/p90_actual_extraction_smoke_summary.json`. Two live
+`qwen3.6:35b-a3b-q8_0` worker calls completed over one full section pair:
+`structure` and `content_metadata`. They produced 51 valid raw candidate records
+after deterministic extraction/repair into JSONL. No record is accepted yet:
+source audit has not run. Observed protocol defects are material and must shape
+P90.1: the structure pass returned prose plus fenced JSONL, and the content pass
+returned key/value blocks that required deterministic conversion before
+validation.
 
 ## Phase 91: Reporting-Worker Decision Packets
 

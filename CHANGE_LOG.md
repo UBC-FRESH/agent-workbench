@@ -2649,3 +2649,17 @@ issues, pull requests, and closeout comments.
   `p89_dry_run_materialization_summary.json`.
 - Added tests proving dry-run materialization stays sanitized, fenced/trailing
   comma JSONL can be mechanically repaired, and unknown chunk IDs are rejected.
+
+## 2026-07-10 - Ran first P90 live extraction smoke
+
+- Retargeted P90 from repair/audit design to actual full-document candidate
+  extraction.
+- Ran two live local-worker calls with `qwen3.6:35b-a3b-q8_0` against the P89
+  full-document packet for section
+  `tsa23_2012_23tsdp12__pages_001_008__p004__s02`.
+- Captured raw worker results and candidate JSONL under ignored `runtime/`.
+- Validated 20 `structure` records and 31 `content_metadata` records after
+  deterministic extraction/repair into JSONL.
+- Added `benchmarks/document_library/p90_actual_extraction_smoke_summary.json`
+  as the public-safe tracked summary. The records are raw candidates only; no
+  source audit or acceptance has been performed.

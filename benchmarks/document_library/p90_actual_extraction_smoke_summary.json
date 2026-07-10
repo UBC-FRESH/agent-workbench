@@ -1,0 +1,65 @@
+{
+  "accepted_record_count": 0,
+  "accepted_record_note": "No source audit has been performed; records are raw worker candidates only.",
+  "completed_ticket_count": 2,
+  "document_id": "tsa23_2012_23tsdp12",
+  "generated_utc": "2026-07-10T16:42:49+00:00",
+  "next_action": "continue extraction only with validation/repair capture, then audit a bounded accepted/repairable sample before claiming useful accepted records",
+  "object_type_counts": {
+    "heading": 2,
+    "table": 49
+  },
+  "observed_defects": [
+    "structure pass returned prose and a Markdown-fenced JSONL block instead of bare JSONL",
+    "content_metadata pass returned key/value blocks instead of JSONL; deterministic conversion was needed before validation",
+    "semantic source audit has not been performed"
+  ],
+  "page_anchor": "PDF page 4",
+  "phase": "P90",
+  "public_safety": {
+    "personal_paths_tracked": false,
+    "provider_urls_or_headers_tracked": false,
+    "raw_source_text_tracked": false,
+    "raw_worker_output_tracked": false,
+    "source_quotes_tracked": false
+  },
+  "run_summaries": [
+    {
+      "candidate_jsonl_path": "runtime/document_library/tsa23_tsr/p90_actual_extraction/p004_s02_structure_qwen36_run01.candidate.jsonl",
+      "fatal_error_count": 0,
+      "model": "qwen3.6:35b-a3b-q8_0",
+      "parseable_record_count": 20,
+      "probe_status": "completed",
+      "protocol_defect": "jsonl_block_with_prose_and_markdown_fence",
+      "raw_result_path": "runtime/document_library/tsa23_tsr/p90_actual_extraction/p004_s02_structure_qwen36_run01.md",
+      "record_pass": "structure",
+      "repaired_jsonl_path": "runtime/document_library/tsa23_tsr/p90_actual_extraction/p004_s02_structure_qwen36_run01.repaired.jsonl",
+      "run_id": "p004_s02_structure_qwen36_run01",
+      "ticket_path": "runtime/document_library/tsa23_tsr/p89_document_indexing_recipe_v2/tickets/p89_tsa23-2012-23tsdp12-pages-001-008-p004-s02_structure.ticket.md",
+      "validation_report_path": "runtime/document_library/tsa23_tsr/p90_actual_extraction/p004_s02_structure_qwen36_run01.validation.json",
+      "validation_status": "valid"
+    },
+    {
+      "candidate_jsonl_path": "runtime/document_library/tsa23_tsr/p90_actual_extraction/p004_s02_content_metadata_qwen36_run01.candidate.jsonl",
+      "fatal_error_count": 0,
+      "model": "qwen3.6:35b-a3b-q8_0",
+      "parseable_record_count": 31,
+      "probe_status": "completed",
+      "protocol_defect": "key_value_blocks_repaired_to_jsonl",
+      "raw_result_path": "runtime/document_library/tsa23_tsr/p90_actual_extraction/p004_s02_content_metadata_qwen36_run01.md",
+      "record_pass": "content_metadata",
+      "repaired_jsonl_path": "runtime/document_library/tsa23_tsr/p90_actual_extraction/p004_s02_content_metadata_qwen36_run01.repaired.jsonl",
+      "run_id": "p004_s02_content_metadata_qwen36_run01",
+      "ticket_path": "runtime/document_library/tsa23_tsr/p89_document_indexing_recipe_v2/tickets/p89_tsa23-2012-23tsdp12-pages-001-008-p004-s02_content_metadata.ticket.md",
+      "validation_report_path": "runtime/document_library/tsa23_tsr/p90_actual_extraction/p004_s02_content_metadata_qwen36_run01.validation.json",
+      "validation_status": "valid"
+    }
+  ],
+  "schema_version": 1,
+  "section_id": "tsa23_2012_23tsdp12__pages_001_008__p004__s02",
+  "selected_ticket_count": 2,
+  "source_slice": "p88_tsa23_2012_data_package_full_document_pages_001_041",
+  "status": "live_extraction_smoke_completed_with_protocol_defects",
+  "summary_id": "p90_actual_extraction_smoke_p004_s02_qwen36",
+  "valid_candidate_record_count": 51
+}
