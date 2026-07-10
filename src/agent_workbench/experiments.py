@@ -27,7 +27,12 @@ REQUIRED_FIELDS = (
 EXPERIMENT_FIELDS = ("experiment_id", "series_id", "project", "phase")
 TASK_FIELDS = ("task_id", "task_family", "scale_factor")
 MODEL_FIELDS = ("model_id", "provider", "cash_cost_per_token_usd")
-OUTCOME_FIELDS = ("status", "records_produced", "accepted_records", "repairable_records")
+OUTCOME_FIELDS = (
+    "status",
+    "records_produced",
+    "accepted_records",
+    "repairable_records",
+)
 ECONOMICS_FIELDS = (
     "worker_input_tokens",
     "worker_output_tokens",
@@ -283,7 +288,9 @@ def validate_nonnegative_number(
         errors.append(f"{label} must be a nonnegative number")
 
 
-def validate_number(data: dict[str, Any], field: str, label: str, errors: list[str]) -> None:
+def validate_number(
+    data: dict[str, Any], field: str, label: str, errors: list[str]
+) -> None:
     if number_or_none(data.get(field)) is None:
         errors.append(f"{label} must be a number")
 

@@ -9,7 +9,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run_verifier(graph_report: Path, audit_report: Path | None = None) -> subprocess.CompletedProcess[str]:
+def run_verifier(
+    graph_report: Path, audit_report: Path | None = None
+) -> subprocess.CompletedProcess[str]:
     command = [
         sys.executable,
         str(ROOT / "scripts" / "verify_document_artifact_graph_report.py"),
@@ -23,7 +25,9 @@ def run_verifier(graph_report: Path, audit_report: Path | None = None) -> subpro
     return subprocess.run(command, text=True, capture_output=True, check=False)
 
 
-def write_audit_report(path: Path, status: str = "accepted_after_supervisor_repair") -> None:
+def write_audit_report(
+    path: Path, status: str = "accepted_after_supervisor_repair"
+) -> None:
     path.write_text(
         json.dumps(
             {
@@ -123,7 +127,10 @@ def test_graph_report_verifier_rejects_mismatched_audit_status(tmp_path: Path) -
     completed = run_verifier(graph_report, audit_report)
 
     assert completed.returncode == 1
-    assert "must match audit_report.verification.subagent_result_status" in completed.stdout
+    assert (
+        "must match audit_report.verification.subagent_result_status"
+        in completed.stdout
+    )
 
 
 def test_graph_report_verifier_rejects_clean_status_with_repair_flag(

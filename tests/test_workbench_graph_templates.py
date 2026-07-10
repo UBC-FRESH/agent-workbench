@@ -29,7 +29,9 @@ def test_document_artifact_audit_supervisor_graph_is_valid() -> None:
 
 
 def test_document_library_index_graph_is_valid() -> None:
-    path = ROOT / "templates" / "workbench_templates" / "document_library_index_graph.json"
+    path = (
+        ROOT / "templates" / "workbench_templates" / "document_library_index_graph.json"
+    )
     data = load_graph_document(path)
 
     result = validate_graph_document(data, source_path=path, agent_metadata=True)

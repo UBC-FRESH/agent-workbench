@@ -71,13 +71,17 @@ def validate_run_manifest(
 
     expected_model = str(manifest.get("expected_model", ""))
     if expected_model and "ollama" not in expected_model.lower():
-        warnings.append("expected_model does not explicitly identify the Ollama provider")
+        warnings.append(
+            "expected_model does not explicitly identify the Ollama provider"
+        )
 
     permission_mode = str(manifest.get("permission_mode", ""))
     if permission_mode not in ("autopilot", "bypass approvals", "default approvals"):
         errors.append(f"invalid permission_mode: {permission_mode}")
 
-    if manifest.get("economics_claim") is True and not manifest.get("budget_record_path"):
+    if manifest.get("economics_claim") is True and not manifest.get(
+        "budget_record_path"
+    ):
         errors.append("economics_claim=true requires budget_record_path")
 
     base = manifest_path.parent if manifest_path is not None else Path(".")
@@ -224,7 +228,9 @@ def render_review_packet_from_path(manifest_path: Path, output: Path) -> dict[st
     result_text = read_optional_text(base, manifest.get("result_path"))
     blocker_text = read_optional_text(base, manifest.get("blocker_path"))
     archive = read_optional_json(base, manifest.get("archive_manifest_path"))
-    decision = recommend_decision(validation, heartbeat_summary, result_text, blocker_text, archive)
+    decision = recommend_decision(
+        validation, heartbeat_summary, result_text, blocker_text, archive
+    )
     packet = {
         "run_id": manifest.get("run_id", ""),
         "child_issue": manifest.get("child_issue", ""),
@@ -255,7 +261,9 @@ def render_review_packet_from_data(
     archive = dict(archive_manifest or {})
     result_text = json.dumps(task_result) if task_result else ""
     blocker_text = ""
-    decision = recommend_decision(validation, heartbeat, result_text, blocker_text, archive)
+    decision = recommend_decision(
+        validation, heartbeat, result_text, blocker_text, archive
+    )
     return {
         "run_id": manifest.get("run_id", ""),
         "child_issue": manifest.get("child_issue", ""),
@@ -274,7 +282,11 @@ def render_review_packet_from_data(
 def read_heartbeat_summary(base: Path, manifest: dict[str, Any]) -> dict[str, Any]:
     heartbeat_path = resolve_path(base, manifest.get("heartbeat_path"))
     if heartbeat_path is None or not heartbeat_path.exists():
-        return {"present": False, "validation_ok": False, "validation_errors": ["missing heartbeat"]}
+        return {
+            "present": False,
+            "validation_ok": False,
+            "validation_errors": ["missing heartbeat"],
+        }
     records = load_heartbeat_jsonl(heartbeat_path)
     summary = summarize_heartbeat_records(records)
     summary["present"] = True

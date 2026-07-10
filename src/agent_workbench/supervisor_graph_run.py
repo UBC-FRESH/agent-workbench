@@ -74,7 +74,9 @@ def build_run_plan(config: DocumentAuditGraphRunConfig) -> dict[str, Any]:
         str(output_dir),
     ]
     for source in config.source_summaries:
-        materialize_command.extend(["--source-summary", repo_relative(source, project_root)])
+        materialize_command.extend(
+            ["--source-summary", repo_relative(source, project_root)]
+        )
     if config.pre_materialize_audit_ticket:
         materialize_command.append("--pre-materialize-audit-ticket")
 
@@ -387,10 +389,7 @@ def summarize_document_audit_graph_run(
         if isinstance(result, dict)
     )
     bridge_accepted = bridge.get("status") == "accepted-candidate"
-    accepted = (
-        bridge_accepted
-        and validator_passed
-    )
+    accepted = bridge_accepted and validator_passed
     status = "accepted-candidate" if accepted else bridge.get("status", "unknown")
     if failure and status == "accepted-candidate":
         status = "validation_failed"
@@ -407,8 +406,7 @@ def summarize_document_audit_graph_run(
     outcome = classify_outcome(
         OutcomeInput(
             quality_validated_candidate=validator_passed and not bool(failure),
-            protocol_accepted_candidate=accepted
-            and not protocol_rejection_reasons,
+            protocol_accepted_candidate=accepted and not protocol_rejection_reasons,
             measured_token_delta=total_delta,
             protocol_rejection_reasons=tuple(protocol_rejection_reasons),
             economics_rejection_reasons=()
@@ -716,7 +714,9 @@ def sanitize_validation_results(results: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(value, dict):
             continue
         sanitized[key] = {
-            item_key: compact_text(item_value) if isinstance(item_value, str) else item_value
+            item_key: compact_text(item_value)
+            if isinstance(item_value, str)
+            else item_value
             for item_key, item_value in value.items()
         }
     return sanitized

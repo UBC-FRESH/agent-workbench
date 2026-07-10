@@ -9,11 +9,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_summary_module():
-    path = (
-        ROOT / "scripts"
-        / "summarize_p57_packaged_launcher_economics.py"
+    path = ROOT / "scripts" / "summarize_p57_packaged_launcher_economics.py"
+    spec = importlib.util.spec_from_file_location(
+        "summarize_p57_packaged_launcher", path
     )
-    spec = importlib.util.spec_from_file_location("summarize_p57_packaged_launcher", path)
     assert spec is not None
     assert spec.loader is not None
     module = importlib.util.module_from_spec(spec)

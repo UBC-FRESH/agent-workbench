@@ -6,7 +6,9 @@ from pathlib import Path
 from types import ModuleType
 
 
-def test_structured_section_report_matches_bare_required_names_to_markdown_headings() -> None:
+def test_structured_section_report_matches_bare_required_names_to_markdown_headings() -> (
+    None
+):
     evaluator = load_evaluator()
     report = evaluator.structured_section_report(
         "\n".join(
@@ -25,7 +27,9 @@ def test_structured_section_report_matches_bare_required_names_to_markdown_headi
     assert not report["has_preamble"]
 
 
-def test_structured_section_report_matches_markdown_required_names_to_bare_normal_form() -> None:
+def test_structured_section_report_matches_markdown_required_names_to_bare_normal_form() -> (
+    None
+):
     evaluator = load_evaluator()
     report = evaluator.structured_section_report(
         "## Factual Summary\nA compact summary.",
@@ -56,7 +60,9 @@ def test_empty_expected_marker_classifies_nonempty_message_as_freeform_output() 
 
 
 def load_evaluator() -> ModuleType:
-    script_path = Path(__file__).resolve().parents[1] / "scripts" / "sdk_same_ticket_eval.py"
+    script_path = (
+        Path(__file__).resolve().parents[1] / "scripts" / "sdk_same_ticket_eval.py"
+    )
     spec = importlib.util.spec_from_file_location("sdk_same_ticket_eval", script_path)
     assert spec is not None
     assert spec.loader is not None

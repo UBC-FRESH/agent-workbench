@@ -11,7 +11,13 @@ from .evidence import find_private_values
 
 
 ROLE_TYPES = {"reviewer", "programmer", "analyst", "editor", "supervisor"}
-IMPLEMENTATION_TYPES = {"human", "local-worker", "paid-agent", "script", "workflow-tool"}
+IMPLEMENTATION_TYPES = {
+    "human",
+    "local-worker",
+    "paid-agent",
+    "script",
+    "workflow-tool",
+}
 AUTHORITY_LEVELS = {"L0", "L1", "L2", "L3", "L4", "L5", "L6", "supervisor-owned"}
 
 REQUIRED_FIELDS = ("role", "capability", "implementations", "selection_policy")
@@ -90,7 +96,9 @@ def validate_implementation(value: Any, index: int) -> list[str]:
         errors.append(f"{prefix}.type must be one of {sorted(IMPLEMENTATION_TYPES)}")
     authority = str(value.get("authority_level", ""))
     if authority not in AUTHORITY_LEVELS:
-        errors.append(f"{prefix}.authority_level must be one of {sorted(AUTHORITY_LEVELS)}")
+        errors.append(
+            f"{prefix}.authority_level must be one of {sorted(AUTHORITY_LEVELS)}"
+        )
     for field in ("id", "name", "fit_notes"):
         if not value.get(field):
             errors.append(f"{prefix}.{field} is required")

@@ -170,13 +170,13 @@ def test_allowed_report_write_commands_are_benign() -> None:
     bridge = load_bridge_module()
     extra_commands = [
         '$reportId = "runtime\\agent_jobs\\report.json"; '
-        '$json | ConvertFrom-Json | ConvertTo-Json -Depth 10 | '
+        "$json | ConvertFrom-Json | ConvertTo-Json -Depth 10 | "
         'Set-Content -Path $reportId -Encoding UTF8; Write-Host "model output saved"',
         '$graphReport | Set-Content -Path "runtime\\agent_jobs\\graph_report.json" '
         "-Encoding UTF8",
-        'python -c "import json; path = r\'runtime\\agent_jobs\\report.json\'; '
-        'data=json.load(open(path)); data[\'verification\'][\'score\']=1.0; '
-        'json.dump(data, open(path, \'w\'), indent=2)"',
+        "python -c \"import json; path = r'runtime\\agent_jobs\\report.json'; "
+        "data=json.load(open(path)); data['verification']['score']=1.0; "
+        "json.dump(data, open(path, 'w'), indent=2)\"",
         "[System.IO.File]::WriteAllText(runtime\\agent_jobs\\graph_report.json, "
         "$graph, ([System.Text.Encoding]::UTF8))",
         'Remove-Item "runtime\\agent_jobs\\report.json"',

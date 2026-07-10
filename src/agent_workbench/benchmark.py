@@ -102,7 +102,9 @@ def validate_benchmark_record(data: dict[str, Any]) -> BenchmarkValidation:
     validation = data.get("validation")
     if not isinstance(validation, dict):
         errors.append("validation must be an object")
-    elif not isinstance(validation.get("commands"), list) or not validation.get("commands"):
+    elif not isinstance(validation.get("commands"), list) or not validation.get(
+        "commands"
+    ):
         errors.append("validation.commands must be a nonempty list")
 
     decision_rules = data.get("decision_rules")
@@ -346,7 +348,15 @@ def prepare_lane_worktree(
             )
             lines.extend([f"- error: {error}", ""])
             return lines, [error]
-        command = ["git", "-C", str(project_root), "worktree", "add", str(worktree), branch]
+        command = [
+            "git",
+            "-C",
+            str(project_root),
+            "worktree",
+            "add",
+            str(worktree),
+            branch,
+        ]
     else:
         command = [
             "git",
@@ -403,7 +413,14 @@ def git_commit_exists(project_root: Path, commit: str) -> bool:
 
 def git_branch_exists(project_root: Path, branch: str) -> bool:
     result = subprocess.run(
-        ["git", "-C", str(project_root), "rev-parse", "--verify", f"refs/heads/{branch}"],
+        [
+            "git",
+            "-C",
+            str(project_root),
+            "rev-parse",
+            "--verify",
+            f"refs/heads/{branch}",
+        ],
         capture_output=True,
         text=True,
         check=False,
@@ -435,7 +452,9 @@ def lane_by_id(data: dict[str, Any], lane_id: str) -> dict[str, Any] | None:
     return None
 
 
-def lane_costs(lane: dict[str, Any], token_accounting: dict[str, Any]) -> dict[str, float]:
+def lane_costs(
+    lane: dict[str, Any], token_accounting: dict[str, Any]
+) -> dict[str, float]:
     usage = lane.get("usage", {})
     if not isinstance(usage, dict):
         usage = {}
@@ -478,10 +497,9 @@ def cost_usd(
     input_price_per_1m_usd: Any,
     output_price_per_1m_usd: Any,
 ) -> float:
-    return (
-        number(input_tokens) / 1_000_000 * number(input_price_per_1m_usd)
-        + number(output_tokens) / 1_000_000 * number(output_price_per_1m_usd)
-    )
+    return number(input_tokens) / 1_000_000 * number(input_price_per_1m_usd) + number(
+        output_tokens
+    ) / 1_000_000 * number(output_price_per_1m_usd)
 
 
 def number(value: Any) -> float:

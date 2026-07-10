@@ -146,8 +146,7 @@ def test_document_audit_graph_cli_dry_run_defaults_to_packaged_boundary() -> Non
     assert plan["pre_materialized_audit_ticket"] is True
     assert "--pre-materialize-audit-ticket" in plan["commands"]["materialize"]
     assert (
-        plan["packaged_workflow"]["setup_commands_visible_to_local_supervisor"]
-        is False
+        plan["packaged_workflow"]["setup_commands_visible_to_local_supervisor"] is False
     )
 
 
@@ -200,7 +199,9 @@ def test_document_audit_graph_plan_can_expose_legacy_setup_surface(
 
     assert plan["pre_materialized_audit_ticket"] is False
     assert "--pre-materialize-audit-ticket" not in plan["commands"]["materialize"]
-    assert plan["packaged_workflow"]["setup_commands_visible_to_local_supervisor"] is True
+    assert (
+        plan["packaged_workflow"]["setup_commands_visible_to_local_supervisor"] is True
+    )
 
 
 def test_live_document_audit_graph_requires_high_entropy_job_id(tmp_path: Path) -> None:
@@ -367,7 +368,9 @@ final_marker_present: true
         "quote_repair_required": 1,
     }
     assert summary["token_costs"]["estimated_paid_cost_usd"] == 0.0027
-    assert summary["token_costs"]["estimated_paid_cost_per_source_artifact_usd"] == 0.00135
+    assert (
+        summary["token_costs"]["estimated_paid_cost_per_source_artifact_usd"] == 0.00135
+    )
     assert summary["token_costs"]["economics_usable"] is True
 
 
@@ -453,7 +456,10 @@ final_marker_present: true
     assert summary["failure"] == "authority_validation failed"
     assert summary["token_costs"]["economics_usable"] is False
     assert "not usable" in summary["token_costs"]["not_usable_reason"]
-    assert "C:\\Users" not in summary["validation_results"]["authority_validation"]["stderr"]
+    assert (
+        "C:\\Users"
+        not in summary["validation_results"]["authority_validation"]["stderr"]
+    )
 
 
 def test_document_audit_graph_model_mismatch_is_protocol_rejection(

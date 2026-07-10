@@ -49,7 +49,9 @@ def test_budget_rejects_attempt_count_over_limit() -> None:
     result = validate_budget_declaration(data)
 
     assert not result.ok
-    assert any("attempt_count cannot exceed max_attempts" in error for error in result.errors)
+    assert any(
+        "attempt_count cannot exceed max_attempts" in error for error in result.errors
+    )
 
 
 def test_budget_exceeded_requires_stop_rule() -> None:

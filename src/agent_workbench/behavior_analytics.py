@@ -65,8 +65,12 @@ def analyze_archive_manifest(
     stall_nudge_count = len(string_list(manifest.get("stall_nudge_user_messages")))
     nudge_count = keep_going_count + stall_nudge_count
     command_failure_count = count_status_failures(tool_statuses)
-    repeated_summary_count = count_matching(assistant_snippets, REPEATED_SUMMARY_PATTERNS)
-    shell_mismatch_count = count_matching(tool_snippets + assistant_snippets, SHELL_MISMATCH_PATTERNS)
+    repeated_summary_count = count_matching(
+        assistant_snippets, REPEATED_SUMMARY_PATTERNS
+    )
+    shell_mismatch_count = count_matching(
+        tool_snippets + assistant_snippets, SHELL_MISMATCH_PATTERNS
+    )
     premature_completion_claim_count = count_premature_completion(
         assistant_snippets,
         user_snippets,
@@ -131,7 +135,9 @@ def count_status_failures(statuses: dict[object, object]) -> int:
 
 
 def count_matching(snippets: list[str], patterns: tuple[re.Pattern[str], ...]) -> int:
-    return sum(1 for snippet in snippets for pattern in patterns if pattern.search(snippet))
+    return sum(
+        1 for snippet in snippets for pattern in patterns if pattern.search(snippet)
+    )
 
 
 def count_premature_completion(
@@ -231,7 +237,9 @@ def synthesize_behavior_summaries(
 
 
 def synthesize_behavior_summary_data(summaries: list[dict[str, Any]]) -> dict[str, Any]:
-    outcome_counts = Counter(str(item.get("behavior_outcome", "")) for item in summaries)
+    outcome_counts = Counter(
+        str(item.get("behavior_outcome", "")) for item in summaries
+    )
     model_counts: dict[str, int] = defaultdict(int)
     permission_counts: dict[str, int] = defaultdict(int)
     burden_total = 0
@@ -286,6 +294,10 @@ def render_synthesis_markdown(summary: dict[str, Any]) -> str:
         "",
     ]
     for outcome in BEHAVIOR_OUTCOMES:
-        lines.append(f"- `{outcome}`: {summary.get('outcome_counts', {}).get(outcome, 0)}")
-    lines.extend(["", "## Policy Feedback", "", str(summary.get("policy_feedback", "")), ""])
+        lines.append(
+            f"- `{outcome}`: {summary.get('outcome_counts', {}).get(outcome, 0)}"
+        )
+    lines.extend(
+        ["", "## Policy Feedback", "", str(summary.get("policy_feedback", "")), ""]
+    )
     return "\n".join(lines)

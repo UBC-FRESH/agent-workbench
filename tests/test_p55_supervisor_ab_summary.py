@@ -5,7 +5,11 @@ from pathlib import Path
 
 
 def load_summary_module():
-    path = Path(__file__).resolve().parents[1] / "scripts" / "summarize_p55_supervisor_ab.py"
+    path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "summarize_p55_supervisor_ab.py"
+    )
     spec = importlib.util.spec_from_file_location("summarize_p55_supervisor_ab", path)
     assert spec is not None
     assert spec.loader is not None
@@ -52,7 +56,9 @@ def test_matching_ollama_latest_suffix_does_not_penalize() -> None:
     lane = {
         "lane_id": "copilot_free_supervisor",
         "repair_model": "qwen3.6:35b-a3b-bf16:latest",
-        "model_provenance": module.default_model_provenance("qwen3.6:35b-a3b-bf16:latest"),
+        "model_provenance": module.default_model_provenance(
+            "qwen3.6:35b-a3b-bf16:latest"
+        ),
         "rubric_score": {
             "max_score": 100.0,
             "total_penalty": 0.0,

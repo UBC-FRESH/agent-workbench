@@ -56,7 +56,10 @@ def validate_graph_document(
 ) -> GraphValidation:
     """Validate a FreshForge-compatible workflow graph without executing it."""
     try:
-        from freshforge.validation import has_error_diagnostics, validate_workflow_document
+        from freshforge.validation import (
+            has_error_diagnostics,
+            validate_workflow_document,
+        )
     except ImportError as exc:
         raise FreshForgeGraphUnavailable(
             "FreshForge graph validation is optional. Install with "
@@ -137,7 +140,9 @@ def validate_agent_metadata(data: dict[str, Any]) -> list[GraphDiagnostic]:
                 )
 
         parameters = node.get("parameters")
-        agent_parameters = parameters.get("agent_workbench") if isinstance(parameters, dict) else None
+        agent_parameters = (
+            parameters.get("agent_workbench") if isinstance(parameters, dict) else None
+        )
         if not isinstance(agent_parameters, dict):
             diagnostics.append(
                 GraphDiagnostic(
@@ -216,7 +221,9 @@ def render_graph_markdown(data: dict[str, Any]) -> str:
             provenance = {}
         parameters = node.get("parameters", {})
         agent_parameters = (
-            parameters.get("agent_workbench", {}) if isinstance(parameters, dict) else {}
+            parameters.get("agent_workbench", {})
+            if isinstance(parameters, dict)
+            else {}
         )
         if not isinstance(agent_parameters, dict):
             agent_parameters = {}
@@ -290,7 +297,9 @@ def render_graph_decisions_markdown(data: dict[str, Any]) -> str:
         result = decide_task(decision_input)
         parameters = node.get("parameters", {})
         agent_parameters = (
-            parameters.get("agent_workbench", {}) if isinstance(parameters, dict) else {}
+            parameters.get("agent_workbench", {})
+            if isinstance(parameters, dict)
+            else {}
         )
         if not isinstance(agent_parameters, dict):
             agent_parameters = {}
@@ -351,7 +360,9 @@ def decision_input_from_node(node: dict[str, Any]) -> dict[str, Any]:
         "roadmap_level": "subtask" if worker_node else "task",
         "suitability": "high" if worker_node else "avoid",
         "risk": "low" if worker_node else "medium",
-        "model": str(provenance.get("model_profile") or provenance.get("implementation", "")),
+        "model": str(
+            provenance.get("model_profile") or provenance.get("implementation", "")
+        ),
         "model_profile_status": "observed",
         "authority_level": decision_authority,
         "expected_verification": expected_verification,

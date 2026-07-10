@@ -84,6 +84,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P73 Standard Agent Workbench profile catalog | #480 / PR #483 | `feature/p73-standard-agent-profile-catalog` | Complete |
 | P74 FoundryTK profile optimization | #481 / PR #482 | `feature/p74-foundrytk-profile-optimization` | Complete |
 | P75 Comparable live overlay-selected SDK run battery | #485 | `feature/p75-live-overlay-sdk-run-battery` | Complete |
+| P76 Profile evaluation aggregate comparison reports | #491 | `feature/p76-profile-evaluation-aggregate-reports` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3564,3 +3565,80 @@ rows, 11 needs-supervisor-review rows, and 4 blocked rows. FoundryTK remains
 external guidance; the next useful lane is automated comparison summaries and
 clearer task/profile contracts over the public-safe local dataset, not runtime
 FoundryTK integration or model selection.
+
+## Phase 76: Profile Evaluation Aggregate Comparison Reports
+
+Parent issue: #491
+
+Branch: `feature/p76-profile-evaluation-aggregate-reports`
+
+Status: complete
+
+Goal: turn P75-style public-safe profile evaluation datasets into aggregate
+comparison reports that make profile, overlay, task-family, controller-health,
+result-validity, and conversation-shape patterns reproducible and actionable.
+
+Planned scope:
+
+- Add a CLI/report surface that consumes public-safe profile evaluation JSONL
+  rows from `agent-workbench foundrytk profile-evaluation-dataset`.
+- Aggregate by selected profile, task overlay, inferred task family,
+  controller health, result status, and conversation-shape counters.
+- Preserve the P75 scoring boundary: controller/session health is separate
+  from result validity.
+- Render Markdown and machine-readable summary outputs without raw transcript
+  text, prompts, credentials, private paths, endpoints, or machine-specific
+  values.
+- Use the P75 24-row dataset shape as the primary fixture.
+- Record whether the aggregate evidence points next to task/profile contract
+  repair, another replicated battery, model-lane expansion, or FoundryTK
+  integration.
+
+Out of scope:
+
+- Running another live SDK battery.
+- Adding FoundryTK as a runtime dependency.
+- Claiming model selection or profile superiority beyond the dataset evidence.
+- Introducing Azure or external evaluation services.
+
+Planned tasks:
+
+- [x] P76.1 Aggregate report contract and roadmap activation (#492)
+  - [x] Add the P76 planning note.
+  - [x] Update the roadmap tracker and detailed phase section.
+  - [x] Define input schema assumptions, grouping dimensions, summary outputs,
+        privacy boundaries, and closeout decision criteria.
+  - [x] Record P75 evidence limits so P76 does not overclaim model or profile
+        superiority.
+- [x] P76.2 Aggregate comparison CLI and tests (#493)
+  - [x] Add a command that reads profile evaluation JSONL rows.
+  - [x] Write Markdown and JSON summary outputs.
+  - [x] Aggregate controller health, result status, profile, overlay,
+        task-family, and conversation-shape metrics.
+  - [x] Preserve public-safe output boundaries.
+  - [x] Add focused tests.
+- [x] P76.3 P75 dataset dogfood report and next-lane decision (#494)
+  - [x] Render ignored runtime aggregate outputs from the P75 dataset when
+        available.
+  - [x] Inspect the aggregate report for public-safe content and decision
+        usefulness.
+  - [x] Update roadmap/changelog/planning with the resulting next-lane
+        recommendation.
+  - [x] Close out through normal issue/PR hygiene.
+
+Activation note: P76 starts from P75's scale decision. The immediate value is a
+reproducible summary layer over existing public-safe evidence, not another live
+run. Model-lane expansion and FoundryTK runtime integration remain blocked on
+stronger local aggregate evidence and verified multi-model inventory.
+
+Completion note: P76 added
+`agent-workbench foundrytk profile-evaluation-aggregate`, which reads
+public-safe profile evaluation JSONL rows and writes both Markdown and JSON
+aggregate summaries. Dogfooding on the P75 24-row dataset reproduced the core
+counts and exposed the main weak cells: `profile-evidence-review` produced all
+4 blocked rows and only 2 accepted-candidate rows, while
+`manifest-contract-audit` produced 7 accepted-candidate rows and no blocked
+rows. The next roadmap lane should prioritize task/profile contract repair,
+especially profile-evidence-review fixtures and result-auditor-as-primary
+behavior, before another live battery, model-lane expansion, or FoundryTK
+runtime integration.

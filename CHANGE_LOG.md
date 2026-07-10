@@ -2212,3 +2212,30 @@ issues, pull requests, and closeout comments.
 - Decided that FoundryTK remains external guidance; P75 supports automated
   aggregate comparison summaries and clearer task/profile contracts as the next
   lane, not runtime FoundryTK integration or model-selection claims.
+
+## 2026-07-09 - Activated P76 aggregate comparison reports
+
+- Created branch `feature/p76-profile-evaluation-aggregate-reports`.
+- Opened parent issue #491 and child issues #492, #493, and #494 for P76.1
+  through P76.3.
+- Added `planning/phase76_profile_evaluation_aggregate_reports.md` to define
+  the aggregate report input contract, output contract, privacy boundary, and
+  follow-on decision boundary.
+- Updated `ROADMAP.md` with P76 as the active next lane from P75 evidence:
+  aggregate comparison tooling and task/profile contract clarity before another
+  live battery, model-lane expansion, or FoundryTK runtime integration.
+
+## 2026-07-09 - Completed P76 aggregate comparison reports
+
+- Added `agent-workbench foundrytk profile-evaluation-aggregate`, which reads
+  public-safe profile evaluation JSONL rows and writes Markdown plus JSON
+  aggregate summaries.
+- The aggregate report summarizes controller health, result status, selected
+  profile, task overlay, inferred task family, grouped result distributions,
+  treatment cells, and conversation-shape totals and averages.
+- Added focused tests for grouped counts, empty datasets, invalid JSONL,
+  private-looking value rejection, and CLI output writing.
+- Dogfooded the command on the P75 24-row dataset under ignored runtime
+  evidence at `runtime/p76_profile_evaluation_aggregate_reports/`.
+- The P75 aggregate report recommends task/profile contract repair before
+  another live battery, model-lane expansion, or FoundryTK runtime integration.

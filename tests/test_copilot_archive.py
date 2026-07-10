@@ -85,7 +85,7 @@ def test_copilot_archive_copies_raw_logs_and_writes_manifest(tmp_path: Path) -> 
                             "toolRequests": [
                                 {
                                     "name": "run_in_terminal",
-                                    "arguments": "{\"command\":\"git status\"}",
+                                    "arguments": '{"command":"git status"}',
                                 }
                             ],
                         },
@@ -121,9 +121,7 @@ def test_copilot_archive_copies_raw_logs_and_writes_manifest(tmp_path: Path) -> 
     assert manifest["event_counts"]["tool.execution_complete"] == 1
     assert manifest["tool_completion_statuses"]["success"] == 1
     assert manifest["permission_levels_detected"] == ["autopilot"]
-    assert "ollama-models/Ollama/qwen3.6:35b-a3b-bf16" in manifest[
-        "model_ids_detected"
-    ]
+    assert "ollama-models/Ollama/qwen3.6:35b-a3b-bf16" in manifest["model_ids_detected"]
     assert manifest["keep_going_user_messages"] == ["P108_MARKER please keep going"]
     assert (output_dir / f"chat_session_{session_id}.raw.jsonl").exists()
     assert (output_dir / f"copilot_transcript_{session_id}.raw.jsonl").exists()

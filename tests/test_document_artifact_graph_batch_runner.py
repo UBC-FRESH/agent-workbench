@@ -58,8 +58,12 @@ def test_batch_runner_summary_only_aggregates_child_summaries(
     manifest_path = tmp_path / "batch_manifest.json"
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     summary_dir = tmp_path / "summaries"
-    write_child_summary(summary_dir / "batch_split_01_v1_internal_summary.json", "batch_split_01_v1", 5)
-    write_child_summary(summary_dir / "batch_split_02_v1_internal_summary.json", "batch_split_02_v1", 4)
+    write_child_summary(
+        summary_dir / "batch_split_01_v1_internal_summary.json", "batch_split_01_v1", 5
+    )
+    write_child_summary(
+        summary_dir / "batch_split_02_v1_internal_summary.json", "batch_split_02_v1", 4
+    )
     token_record = tmp_path / "tokens.json"
     token_record.write_text(
         json.dumps(
@@ -138,7 +142,9 @@ def test_batch_runner_dry_run_skips_existing_accepted_child(
     manifest_path = tmp_path / "batch_manifest.json"
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     summary_dir = tmp_path / "summaries"
-    write_child_summary(summary_dir / "batch_split_01_v1_internal_summary.json", "batch_split_01_v1", 1)
+    write_child_summary(
+        summary_dir / "batch_split_01_v1_internal_summary.json", "batch_split_01_v1", 1
+    )
     output = tmp_path / "summary.json"
 
     command = [

@@ -48,10 +48,15 @@ def test_graph_materializer_resolves_paths_from_project_root(tmp_path: Path) -> 
         "write_supervisor_report",
         "validate_and_repair_report",
     ]
-    assert "materialize_document_artifact_audit.py" in manifest["exact_materializer_command"]
+    assert (
+        "materialize_document_artifact_audit.py"
+        in manifest["exact_materializer_command"]
+    )
     assert "--project-root" in manifest["exact_materializer_command"]
     assert source_summary in manifest["exact_materializer_command"]
-    assert "agent_workbench.cli authority validate" in manifest["exact_validation_command"]
+    assert (
+        "agent_workbench.cli authority validate" in manifest["exact_validation_command"]
+    )
     assert "PYTHONPATH" in manifest["exact_validation_command"]
     assert (
         "verify_document_artifact_audit_report.py"
@@ -61,9 +66,10 @@ def test_graph_materializer_resolves_paths_from_project_root(tmp_path: Path) -> 
         "verify_document_artifact_graph_report.py"
         in manifest["exact_graph_report_verifier_command"]
     )
-    assert "repair_document_artifact_graph_reports.py" in manifest[
-        "exact_repair_helper_command"
-    ]
+    assert (
+        "repair_document_artifact_graph_reports.py"
+        in manifest["exact_repair_helper_command"]
+    )
 
     ticket = ticket_path.read_text(encoding="utf-8")
     assert "`materialize_runtime_job`" in ticket

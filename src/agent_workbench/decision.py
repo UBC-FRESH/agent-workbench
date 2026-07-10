@@ -110,6 +110,7 @@ class Economics:
     def expected_net_savings_usd(self) -> float:
         return self.direct_supervisor_cost_usd - self.expected_delegated_cost_usd
 
+
 @dataclass(frozen=True)
 class DecisionResult:
     recommendation: str
@@ -165,11 +166,15 @@ def decide_task(data: dict[str, Any]) -> DecisionResult:
             reasons.append(f"Task requires {label}, which is supervisor-owned.")
 
     if bool(data.get("requires_private_context", False)):
-        reasons.append("Task requires private or hidden context that should not be delegated.")
+        reasons.append(
+            "Task requires private or hidden context that should not be delegated."
+        )
 
     authority_value = AUTHORITY_LEVELS[authority_level]
     if authority_value >= 4:
-        reasons.append(f"Requested authority `{authority_level}` is outside the delegated boundary.")
+        reasons.append(
+            f"Requested authority `{authority_level}` is outside the delegated boundary."
+        )
 
     if roadmap_level == "closeout":
         reasons.append("Closeout work is nondelegable by default.")
@@ -203,7 +208,9 @@ def decide_task(data: dict[str, Any]) -> DecisionResult:
         reasons.append(
             f"Model profile status is `{profile_status}`, so capability is not yet observed."
         )
-        cautions.append("Run a marker or no-tool proposal probe before assigning project work.")
+        cautions.append(
+            "Run a marker or no-tool proposal probe before assigning project work."
+        )
         return build_result(
             "defer",
             task_id,
@@ -222,9 +229,13 @@ def decide_task(data: dict[str, Any]) -> DecisionResult:
         )
 
     if roadmap_level in {"project", "phase"}:
-        reasons.append(f"Roadmap level `{roadmap_level}` is too broad for direct delegation.")
+        reasons.append(
+            f"Roadmap level `{roadmap_level}` is too broad for direct delegation."
+        )
         if profile_status == "partial":
-            cautions.append("Partial model profile increases the need for a smaller probe.")
+            cautions.append(
+                "Partial model profile increases the need for a smaller probe."
+            )
         return build_result(
             "split-smaller",
             task_id,
@@ -305,7 +316,9 @@ def decide_task(data: dict[str, Any]) -> DecisionResult:
 
     if profile_status == "partial":
         reasons.append("Model profile is partial; supervisor judgment is required.")
-        cautions.append("Use a repeated run or compare against an observed-profile model.")
+        cautions.append(
+            "Use a repeated run or compare against an observed-profile model."
+        )
         return build_result(
             "needs-human-decision",
             task_id,
@@ -324,7 +337,9 @@ def decide_task(data: dict[str, Any]) -> DecisionResult:
         )
 
     if SUITABILITY_LEVELS[suitability] >= 2 and authority_value <= 1:
-        reasons.append("Task suitability, authority, risk, and economics support delegation.")
+        reasons.append(
+            "Task suitability, authority, risk, and economics support delegation."
+        )
         return build_result(
             "delegate",
             task_id,
@@ -342,7 +357,9 @@ def decide_task(data: dict[str, Any]) -> DecisionResult:
             "Prepare an L0/L1 bounded worker ticket and verify claims independently.",
         )
 
-    reasons.append("Task may be useful, but the suitability or authority boundary is marginal.")
+    reasons.append(
+        "Task may be useful, but the suitability or authority boundary is marginal."
+    )
     cautions.append("Tighten the ticket or run a smaller probe before project use.")
     return build_result(
         "needs-human-decision",
@@ -368,20 +385,31 @@ def validate_decision_input(data: dict[str, Any]) -> list[str]:
         if field not in data or str(data[field]).strip() == "":
             errors.append(f"missing required field `{field}`")
 
-    if "roadmap_level" in data and normalized_lower(data["roadmap_level"]) not in ROADMAP_LEVELS:
+    if (
+        "roadmap_level" in data
+        and normalized_lower(data["roadmap_level"]) not in ROADMAP_LEVELS
+    ):
         errors.append(f"`roadmap_level` must be one of {sorted(ROADMAP_LEVELS)}")
-    if "suitability" in data and normalized_lower(data["suitability"]) not in SUITABILITY_LEVELS:
+    if (
+        "suitability" in data
+        and normalized_lower(data["suitability"]) not in SUITABILITY_LEVELS
+    ):
         errors.append(f"`suitability` must be one of {sorted(SUITABILITY_LEVELS)}")
     if "risk" in data and normalized_lower(data["risk"]) not in RISK_LEVELS:
         errors.append(f"`risk` must be one of {sorted(RISK_LEVELS)}")
-    if "authority_level" in data and normalized_authority(data["authority_level"]) not in AUTHORITY_LEVELS:
+    if (
+        "authority_level" in data
+        and normalized_authority(data["authority_level"]) not in AUTHORITY_LEVELS
+    ):
         errors.append(f"`authority_level` must be one of {sorted(AUTHORITY_LEVELS)}")
 
     profile_status = profile_status_from_input(data, allow_missing=True)
     if profile_status is None:
         errors.append("provide `model_profile_status` or `model_profile_path`")
     elif profile_status not in PROFILE_STATUSES:
-        errors.append(f"`model_profile_status` must be one of {sorted(PROFILE_STATUSES)}")
+        errors.append(
+            f"`model_profile_status` must be one of {sorted(PROFILE_STATUSES)}"
+        )
 
     economics = data.get("economics", {})
     if economics is not None and not isinstance(economics, dict):
@@ -557,8 +585,12 @@ def parse_economics(data: Any) -> Economics:
     if not isinstance(data, dict):
         data = {}
     return Economics(
-        direct_supervisor_input_tokens=float(data.get("direct_supervisor_input_tokens", 0.0)),
-        direct_supervisor_output_tokens=float(data.get("direct_supervisor_output_tokens", 0.0)),
+        direct_supervisor_input_tokens=float(
+            data.get("direct_supervisor_input_tokens", 0.0)
+        ),
+        direct_supervisor_output_tokens=float(
+            data.get("direct_supervisor_output_tokens", 0.0)
+        ),
         delegated_supervisor_input_tokens=float(
             data.get("delegated_supervisor_input_tokens", 0.0)
         ),
@@ -579,7 +611,9 @@ def parse_economics(data: Any) -> Economics:
         supervisor_output_price_per_1m_usd=float(
             data.get("supervisor_output_price_per_1m_usd", 0.0)
         ),
-        worker_input_price_per_1m_usd=float(data.get("worker_input_price_per_1m_usd", 0.0)),
+        worker_input_price_per_1m_usd=float(
+            data.get("worker_input_price_per_1m_usd", 0.0)
+        ),
         worker_output_price_per_1m_usd=float(
             data.get("worker_output_price_per_1m_usd", 0.0)
         ),
@@ -588,7 +622,9 @@ def parse_economics(data: Any) -> Economics:
     )
 
 
-def profile_status_from_input(data: dict[str, Any], allow_missing: bool = False) -> str | None:
+def profile_status_from_input(
+    data: dict[str, Any], allow_missing: bool = False
+) -> str | None:
     explicit = data.get("model_profile_status")
     if explicit is not None and str(explicit).strip():
         return normalized_lower(explicit)
@@ -599,7 +635,10 @@ def profile_status_from_input(data: dict[str, Any], allow_missing: bool = False)
             return "missing"
         text = path.read_text(encoding="utf-8-sig")
         for status in sorted(PROFILE_STATUSES):
-            if f"Profile status: `{status}`" in text or f"Profile status: {status}" in text:
+            if (
+                f"Profile status: `{status}`" in text
+                or f"Profile status: {status}" in text
+            ):
                 return status
         return "partial"
     if allow_missing:

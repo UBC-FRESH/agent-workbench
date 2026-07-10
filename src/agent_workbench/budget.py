@@ -59,9 +59,13 @@ def validate_budget_declaration(data: dict[str, Any]) -> BudgetValidation:
     if not positive_integer(data.get("max_attempts")):
         errors.append("max_attempts must be a positive integer")
     errors.extend(validate_checkpoint_spans(data.get("checkpoint_spans")))
-    errors.extend(validate_stop_condition(data.get("stop_condition"), data.get("max_attempts")))
+    errors.extend(
+        validate_stop_condition(data.get("stop_condition"), data.get("max_attempts"))
+    )
     errors.extend(validate_maintainer_checkpoint(data.get("maintainer_checkpoint")))
-    errors.extend(validate_summary_status(data.get("summary_status"), data.get("max_attempts")))
+    errors.extend(
+        validate_summary_status(data.get("summary_status"), data.get("max_attempts"))
+    )
     errors.extend(validate_public_safety(data.get("public_safety"), data))
     return BudgetValidation(ok=not errors, errors=errors)
 
@@ -118,7 +122,9 @@ def validate_maintainer_checkpoint(value: Any) -> list[str]:
     if not nonempty_string(value.get("trigger")):
         errors.append("maintainer_checkpoint.trigger must be a nonempty string")
     if not nonempty_string(value.get("decision_surface")):
-        errors.append("maintainer_checkpoint.decision_surface must be a nonempty string")
+        errors.append(
+            "maintainer_checkpoint.decision_surface must be a nonempty string"
+        )
     return errors
 
 
@@ -144,7 +150,10 @@ def validate_summary_status(value: Any, max_attempts: Any) -> list[str]:
         errors.append("summary_status.attempt_count cannot exceed max_attempts")
     if value.get("budget_declared") is not True:
         errors.append("summary_status.budget_declared must be true")
-    if value.get("budget_exceeded") is True and value.get("stop_rule_triggered") is not True:
+    if (
+        value.get("budget_exceeded") is True
+        and value.get("stop_rule_triggered") is not True
+    ):
         errors.append("budget_exceeded=true requires stop_rule_triggered=true")
     return errors
 
@@ -207,7 +216,9 @@ def nonempty_string(value: Any) -> bool:
 
 
 def nonnegative_number(value: Any) -> bool:
-    return isinstance(value, (int, float)) and not isinstance(value, bool) and value >= 0
+    return (
+        isinstance(value, (int, float)) and not isinstance(value, bool) and value >= 0
+    )
 
 
 def positive_integer(value: Any) -> bool:

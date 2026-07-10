@@ -174,7 +174,9 @@ def validate_subagent_payload_evidence(verification: dict[str, Any]) -> list[str
     if attempted is not True:
         return errors
     if not str(verification.get("subagent_name", "")).strip():
-        errors.append("verification.subagent_name is required when subagent was attempted")
+        errors.append(
+            "verification.subagent_name is required when subagent was attempted"
+        )
     if "subagent_invocation_observed_by_supervisor" not in verification:
         errors.append(
             "verification.subagent_invocation_observed_by_supervisor is required "
@@ -186,7 +188,9 @@ def validate_subagent_payload_evidence(verification: dict[str, Any]) -> list[str
             "verification.subagent_payload_excerpt is required when subagent was attempted"
         )
     elif len(excerpt) > 1000:
-        errors.append("verification.subagent_payload_excerpt must be 1000 characters or fewer")
+        errors.append(
+            "verification.subagent_payload_excerpt must be 1000 characters or fewer"
+        )
     result_status = str(verification.get("subagent_result_status", "")).strip()
     if result_status not in SUBAGENT_RESULT_STATUSES:
         errors.append(
@@ -194,7 +198,11 @@ def validate_subagent_payload_evidence(verification: dict[str, Any]) -> list[str
             f"{sorted(SUBAGENT_RESULT_STATUSES)} when subagent was attempted"
         )
     repair_summary = str(verification.get("subagent_repair_summary", "")).strip()
-    if result_status and result_status != "accepted_without_repair" and not repair_summary:
+    if (
+        result_status
+        and result_status != "accepted_without_repair"
+        and not repair_summary
+    ):
         errors.append(
             "verification.subagent_repair_summary is required when the subagent "
             "result was repaired, rejected, replaced, or unavailable"
@@ -243,7 +251,9 @@ def validate_workspace(value: Any) -> list[str]:
             f"workspace.root_policy must be one of {sorted(WORKSPACE_ROOT_POLICIES)}"
         )
     if policy == "absolute_runtime_path" and ("${" in root or root.startswith(".")):
-        errors.append("workspace.root must be absolute when root_policy is absolute_runtime_path")
+        errors.append(
+            "workspace.root must be absolute when root_policy is absolute_runtime_path"
+        )
     if not value.get("wrong_root_stop_rule"):
         errors.append("workspace.wrong_root_stop_rule is required")
     return errors
@@ -293,8 +303,10 @@ def validate_public_safety(value: Any, record: dict[str, Any]) -> list[str]:
 
 
 def nonempty_string_list(value: Any) -> bool:
-    return isinstance(value, list) and bool(value) and all(
-        isinstance(item, str) and bool(item.strip()) for item in value
+    return (
+        isinstance(value, list)
+        and bool(value)
+        and all(isinstance(item, str) and bool(item.strip()) for item in value)
     )
 
 
