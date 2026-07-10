@@ -85,7 +85,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P74 FoundryTK profile optimization | #481 / PR #482 | `feature/p74-foundrytk-profile-optimization` | Complete |
 | P75 Comparable live overlay-selected SDK run battery | #485 | `feature/p75-live-overlay-sdk-run-battery` | Complete |
 | P76 Profile evaluation aggregate comparison reports | #491 | `feature/p76-profile-evaluation-aggregate-reports` | Complete |
-| P77 Profile contract repair plan | #496 | `feature/p77-profile-contract-repair-plan` | Active |
+| P77 Profile contract repair plan | #496 | `feature/p77-profile-contract-repair-plan` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3650,7 +3650,7 @@ Parent issue: #496
 
 Branch: `feature/p77-profile-contract-repair-plan`
 
-Status: active
+Status: complete
 
 Goal: convert the P75/P76 aggregate evidence into a deterministic
 task/profile contract repair plan before spending on another live SDK battery.
@@ -3697,7 +3697,7 @@ Planned tasks:
         usefulness.
   - [x] Update roadmap/changelog/planning with the resulting next-lane
         recommendation.
-  - [ ] Close out through normal issue/PR hygiene.
+  - [x] Close out through normal issue/PR hygiene.
 
 Activation note: P77 starts from P76's decision that task/profile contract
 repair is the highest-value lane. The immediate value is a deterministic
