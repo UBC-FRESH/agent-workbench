@@ -338,6 +338,31 @@ def test_profile_evaluation_aggregate_counts_grouped_cells(tmp_path: Path) -> No
     assert "existing-code-debugging" in markdown
 
 
+def test_profile_evaluation_aggregate_recommends_comparison_after_stable_repair(
+    tmp_path: Path,
+) -> None:
+    rows = [
+        dataset_row(
+            f"p85_run_{index:02d}",
+            selected_agent="result-auditor",
+            overlay="release-readiness-review",
+            result_status=(
+                "needs-supervisor-review" if index == 48 else "accepted-candidate"
+            ),
+        )
+        for index in range(1, 49)
+    ]
+    dataset_path = tmp_path / "dataset.jsonl"
+    write_dataset_jsonl(dataset_path, rows)
+
+    aggregate = build_profile_evaluation_aggregate(
+        load_profile_evaluation_dataset_jsonl(dataset_path)
+    )
+
+    assert aggregate.ok
+    assert "next replicated comparison lane" in aggregate.summary["recommendation"]
+
+
 def test_profile_evaluation_aggregate_empty_dataset(tmp_path: Path) -> None:
     dataset_path = tmp_path / "empty.jsonl"
     dataset_path.write_text("", encoding="utf-8")

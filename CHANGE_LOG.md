@@ -2487,3 +2487,75 @@ issues, pull requests, and closeout comments.
   profile-evidence-review battery using the P83/P84 access repair, while
   keeping P84 itself classified as access evidence rather than repaired
   behavior evidence.
+
+## 2026-07-10 - Activated P85 health-gated repaired battery rerun
+
+- Created branch `feature/p85-health-gated-repaired-battery-rerun`.
+- Opened parent issue #542 and child issues #544, #545, #546, #547, and #543
+  for P85.1 through P85.5.
+- Added `planning/phase85_health_gated_repaired_battery_rerun.md` to define the
+  full 48-row repaired battery rerun, P81 health-gate requirement, analyzable
+  threshold, balanced cell coverage threshold, and stop rules.
+- Recorded that P85 should preserve the full balanced empirical design now that
+  P83/P84 repaired and live-probed declared review-subject access.
+
+## 2026-07-10 - Generated P85 repaired battery runtime scaffold
+
+- Generated ignored P85 runtime artifacts under
+  `runtime/p85_health_gated_repaired_battery_rerun/`.
+- Preserved the full 48-row design with 12 profile/overlay/source-stratum cells
+  and 4 rows per cell.
+- Confirmed source-result stratum counts of 16 `accepted-candidate`, 16
+  `needs-supervisor-review`, and 16 `blocked`.
+- Regenerated all 48 manifests, tickets, and contracts with
+  `agent_workbench_review_subject` declared in custom tools.
+- Validated all 48 SDK manifests and profile declarations before live
+  execution.
+- Generated and validated the separate P85 live health-probe manifest, ticket,
+  and contract outside the 48-row empirical sample.
+
+## 2026-07-10 - Passed P85 live health preflight
+
+- Ran the separate P85 live health probe before starting the 48-row repaired
+  battery.
+- The probe reached `completion_candidate` after 70 events, produced an
+  `accepted-candidate` result, and did not produce a blocker artifact.
+- The rendered profile summary classified controller health as `healthy`.
+- The formal P81 health gate returned `decision=go` with 1 healthy probe row
+  and no repeated error signatures.
+- Recorded that P85.4 may start the full 48-row repaired battery under the P85
+  stop rules.
+
+## 2026-07-10 - Executed and evaluated P85 repaired battery
+
+- Executed all 48 P85 repaired profile-evidence-review battery rows after the
+  live health gate passed.
+- All 48 `copilot-sdk start` calls exited successfully.
+- Rendered monitors, compact transcripts, profile summaries, the full-battery
+  health-gate report, profile-evaluation dataset, aggregate report, and
+  execution summary under ignored runtime evidence.
+- The full-battery health gate returned `decision=go` for all 48 rows, with 48
+  healthy controller rows and no repeated error signatures.
+- The profile-evaluation dataset was valid with 48 analyzable rows, 48 result
+  artifacts, and 0 blocker artifacts.
+- Final status counts were 47 `accepted-candidate`, 1
+  `needs-supervisor-review`, and 0 `blocked`.
+- The balanced source-cell threshold was met with 12 cells and 4 rows per cell.
+- Compared with the P75 profile-evidence-review baseline, accepted rows
+  increased from 2 to 47, blocked rows decreased from 4 to 0, and
+  needs-supervisor-review rows decreased from 6 to 1.
+- Updated the aggregate recommendation so high-acceptance, no-blocker repaired
+  batteries point to the next replicated comparison lane while preserving
+  targeted audit of remaining needs-supervisor-review rows.
+
+## 2026-07-10 - Prepared P85 GitHub and PR closeout
+
+- Marked P85.5 repo-side complete after the repaired battery evaluation met the
+  minimum analyzable-row and balanced-cell thresholds.
+- Recorded that resumed closeout has authenticated `gh` access, replacing the
+  stale broken-shell note from the handoff session.
+- Prepared P85 for child issue closeout and PR merge with the empirical result:
+  48 analyzable rows, 47 accepted-candidate results, 1
+  needs-supervisor-review result, and 0 blocked results.
+- Kept the next lane focused on replicated comparison or model-lane evaluation,
+  with targeted audit of the remaining needs-supervisor-review row.
