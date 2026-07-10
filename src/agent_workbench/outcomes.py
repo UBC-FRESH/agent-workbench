@@ -35,7 +35,9 @@ def classify_outcome(input_data: OutcomeInput) -> dict[str, Any]:
     reasons: list[str] = []
     reasons.extend(reason for reason in input_data.hard_quality_reasons if reason)
     reasons.extend(reason for reason in input_data.protocol_rejection_reasons if reason)
-    reasons.extend(reason for reason in input_data.economics_rejection_reasons if reason)
+    reasons.extend(
+        reason for reason in input_data.economics_rejection_reasons if reason
+    )
 
     if input_data.stale:
         reasons.append("stale_session_or_artifact")
@@ -72,7 +74,9 @@ def classify_outcome(input_data: OutcomeInput) -> dict[str, Any]:
         "final_decision": final_decision,
         "rejection_reasons": sorted(set(reasons)),
         "soft_penalty": round(float(input_data.soft_penalty), 6),
-        "soft_reasons": sorted(set(reason for reason in input_data.soft_reasons if reason)),
+        "soft_reasons": sorted(
+            set(reason for reason in input_data.soft_reasons if reason)
+        ),
         "metadata": input_data.metadata,
     }
 

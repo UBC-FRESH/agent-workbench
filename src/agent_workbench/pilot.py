@@ -73,11 +73,17 @@ def scaffold_pilot(config: PilotScaffoldConfig) -> PilotScaffoldResult:
 
     ticket_path.write_text(render_ticket(config), encoding="utf-8")
     manifest_path.write_text(
-        json.dumps(render_manifest(config, project_root, output_dir, ticket_path), indent=2) + "\n",
+        json.dumps(
+            render_manifest(config, project_root, output_dir, ticket_path), indent=2
+        )
+        + "\n",
         encoding="utf-8",
     )
     evidence_path.write_text(
-        json.dumps(render_evidence(config, project_root, output_dir, manifest_path), indent=2) + "\n",
+        json.dumps(
+            render_evidence(config, project_root, output_dir, manifest_path), indent=2
+        )
+        + "\n",
         encoding="utf-8",
     )
 

@@ -86,7 +86,9 @@ def test_document_artifact_verifier_rejects_missing_aggregate_decision(
     assert "all_decisions_consistent_with_gate must be boolean" in completed.stdout
 
 
-def test_document_artifact_verifier_prioritizes_quote_limit_failed(tmp_path: Path) -> None:
+def test_document_artifact_verifier_prioritizes_quote_limit_failed(
+    tmp_path: Path,
+) -> None:
     source = tmp_path / "source.json"
     source.write_text(
         json.dumps(
@@ -305,7 +307,10 @@ def test_document_artifact_verifier_rejects_ready_to_scale_without_explicit_gate
     completed = run_verifier(report, [str(source)])
 
     assert completed.returncode == 1
-    assert "expected 'needs_coordinator_review', observed 'ready_to_scale'" in completed.stdout
+    assert (
+        "expected 'needs_coordinator_review', observed 'ready_to_scale'"
+        in completed.stdout
+    )
 
 
 def test_document_artifact_verifier_rejects_inconsistent_score(

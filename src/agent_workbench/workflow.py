@@ -11,7 +11,14 @@ from .evidence import find_private_values
 
 
 ARTIFACT_KINDS = {"source", "generated", "promoted", "rejected"}
-IMPLEMENTATION_TYPES = {"human", "local-worker", "paid-agent", "script", "ci", "workflow-tool"}
+IMPLEMENTATION_TYPES = {
+    "human",
+    "local-worker",
+    "paid-agent",
+    "script",
+    "ci",
+    "workflow-tool",
+}
 
 REQUIRED_FIELDS = (
     "workflow_id",
@@ -70,8 +77,7 @@ def validate_workflow_step(data: dict[str, Any]) -> WorkflowValidation:
         implementation_type = str(implementation.get("type", ""))
         if implementation_type not in IMPLEMENTATION_TYPES:
             errors.append(
-                "implementation.type must be one of "
-                f"{sorted(IMPLEMENTATION_TYPES)}"
+                f"implementation.type must be one of {sorted(IMPLEMENTATION_TYPES)}"
             )
 
     token_accounting = data.get("token_accounting")

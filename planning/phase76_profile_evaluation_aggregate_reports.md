@@ -114,3 +114,37 @@ insufficient for the next planning decision.
 - P76.2: Implement the aggregate comparison CLI and tests.
 - P76.3: Dogfood the report on the P75 dataset and record the next-lane
   decision.
+
+## P76 Outcome
+
+P76 added `agent-workbench foundrytk profile-evaluation-aggregate`. The command
+reads public-safe profile evaluation JSONL rows and writes:
+
+- a Markdown aggregate report;
+- a JSON aggregate summary.
+
+The report includes row counts, controller-health counts, result-status counts,
+profile counts, overlay counts, inferred task-family counts, grouped
+result-status tables, treatment-cell summaries, and conversation-shape totals
+and averages.
+
+Dogfooding on the P75 24-row dataset produced:
+
+- controller health: 24 healthy rows;
+- result status: 9 accepted-candidate, 11 needs-supervisor-review, 4 blocked;
+- profile split:
+  - `agent-workbench-local-supervisor`: 7 accepted-candidate, 4
+    needs-supervisor-review, 1 blocked;
+  - `agent-workbench-result-auditor`: 2 accepted-candidate, 7
+    needs-supervisor-review, 3 blocked;
+- task-family split:
+  - `manifest-contract-audit`: 7 accepted-candidate, 5
+    needs-supervisor-review, 0 blocked;
+  - `profile-evidence-review`: 2 accepted-candidate, 6
+    needs-supervisor-review, 4 blocked.
+
+The next lane should prioritize task/profile contract repair before another
+live battery, model-lane expansion, or FoundryTK runtime integration. The
+highest-value repair target is the profile-evidence-review task family,
+especially result-auditor-as-primary behavior and fixtures that make the
+evidence artifact explicit enough to score without review/blocker fallback.

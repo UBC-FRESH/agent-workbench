@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from agent_workbench.outcomes import OutcomeInput, classify_outcome, outcome_from_summary
+from agent_workbench.outcomes import (
+    OutcomeInput,
+    classify_outcome,
+    outcome_from_summary,
+)
 
 
 def test_outcome_accepts_quality_protocol_and_economics() -> None:

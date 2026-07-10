@@ -42,7 +42,9 @@ class HeartbeatValidation:
 
 def load_heartbeat_jsonl(path: Path) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
-    for line_number, line in enumerate(path.read_text(encoding="utf-8-sig").splitlines(), 1):
+    for line_number, line in enumerate(
+        path.read_text(encoding="utf-8-sig").splitlines(), 1
+    ):
         stripped = line.strip()
         if not stripped:
             continue
@@ -51,7 +53,9 @@ def load_heartbeat_jsonl(path: Path) -> list[dict[str, Any]]:
         except json.JSONDecodeError as exc:
             raise ValueError(f"line {line_number}: invalid JSON: {exc}") from exc
         if not isinstance(value, dict):
-            raise ValueError(f"line {line_number}: heartbeat record must be a JSON object")
+            raise ValueError(
+                f"line {line_number}: heartbeat record must be a JSON object"
+            )
         records.append(value)
     return records
 
@@ -102,15 +106,12 @@ def summarize_heartbeat_records(
         age_seconds = max(0, int((now - last_timestamp).total_seconds()))
         is_stale = age_seconds > stale_after_seconds
 
-    last_status = str(last_record.get("status", "missing")) if last_record else "missing"
+    last_status = (
+        str(last_record.get("status", "missing")) if last_record else "missing"
+    )
     terminal = last_status in TERMINAL_STATUSES
-    stalled = (
-        not terminal
-        and (
-            is_stale
-            or last_status in ("no_progress", "tool_blocked")
-            or not validation.ok
-        )
+    stalled = not terminal and (
+        is_stale or last_status in ("no_progress", "tool_blocked") or not validation.ok
     )
 
     nudge_count = count_nudges(records)
@@ -201,7 +202,9 @@ def suggest_nudge(summary: dict[str, Any]) -> str:
         )
     action = str(summary.get("recommended_coordinator_action", "wait"))
     checklist = str(summary.get("last_checklist_item", "the current checklist item"))
-    next_action = str(summary.get("last_next_intended_action", "the next bounded action"))
+    next_action = str(
+        summary.get("last_next_intended_action", "the next bounded action")
+    )
     if action == "review-result-and-archive":
         return "No nudge needed. Review the result file and archive evidence."
     if action == "inspect-blocker":
@@ -223,7 +226,9 @@ def suggest_nudge(summary: dict[str, Any]) -> str:
             f"from `{checklist}` to the next bounded action: {next_action}. "
             "Do not summarize completion unless the result file is written."
         )
-    return "No nudge needed. Continue waiting for the next heartbeat or terminal result."
+    return (
+        "No nudge needed. Continue waiting for the next heartbeat or terminal result."
+    )
 
 
 def render_nudge(summary: dict[str, Any]) -> str:

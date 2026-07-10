@@ -66,7 +66,9 @@ def validate_summary(data: dict[str, Any]) -> ValidationResult:
         if not isinstance(source_paths, list) or not all(
             isinstance(path, str) for path in source_paths
         ):
-            errors.append("source_runtime_paths must be a list of repo-relative strings")
+            errors.append(
+                "source_runtime_paths must be a list of repo-relative strings"
+            )
         else:
             for path in source_paths:
                 if Path(path).is_absolute() or re.match(r"^[A-Za-z]:", path):
@@ -148,7 +150,15 @@ def render_markdown(data: dict[str, Any]) -> str:
     for path in data.get("source_runtime_paths", []):
         lines.append(f"- `{path}`")
 
-    lines.extend(["", "## Outcomes", "", "| Subject | Classification | Count | Notes |", "| --- | --- | ---: | --- |"])
+    lines.extend(
+        [
+            "",
+            "## Outcomes",
+            "",
+            "| Subject | Classification | Count | Notes |",
+            "| --- | --- | ---: | --- |",
+        ]
+    )
     if isinstance(outcomes, list):
         for outcome in outcomes:
             if isinstance(outcome, dict):

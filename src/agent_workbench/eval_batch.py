@@ -126,7 +126,9 @@ def run_one_manifest(config: BatchEvalConfig, manifest: Path) -> dict[str, Any]:
 
 def eval_summary_path(manifest: Path, project_root: Path | None) -> Path:
     data = load_json_if_exists(manifest)
-    output_dir_text = str(data.get("output_dir", "")).strip() if isinstance(data, dict) else ""
+    output_dir_text = (
+        str(data.get("output_dir", "")).strip() if isinstance(data, dict) else ""
+    )
     if not output_dir_text:
         return manifest.parent / "eval" / "summary.json"
     output_dir = Path(output_dir_text)

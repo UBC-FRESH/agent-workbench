@@ -89,8 +89,12 @@ from .experiments import (
     validate_experiment_record,
 )
 from .foundry_profile_optimization import (
+    build_profile_evaluation_aggregate,
     build_profile_evaluation_dataset,
     build_profile_optimization_plan,
+    load_profile_evaluation_dataset_jsonl,
+    render_profile_evaluation_aggregate_json,
+    render_profile_evaluation_aggregate_markdown,
     render_profile_evaluation_dataset_jsonl,
     render_profile_evaluation_dataset_markdown,
     render_profile_optimization_plan_markdown,
@@ -485,6 +489,24 @@ def build_parser() -> argparse.ArgumentParser:
         required=True,
     )
     foundrytk_dataset_parser.set_defaults(func=run_foundrytk_profile_dataset)
+
+    foundrytk_aggregate_parser = foundrytk_subparsers.add_parser(
+        "profile-evaluation-aggregate",
+        help="Aggregate public-safe profile evaluation JSONL rows.",
+    )
+    foundrytk_aggregate_parser.add_argument(
+        "--dataset",
+        type=Path,
+        required=True,
+        help="Profile evaluation JSONL dataset path.",
+    )
+    foundrytk_aggregate_parser.add_argument("--json-output", type=Path, required=True)
+    foundrytk_aggregate_parser.add_argument(
+        "--markdown-output",
+        type=Path,
+        required=True,
+    )
+    foundrytk_aggregate_parser.set_defaults(func=run_foundrytk_profile_aggregate)
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1844,6 +1866,31 @@ def run_foundrytk_profile_dataset(args: argparse.Namespace) -> int:
         )
     )
     return 0 if dataset.ok else 1
+
+
+def run_foundrytk_profile_aggregate(args: argparse.Namespace) -> int:
+    try:
+        dataset = load_profile_evaluation_dataset_jsonl(args.dataset)
+        aggregate = build_profile_evaluation_aggregate(dataset)
+        json_text = render_profile_evaluation_aggregate_json(aggregate)
+        markdown = render_profile_evaluation_aggregate_markdown(aggregate)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.json_output.parent.mkdir(parents=True, exist_ok=True)
+    args.json_output.write_text(json_text, encoding="utf-8")
+    args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+    args.markdown_output.write_text(markdown, encoding="utf-8")
+    print(
+        "rows={rows} valid={valid} recommendation={recommendation}".format(
+            rows=aggregate.summary.get("row_count", 0),
+            valid=aggregate.ok,
+            recommendation=aggregate.summary.get("recommendation", ""),
+        )
+    )
+    print(f"wrote {args.json_output}")
+    print(f"wrote {args.markdown_output}")
+    return 0 if aggregate.ok else 1
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:

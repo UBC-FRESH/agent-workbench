@@ -103,7 +103,9 @@ def tune_policy(paths: list[Path]) -> str:
 
 
 def collect_groups(paths: list[Path]) -> list[PolicyGroup]:
-    grouped: dict[tuple[str, str, str], list[tuple[dict[str, Any], AccountingCosts]]] = {}
+    grouped: dict[
+        tuple[str, str, str], list[tuple[dict[str, Any], AccountingCosts]]
+    ] = {}
     errors: list[str] = []
     for path in paths:
         try:
@@ -124,7 +126,9 @@ def collect_groups(paths: list[Path]) -> list[PolicyGroup]:
 
     if errors:
         joined = "\n".join(f"- {error}" for error in errors)
-        raise ValueError(f"cannot tune policy from invalid accounting records:\n{joined}")
+        raise ValueError(
+            f"cannot tune policy from invalid accounting records:\n{joined}"
+        )
 
     return [build_group(key, values) for key, values in sorted(grouped.items())]
 
@@ -134,7 +138,12 @@ def build_group(
     values: list[tuple[dict[str, Any], AccountingCosts]],
 ) -> PolicyGroup:
     task_type, model, protocol = key
-    classifications = {"promising": 0, "poor": 0, "mixed": 0, "insufficient-evidence": 0}
+    classifications = {
+        "promising": 0,
+        "poor": 0,
+        "mixed": 0,
+        "insufficient-evidence": 0,
+    }
     accepted = 0
     rejected = 0
     needs = 0
@@ -194,9 +203,8 @@ def recommend_group(group: PolicyGroup) -> tuple[str, int, str, str]:
             "bail after two poor repeats",
             "Positive net savings and claim balance support cautious delegation.",
         )
-    if (
-        group.poor >= group.promising
-        and (group.total_net_savings_usd < 0 or group.rejected_claims > group.accepted_claims)
+    if group.poor >= group.promising and (
+        group.total_net_savings_usd < 0 or group.rejected_claims > group.accepted_claims
     ):
         return (
             "lower-trust",

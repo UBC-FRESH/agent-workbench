@@ -9,7 +9,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_graph_repair_helper_overwrites_reports_without_deleting(tmp_path: Path) -> None:
+def test_graph_repair_helper_overwrites_reports_without_deleting(
+    tmp_path: Path,
+) -> None:
     source = tmp_path / "source.json"
     source.write_text(
         json.dumps(
@@ -64,7 +66,8 @@ def test_graph_repair_helper_overwrites_reports_without_deleting(tmp_path: Path)
     assert item["auditor_decision"] == "quote_repair_required"
     assert item["decision_consistent_with_gate"] is True
     assert audit["verification"]["score"] == 1.0
-    assert graph["subagent_result"]["status"] == audit["verification"][
-        "subagent_result_status"
-    ]
+    assert (
+        graph["subagent_result"]["status"]
+        == audit["verification"]["subagent_result_status"]
+    )
     assert graph["authority_validation"]["passed_after_repair"] is True

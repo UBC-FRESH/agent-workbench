@@ -114,7 +114,9 @@ def validate_accounting_record(data: dict[str, Any]) -> AccountingValidation:
                 errors.append(f"claim_review.{field} must be a nonnegative integer")
         changed = claim_review.get("worker_changed_supervisor_decision", False)
         if not isinstance(changed, bool):
-            errors.append("claim_review.worker_changed_supervisor_decision must be boolean")
+            errors.append(
+                "claim_review.worker_changed_supervisor_decision must be boolean"
+            )
 
     task_selection = data.get("task_selection")
     if not isinstance(task_selection, dict):
@@ -135,7 +137,9 @@ def validate_accounting_record(data: dict[str, Any]) -> AccountingValidation:
     else:
         classification = str(outcome.get("classification", "")).strip()
         if classification not in CLASSIFICATIONS:
-            errors.append(f"outcome.classification must be one of {sorted(CLASSIFICATIONS)}")
+            errors.append(
+                f"outcome.classification must be one of {sorted(CLASSIFICATIONS)}"
+            )
 
     for finding in find_private_values(data):
         errors.append(f"private-looking value detected: {finding}")
@@ -148,8 +152,12 @@ def calculate_costs(data: dict[str, Any]) -> AccountingCosts:
     if not isinstance(accounting, dict):
         accounting = {}
 
-    supervisor_input_price = number(accounting.get("supervisor_input_price_per_1m_usd", 0))
-    supervisor_output_price = number(accounting.get("supervisor_output_price_per_1m_usd", 0))
+    supervisor_input_price = number(
+        accounting.get("supervisor_input_price_per_1m_usd", 0)
+    )
+    supervisor_output_price = number(
+        accounting.get("supervisor_output_price_per_1m_usd", 0)
+    )
     worker_input_price = number(accounting.get("worker_input_price_per_1m_usd", 0))
     worker_output_price = number(accounting.get("worker_output_price_per_1m_usd", 0))
 
@@ -307,10 +315,16 @@ def synthesize_accounting_markdown(paths: list[Path]) -> str:
         joined = "\n".join(f"- {error}" for error in errors)
         raise ValueError(f"cannot synthesize invalid accounting records:\n{joined}")
 
-    total_direct = sum(costs.direct_supervisor_cost_usd for _path, _data, costs in records)
-    total_delegated = sum(costs.delegated_total_cost_usd for _path, _data, costs in records)
+    total_direct = sum(
+        costs.direct_supervisor_cost_usd for _path, _data, costs in records
+    )
+    total_delegated = sum(
+        costs.delegated_total_cost_usd for _path, _data, costs in records
+    )
     total_net = sum(costs.net_savings_usd for _path, _data, costs in records)
-    promising = [item for item in records if classify_record(item[1], item[2]) == "promising"]
+    promising = [
+        item for item in records if classify_record(item[1], item[2]) == "promising"
+    ]
     poor = [item for item in records if classify_record(item[1], item[2]) == "poor"]
 
     lines = [
@@ -377,8 +391,12 @@ def classify_record(data: dict[str, Any], costs: AccountingCosts) -> str:
         if classification in {"promising", "poor"}:
             return classification
     claims = data.get("claim_review", {})
-    accepted = number(claims.get("accepted_claims", 0)) if isinstance(claims, dict) else 0
-    rejected = number(claims.get("rejected_claims", 0)) if isinstance(claims, dict) else 0
+    accepted = (
+        number(claims.get("accepted_claims", 0)) if isinstance(claims, dict) else 0
+    )
+    rejected = (
+        number(claims.get("rejected_claims", 0)) if isinstance(claims, dict) else 0
+    )
     if costs.net_savings_usd > 0 and accepted > rejected:
         return "promising"
     if costs.net_savings_usd < 0 or rejected > accepted:
