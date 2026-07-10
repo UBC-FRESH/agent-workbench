@@ -4254,20 +4254,28 @@ Planned tasks:
   - [x] Run the probe before the 48-row battery.
   - [x] Render the P81 health-gate report.
   - [x] Stop before the full battery if the decision is not `go`.
-- [ ] P85.4 Full repaired battery execution (#547)
-  - [ ] Execute all 48 repaired rows after a passing health gate.
-  - [ ] Monitor each row and collect result or blocker artifacts.
-  - [ ] Render compact transcripts, profile summaries, monitor summaries, and
+- [x] P85.4 Full repaired battery execution (#547)
+  - [x] Execute all 48 repaired rows after a passing health gate.
+  - [x] Monitor each row and collect result or blocker artifacts.
+  - [x] Render compact transcripts, profile summaries, monitor summaries, and
         execution progress under ignored runtime storage.
-  - [ ] Do not silently narrow the sample after partial failures.
+  - [x] Do not silently narrow the sample after partial failures.
 - [ ] P85.5 Battery evaluation and closeout (#543)
-  - [ ] Render the profile-evaluation dataset and aggregate report.
-  - [ ] Evaluate analyzable row count, final-status distribution, and balanced
+  - [x] Render the profile-evaluation dataset and aggregate report.
+  - [x] Evaluate analyzable row count, final-status distribution, and balanced
         cell coverage.
-  - [ ] Compare repaired validity against P75 only if thresholds are met.
+  - [x] Compare repaired validity against P75 only if thresholds are met.
   - [ ] Update roadmap, changelog, planning note, issues, and PR with the
         outcome.
 
 Activation note: P85 is the next empirical battery after P83/P84 repaired and
 live-probed declared review-subject access. It should not reduce the sample size
 or replace the full balanced design with another smoke.
+
+Evaluation note: P85 met the repaired-battery evidence thresholds with 48
+analyzable rows, 12 balanced source cells at 4 rows per cell, 48 healthy
+controller rows, 47 accepted-candidate results, 1 needs-supervisor-review
+result, and 0 blocked results. Compared with the P75 profile-evidence-review
+baseline, accepted rows increased from 2 to 47, blocked rows decreased from 4
+to 0, and needs-supervisor-review rows decreased from 6 to 1. GitHub issue/PR
+closeout remains pending in the current shell because `gh` is unavailable.

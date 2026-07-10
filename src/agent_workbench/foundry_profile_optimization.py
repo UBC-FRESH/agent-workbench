@@ -840,6 +840,14 @@ def recommend_next_lane(rows: tuple[dict[str, Any], ...]) -> str:
         return "Repair controller/session health before profile or model optimization."
     statuses = Counter(row_value(row, "result_status") for row in rows)
     accepted = statuses.get("accepted-candidate", 0)
+    blocked = statuses.get("blocked", 0)
+    accepted_rate = accepted / len(rows)
+    if accepted_rate >= 0.95 and blocked == 0:
+        return (
+            "Treat the repaired profile-evidence-review contract as empirically "
+            "stable enough for the next replicated comparison lane; audit any "
+            "remaining needs-supervisor-review rows as targeted follow-up."
+        )
     if accepted < len(rows):
         return (
             "Prioritize task/profile contract repair before another live battery, "

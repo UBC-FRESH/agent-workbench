@@ -2525,3 +2525,25 @@ issues, pull requests, and closeout comments.
   and no repeated error signatures.
 - Recorded that P85.4 may start the full 48-row repaired battery under the P85
   stop rules.
+
+## 2026-07-10 - Executed and evaluated P85 repaired battery
+
+- Executed all 48 P85 repaired profile-evidence-review battery rows after the
+  live health gate passed.
+- All 48 `copilot-sdk start` calls exited successfully.
+- Rendered monitors, compact transcripts, profile summaries, the full-battery
+  health-gate report, profile-evaluation dataset, aggregate report, and
+  execution summary under ignored runtime evidence.
+- The full-battery health gate returned `decision=go` for all 48 rows, with 48
+  healthy controller rows and no repeated error signatures.
+- The profile-evaluation dataset was valid with 48 analyzable rows, 48 result
+  artifacts, and 0 blocker artifacts.
+- Final status counts were 47 `accepted-candidate`, 1
+  `needs-supervisor-review`, and 0 `blocked`.
+- The balanced source-cell threshold was met with 12 cells and 4 rows per cell.
+- Compared with the P75 profile-evidence-review baseline, accepted rows
+  increased from 2 to 47, blocked rows decreased from 4 to 0, and
+  needs-supervisor-review rows decreased from 6 to 1.
+- Updated the aggregate recommendation so high-acceptance, no-blocker repaired
+  batteries point to the next replicated comparison lane while preserving
+  targeted audit of remaining needs-supervisor-review rows.

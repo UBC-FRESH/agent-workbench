@@ -119,3 +119,42 @@ Health preflight evidence:
 
 The full 48-row repaired battery is therefore allowed to start under the P85
 stop rules.
+
+## Execution Outcome
+
+P85.4 executed all 48 repaired battery rows after the health gate passed.
+
+Full-battery evidence:
+
+- planned rows: 48;
+- attempted rows: 48;
+- start exit failures: 0;
+- analyzable rows: 48;
+- result artifacts: 48;
+- blocker artifacts: 0;
+- full-battery health-gate decision: `go`;
+- controller health: 48 `healthy`;
+- repeated error signatures: none;
+- final status counts: 47 `accepted-candidate`, 1
+  `needs-supervisor-review`, 0 `blocked`;
+- accepted rate: 0.9792;
+- source-balanced cells: 12;
+- source-cell coverage: 4 rows minimum, 4 rows maximum;
+- minimum analyzable threshold: met; and
+- balanced cell threshold: met.
+
+P85 therefore supports a repaired profile-evidence-review behavior claim for
+the P83/P84 access-repaired contract. Compared with the P75
+profile-evidence-review baseline, accepted rows increased from 2 to 47,
+blocked rows decreased from 4 to 0, and needs-supervisor-review rows decreased
+from 6 to 1.
+
+The remaining needs-supervisor-review row should be audited as targeted
+follow-up, not treated as a reason to rerun another contract-repair battery.
+
+## Next Lane
+
+The next development lane should move from contract repair back to replicated
+comparison or model-lane evaluation using the repaired profile-evidence-review
+contract. P85 remains a profile/task-contract battery and does not by itself
+claim model superiority.
