@@ -94,7 +94,21 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P83 Review-subject access contract repair | #530 | `feature/p83-review-subject-access-contract` | Complete |
 | P84 Review-subject live access probe | #536 | `feature/p84-review-subject-live-access-probe` | Complete |
 | P85 Health-gated repaired profile-evidence-review battery rerun | #542 | `feature/p85-health-gated-repaired-battery-rerun` | Complete |
-| P86 Dev validation toolchain repair | #549 | `feature/p86-dev-validation-toolchain-repair` | Closeout |
+| P86 Dev validation toolchain repair | #549 | `feature/p86-dev-validation-toolchain-repair` | Complete |
+| P87 Real-project ROI roadmap reset | #551 | `feature/p87-real-project-roi-roadmap-reset` | Closeout |
+| P88 Real-corpus benchmark registry | #552 | `feature/p88-real-corpus-benchmark-registry` | Planned |
+| P89 Document-indexing recipe v2 | #553 | `feature/p89-document-indexing-recipe-v2` | Planned |
+| P90 Source-anchored repair and audit loop | #554 | `feature/p90-source-anchored-repair-audit` | Planned |
+| P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
+| P92 Packaged graph-shaped pilot | #556 | `feature/p92-packaged-graph-shaped-pilot` | Planned |
+| P93 Second public corpus application | TBD | `feature/p93-second-public-corpus-application` | Planned |
+| P94 Project-owned index promotion | TBD | `feature/p94-project-owned-index-promotion` | Planned |
+| P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
+| P96 Yield and audit-cost model comparison | TBD | `feature/p96-yield-audit-cost-model-comparison` | Planned |
+| P97 Reusable workflow graph packaging | TBD | `feature/p97-reusable-workflow-graphs` | Planned |
+| P98 Reporting-worker template packaging | TBD | `feature/p98-reporting-worker-templates` | Planned |
+| P99 Economics dashboard and release criteria | TBD | `feature/p99-economics-dashboard-release-criteria` | Planned |
+| P100 Public alpha readiness review | TBD | `feature/p100-public-alpha-readiness-review` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -4291,7 +4305,7 @@ Parent issue: #549
 
 Branch: `feature/p86-dev-validation-toolchain-repair`
 
-Status: closeout
+Status: complete
 
 Goal: make the previously skipped `mypy src` and
 `pre-commit run --all-files` validation gates reproducible and runnable.
@@ -4332,4 +4346,316 @@ Planned tasks:
 
 Closeout note: P86 added a reproducible `dev` extra, added a focused
 pre-commit configuration, repaired current type-check failures, and verified
-that `mypy src` and `pre-commit run --all-files` pass.
+that `mypy src` and `pre-commit run --all-files` pass. P86 merged through PR
+#550 at `2c323fa60591809bdd23a05c745f7442f4215b58`, and parent issue #549
+closed on merge.
+
+## Phase 87: Real-Project ROI Roadmap Reset
+
+Parent issue: #551
+
+Branch: `feature/p87-real-project-roi-roadmap-reset`
+
+Status: closeout
+
+Goal: reset the Agent Workbench roadmap around real-project ROI and make
+P87-P92 the next detailed tranche.
+
+Scope:
+
+- Mark P86 complete after PR #550.
+- Add `planning/p87_p92_real_project_roi_roadmap.md`.
+- Summarize the P55, P63, P85, and P86 evidence into one decision memo.
+- Park profile-battery work unless it answers a direct real-project ROI
+  question.
+- Add the strategic P93-P100 arc and detailed P87-P92 tranche to this roadmap.
+- Update `CHANGE_LOG.md` and GitHub issue/PR state.
+
+Out of scope:
+
+- Live SDK or local-worker runs.
+- Additional profile/model batteries.
+- Implementing document-indexing recipe v2.
+- Creating a production document index.
+
+Planned tasks:
+
+- [x] P87.1 Roadmap status reset
+  - [x] Mark P86 complete with merge and issue-close evidence.
+  - [x] Add P87-P92 issue tracker rows with parent issue anchors.
+  - [x] Add P93-P100 strategic planned rows without opening those issues yet.
+- [x] P87.2 Evidence synthesis
+  - [x] Summarize P55 document-indexing evidence.
+  - [x] Summarize P63 recipe-pilot stop decision.
+  - [x] Summarize P85 profile-battery repair result.
+  - [x] Summarize P86 validation-gate repair.
+- [x] P87.3 Real-project ROI roadmap note
+  - [x] Add the P87-P92 tranche note.
+  - [x] Define the default rule that profile/model batteries are parked unless
+        tied to direct real-project ROI.
+  - [x] Define the validation and live-run gate policy.
+- [x] P87.4 Planning closeout
+  - [x] Run planning-only validation.
+  - [x] Prepare GitHub issue and PR closeout state.
+  - [x] Prepare final `main` verification for after merge.
+
+Closeout note: P87 reset the roadmap around real-project ROI, added the
+P87-P92 planning note, opened P87-P92 parent issues, marked P86 complete, and
+parked profile/model batteries unless they answer a direct real-project ROI
+question. Validation passed with `ruff format src tests`, `ruff check src
+tests`, `mypy src`, `pytest tests -q`, `pre-commit run --all-files`, and
+`git diff --check`.
+
+## Phase 88: Real-Corpus Benchmark Registry
+
+Parent issue: #552
+
+Branch: `feature/p88-real-corpus-benchmark-registry`
+
+Status: planned
+
+Goal: define the real-corpus benchmark registry for the real-project ROI
+tranche.
+
+Planned scope:
+
+- Define candidate public technical corpora, starting with TSA23/MP11-style
+  forestry planning documents.
+- Record corpus value, source availability, expected downstream use, risk, and
+  audit burden.
+- Choose exactly one bounded first corpus slice for the next live run.
+- Record source provenance, document IDs, chunk scope, budget boundary, and
+  stop rules.
+
+Out of scope:
+
+- Running local workers.
+- Expanding to multiple corpora before the first slice is selected.
+- Creating a production index.
+
+Activation tasks:
+
+- [ ] P88.1 Candidate corpus registry.
+- [ ] P88.2 First-slice selection.
+- [ ] P88.3 Budget and stop-rule record.
+- [ ] P88.4 Registry closeout and P89 handoff.
+
+## Phase 89: Document-Indexing Recipe V2
+
+Parent issue: #553
+
+Branch: `feature/p89-document-indexing-recipe-v2`
+
+Status: planned
+
+Goal: build document-indexing recipe v2 from the P63 lessons.
+
+Planned scope:
+
+- Repair the P63 recipe shape with smaller section-level tickets.
+- Add explicit chunk-ID enum handling.
+- Add deterministic JSONL validation and deterministic repair where possible.
+- Keep raw PDF text and worker outputs in ignored runtime paths.
+- Produce only sanitized manifests, summaries, and decision artifacts in
+  tracked files.
+
+Out of scope:
+
+- Live worker execution.
+- Supervisor audit loops.
+- Production index promotion.
+
+Activation tasks:
+
+- [ ] P89.1 Recipe v2 ticket and manifest shape.
+- [ ] P89.2 Chunk-ID enum and validation contract.
+- [ ] P89.3 Deterministic JSONL repair path.
+- [ ] P89.4 Dry-run materialization and closeout.
+
+## Phase 90: Source-Anchored Repair And Audit Loop
+
+Parent issue: #554
+
+Branch: `feature/p90-source-anchored-repair-audit`
+
+Status: planned
+
+Goal: add the source-anchored repair and audit loop for document-indexing
+candidates.
+
+Planned scope:
+
+- Add a local-worker repair-prepass ticket over candidate records plus compact
+  source excerpts.
+- Define supervisor audit classifications: accepted, repairable, rejected, and
+  needs-review.
+- Measure audit tokens and audit cost per accepted or repairable record.
+- Produce one bounded auditable calibration packet.
+
+Out of scope:
+
+- Production index assembly.
+- Direct-supervisor baseline runs before a quality-valid delegated candidate
+  exists.
+- Broad model comparisons.
+
+Activation tasks:
+
+- [ ] P90.1 Repair-prepass ticket.
+- [ ] P90.2 Audit classification packet.
+- [ ] P90.3 Audit token/economics record.
+- [ ] P90.4 Bounded calibration closeout.
+
+## Phase 91: Reporting-Worker Decision Packets
+
+Parent issue: #555
+
+Branch: `feature/p91-reporting-worker-decision-packets`
+
+Status: planned
+
+Goal: introduce reporting-worker decision packets for sanitized experiment
+summaries.
+
+Planned scope:
+
+- Delegate sanitized experiment-summary reporting to a local worker.
+- Keep the paid supervisor focused on source audit and final acceptance
+  decisions.
+- Split task economics from repository governance overhead.
+- Define the decision-packet shape and supervisor approval boundary.
+
+Out of scope:
+
+- Delegating final acceptance authority.
+- Raw transcript, raw PDF text, provider URL, header, or credential handling in
+  tracked artifacts.
+- New live benchmarking unless gated by prior phases.
+
+Activation tasks:
+
+- [ ] P91.1 Reporting-worker ticket.
+- [ ] P91.2 Decision-packet schema/template.
+- [ ] P91.3 Governance-overhead split in summaries.
+- [ ] P91.4 Reporting-worker closeout.
+
+## Phase 92: Packaged Graph-Shaped Pilot
+
+Parent issue: #556
+
+Branch: `feature/p92-packaged-graph-shaped-pilot`
+
+Status: planned
+
+Goal: run the packaged graph-shaped pilot for the repaired real-project ROI
+workflow.
+
+Planned scope:
+
+- Represent the repaired workflow as a FreshForge-shaped graph template:
+  prepare, run, validate, repair-prepass, summarize, audit, decide.
+- Run one bounded pilot only after P88-P91 gates are satisfied.
+- Decide whether to scale, repair, switch model/provider, or stop.
+- Preserve separated quality, protocol, and economics outcomes.
+
+Out of scope:
+
+- Ungated live runs.
+- Production release.
+- Broad corpus scale-up before the pilot decision packet is reviewed.
+
+Activation tasks:
+
+- [ ] P92.1 Graph-shaped workflow template.
+- [ ] P92.2 Bounded pilot gate.
+- [ ] P92.3 Pilot execution and evidence packet.
+- [ ] P92.4 Scale/repair/switch/stop decision.
+
+## Phase 93: Second Public Corpus Application
+
+Parent issue: TBD
+
+Branch: `feature/p93-second-public-corpus-application`
+
+Status: planned
+
+Goal: apply the repaired document-indexing workflow to a second public
+technical corpus after P92 produces a reviewed decision packet.
+
+## Phase 94: Project-Owned Index Promotion
+
+Parent issue: TBD
+
+Branch: `feature/p94-project-owned-index-promotion`
+
+Status: planned
+
+Goal: promote accepted or repaired records into a project-owned index format
+with source hashes, page/chunk anchors, model lane, audit status, and
+provenance.
+
+## Phase 95: Retrieval And Modelling-Agent Usability
+
+Parent issue: TBD
+
+Branch: `feature/p95-index-retrieval-usability`
+
+Status: planned
+
+Goal: add retrieval and use-case surfaces that help modelling agents find and
+cite source-backed facts from promoted public-document indexes.
+
+## Phase 96: Yield And Audit-Cost Model Comparison
+
+Parent issue: TBD
+
+Branch: `feature/p96-yield-audit-cost-model-comparison`
+
+Status: planned
+
+Goal: compare worker/model lanes only where they affect accepted-record yield,
+repairable-record yield, or supervisor audit cost.
+
+## Phase 97: Reusable Workflow Graph Packaging
+
+Parent issue: TBD
+
+Branch: `feature/p97-reusable-workflow-graphs`
+
+Status: planned
+
+Goal: package repeatable workflow graph templates for successful Agent
+Workbench real-project workflows.
+
+## Phase 98: Reporting-Worker Template Packaging
+
+Parent issue: TBD
+
+Branch: `feature/p98-reporting-worker-templates`
+
+Status: planned
+
+Goal: package reporting-worker templates and supervisor decision packets that
+proved useful in P91/P92.
+
+## Phase 99: Economics Dashboard And Release Criteria
+
+Parent issue: TBD
+
+Branch: `feature/p99-economics-dashboard-release-criteria`
+
+Status: planned
+
+Goal: make task economics, governance overhead, and release-readiness criteria
+visible enough for public-alpha decisions.
+
+## Phase 100: Public Alpha Readiness Review
+
+Parent issue: TBD
+
+Branch: `feature/p100-public-alpha-readiness-review`
+
+Status: planned
+
+Goal: prepare a public alpha only after one end-to-end real-project workflow
+shows net value.
