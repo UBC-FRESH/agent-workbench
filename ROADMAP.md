@@ -86,7 +86,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P75 Comparable live overlay-selected SDK run battery | #485 | `feature/p75-live-overlay-sdk-run-battery` | Complete |
 | P76 Profile evaluation aggregate comparison reports | #491 | `feature/p76-profile-evaluation-aggregate-reports` | Complete |
 | P77 Profile contract repair plan | #496 | `feature/p77-profile-contract-repair-plan` | Complete |
-| P78 Profile evidence review contract repair | #501 | `feature/p78-profile-evidence-review-contract` | Active |
+| P78 Profile evidence review contract repair | #501 | `feature/p78-profile-evidence-review-contract` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3725,7 +3725,7 @@ Parent issue: #501
 
 Branch: `feature/p78-profile-evidence-review-contract`
 
-Status: active
+Status: complete
 
 Goal: repair the profile-evidence-review task contract and
 result-auditor-as-primary behavior before another live SDK battery.
@@ -3776,7 +3776,7 @@ Planned tasks:
         usefulness.
   - [x] Update roadmap/changelog/planning with the resulting next-lane
         recommendation.
-  - [ ] Close out through normal issue/PR hygiene.
+  - [x] Close out through normal issue/PR hygiene.
 
 Activation note: P78 starts from P77's repair-plan recommendation. The target
 is not more sample volume yet; it is removing a known self-referential fixture
