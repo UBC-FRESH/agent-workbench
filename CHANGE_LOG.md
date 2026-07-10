@@ -2330,3 +2330,15 @@ issues, pull requests, and closeout comments.
 - Recorded that the next phase should execute the 48-row repaired battery, or
   at minimum preserve 36 analyzable rows with three matched source subjects per
   stratum for every profile/overlay pair.
+
+## 2026-07-09 - Activated P80 repaired profile-evidence-review execution
+
+- Created branch `feature/p80-repaired-profile-review-execution`.
+- Opened parent issue #512 and child issues #513, #514, #515, and #516 for
+  P80.1 through P80.4.
+- Added `planning/phase80_repaired_profile_review_execution.md` to define the
+  execution boundary, 12-row smoke gate, 48-row target, 36-row minimum
+  analyzable threshold, evidence outputs, and stop rules.
+- Confirmed the active shell can import `copilot` and `pydantic`, and validated
+  a representative P79 manifest with
+  `agent-workbench copilot-sdk validate --manifest`.

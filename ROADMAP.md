@@ -88,6 +88,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P77 Profile contract repair plan | #496 | `feature/p77-profile-contract-repair-plan` | Complete |
 | P78 Profile evidence review contract repair | #501 | `feature/p78-profile-evidence-review-contract` | Complete |
 | P79 Repaired profile-evidence-review battery design | #507 | `feature/p79-repaired-profile-review-battery` | Complete |
+| P80 Repaired profile-evidence-review battery execution | #512 | `feature/p80-repaired-profile-review-execution` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3858,3 +3859,63 @@ paths, provider URLs, or token-like values. The next phase should execute the
 48-row repaired battery; any narrowed execution should preserve at least 36
 analyzable rows with three matched source subjects per stratum for every
 profile/overlay pair.
+
+## Phase 80: Repaired Profile Evidence Review Execution
+
+Parent issue: #512
+
+Branch: `feature/p80-repaired-profile-review-execution`
+
+Status: active
+
+Goal: execute and aggregate the repaired profile-evidence-review battery
+scaffolded by P79.
+
+Planned scope:
+
+- Revalidate the P79 matrix, manifests, tickets, and contracts.
+- Execute the declared 12-row smoke gate.
+- Continue toward the full 48-row battery when the smoke gate passes.
+- Capture manifests, SDK event logs, status summaries, results or blockers,
+  compact transcripts, profile summaries, datasets, aggregate summaries, and
+  repair-plan outputs.
+- Decide whether repaired profile-evidence-review is stable enough for model
+  lane expansion or still needs contract/profile repair.
+
+Out of scope:
+
+- Treating the smoke gate as repaired-profile evidence.
+- Model-lane expansion before the repaired-cell battery is aggregated.
+- FoundryTK runtime integration.
+- Broad profile/model superiority claims.
+
+Planned tasks:
+
+- [x] P80.1 Execution readiness checks (#513)
+  - [x] Validate the active shell has Copilot SDK and Pydantic dependencies.
+  - [x] Validate representative P79 manifests.
+  - [x] Record exact runner command shape and readiness caveats.
+- [ ] P80.2 Twelve-row smoke gate (#514)
+  - [ ] Run one matched source subject per stratum across all four
+        profile/overlay pairs.
+  - [ ] Capture SDK events, status summaries, result/blocker files, compact
+        transcripts, and profile summaries.
+  - [ ] Continue only if at least 10 of 12 rows produce valid result or
+        blocker artifacts.
+  - [ ] Report smoke rows as a gate, not as repaired-profile evidence.
+- [ ] P80.3 Full repaired battery execution (#515)
+  - [ ] Continue toward the full 48-row matrix if the smoke gate passes.
+  - [ ] Preserve the 36-row minimum analyzable threshold.
+  - [ ] Apply declared stop rules without silently narrowing the design.
+- [ ] P80.4 P80 aggregate and next-lane decision (#516)
+  - [ ] Render P74/P76-compatible dataset, aggregate summary, and repair-plan
+        outputs from P80 manifests.
+  - [ ] Compare repaired profile-evidence-review result validity against the
+        P75 baseline.
+  - [ ] Keep controller health separate from worker result validity.
+  - [ ] Decide whether the next lane is model expansion, another repaired
+        battery, profile/ticket repair, or FoundryTK runtime integration.
+
+Activation note: P80 starts from the P79 48-row scaffold. The 12-row smoke gate
+is an execution-readiness gate only. Repaired profile behavior claims require
+at least 36 analyzable rows and preferably the full 48-row matrix.
