@@ -2360,3 +2360,14 @@ issues, pull requests, and closeout comments.
 - Recorded the next lane as controller/session health repair or quota recovery
   before another repaired battery, model-lane expansion, or FoundryTK runtime
   integration.
+
+## 2026-07-10 - Activated P81 controller/session health gate
+
+- Created branch `feature/p81-controller-session-health-gate`.
+- Opened parent issue #518 and child issues #519, #520, #521, and #522 for
+  P81.1 through P81.4.
+- Added `planning/phase81_controller_session_health_gate.md` to define the
+  deterministic health-gate contract, public-safety boundary, go/no-go
+  semantics, and next-lane rule.
+- Recorded that P81 should protect the P79/P80 repaired 48-row factorial design
+  rather than reduce the sample size after P80's quota/controller-health stop.
