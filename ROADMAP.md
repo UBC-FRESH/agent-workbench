@@ -3836,14 +3836,25 @@ Planned tasks:
         2 profiles * 2 overlays * 3 source-result strata * 4 matched subjects.
   - [x] Define a 36-row minimum analyzable threshold.
   - [x] Preserve replication before breadth.
-- [ ] P79.3 Repaired battery artifact scaffold (#510)
-  - [ ] Render ignored runtime matrix JSON and Markdown artifacts.
-  - [ ] Render repaired manifests with pre-existing review subject paths.
-  - [ ] Render repaired profile-evidence-review tickets with the P78 renderer.
-  - [ ] Verify generated artifacts are public-safe and structurally valid.
+- [x] P79.3 Repaired battery artifact scaffold (#510)
+  - [x] Render ignored runtime matrix JSON and Markdown artifacts.
+  - [x] Render repaired manifests with pre-existing review subject paths.
+  - [x] Render repaired profile-evidence-review tickets with the P78 renderer.
+  - [x] Verify generated artifacts are public-safe and structurally valid.
 
 Activation note: P79 starts from P78's repaired contract. The target is a
 48-row scaffolded matrix, not a minimal smoke. If execution resources later
 force a narrower run, the minimum meaningful repaired-cell decision threshold
 is 36 analyzable rows with at least three source subjects per stratum for every
+profile/overlay pair.
+
+Completion note: P79 scaffolded a balanced 48-row repaired
+profile-evidence-review battery under ignored runtime storage. The matrix
+crosses two profiles, two overlays, three source-result strata, and four
+matched public-safe P75 profile-run summary subjects per stratum. Generated
+artifacts include 48 manifests, 48 repaired tickets, 48 contract JSON files,
+and matrix JSON/Markdown previews. Public-safety inspection found no personal
+paths, provider URLs, or token-like values. The next phase should execute the
+48-row repaired battery; any narrowed execution should preserve at least 36
+analyzable rows with three matched source subjects per stratum for every
 profile/overlay pair.

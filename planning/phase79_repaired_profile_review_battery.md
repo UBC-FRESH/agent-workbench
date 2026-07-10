@@ -119,3 +119,41 @@ consistent, public-safe, and sufficiently replicated on paper. It cannot prove
 improved profile behavior until the 48-row battery, or at least the 36-row
 minimum, is executed and aggregated.
 
+## P79 Outcome
+
+P79 scaffolded the repaired battery under ignored runtime storage:
+
+- matrix JSON:
+  `runtime/p79_repaired_profile_review_battery/p79_run_matrix.json`;
+- matrix preview:
+  `runtime/p79_repaired_profile_review_battery/p79_run_matrix.md`;
+- 48 manifests under
+  `runtime/p79_repaired_profile_review_battery/manifests/`;
+- 48 repaired tickets under
+  `runtime/p79_repaired_profile_review_battery/tickets/`;
+- 48 contract JSON files under
+  `runtime/p79_repaired_profile_review_battery/contracts/`.
+
+The generated matrix is balanced:
+
+- profiles:
+  - `agent-workbench-local-supervisor`: 24 rows;
+  - `agent-workbench-result-auditor`: 24 rows;
+- overlays:
+  - `existing-code-debugging`: 24 rows;
+  - `release-readiness-review`: 24 rows;
+- source-result strata:
+  - `accepted-candidate`: 16 rows;
+  - `needs-supervisor-review`: 16 rows;
+  - `blocked`: 16 rows;
+- 12 profile/overlay/stratum cells, each with 4 matched source subjects.
+
+The scaffold uses existing P75 public-safe profile-run summaries as
+pre-existing review subjects. Public-safety inspection found no personal paths,
+provider URLs, or token-like values in the generated matrix, tickets, or
+contracts.
+
+The next phase should execute the repaired 48-row battery. If execution limits
+force narrowing, the minimum meaningful result remains 36 analyzable rows with
+at least three matched source subjects per stratum for every profile/overlay
+pair.
