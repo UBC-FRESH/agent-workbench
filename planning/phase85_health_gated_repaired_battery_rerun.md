@@ -47,8 +47,9 @@ smoke:
 - Two task overlays:
   - `release-readiness-review`;
   - `existing-code-debugging`.
-- Two source result strata:
+- Three source result strata:
   - `accepted-candidate`;
+  - `needs-supervisor-review`;
   - `blocked`.
 - At least three rows per balanced cell.
 - Fixed model lane: `operator-configured-copilot-sdk`.
@@ -73,3 +74,28 @@ smoke:
 - P85.4: Execute and monitor the full repaired battery if the health gate
   passes (#547).
 - P85.5: Evaluate and close out P85 (#543).
+
+## Scaffold Status
+
+P85.2 generated ignored runtime artifacts under
+`runtime/p85_health_gated_repaired_battery_rerun/`.
+
+Scaffold validation:
+
+- row count: 48;
+- manifest count: 48;
+- profile counts: 24 `agent-workbench-local-supervisor`, 24
+  `agent-workbench-result-auditor`;
+- overlay counts: 24 `existing-code-debugging`, 24
+  `release-readiness-review`;
+- source-result stratum counts: 16 `accepted-candidate`, 16
+  `needs-supervisor-review`, 16 `blocked`;
+- balanced cells: 12;
+- rows per cell: 4 minimum, 4 maximum;
+- all 48 manifests validated;
+- all 48 profile declarations validated; and
+- every manifest declares `agent_workbench_review_subject`.
+
+P85.2 also generated and validated the separate live health-probe manifest,
+ticket, and contract under the same ignored runtime root. The health probe is
+readiness evidence only and remains outside the 48-row empirical sample.

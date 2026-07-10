@@ -2498,3 +2498,18 @@ issues, pull requests, and closeout comments.
   threshold, balanced cell coverage threshold, and stop rules.
 - Recorded that P85 should preserve the full balanced empirical design now that
   P83/P84 repaired and live-probed declared review-subject access.
+
+## 2026-07-10 - Generated P85 repaired battery runtime scaffold
+
+- Generated ignored P85 runtime artifacts under
+  `runtime/p85_health_gated_repaired_battery_rerun/`.
+- Preserved the full 48-row design with 12 profile/overlay/source-stratum cells
+  and 4 rows per cell.
+- Confirmed source-result stratum counts of 16 `accepted-candidate`, 16
+  `needs-supervisor-review`, and 16 `blocked`.
+- Regenerated all 48 manifests, tickets, and contracts with
+  `agent_workbench_review_subject` declared in custom tools.
+- Validated all 48 SDK manifests and profile declarations before live
+  execution.
+- Generated and validated the separate P85 live health-probe manifest, ticket,
+  and contract outside the 48-row empirical sample.

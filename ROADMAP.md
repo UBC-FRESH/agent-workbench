@@ -4238,16 +4238,16 @@ Out of scope:
 
 Planned tasks:
 
-- [ ] P85.1 Full repaired battery rerun activation (#544)
-  - [ ] Add a planning note tied to the P84 live access proof.
-  - [ ] Record the 48-row design, health-gate requirements, thresholds, and
+- [x] P85.1 Full repaired battery rerun activation (#544)
+  - [x] Add a planning note tied to the P84 live access proof.
+  - [x] Record the 48-row design, health-gate requirements, thresholds, and
         stop rules.
-  - [ ] Keep P85 distinct from P84 access evidence.
-- [ ] P85.2 Runtime matrix and manifest generation (#545)
-  - [ ] Reuse the P79/P80/P82 balanced 48-row repaired battery structure.
-  - [ ] Ensure every manifest declares `agent_workbench_review_subject`.
-  - [ ] Validate all manifests, custom profiles, and repaired tickets.
-  - [ ] Render public-safe matrix and validation summaries under ignored
+  - [x] Keep P85 distinct from P84 access evidence.
+- [x] P85.2 Runtime matrix and manifest generation (#545)
+  - [x] Reuse the P79/P80/P82 balanced 48-row repaired battery structure.
+  - [x] Ensure every manifest declares `agent_workbench_review_subject`.
+  - [x] Validate all manifests, custom profiles, and repaired tickets.
+  - [x] Render public-safe matrix and validation summaries under ignored
         runtime storage.
 - [ ] P85.3 Live health preflight (#546)
   - [ ] Generate a separate live health-probe manifest.
