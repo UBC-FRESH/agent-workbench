@@ -2424,3 +2424,14 @@ issues, pull requests, and closeout comments.
   so P82 makes no repaired profile-evidence-review behavior claim.
 - Recorded the next lane as review-subject path/materialization or SDK
   run-context access repair before another repaired battery.
+
+## 2026-07-10 - Activated P83 review-subject access repair
+
+- Created branch `feature/p83-review-subject-access-contract`.
+- Opened parent issue #530 and child issues #531, #532, #533, and #534 for
+  P83.1 through P83.4.
+- Added `planning/phase83_review_subject_access_contract.md` to define the
+  review-subject resolver/reader contract, public-safety boundary, and
+  dogfood requirements.
+- Recorded that P83 should repair access/materialization semantics before
+  another repaired profile-evidence-review battery.

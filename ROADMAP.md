@@ -91,6 +91,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P80 Repaired profile-evidence-review battery execution | #512 | `feature/p80-repaired-profile-review-execution` | Complete |
 | P81 Controller/session health gate for live SDK batteries | #518 | `feature/p81-controller-session-health-gate` | Complete |
 | P82 Health-gated repaired profile-evidence-review battery | #524 | `feature/p82-health-gated-repaired-battery` | Complete |
+| P83 Review-subject access contract repair | #530 | `feature/p83-review-subject-access-contract` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -4083,3 +4084,63 @@ The balanced 3-per-cell threshold was not met because minimum cell coverage was
 2. P82 therefore makes no repaired profile-evidence-review behavior claim. The
 next lane should repair review-subject path/materialization or SDK run-context
 access before another repaired battery.
+
+## Phase 83: Review-Subject Access Contract Repair
+
+Parent issue: #530
+
+Branch: `feature/p83-review-subject-access-contract`
+
+Status: active
+
+Goal: make declared review subjects readable through a stable public-safe
+custom-tool interface before another repaired battery.
+
+Planned scope:
+
+- Add or extend custom SDK tooling so workers can resolve and read the declared
+  review subject without filesystem search.
+- Return public-safe metadata and bounded content from the declared subject.
+- Reject missing, private-looking, current-run-output, or outside-allowed-root
+  review subjects.
+- Expose the repaired access interface in profile-evidence-review tickets and
+  custom tool declarations.
+- Dogfood the repair on both a deterministic fixture and a real P75
+  profile-summary subject.
+
+Out of scope:
+
+- Rerunning the repaired 48-row battery.
+- Model-lane expansion.
+- Tracking raw transcripts, provider URLs, headers, credentials, personal
+  paths, or raw worker blocker text.
+
+Planned tasks:
+
+- [ ] P83.1 Review-subject access contract (#531)
+  - [ ] Add a planning note tying P83 to the P82 access failure.
+  - [ ] Define the required review-subject resolver/reader behavior.
+  - [ ] Define public-safe output fields and redaction boundaries.
+  - [ ] Record that P83 repairs access/materialization only.
+- [ ] P83.2 Resolver/reader tool support (#532)
+  - [ ] Add or extend custom SDK tooling for declared review-subject reads.
+  - [ ] Return public-safe metadata and bounded content/snippets.
+  - [ ] Reject missing, private-looking, current-run-output, or outside-root
+        review subjects.
+  - [ ] Expose the tool in profile-evidence-review custom tool declarations.
+  - [ ] Add focused tests.
+- [ ] P83.3 Review-subject access dogfood (#533)
+  - [ ] Run deterministic fixture-level validation.
+  - [ ] Dogfood against one real P75 profile-summary subject used by the matrix.
+  - [ ] Render ignored JSON/Markdown evidence.
+  - [ ] Promote only sanitized counts, paths, and conclusions to tracked docs.
+- [ ] P83.4 Closeout and next-lane decision (#534)
+  - [ ] Run focused validation.
+  - [ ] Close child issues with evidence comments.
+  - [ ] Open and merge the P83 PR.
+  - [ ] Record whether the next lane is a small live access probe or a repaired
+        battery rerun.
+
+Activation note: P83 is a targeted access-contract repair phase. It does not
+rerun the battery; it repairs the worker interface needed before a future
+health-gated battery can measure profile-evidence-review behavior.
