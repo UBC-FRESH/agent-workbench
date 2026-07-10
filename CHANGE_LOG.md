@@ -2513,3 +2513,15 @@ issues, pull requests, and closeout comments.
   execution.
 - Generated and validated the separate P85 live health-probe manifest, ticket,
   and contract outside the 48-row empirical sample.
+
+## 2026-07-10 - Passed P85 live health preflight
+
+- Ran the separate P85 live health probe before starting the 48-row repaired
+  battery.
+- The probe reached `completion_candidate` after 70 events, produced an
+  `accepted-candidate` result, and did not produce a blocker artifact.
+- The rendered profile summary classified controller health as `healthy`.
+- The formal P81 health gate returned `decision=go` with 1 healthy probe row
+  and no repeated error signatures.
+- Recorded that P85.4 may start the full 48-row repaired battery under the P85
+  stop rules.

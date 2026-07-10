@@ -4249,11 +4249,11 @@ Planned tasks:
   - [x] Validate all manifests, custom profiles, and repaired tickets.
   - [x] Render public-safe matrix and validation summaries under ignored
         runtime storage.
-- [ ] P85.3 Live health preflight (#546)
-  - [ ] Generate a separate live health-probe manifest.
-  - [ ] Run the probe before the 48-row battery.
-  - [ ] Render the P81 health-gate report.
-  - [ ] Stop before the full battery if the decision is not `go`.
+- [x] P85.3 Live health preflight (#546)
+  - [x] Generate a separate live health-probe manifest.
+  - [x] Run the probe before the 48-row battery.
+  - [x] Render the P81 health-gate report.
+  - [x] Stop before the full battery if the decision is not `go`.
 - [ ] P85.4 Full repaired battery execution (#547)
   - [ ] Execute all 48 repaired rows after a passing health gate.
   - [ ] Monitor each row and collect result or blocker artifacts.

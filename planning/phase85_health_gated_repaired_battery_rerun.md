@@ -99,3 +99,23 @@ Scaffold validation:
 P85.2 also generated and validated the separate live health-probe manifest,
 ticket, and contract under the same ignored runtime root. The health probe is
 readiness evidence only and remains outside the 48-row empirical sample.
+
+## Health Preflight Status
+
+P85.3 ran the separate live health probe before the 48-row battery.
+
+Health preflight evidence:
+
+- probe run id: `p85_live_health_probe`;
+- latest SDK status: `completion_candidate`;
+- event count: 70;
+- result artifact: present;
+- blocker artifact: absent;
+- final status: `accepted-candidate`;
+- profile summary controller health: `healthy`;
+- health-gate decision: `go`;
+- healthy probe rows: 1; and
+- repeated error signatures: none.
+
+The full 48-row repaired battery is therefore allowed to start under the P85
+stop rules.
