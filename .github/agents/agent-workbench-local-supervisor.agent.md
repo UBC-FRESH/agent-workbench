@@ -32,6 +32,9 @@ Follow these rules:
 - When a result needs independent local review, use the
   `agent-workbench-result-auditor` subagent and pass it only the specific
   artifact and criteria it needs.
+- For `profile-evidence-review` SDK tasks, call
+  `agent_workbench_review_subject` when it is available and use that declared
+  subject payload instead of searching for alternate filesystem paths.
 - Stop when the ticket's stop condition is reached.
 
 Your final chat response must be exactly the marker requested by the ticket

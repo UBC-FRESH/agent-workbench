@@ -1,0 +1,91 @@
+# Phase 83: Review-Subject Access Contract Repair
+
+Phase 83 repairs the review-subject access contract for SDK
+profile-evidence-review tasks.
+
+P82 showed that the source review-subject artifacts exist and resolve from each
+generated manifest's base path, but SDK workers could not reliably use those
+declared artifacts through the run-context and custom-tool contract. The failure
+mode was not sample size and not repeated provider quota exhaustion: it was
+access semantics.
+
+## Goal
+
+Make declared review subjects readable through a stable public-safe custom-tool
+interface before another repaired battery.
+
+## Scope
+
+- Add or extend custom SDK tooling so workers can resolve and read the declared
+  review subject without filesystem search.
+- Return public-safe metadata and bounded content from the declared subject.
+- Reject missing, private-looking, current-run-output, or outside-allowed-root
+  review subjects.
+- Expose the repaired access interface in profile-evidence-review tickets and
+  custom tool declarations.
+- Dogfood the repair on both a deterministic fixture and a real P75
+  profile-summary subject.
+
+## Out Of Scope
+
+- Rerunning the repaired 48-row battery.
+- Model-lane expansion.
+- Tracking raw transcripts, provider URLs, headers, credentials, personal paths,
+  or raw worker blocker text.
+
+## Contract Requirements
+
+The repaired interface must prove:
+
+- which review-subject path was declared;
+- whether the path resolved from the manifest base;
+- whether the resolved subject stays under allowed public-safe roots;
+- whether the subject was read successfully;
+- bounded public-safe content or summary from the subject; and
+- enough stable metadata for a worker to cite the declared subject without
+  searching the filesystem or inventing alternate paths.
+
+## Planned Tasks
+
+- P83.1: Define the review-subject access contract (#531).
+- P83.2: Implement resolver/reader tool support (#532).
+- P83.3: Dogfood review-subject access (#533).
+- P83.4: Close out P83 and decide the next lane (#534).
+
+## Outcome
+
+P83 added `agent_workbench_review_subject` as the declared review-subject
+resolver/reader for SDK profile-evidence-review tasks. The tool reports the
+declared path, resolved public-safe path, allowed root, subject kind, bounded
+content, truncation state, and validation errors without requiring workers to
+search the filesystem.
+
+The repaired contract rejects missing subjects, private-looking declared paths,
+current-run outputs, content with private-looking values, and runtime-manifest
+escapes outside the nearest `runtime` root. It still permits the required
+sibling-runtime access pattern used by P82 manifests to read P75 profile-summary
+subjects.
+
+Dogfood evidence under ignored runtime storage showed:
+
+- fixture subject read: `ok=true`, `allowed_root=runtime`;
+- real P82 manifest to P75 profile-summary read: `ok=true`;
+- real declared path:
+  `../../p75_live_overlay_sdk_run_battery/profile_summaries/p75_mca_lsup_debug_r1.md`;
+- real resolved path:
+  `runtime/p75_live_overlay_sdk_run_battery/profile_summaries/p75_mca_lsup_debug_r1.md`;
+- real allowed root: `runtime`;
+- real content was read without truncation or validation errors.
+
+## Next-Lane Rule
+
+If P83 proves that workers can read declared review subjects through the
+repaired interface, the next lane should be a small live access probe before
+another health-gated repaired battery. If P83 cannot prove deterministic access,
+repair manifest path semantics or runtime materialization before spending live
+SDK runs.
+
+P83 proved deterministic access for fixture and real P75 subjects. The next lane
+should therefore be a small live SDK access probe that asks one
+profile-evidence-review worker to use `agent_workbench_review_subject` before
+spending another full repaired battery.

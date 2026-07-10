@@ -73,6 +73,8 @@ def test_profile_evidence_review_contract_accepts_preexisting_subject(
     assert payload["review_subject_kind"] == "profile-run-summary"
     assert "pre-existing artifact declared before this run starts" in ticket
     assert "Do not treat profile summaries" in ticket
+    assert "agent_workbench_review_subject" in ticket
+    assert "Do not search the filesystem" in ticket
     assert "agent_workbench_write_result" in ticket
 
 
