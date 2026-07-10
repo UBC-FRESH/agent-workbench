@@ -93,6 +93,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P82 Health-gated repaired profile-evidence-review battery | #524 | `feature/p82-health-gated-repaired-battery` | Complete |
 | P83 Review-subject access contract repair | #530 | `feature/p83-review-subject-access-contract` | Complete |
 | P84 Review-subject live access probe | #536 | `feature/p84-review-subject-live-access-probe` | Complete |
+| P85 Health-gated repaired profile-evidence-review battery rerun | #542 | `feature/p85-health-gated-repaired-battery-rerun` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -4202,3 +4203,71 @@ requested and executed `agent_workbench_review_subject` once, wrote an
 `accepted-candidate` result, and validated the result artifact. The next lane
 can return to a health-gated repaired battery using the P83/P84 access repair;
 P84 remains access evidence only, not repaired behavior evidence.
+
+## Phase 85: Health-Gated Repaired Profile-Evidence-Review Battery Rerun
+
+Parent issue: #542
+
+Branch: `feature/p85-health-gated-repaired-battery-rerun`
+
+Status: active
+
+Goal: run the full health-gated repaired profile-evidence-review battery with
+the P83/P84 declared review-subject access repair included.
+
+Planned scope:
+
+- Preserve the P79/P80/P82 48-row repaired battery design.
+- Regenerate P85 runtime manifests, tickets, and contracts with
+  `agent_workbench_review_subject` declared in custom tools.
+- Run a live P81 health preflight before spending the 48-row battery.
+- Execute all 48 rows only if the health gate returns `go`.
+- Render ignored public-safe monitor, summary, aggregate, and evaluation
+  evidence.
+- Require at least 36 analyzable rows and balanced minimum cell coverage before
+  making repaired profile-evidence-review behavior claims.
+
+Out of scope:
+
+- Reducing the matrix because the run is expensive.
+- Model-lane expansion.
+- Publishing raw transcripts, provider URLs, headers, credentials, personal
+  paths, provider-side identifier strings, or raw worker blocker text.
+- Treating the health probe as empirical profile-evidence-review behavior
+  evidence.
+
+Planned tasks:
+
+- [ ] P85.1 Full repaired battery rerun activation (#544)
+  - [ ] Add a planning note tied to the P84 live access proof.
+  - [ ] Record the 48-row design, health-gate requirements, thresholds, and
+        stop rules.
+  - [ ] Keep P85 distinct from P84 access evidence.
+- [ ] P85.2 Runtime matrix and manifest generation (#545)
+  - [ ] Reuse the P79/P80/P82 balanced 48-row repaired battery structure.
+  - [ ] Ensure every manifest declares `agent_workbench_review_subject`.
+  - [ ] Validate all manifests, custom profiles, and repaired tickets.
+  - [ ] Render public-safe matrix and validation summaries under ignored
+        runtime storage.
+- [ ] P85.3 Live health preflight (#546)
+  - [ ] Generate a separate live health-probe manifest.
+  - [ ] Run the probe before the 48-row battery.
+  - [ ] Render the P81 health-gate report.
+  - [ ] Stop before the full battery if the decision is not `go`.
+- [ ] P85.4 Full repaired battery execution (#547)
+  - [ ] Execute all 48 repaired rows after a passing health gate.
+  - [ ] Monitor each row and collect result or blocker artifacts.
+  - [ ] Render compact transcripts, profile summaries, monitor summaries, and
+        execution progress under ignored runtime storage.
+  - [ ] Do not silently narrow the sample after partial failures.
+- [ ] P85.5 Battery evaluation and closeout (#543)
+  - [ ] Render the profile-evaluation dataset and aggregate report.
+  - [ ] Evaluate analyzable row count, final-status distribution, and balanced
+        cell coverage.
+  - [ ] Compare repaired validity against P75 only if thresholds are met.
+  - [ ] Update roadmap, changelog, planning note, issues, and PR with the
+        outcome.
+
+Activation note: P85 is the next empirical battery after P83/P84 repaired and
+live-probed declared review-subject access. It should not reduce the sample size
+or replace the full balanced design with another smoke.

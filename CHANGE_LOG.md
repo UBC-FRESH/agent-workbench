@@ -2487,3 +2487,14 @@ issues, pull requests, and closeout comments.
   profile-evidence-review battery using the P83/P84 access repair, while
   keeping P84 itself classified as access evidence rather than repaired
   behavior evidence.
+
+## 2026-07-10 - Activated P85 health-gated repaired battery rerun
+
+- Created branch `feature/p85-health-gated-repaired-battery-rerun`.
+- Opened parent issue #542 and child issues #544, #545, #546, #547, and #543
+  for P85.1 through P85.5.
+- Added `planning/phase85_health_gated_repaired_battery_rerun.md` to define the
+  full 48-row repaired battery rerun, P81 health-gate requirement, analyzable
+  threshold, balanced cell coverage threshold, and stop rules.
+- Recorded that P85 should preserve the full balanced empirical design now that
+  P83/P84 repaired and live-probed declared review-subject access.
