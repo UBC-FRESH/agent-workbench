@@ -80,3 +80,26 @@ paths, not raw transcripts or worker outputs.
   manifest, ticket, profile, or controller defect.
 - Do not claim repaired profile behavior from fewer than 36 analyzable rows.
 
+## Outcome
+
+P80 executed the 12-row smoke gate and stopped before the full 48-row battery.
+
+Smoke-gate evidence under `runtime/p80_repaired_profile_review_execution/`
+shows:
+
+- 12 smoke rows attempted;
+- 10 rows with a valid result or blocker artifact;
+- 3 controller/provider error rows;
+- repeated SDK event errors reporting provider quota exhaustion; and
+- `smoke_gate_passed=false`.
+
+The smoke gate therefore did not authorize continuation to P80.3 full repaired
+battery execution. P80 rendered the smoke-gate profile-evaluation dataset,
+aggregate summary, and contract-repair plan, but those artifacts are
+infrastructure and controller-health evidence only. They are not sufficient
+evidence for repaired profile-evidence-review behavior because the phase did
+not reach the 36-row minimum analyzable threshold.
+
+The P80 aggregate recommendation is to repair or wait out controller/session
+health before profile or model optimization. The P80 repair-plan recommendation
+is to repair controller/session health before task/profile contract repair.

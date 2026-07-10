@@ -2342,3 +2342,21 @@ issues, pull requests, and closeout comments.
 - Confirmed the active shell can import `copilot` and `pydantic`, and validated
   a representative P79 manifest with
   `agent-workbench copilot-sdk validate --manifest`.
+
+## 2026-07-09 - Completed P80 smoke-gate execution
+
+- Executed the 12-row repaired profile-evidence-review smoke gate under ignored
+  runtime evidence at `runtime/p80_repaired_profile_review_execution/`.
+- Captured SDK events, status summaries, compact transcripts, profile
+  summaries, and result or blocker artifacts for the smoke rows.
+- The smoke gate produced 10 valid result-or-blocker artifacts and 3
+  controller/provider error rows, including repeated provider quota-exceeded
+  SDK event errors.
+- Rendered the P80 smoke profile-evaluation dataset, aggregate summary, and
+  contract-repair plan.
+- Stopped before the full 48-row repaired battery because
+  `smoke_gate_passed=false`; the phase therefore makes no repaired
+  profile-evidence-review behavior claim.
+- Recorded the next lane as controller/session health repair or quota recovery
+  before another repaired battery, model-lane expansion, or FoundryTK runtime
+  integration.
