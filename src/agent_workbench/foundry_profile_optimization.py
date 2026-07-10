@@ -50,6 +50,16 @@ class ProfileEvaluationAggregate:
         return not self.errors
 
 
+@dataclass(frozen=True)
+class ProfileContractRepairPlan:
+    summary: dict[str, Any]
+    errors: tuple[str, ...] = ()
+
+    @property
+    def ok(self) -> bool:
+        return not self.errors
+
+
 def build_profile_optimization_plan(
     manifest_paths: list[Path] | tuple[Path, ...],
     *,
@@ -390,6 +400,340 @@ def render_profile_evaluation_aggregate_markdown(
         lines.extend(f"- {error}" for error in aggregate.errors)
         lines.append("")
     return "\n".join(lines)
+
+
+def load_profile_evaluation_aggregate_json(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{path}: invalid JSON: {exc.msg}") from exc
+    if not isinstance(payload, dict):
+        raise ValueError(f"{path}: aggregate summary must be an object")
+    private_findings = find_private_values(payload)
+    private_findings.extend(find_private_keys(payload))
+    if private_findings:
+        raise ValueError(
+            "{path}: private-looking value detected: {finding}".format(
+                path=path,
+                finding=private_findings[0],
+            )
+        )
+    return payload
+
+
+def find_private_keys(value: Any, path: str = "$") -> list[str]:
+    findings: list[str] = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            key_path = f"{path}.{key}"
+            if find_private_values(str(key)):
+                findings.append(key_path)
+            findings.extend(find_private_keys(child, key_path))
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            findings.extend(find_private_keys(child, f"{path}[{index}]"))
+    return findings
+
+
+def build_profile_contract_repair_plan(
+    aggregate_summary: dict[str, Any],
+) -> ProfileContractRepairPlan:
+    errors = tuple(validate_aggregate_summary_shape(aggregate_summary))
+    if errors:
+        return ProfileContractRepairPlan(summary={}, errors=errors)
+    weak_cells = ranked_weak_treatment_cells(
+        aggregate_summary.get("treatment_cells", [])
+    )
+    task_family_targets = ranked_result_targets(
+        aggregate_summary.get("by_task_family_result_status", {})
+    )
+    profile_targets = ranked_result_targets(
+        aggregate_summary.get("by_profile_result_status", {})
+    )
+    summary = {
+        "schema_version": 1,
+        "source_schema_version": aggregate_summary.get("schema_version"),
+        "row_count": aggregate_summary.get("row_count", 0),
+        "controller_health": aggregate_summary.get("controller_health", {}),
+        "result_status": aggregate_summary.get("result_status", {}),
+        "weak_treatment_cells": weak_cells,
+        "task_family_targets": task_family_targets,
+        "profile_targets": profile_targets,
+        "recommendation": recommend_contract_repair_next_step(
+            aggregate_summary,
+            weak_cells=weak_cells,
+            task_family_targets=task_family_targets,
+            profile_targets=profile_targets,
+        ),
+        "validation_boundary": (
+            "After repair, rerun a matched replicated battery on repaired cells "
+            "before model-lane expansion or FoundryTK runtime integration."
+        ),
+    }
+    return ProfileContractRepairPlan(summary=summary)
+
+
+def validate_aggregate_summary_shape(summary: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(summary.get("row_count", 0), int):
+        errors.append("row_count must be an integer")
+    for key in (
+        "controller_health",
+        "result_status",
+        "by_task_family_result_status",
+        "by_profile_result_status",
+    ):
+        if not isinstance(summary.get(key, {}), dict):
+            errors.append(f"{key} must be an object")
+    if not isinstance(summary.get("treatment_cells", []), list):
+        errors.append("treatment_cells must be a list")
+    return errors
+
+
+def ranked_weak_treatment_cells(cells: Any) -> list[dict[str, Any]]:
+    if not isinstance(cells, list):
+        return []
+    weak_cells: list[dict[str, Any]] = []
+    for cell in cells:
+        if not isinstance(cell, dict):
+            continue
+        statuses = cell.get("result_status", {})
+        if not isinstance(statuses, dict):
+            continue
+        rows = int(cell.get("rows", 0)) if isinstance(cell.get("rows", 0), int) else 0
+        accepted = int(statuses.get("accepted-candidate", 0))
+        review = int(statuses.get("needs-supervisor-review", 0))
+        blocked = int(statuses.get("blocked", 0))
+        if rows <= 0 or (blocked == 0 and review == 0 and accepted >= rows):
+            continue
+        accepted_rate = round(accepted / rows, 3) if rows else 0.0
+        repair_score = blocked * 3 + review + max(rows - accepted, 0)
+        weak_cells.append(
+            {
+                "selected_agent": str(cell.get("selected_agent", "(missing)")),
+                "task_overlay": str(cell.get("task_overlay", "(missing)")),
+                "task_family": str(cell.get("task_family", "(missing)")),
+                "rows": rows,
+                "accepted_candidate": accepted,
+                "needs_supervisor_review": review,
+                "blocked": blocked,
+                "accepted_rate": accepted_rate,
+                "repair_score": repair_score,
+                "repair_focus": repair_focus_for_counts(
+                    blocked=blocked,
+                    review=review,
+                    accepted=accepted,
+                    rows=rows,
+                ),
+            }
+        )
+    return sorted(
+        weak_cells,
+        key=lambda item: (
+            -int(item["repair_score"]),
+            -int(item["blocked"]),
+            -int(item["needs_supervisor_review"]),
+            float(item["accepted_rate"]),
+            item["task_family"],
+            item["selected_agent"],
+            item["task_overlay"],
+        ),
+    )
+
+
+def ranked_result_targets(groups: Any) -> list[dict[str, Any]]:
+    if not isinstance(groups, dict):
+        return []
+    targets: list[dict[str, Any]] = []
+    for name, statuses in groups.items():
+        if not isinstance(statuses, dict):
+            continue
+        accepted = int(statuses.get("accepted-candidate", 0))
+        review = int(statuses.get("needs-supervisor-review", 0))
+        blocked = int(statuses.get("blocked", 0))
+        rows = sum(int(value) for value in statuses.values() if isinstance(value, int))
+        if rows <= 0 or (blocked == 0 and review == 0 and accepted >= rows):
+            continue
+        accepted_rate = round(accepted / rows, 3) if rows else 0.0
+        repair_score = blocked * 3 + review + max(rows - accepted, 0)
+        targets.append(
+            {
+                "name": str(name),
+                "rows": rows,
+                "accepted_candidate": accepted,
+                "needs_supervisor_review": review,
+                "blocked": blocked,
+                "accepted_rate": accepted_rate,
+                "repair_score": repair_score,
+                "repair_focus": repair_focus_for_counts(
+                    blocked=blocked,
+                    review=review,
+                    accepted=accepted,
+                    rows=rows,
+                ),
+            }
+        )
+    return sorted(
+        targets,
+        key=lambda item: (
+            -int(item["repair_score"]),
+            -int(item["blocked"]),
+            -int(item["needs_supervisor_review"]),
+            float(item["accepted_rate"]),
+            item["name"],
+        ),
+    )
+
+
+def repair_focus_for_counts(
+    *,
+    blocked: int,
+    review: int,
+    accepted: int,
+    rows: int,
+) -> str:
+    if blocked:
+        return "repair blocker-producing contract ambiguity before rerun"
+    if review > accepted:
+        return "tighten evidence rubric and artifact references before rerun"
+    if accepted < rows:
+        return "reduce supervisor-review fallback before scale-up"
+    return "monitor"
+
+
+def recommend_contract_repair_next_step(
+    aggregate_summary: dict[str, Any],
+    *,
+    weak_cells: list[dict[str, Any]],
+    task_family_targets: list[dict[str, Any]],
+    profile_targets: list[dict[str, Any]],
+) -> str:
+    if aggregate_summary.get("row_count", 0) == 0:
+        return "Collect aggregate evidence before writing a contract repair plan."
+    controller_health = aggregate_summary.get("controller_health", {})
+    if isinstance(controller_health, dict) and any(
+        status != "healthy" for status in controller_health
+    ):
+        return "Repair controller/session health before task/profile contract repair."
+    top_task = task_family_targets[0]["name"] if task_family_targets else ""
+    top_profile = profile_targets[0]["name"] if profile_targets else ""
+    if top_task == "profile-evidence-review" and top_profile:
+        return (
+            "Repair profile-evidence-review fixtures and "
+            f"{top_profile}-as-primary behavior before another live battery."
+        )
+    if weak_cells:
+        first = weak_cells[0]
+        return (
+            "Repair the highest-scoring treatment cell before another live "
+            "battery: {profile} / {overlay} / {task_family}.".format(
+                profile=first["selected_agent"],
+                overlay=first["task_overlay"],
+                task_family=first["task_family"],
+            )
+        )
+    return (
+        "No weak contract cells detected; run another replicated battery or a "
+        "verified model-lane block before broad claims."
+    )
+
+
+def render_profile_contract_repair_plan_json(
+    plan: ProfileContractRepairPlan,
+) -> str:
+    payload = dict(plan.summary)
+    payload["errors"] = list(plan.errors)
+    return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+
+
+def render_profile_contract_repair_plan_markdown(
+    plan: ProfileContractRepairPlan,
+) -> str:
+    if plan.errors:
+        lines = ["# Profile Contract Repair Plan", "", "- valid: `False`", ""]
+        lines.extend(["## Errors", ""])
+        lines.extend(f"- {error}" for error in plan.errors)
+        lines.append("")
+        return "\n".join(lines)
+    summary = plan.summary
+    lines = [
+        "# Profile Contract Repair Plan",
+        "",
+        "- valid: `True`",
+        f"- rows: {summary['row_count']}",
+        "- raw_transcripts_included: `False`",
+        "- private_paths_included: `False`",
+        f"- recommendation: {summary['recommendation']}",
+        "",
+        "## Controller Health",
+        "",
+        markdown_count_table(summary["controller_health"]),
+        "## Result Status",
+        "",
+        markdown_count_table(summary["result_status"]),
+        "## Task Family Repair Targets",
+        "",
+        markdown_repair_target_table(summary["task_family_targets"]),
+        "## Profile Repair Targets",
+        "",
+        markdown_repair_target_table(summary["profile_targets"]),
+        "## Weak Treatment Cells",
+        "",
+        markdown_weak_cell_table(summary["weak_treatment_cells"]),
+        "## Validation Boundary",
+        "",
+        summary["validation_boundary"],
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def markdown_repair_target_table(targets: list[dict[str, Any]]) -> str:
+    if not targets:
+        return "No weak targets.\n"
+    lines = [
+        "| target | rows | accepted | review | blocked | accepted_rate | repair_score | focus |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+    ]
+    for target in targets:
+        lines.append(
+            "| `{name}` | {rows} | {accepted} | {review} | {blocked} | {rate} | {score} | {focus} |".format(
+                name=target["name"],
+                rows=target["rows"],
+                accepted=target["accepted_candidate"],
+                review=target["needs_supervisor_review"],
+                blocked=target["blocked"],
+                rate=target["accepted_rate"],
+                score=target["repair_score"],
+                focus=target["repair_focus"],
+            )
+        )
+    return "\n".join(lines) + "\n"
+
+
+def markdown_weak_cell_table(cells: list[dict[str, Any]]) -> str:
+    if not cells:
+        return "No weak treatment cells.\n"
+    lines = [
+        "| profile | overlay | task_family | rows | accepted | review | blocked | accepted_rate | repair_score | focus |",
+        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+    ]
+    for cell in cells:
+        lines.append(
+            "| `{profile}` | `{overlay}` | `{family}` | {rows} | {accepted} | {review} | {blocked} | {rate} | {score} | {focus} |".format(
+                profile=cell["selected_agent"],
+                overlay=cell["task_overlay"],
+                family=cell["task_family"],
+                rows=cell["rows"],
+                accepted=cell["accepted_candidate"],
+                review=cell["needs_supervisor_review"],
+                blocked=cell["blocked"],
+                rate=cell["accepted_rate"],
+                score=cell["repair_score"],
+                focus=cell["repair_focus"],
+            )
+        )
+    return "\n".join(lines) + "\n"
 
 
 def row_value(row: dict[str, Any], key: str) -> str:

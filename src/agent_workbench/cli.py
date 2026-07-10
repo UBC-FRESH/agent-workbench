@@ -91,12 +91,16 @@ from .experiments import (
 from .foundry_profile_optimization import (
     build_profile_evaluation_aggregate,
     build_profile_evaluation_dataset,
+    build_profile_contract_repair_plan,
     build_profile_optimization_plan,
+    load_profile_evaluation_aggregate_json,
     load_profile_evaluation_dataset_jsonl,
     render_profile_evaluation_aggregate_json,
     render_profile_evaluation_aggregate_markdown,
     render_profile_evaluation_dataset_jsonl,
     render_profile_evaluation_dataset_markdown,
+    render_profile_contract_repair_plan_json,
+    render_profile_contract_repair_plan_markdown,
     render_profile_optimization_plan_markdown,
 )
 from .graph import (
@@ -507,6 +511,26 @@ def build_parser() -> argparse.ArgumentParser:
         required=True,
     )
     foundrytk_aggregate_parser.set_defaults(func=run_foundrytk_profile_aggregate)
+
+    foundrytk_repair_plan_parser = foundrytk_subparsers.add_parser(
+        "profile-contract-repair-plan",
+        help="Render a repair plan from public-safe profile aggregate JSON.",
+    )
+    foundrytk_repair_plan_parser.add_argument(
+        "--aggregate",
+        type=Path,
+        required=True,
+        help="Profile evaluation aggregate JSON summary path.",
+    )
+    foundrytk_repair_plan_parser.add_argument("--json-output", type=Path, required=True)
+    foundrytk_repair_plan_parser.add_argument(
+        "--markdown-output",
+        type=Path,
+        required=True,
+    )
+    foundrytk_repair_plan_parser.set_defaults(
+        func=run_foundrytk_profile_contract_repair_plan
+    )
 
     heartbeat_parser = subparsers.add_parser(
         "heartbeat",
@@ -1891,6 +1915,32 @@ def run_foundrytk_profile_aggregate(args: argparse.Namespace) -> int:
     print(f"wrote {args.json_output}")
     print(f"wrote {args.markdown_output}")
     return 0 if aggregate.ok else 1
+
+
+def run_foundrytk_profile_contract_repair_plan(args: argparse.Namespace) -> int:
+    try:
+        aggregate_summary = load_profile_evaluation_aggregate_json(args.aggregate)
+        plan = build_profile_contract_repair_plan(aggregate_summary)
+        json_text = render_profile_contract_repair_plan_json(plan)
+        markdown = render_profile_contract_repair_plan_markdown(plan)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    args.json_output.parent.mkdir(parents=True, exist_ok=True)
+    args.json_output.write_text(json_text, encoding="utf-8")
+    args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+    args.markdown_output.write_text(markdown, encoding="utf-8")
+    print(
+        "rows={rows} valid={valid} weak_cells={weak_cells} recommendation={recommendation}".format(
+            rows=plan.summary.get("row_count", 0),
+            valid=plan.ok,
+            weak_cells=len(plan.summary.get("weak_treatment_cells", [])),
+            recommendation=plan.summary.get("recommendation", ""),
+        )
+    )
+    print(f"wrote {args.json_output}")
+    print(f"wrote {args.markdown_output}")
+    return 0 if plan.ok else 1
 
 
 def run_heartbeat_validate(args: argparse.Namespace) -> int:
