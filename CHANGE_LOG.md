@@ -2302,3 +2302,14 @@ issues, pull requests, and closeout comments.
 - The next empirical step is a matched replicated live battery on repaired
   profile-evidence-review cells before model-lane expansion or FoundryTK
   runtime integration.
+
+## 2026-07-09 - Activated P79 repaired profile-evidence-review battery
+
+- Created branch `feature/p79-repaired-profile-review-battery`.
+- Opened parent issue #507 and child issues #508, #509, and #510 for P79.1
+  through P79.3.
+- Added `planning/phase79_repaired_profile_review_battery.md` to define a
+  48-row repaired-cell matrix across two selected profiles, two overlays,
+  three source-result strata, and four matched review subjects per stratum.
+- Declared a 36-row minimum analyzable threshold and stop rules so later live
+  execution does not treat an underpowered smoke as repaired profile evidence.

@@ -87,6 +87,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P76 Profile evaluation aggregate comparison reports | #491 | `feature/p76-profile-evaluation-aggregate-reports` | Complete |
 | P77 Profile contract repair plan | #496 | `feature/p77-profile-contract-repair-plan` | Complete |
 | P78 Profile evidence review contract repair | #501 | `feature/p78-profile-evidence-review-contract` | Complete |
+| P79 Repaired profile-evidence-review battery design | #507 | `feature/p79-repaired-profile-review-battery` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3793,3 +3794,56 @@ and ticket artifacts from a repaired P75-style manifest using an existing P75
 profile summary as the review subject. The next step should be a matched
 replicated live battery over repaired profile-evidence-review cells, not model
 lane expansion or FoundryTK runtime integration.
+
+## Phase 79: Repaired Profile Evidence Review Battery
+
+Parent issue: #507
+
+Branch: `feature/p79-repaired-profile-review-battery`
+
+Status: active
+
+Goal: design and scaffold a sufficiently replicated repaired
+profile-evidence-review battery before live execution.
+
+Planned scope:
+
+- Define the repaired profile-evidence-review factorial design.
+- Use selected profile, overlay, source-result stratum, and matched review
+  subject as declared factors or blocking variables.
+- Preserve replication before breadth if runtime limits force narrowing.
+- Scaffold run matrix, repaired manifests, and repaired tickets under ignored
+  runtime storage.
+- Keep live execution as a separately gated follow-on until the full matrix
+  and stop rules are ready.
+
+Out of scope:
+
+- Claiming repaired profile behavior before live execution.
+- Model-lane expansion.
+- FoundryTK runtime integration.
+- Running an underpowered smoke and treating it as empirical evidence.
+
+Planned tasks:
+
+- [x] P79.1 Roadmap and planning activation (#508)
+  - [x] Add the P79 planning note.
+  - [x] Update the roadmap tracker and detailed phase section.
+  - [x] Carry forward the P78 validation boundary.
+- [x] P79.2 Repaired-cell factorial design (#509)
+  - [x] Declare fixed factors, blocking variables, and stop rules.
+  - [x] Use a 48-row target matrix:
+        2 profiles * 2 overlays * 3 source-result strata * 4 matched subjects.
+  - [x] Define a 36-row minimum analyzable threshold.
+  - [x] Preserve replication before breadth.
+- [ ] P79.3 Repaired battery artifact scaffold (#510)
+  - [ ] Render ignored runtime matrix JSON and Markdown artifacts.
+  - [ ] Render repaired manifests with pre-existing review subject paths.
+  - [ ] Render repaired profile-evidence-review tickets with the P78 renderer.
+  - [ ] Verify generated artifacts are public-safe and structurally valid.
+
+Activation note: P79 starts from P78's repaired contract. The target is a
+48-row scaffolded matrix, not a minimal smoke. If execution resources later
+force a narrower run, the minimum meaningful repaired-cell decision threshold
+is 36 analyzable rows with at least three source subjects per stratum for every
+profile/overlay pair.
