@@ -93,7 +93,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P82 Health-gated repaired profile-evidence-review battery | #524 | `feature/p82-health-gated-repaired-battery` | Complete |
 | P83 Review-subject access contract repair | #530 | `feature/p83-review-subject-access-contract` | Complete |
 | P84 Review-subject live access probe | #536 | `feature/p84-review-subject-live-access-probe` | Complete |
-| P85 Health-gated repaired profile-evidence-review battery rerun | #542 | `feature/p85-health-gated-repaired-battery-rerun` | Closeout |
+| P85 Health-gated repaired profile-evidence-review battery rerun | #542 | `feature/p85-health-gated-repaired-battery-rerun` | Complete |
+| P86 Dev validation toolchain repair | #549 | `feature/p86-dev-validation-toolchain-repair` | Closeout |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -4210,7 +4211,7 @@ Parent issue: #542
 
 Branch: `feature/p85-health-gated-repaired-battery-rerun`
 
-Status: active
+Status: complete
 
 Goal: run the full health-gated repaired profile-evidence-review battery with
 the P83/P84 declared review-subject access repair included.
@@ -4279,3 +4280,56 @@ result, and 0 blocked results. Compared with the P75 profile-evidence-review
 baseline, accepted rows increased from 2 to 47, blocked rows decreased from 4
 to 0, and needs-supervisor-review rows decreased from 6 to 1. GitHub issue/PR
 closeout proceeds from the resumed session with authenticated `gh` access.
+
+Closeout note: P85 merged through PR #548 at
+`625c26dc72d4263c2d29716965d7387aac05462a`, and parent issue #542 closed on
+merge.
+
+## Phase 86: Dev Validation Toolchain Repair
+
+Parent issue: #549
+
+Branch: `feature/p86-dev-validation-toolchain-repair`
+
+Status: closeout
+
+Goal: make the previously skipped `mypy src` and
+`pre-commit run --all-files` validation gates reproducible and runnable.
+
+Scope:
+
+- Add a reproducible development dependency extra for validation tools.
+- Add a minimal pre-commit configuration for the repository's validation gates.
+- Repair type-checking issues so `mypy src` passes.
+- Verify `pre-commit run --all-files` runs successfully.
+
+Out of scope:
+
+- New workflow features.
+- Live SDK reruns.
+- Model-lane evaluation.
+- Broad refactors unrelated to validation tooling or type checking.
+
+Planned tasks:
+
+- [x] P86.1 Dev dependency contract
+  - [x] Declare validation tools in `pyproject.toml`.
+  - [x] Confirm the active venv has the declared tools.
+- [x] P86.2 Pre-commit configuration
+  - [x] Add a minimal `.pre-commit-config.yaml`.
+  - [x] Confirm `pre-commit run --all-files` invokes the intended checks.
+- [x] P86.3 Type-check repair
+  - [x] Fix or narrowly configure current `mypy src` failures.
+  - [x] Keep runtime behavior unchanged except where a type defect reveals an
+        actual bug.
+- [x] P86.4 Validation and closeout
+  - [x] Run `ruff format src tests`.
+  - [x] Run `ruff check src tests`.
+  - [x] Run `mypy src`.
+  - [x] Run `pytest tests -q`.
+  - [x] Run `pre-commit run --all-files`.
+  - [x] Update roadmap, changelog, issue, and PR state.
+
+Closeout note: P86 added a reproducible `dev` extra, added a focused
+pre-commit configuration, repaired current type-check failures, and verified
+that `mypy src` and `pre-commit run --all-files` pass.

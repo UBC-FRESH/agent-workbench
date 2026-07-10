@@ -81,7 +81,7 @@ def validate_checkpoint_spans(value: Any) -> list[str]:
             errors.append(f"{prefix} must be an object")
             continue
         span_id = item.get("span_id")
-        if not nonempty_string(span_id):
+        if not isinstance(span_id, str) or not span_id.strip():
             errors.append(f"{prefix}.span_id must be a nonempty string")
         elif span_id in seen:
             errors.append(f"{prefix}.span_id is duplicated: {span_id}")

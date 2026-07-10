@@ -2559,3 +2559,27 @@ issues, pull requests, and closeout comments.
   needs-supervisor-review result, and 0 blocked results.
 - Kept the next lane focused on replicated comparison or model-lane evaluation,
   with targeted audit of the remaining needs-supervisor-review row.
+
+## 2026-07-10 - Activated P86 dev validation toolchain repair
+
+- Opened issue #549 and branch `feature/p86-dev-validation-toolchain-repair`.
+- Marked P85 complete after PR #548 merged and parent issue #542 closed.
+- Confirmed that installing `mypy` exposed current type-check failures instead
+  of a clean validation gate.
+- Confirmed that installing `pre-commit` exposed the missing
+  `.pre-commit-config.yaml` repository contract.
+- Started P86 to make the skipped validation gates reproducible and runnable
+  rather than leaving them as local environment caveats.
+
+## 2026-07-10 - Repaired P86 dev validation gates
+
+- Added a `dev` extra in `pyproject.toml` for `github-copilot-sdk`, `mypy`,
+  `pre-commit`, `pytest`, `ruff`, and `types-PyYAML`.
+- Added a focused `.pre-commit-config.yaml` that runs `ruff format --check`,
+  `ruff check`, and `mypy` over the maintained `src` and `tests` validation
+  surfaces.
+- Repaired current `mypy src` failures by narrowing JSON-boundary values,
+  preserving optional SDK runtime imports, and adding a targeted FreshForge
+  missing-import override.
+- Verified `ruff format src tests`, `ruff check src tests`, `mypy src`,
+  `pytest tests -q`, `pre-commit run --all-files`, and `git diff --check`.

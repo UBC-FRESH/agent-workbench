@@ -1540,6 +1540,8 @@ class LiveCopilotSdkAdapter:
         return self.open_session
 
     def _session_kwargs(self, manifest: dict[str, Any]) -> dict[str, Any]:
+        if self.permission_handler is None:
+            raise RuntimeError("SDK permission handler is not loaded")
         sdk = manifest.get("sdk", {})
         kwargs: dict[str, Any] = {
             "on_permission_request": self.permission_handler.approve_all,

@@ -92,10 +92,17 @@ def validate_supervisor_job_contract(data: dict[str, Any]) -> AuthorityValidatio
         if not nonempty_string_list(data.get(field)):
             errors.append(f"{field} must be a nonempty list of strings")
 
-    final_signals = data.get("final_signals")
-    if not nonempty_string_list(final_signals):
+    raw_final_signals = data.get("final_signals")
+    if not (
+        isinstance(raw_final_signals, list)
+        and raw_final_signals
+        and all(
+            isinstance(signal, str) and signal.strip() for signal in raw_final_signals
+        )
+    ):
         errors.append("final_signals must be a nonempty list of strings")
     else:
+        final_signals = raw_final_signals
         unknown = sorted(set(final_signals) - JOB_SIGNALS)
         if unknown:
             errors.append(f"final_signals contains unknown signals: {unknown}")
