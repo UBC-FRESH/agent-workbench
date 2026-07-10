@@ -2279,3 +2279,26 @@ issues, pull requests, and closeout comments.
 - Updated `ROADMAP.md` with P78 as the active next lane from P77 evidence:
   repair profile-evidence-review fixtures and result-auditor-as-primary
   behavior before another matched replicated live SDK battery.
+
+## 2026-07-09 - Completed P78 profile evidence review contract repair
+
+- Added `agent-workbench foundrytk profile-evidence-review-ticket`, which reads
+  an SDK manifest and writes a JSON contract plus Markdown ticket for repaired
+  profile-evidence-review tasks.
+- The repaired contract requires a pre-existing review subject path, rejects
+  missing or private-looking subjects, and rejects subjects that point at
+  current-run output paths.
+- Updated `agent_workbench_run_context` to expose declared artifact paths so
+  selected primary agents can discover the review subject through the
+  constrained tool surface.
+- Updated `agent-workbench-result-auditor` with selected-primary instructions
+  for using Agent Workbench run-context, result-contract, result-writer, and
+  validation tools while preserving read-only and no-GitHub boundaries.
+- Added focused tests for valid, missing-subject, current-run-output subject,
+  private-subject, CLI output, run-context artifact paths, and result-auditor
+  primary-mode profile text.
+- Dogfooded the command on a repaired P75-style manifest under ignored runtime
+  evidence at `runtime/p78_profile_evidence_review_contract/`.
+- The next empirical step is a matched replicated live battery on repaired
+  profile-evidence-review cells before model-lane expansion or FoundryTK
+  runtime integration.

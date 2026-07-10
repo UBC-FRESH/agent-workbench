@@ -70,3 +70,43 @@ self-referential. It cannot prove improved live-agent performance by itself.
 The next empirical step after P78 should be a matched replicated live battery
 on repaired cells before model-lane expansion or FoundryTK runtime integration.
 
+## P78 Outcome
+
+P78 added `agent-workbench foundrytk profile-evidence-review-ticket`. The
+command reads an SDK manifest and writes:
+
+- a JSON profile-evidence-review contract;
+- a Markdown ticket for the selected primary profile.
+
+The repaired contract requires a pre-existing review subject path for
+`profile-evidence-review` tasks. It rejects missing subjects, private-looking
+subject paths, and subjects that point at current-run output paths. The ticket
+separates the review subject from current-run result and blocker outputs and
+includes a rubric for controller health, result validity, and evidence
+sufficiency.
+
+P78 also updated the standard `agent-workbench-result-auditor` profile so it
+knows what to do when it is the selected primary profile: use Agent Workbench
+run-context and result-contract tools when available, write exactly one
+manifest-declared result or blocker with the constrained writer, validate the
+written artifact when possible, and avoid broad search, subagent spawning,
+tracked-file edits, commits, GitHub mutation, or whole-phase closeout claims.
+
+Dogfooding rendered:
+
+- manifest:
+  `runtime/p78_profile_evidence_review_contract/manifests/p78_per_raud_release_repaired_r1.json`;
+- contract:
+  `runtime/p78_profile_evidence_review_contract/contracts/p78_per_raud_release_repaired_r1.json`;
+- ticket:
+  `runtime/p78_profile_evidence_review_contract/tickets/p78_per_raud_release_repaired_r1.md`.
+
+The dogfood contract was valid and used the existing public-safe P75 profile
+summary `runtime/p75_live_overlay_sdk_run_battery/profile_summaries/p75_mca_lsup_debug_r1.md`
+as a pre-existing review subject. Inspection found no personal paths, provider
+URLs, or token-like values in the generated ticket or contract.
+
+The next empirical step should be a matched replicated live battery on repaired
+profile-evidence-review cells. The repaired fixture removes a known
+self-referential contract defect, but it does not by itself prove improved
+result-auditor live performance.

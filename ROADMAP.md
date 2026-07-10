@@ -3755,26 +3755,26 @@ Planned tasks:
   - [x] Update the roadmap tracker and detailed phase section.
   - [x] Define the review-subject input contract and output contract.
   - [x] Preserve the P77 evidence-backed rationale.
-- [ ] P78.2 Profile-evidence-review ticket contract (#503)
-  - [ ] Add code that identifies profile-evidence-review manifests.
-  - [ ] Require a pre-existing review subject path for that task family.
-  - [ ] Render a ticket that separates review subject evidence from current
+- [x] P78.2 Profile-evidence-review ticket contract (#503)
+  - [x] Add code that identifies profile-evidence-review manifests.
+  - [x] Require a pre-existing review subject path for that task family.
+  - [x] Render a ticket that separates review subject evidence from current
         run outputs.
-  - [ ] Add focused tests for valid, missing-subject, unsafe-subject, and CLI
+  - [x] Add focused tests for valid, missing-subject, unsafe-subject, and CLI
         output cases.
-- [ ] P78.3 Result-auditor primary-mode repair (#504)
-  - [ ] Update the standard result-auditor profile for selected-primary use.
-  - [ ] Require primary-mode runs to use Agent Workbench result contract and
+- [x] P78.3 Result-auditor primary-mode repair (#504)
+  - [x] Update the standard result-auditor profile for selected-primary use.
+  - [x] Require primary-mode runs to use Agent Workbench result contract and
         result writer tools when available.
-  - [ ] Preserve read-only, no-GitHub, no-commit, and no-whole-job-completion
+  - [x] Preserve read-only, no-GitHub, no-commit, and no-whole-job-completion
         boundaries.
-  - [ ] Add or update catalog/profile tests as needed.
-- [ ] P78.4 Repaired contract dogfood and closeout (#505)
-  - [ ] Render ignored runtime ticket/contract artifacts from a repaired
+  - [x] Add or update catalog/profile tests as needed.
+- [x] P78.4 Repaired contract dogfood and closeout (#505)
+  - [x] Render ignored runtime ticket/contract artifacts from a repaired
         P75-style manifest with a pre-existing review subject.
-  - [ ] Inspect generated artifacts for public-safe content and decision
+  - [x] Inspect generated artifacts for public-safe content and decision
         usefulness.
-  - [ ] Update roadmap/changelog/planning with the resulting next-lane
+  - [x] Update roadmap/changelog/planning with the resulting next-lane
         recommendation.
   - [ ] Close out through normal issue/PR hygiene.
 
@@ -3782,3 +3782,14 @@ Activation note: P78 starts from P77's repair-plan recommendation. The target
 is not more sample volume yet; it is removing a known self-referential fixture
 defect so the next matched replicated live battery measures profile behavior
 rather than an avoidable task-contract ambiguity.
+
+Completion note: P78 added
+`agent-workbench foundrytk profile-evidence-review-ticket`, a repaired
+manifest-backed ticket renderer that requires a pre-existing review subject for
+`profile-evidence-review` tasks and separates that subject from current-run
+outputs. It also updated `agent-workbench-result-auditor` with explicit
+selected-primary behavior. Dogfooding produced valid ignored runtime contract
+and ticket artifacts from a repaired P75-style manifest using an existing P75
+profile summary as the review subject. The next step should be a matched
+replicated live battery over repaired profile-evidence-review cells, not model
+lane expansion or FoundryTK runtime integration.
