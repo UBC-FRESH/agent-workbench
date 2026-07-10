@@ -87,7 +87,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P76 Profile evaluation aggregate comparison reports | #491 | `feature/p76-profile-evaluation-aggregate-reports` | Complete |
 | P77 Profile contract repair plan | #496 | `feature/p77-profile-contract-repair-plan` | Complete |
 | P78 Profile evidence review contract repair | #501 | `feature/p78-profile-evidence-review-contract` | Complete |
-| P79 Repaired profile-evidence-review battery design | #507 | `feature/p79-repaired-profile-review-battery` | Active |
+| P79 Repaired profile-evidence-review battery design | #507 | `feature/p79-repaired-profile-review-battery` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -3801,7 +3801,7 @@ Parent issue: #507
 
 Branch: `feature/p79-repaired-profile-review-battery`
 
-Status: active
+Status: complete
 
 Goal: design and scaffold a sufficiently replicated repaired
 profile-evidence-review battery before live execution.
