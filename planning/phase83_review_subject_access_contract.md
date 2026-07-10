@@ -52,6 +52,31 @@ The repaired interface must prove:
 - P83.3: Dogfood review-subject access (#533).
 - P83.4: Close out P83 and decide the next lane (#534).
 
+## Outcome
+
+P83 added `agent_workbench_review_subject` as the declared review-subject
+resolver/reader for SDK profile-evidence-review tasks. The tool reports the
+declared path, resolved public-safe path, allowed root, subject kind, bounded
+content, truncation state, and validation errors without requiring workers to
+search the filesystem.
+
+The repaired contract rejects missing subjects, private-looking declared paths,
+current-run outputs, content with private-looking values, and runtime-manifest
+escapes outside the nearest `runtime` root. It still permits the required
+sibling-runtime access pattern used by P82 manifests to read P75 profile-summary
+subjects.
+
+Dogfood evidence under ignored runtime storage showed:
+
+- fixture subject read: `ok=true`, `allowed_root=runtime`;
+- real P82 manifest to P75 profile-summary read: `ok=true`;
+- real declared path:
+  `../../p75_live_overlay_sdk_run_battery/profile_summaries/p75_mca_lsup_debug_r1.md`;
+- real resolved path:
+  `runtime/p75_live_overlay_sdk_run_battery/profile_summaries/p75_mca_lsup_debug_r1.md`;
+- real allowed root: `runtime`;
+- real content was read without truncation or validation errors.
+
 ## Next-Lane Rule
 
 If P83 proves that workers can read declared review subjects through the
@@ -59,3 +84,8 @@ repaired interface, the next lane should be a small live access probe before
 another health-gated repaired battery. If P83 cannot prove deterministic access,
 repair manifest path semantics or runtime materialization before spending live
 SDK runs.
+
+P83 proved deterministic access for fixture and real P75 subjects. The next lane
+should therefore be a small live SDK access probe that asks one
+profile-evidence-review worker to use `agent_workbench_review_subject` before
+spending another full repaired battery.

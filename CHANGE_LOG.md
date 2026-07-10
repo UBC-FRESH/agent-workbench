@@ -2435,3 +2435,24 @@ issues, pull requests, and closeout comments.
   dogfood requirements.
 - Recorded that P83 should repair access/materialization semantics before
   another repaired profile-evidence-review battery.
+
+## 2026-07-10 - Completed P83 review-subject access repair
+
+- Added `agent_workbench_review_subject` as a Copilot SDK custom tool for
+  resolving and reading the declared profile-evidence-review subject without
+  filesystem search.
+- Extended run-context and result-contract payloads so workers can discover the
+  declared review subject and the read tool alongside existing write/validate
+  tools.
+- Updated profile-evidence-review tickets and agent instructions to prefer the
+  declared review-subject tool when it is available.
+- Added focused tests for successful reads, missing subjects, current-run output
+  rejection, private-looking path rejection, bounded content, sibling-runtime
+  reads, and runtime escape rejection.
+- Dogfooded the repair against a deterministic fixture and a real P82 manifest
+  pointing to the P75 profile summary
+  `runtime/p75_live_overlay_sdk_run_battery/profile_summaries/p75_mca_lsup_debug_r1.md`.
+- The real dogfood read returned `ok=true`, `allowed_root=runtime`, no
+  validation errors, and untruncated bounded content.
+- Recorded the next lane as a small live SDK access probe before spending
+  another full health-gated repaired battery.

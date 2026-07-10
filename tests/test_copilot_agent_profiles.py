@@ -22,6 +22,7 @@ from agent_workbench.copilot_agent_profiles import (
 from agent_workbench.copilot_sdk_tools import (
     AGENT_WORKBENCH_TOOL_NAMES,
     result_contract_payload,
+    review_subject_payload,
     run_context_payload,
     validate_agent_workbench_tool_names,
     validate_result_payload,
@@ -254,6 +255,12 @@ def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
         "Final status: accepted-candidate\n\nSummary: done\n",
         encoding="utf-8",
     )
+    subject = tmp_path / "profile_summaries" / "source.md"
+    subject.parent.mkdir()
+    subject.write_text(
+        "# Copilot SDK Profile Run Evidence\n\n- controller_health: `healthy`\n",
+        encoding="utf-8",
+    )
     manifest = {
         "run_id": "p72-test-run",
         "phase": "P72",
@@ -262,7 +269,11 @@ def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
         "target_project": "agent-workbench",
         "target_task": "tool tests",
         "workspace_root": ".",
-        "paths": {"result": "result.md", "blocker": "blocker.md"},
+        "paths": {
+            "result": "result.md",
+            "blocker": "blocker.md",
+            "review_subject": "profile_summaries/source.md",
+        },
         "control": {"stop_condition": "result or blocker"},
     }
 
@@ -271,9 +282,17 @@ def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
     context = run_context_payload(manifest)
     assert context["run_id"] == "p72-test-run"
     assert context["artifact_paths"]["result"] == "result.md"
+    assert context["review_subject"]["read_tool"] == "agent_workbench_review_subject"
     contract = result_contract_payload(manifest)
     assert "accepted-candidate" in contract["required_final_statuses"]
+    assert contract["review_subject_tool"] == "agent_workbench_review_subject"
     assert contract["write_tool"] == "agent_workbench_write_result"
+    subject_payload = review_subject_payload(manifest, base=tmp_path)
+    assert subject_payload["ok"], subject_payload["errors"]
+    assert subject_payload["declared_path"] == "profile_summaries/source.md"
+    assert subject_payload["kind"] == "profile-run-summary"
+    assert subject_payload["resolved_path"] == "profile_summaries/source.md"
+    assert "controller_health" in subject_payload["content"]
     validation = validate_result_payload(
         manifest,
         base=tmp_path,
@@ -288,6 +307,91 @@ def test_agent_workbench_tool_payloads_and_validation(tmp_path: Path) -> None:
     )
     assert not blocked["ok"]
     assert "path is not the manifest result or blocker path" in blocked["errors"]
+
+
+def test_review_subject_tool_rejects_missing_subject(tmp_path: Path) -> None:
+    manifest = {
+        "paths": {"review_subject": "profile_summaries/missing.md"},
+    }
+
+    payload = review_subject_payload(manifest, base=tmp_path)
+
+    assert not payload["ok"]
+    assert "review subject does not exist" in payload["errors"]
+
+
+def test_review_subject_tool_rejects_current_run_output(tmp_path: Path) -> None:
+    result = tmp_path / "result.md"
+    result.write_text("Final status: accepted-candidate\n", encoding="utf-8")
+    manifest = {
+        "paths": {
+            "result": "result.md",
+            "blocker": "blocker.md",
+            "review_subject": "result.md",
+        },
+    }
+
+    payload = review_subject_payload(manifest, base=tmp_path)
+
+    assert not payload["ok"]
+    assert "review subject points at current-run output" in payload["errors"]
+
+
+def test_review_subject_tool_rejects_private_path(tmp_path: Path) -> None:
+    manifest = {
+        "paths": {"review_subject": r"C:\Users\somebody\source.md"},
+    }
+
+    payload = review_subject_payload(manifest, base=tmp_path)
+
+    assert not payload["ok"]
+    assert "review subject path is private-looking" in payload["errors"]
+
+
+def test_review_subject_tool_allows_runtime_sibling_subject(tmp_path: Path) -> None:
+    manifest_base = tmp_path / "runtime" / "current" / "manifests"
+    subject = tmp_path / "runtime" / "previous" / "profile_summaries" / "source.md"
+    subject.parent.mkdir(parents=True)
+    subject.write_text("controller_health: healthy\n", encoding="utf-8")
+    manifest = {
+        "paths": {"review_subject": "../../previous/profile_summaries/source.md"},
+    }
+
+    payload = review_subject_payload(manifest, base=manifest_base)
+
+    assert payload["ok"], payload["errors"]
+    assert payload["allowed_root"] == "runtime"
+    assert payload["resolved_path"] == "source.md"
+
+
+def test_review_subject_tool_rejects_runtime_escape(tmp_path: Path) -> None:
+    manifest_base = tmp_path / "runtime" / "current" / "manifests"
+    subject = tmp_path / "outside.md"
+    subject.write_text("outside runtime\n", encoding="utf-8")
+    manifest = {
+        "paths": {"review_subject": "../../../outside.md"},
+    }
+
+    payload = review_subject_payload(manifest, base=manifest_base)
+
+    assert not payload["ok"]
+    assert "review subject is outside allowed root" in payload["errors"]
+
+
+def test_review_subject_tool_returns_bounded_content(tmp_path: Path) -> None:
+    subject = tmp_path / "profile_summaries" / "source.md"
+    subject.parent.mkdir()
+    subject.write_text("a" * 14000, encoding="utf-8")
+    manifest = {
+        "paths": {"review_subject": "profile_summaries/source.md"},
+    }
+
+    payload = review_subject_payload(manifest, base=tmp_path, max_chars=100)
+
+    assert payload["ok"], payload["errors"]
+    assert payload["content_chars"] == 100
+    assert payload["truncated"] is True
+    assert payload["content"] == "a" * 100
 
 
 def test_agent_workbench_write_result_tool_is_path_constrained(tmp_path: Path) -> None:
