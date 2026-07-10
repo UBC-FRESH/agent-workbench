@@ -92,6 +92,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P81 Controller/session health gate for live SDK batteries | #518 | `feature/p81-controller-session-health-gate` | Complete |
 | P82 Health-gated repaired profile-evidence-review battery | #524 | `feature/p82-health-gated-repaired-battery` | Complete |
 | P83 Review-subject access contract repair | #530 | `feature/p83-review-subject-access-contract` | Complete |
+| P84 Review-subject live access probe | #536 | `feature/p84-review-subject-live-access-probe` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -4144,3 +4145,59 @@ Closeout note: P83 added the `agent_workbench_review_subject` SDK tool and
 proved it can read both a deterministic fixture subject and a real P75
 profile-summary subject declared from a P82 manifest. The next lane is a small
 live SDK access probe before another health-gated repaired battery.
+
+## Phase 84: Review-Subject Live Access Probe
+
+Parent issue: #536
+
+Branch: `feature/p84-review-subject-live-access-probe`
+
+Status: active
+
+Goal: run one small live SDK probe that asks a profile-evidence-review worker to
+use `agent_workbench_review_subject` before spending another health-gated
+repaired battery.
+
+Planned scope:
+
+- Build one public-safe live probe manifest from existing P82/P75 evidence.
+- Preserve the P83 review-subject access contract in the run context and result
+  contract.
+- Require the worker to use the declared review-subject tool when available.
+- Collect result or blocker evidence from exactly one live SDK worker run.
+- Render a concise public-safe probe summary under ignored runtime storage.
+- Decide whether the next lane can return to a repaired battery or needs
+  another targeted access-contract repair.
+
+Out of scope:
+
+- Rerunning the 48-row repaired battery.
+- Model-lane expansion.
+- Publishing raw transcripts, provider URLs, headers, credentials, personal
+  paths, or raw worker blocker text.
+- Treating a single probe as repaired profile-evidence-review behavior evidence.
+
+Planned tasks:
+
+- [ ] P84.1 Live access probe contract (#539)
+  - [ ] Add a planning note tying P84 to the P83 closeout decision.
+  - [ ] Define live probe success and stop criteria.
+  - [ ] Record the public-safety boundary and evidence artifacts.
+- [ ] P84.2 Live probe manifest and ticket (#540)
+  - [ ] Select one real P82 manifest whose declared subject points to P75.
+  - [ ] Generate P84 manifest, contract, and ticket artifacts.
+  - [ ] Validate that the manifest exposes `agent_workbench_review_subject`.
+- [ ] P84.3 Live SDK access probe execution (#537)
+  - [ ] Run one live SDK profile-evidence-review probe.
+  - [ ] Monitor and collect result or blocker artifacts.
+  - [ ] Evaluate whether the worker consumed the declared access path.
+- [ ] P84.4 Closeout and next-lane decision (#538)
+  - [ ] Run focused validation.
+  - [ ] Close child issues with evidence comments.
+  - [ ] Open and merge the P84 PR.
+  - [ ] Record whether the next lane is a repaired battery or another targeted
+        access repair.
+
+Activation note: P84 is a live access probe only. It protects the repaired
+battery design by checking worker use of the declared review-subject tool before
+spending another full matrix.

@@ -2456,3 +2456,14 @@ issues, pull requests, and closeout comments.
   validation errors, and untruncated bounded content.
 - Recorded the next lane as a small live SDK access probe before spending
   another full health-gated repaired battery.
+
+## 2026-07-10 - Activated P84 review-subject live access probe
+
+- Created branch `feature/p84-review-subject-live-access-probe`.
+- Opened parent issue #536 and child issues #539, #540, #537, and #538 for
+  P84.1 through P84.4.
+- Added `planning/phase84_review_subject_live_access_probe.md` to define the
+  one-run live access probe, success criteria, stop rules, and public-safety
+  boundary.
+- Recorded that P84 should verify live worker use of
+  `agent_workbench_review_subject` before another full repaired battery.
