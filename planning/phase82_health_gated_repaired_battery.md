@@ -75,3 +75,46 @@ recommendations, and repo-relative artifact paths.
 - Do not claim repaired profile-evidence-review behavior from fewer than 36
   analyzable rows.
 - Do not silently narrow the matrix after controller/session health failures.
+
+## Outcome
+
+P82 scaffolded and validated a fresh ignored runtime under
+`runtime/p82_health_gated_repaired_battery/`.
+
+Scaffold validation:
+
+- generated 48 repaired matrix manifests, tickets, and contracts;
+- preserved all 12 profile/overlay/source-stratum cells with 4 rows per cell;
+- validated all 48 matrix manifests before live execution;
+- validated the separate live health-probe manifest; and
+- confirmed the declared review-subject artifacts resolve from each generated
+  manifest's base path.
+
+The live health preflight passed:
+
+- health-gate decision: `go`;
+- controller health: 1 healthy probe row;
+- repeated error signatures: none; and
+- result status: `accepted-candidate`.
+
+P82 then attempted all 48 repaired battery rows. Full-battery evidence showed:
+
+- attempted rows: 48;
+- analyzable result/blocker artifacts: 40;
+- missing result/blocker artifacts: 8;
+- controller health: 40 healthy, 8 unknown;
+- repeated controller/provider error signatures: none;
+- final status counts: 40 blocked, 8 missing; and
+- balanced 3-per-cell threshold: not met, with minimum cell coverage of 2.
+
+The rendered P82 aggregate and repair plan recommend repair before model-lane
+expansion. The dominant finding is not provider quota exhaustion: P82's full
+battery reached the provider, but the repaired profile-evidence-review task
+still failed because workers could not reliably use the declared review-subject
+artifact path through the SDK run context. The source artifacts exist from
+manifest-relative resolution, so the next lane should repair review-subject
+path/materialization or tool-access semantics before another repaired battery.
+
+P82 does not support a repaired profile-evidence-review behavior claim because
+the balanced analyzable threshold failed and every analyzable row wrote a
+blocked artifact.

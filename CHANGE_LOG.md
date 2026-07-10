@@ -2402,3 +2402,25 @@ issues, pull requests, and closeout comments.
 - Recorded that P82 should execute the full repaired battery only after a live
   P81 health gate passes and should not replace the battery with another
   underpowered smoke.
+
+## 2026-07-10 - Completed P82 health-gated repaired battery
+
+- Generated a fresh ignored P82 runtime at
+  `runtime/p82_health_gated_repaired_battery/` from the P79 repaired 48-row
+  matrix.
+- Validated all 48 generated matrix manifests plus the separate live health
+  probe manifest before live execution.
+- The live health preflight passed with `decision=go`, one healthy probe row,
+  no repeated error signatures, and an `accepted-candidate` result.
+- Executed all 48 repaired battery rows after the health gate passed.
+- Rendered monitor summaries, compact transcripts, profile summaries, the
+  P82 full-battery health-gate report, the profile-evaluation dataset,
+  aggregate report, contract-repair plan, and execution summary under ignored
+  runtime evidence.
+- Full-battery evidence showed 40 analyzable result/blocker artifacts, 8
+  missing artifacts from quiet-stall/unknown controller rows, no repeated
+  controller/provider error signatures, and 40 blocked final statuses.
+- The balanced 3-per-cell threshold was not met; minimum cell coverage was 2,
+  so P82 makes no repaired profile-evidence-review behavior claim.
+- Recorded the next lane as review-subject path/materialization or SDK
+  run-context access repair before another repaired battery.

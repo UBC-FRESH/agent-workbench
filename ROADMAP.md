@@ -90,7 +90,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P79 Repaired profile-evidence-review battery design | #507 | `feature/p79-repaired-profile-review-battery` | Complete |
 | P80 Repaired profile-evidence-review battery execution | #512 | `feature/p80-repaired-profile-review-execution` | Complete |
 | P81 Controller/session health gate for live SDK batteries | #518 | `feature/p81-controller-session-health-gate` | Complete |
-| P82 Health-gated repaired profile-evidence-review battery | #524 | `feature/p82-health-gated-repaired-battery` | Active |
+| P82 Health-gated repaired profile-evidence-review battery | #524 | `feature/p82-health-gated-repaired-battery` | Complete |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -4008,7 +4008,7 @@ Parent issue: #524
 
 Branch: `feature/p82-health-gated-repaired-battery`
 
-Status: active
+Status: completed
 
 Goal: execute the full repaired profile-evidence-review battery only after a
 live P81 health gate passes.
@@ -4037,40 +4037,49 @@ Out of scope:
 
 Planned tasks:
 
-- [ ] P82.1 Scaffold and validate execution runtime (#525)
-  - [ ] Create a fresh ignored P82 runtime from the P79 repaired 48-row matrix.
-  - [ ] Update phase, run IDs, governing issue, child issue, seed, paths, and
+- [x] P82.1 Scaffold and validate execution runtime (#525)
+  - [x] Create a fresh ignored P82 runtime from the P79 repaired 48-row matrix.
+  - [x] Update phase, run IDs, governing issue, child issue, seed, paths, and
         SDK homes for P82.
-  - [ ] Preserve 48 rows across the declared profile, overlay, and stratum
+  - [x] Preserve 48 rows across the declared profile, overlay, and stratum
         factors.
-  - [ ] Validate generated manifests before any live provider call.
-  - [ ] Inspect generated scaffold artifacts for public-safety issues.
-- [ ] P82.2 Live health preflight (#526)
-  - [ ] Run a dedicated live SDK health probe that is not profile behavior
+  - [x] Validate generated manifests before any live provider call.
+  - [x] Inspect generated scaffold artifacts for public-safety issues.
+- [x] P82.2 Live health preflight (#526)
+  - [x] Run a dedicated live SDK health probe that is not profile behavior
         evidence.
-  - [ ] Render status, monitor, transcript, and profile summary artifacts.
-  - [ ] Run `copilot-sdk health-gate` over the probe evidence.
-  - [ ] Continue to the full battery only if the gate returns `go`.
-  - [ ] If the gate returns `no-go`, stop and record controller/session health
+  - [x] Render status, monitor, transcript, and profile summary artifacts.
+  - [x] Run `copilot-sdk health-gate` over the probe evidence.
+  - [x] Continue to the full battery only if the gate returns `go`.
+  - [x] If the gate returns `no-go`, stop and record controller/session health
         evidence without weakening the battery design.
-- [ ] P82.3 Full repaired 48-row battery execution (#527)
-  - [ ] Execute all 48 repaired matrix rows only after health preflight passes.
-  - [ ] Capture SDK events, status summaries, monitor summaries, compact
+- [x] P82.3 Full repaired 48-row battery execution (#527)
+  - [x] Execute all 48 repaired matrix rows only after health preflight passes.
+  - [x] Capture SDK events, status summaries, monitor summaries, compact
         transcripts, profile summaries, and result/blocker artifacts.
-  - [ ] Apply repeated controller/provider stop rules without silently
+  - [x] Apply repeated controller/provider stop rules without silently
         narrowing the design.
-  - [ ] Preserve the 36-row minimum analyzable threshold with balanced stratum
+  - [x] Preserve the 36-row minimum analyzable threshold with balanced stratum
         coverage before any repaired-profile behavior claim.
-- [ ] P82.4 Aggregate evidence and next-lane decision (#528)
-  - [ ] Render the P74/P76-compatible profile-evaluation dataset, aggregate
+- [x] P82.4 Aggregate evidence and next-lane decision (#528)
+  - [x] Render the P74/P76-compatible profile-evaluation dataset, aggregate
         summary, and P77-style repair plan when enough execution evidence
         exists.
-  - [ ] Keep controller/session health separate from worker result validity.
-  - [ ] Compare repaired profile-evidence-review result validity against the
+  - [x] Keep controller/session health separate from worker result validity.
+  - [x] Compare repaired profile-evidence-review result validity against the
         P75 baseline only when the 36-row threshold is met.
-  - [ ] Decide whether the next lane is model expansion, targeted repair, or
+  - [x] Decide whether the next lane is model expansion, targeted repair, or
         continued controller/session health repair.
 
 Activation note: P82 is a health-gated full-battery execution phase. The live
 health probe answers whether it is worth spending the full 48-row battery now;
 it is not a substitute empirical sample.
+
+Completion note: P82 passed the live health preflight and attempted all 48
+repaired battery rows. The full battery produced 40 analyzable result/blocker
+artifacts, 8 missing artifacts from quiet-stall/unknown controller rows, no
+repeated controller/provider error signatures, and 40 blocked final statuses.
+The balanced 3-per-cell threshold was not met because minimum cell coverage was
+2. P82 therefore makes no repaired profile-evidence-review behavior claim. The
+next lane should repair review-subject path/materialization or SDK run-context
+access before another repaired battery.
