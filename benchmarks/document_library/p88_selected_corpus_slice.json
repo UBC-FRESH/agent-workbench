@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "phase": "P88",
+  "slice_id": "p88_tsa23_2012_data_package_pages_001_022",
+  "status": "selected_for_p89_p92",
+  "selection_date": "2026-07-10",
+  "selection_reason": "This slice preserves the P63 diagnostic source scope while allowing P89 to repair ticket shape, chunk-ID handling, and JSONL validation before any live repeat.",
+  "corpus": {
+    "corpus_id": "bc_tsr_tsa23_public_1995_present",
+    "registry": "benchmarks/document_library/tsa23_tsr/corpus_registry.json",
+    "management_unit": "100 Mile House TSA",
+    "jurisdiction": "British Columbia",
+    "source_provenance": "FEMIC TSR registry generated from public BC Ministry of Forests Timber Supply Review document listings."
+  },
+  "document": {
+    "document_id": "tsa23_2012_23tsdp12",
+    "title": "23tsdp12",
+    "document_type": "data_package",
+    "cycle_year": 2012,
+    "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2012/Data_Package/23tsdp12.pdf",
+    "source_sha256": "b334d15b71824c91460ad59bc0cc1ed5a7bed7efea4dd4d22eba0279e26cfedf",
+    "byte_size": 657000,
+    "tracked_chunk_manifest": "benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23tsdp12.json",
+    "runtime_pdf_cache_policy": "raw PDF remains ignored runtime material or target-project-managed data"
+  },
+  "selected_scope": {
+    "page_start": 1,
+    "page_end": 22,
+    "selected_chunk_count": 3,
+    "total_tracked_text_char_count": 58640,
+    "chunk_ids": [
+      "tsa23_2012_23tsdp12::pages_001_008",
+      "tsa23_2012_23tsdp12::pages_008_015",
+      "tsa23_2012_23tsdp12::pages_015_022"
+    ],
+    "chunks": [
+      {
+        "chunk_id": "tsa23_2012_23tsdp12::pages_001_008",
+        "page_start": 1,
+        "page_end": 8,
+        "text_char_count": 21045,
+        "text_sha256": "8ed2855531ad2ce126bc6b8c2ce4c6ca600d73b48fe8c9d7a4bff2eb0d0ec665"
+      },
+      {
+        "chunk_id": "tsa23_2012_23tsdp12::pages_008_015",
+        "page_start": 8,
+        "page_end": 15,
+        "text_char_count": 18889,
+        "text_sha256": "9157a489d13d3862cc9264d6bbb1c0daeb74b2b802552021ade9c554f0151ba1"
+      },
+      {
+        "chunk_id": "tsa23_2012_23tsdp12::pages_015_022",
+        "page_start": 15,
+        "page_end": 22,
+        "text_char_count": 18706,
+        "text_sha256": "a12a88d3be0e2f210796f251c6a6e44fc9e07543fdfcd9f47722a933701a797e"
+      }
+    ]
+  },
+  "p63_reference": {
+    "plan": "benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_plan.json",
+    "budget": "benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_budget.json",
+    "execution_summary": "benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_execution_summary.json",
+    "observed_candidate_records": 40,
+    "valid_chunk_records": 39,
+    "invalid_chunk_id_records": 1,
+    "malformed_lines": 2,
+    "observed_error_kinds": [
+      "provider_524_model_call_failure"
+    ],
+    "final_decision": "stop_after_single_attempt_model_call_failure"
+  },
+  "budget_boundary": {
+    "p88_live_execution_allowed": false,
+    "p89_live_execution_allowed": false,
+    "first_possible_live_phase": "P92",
+    "required_before_any_live_run": [
+      "P89 recipe-v2 dry-run materialization passes",
+      "explicit chunk-ID enum is present in every generated ticket",
+      "deterministic JSONL validation and repair paths are defined",
+      "P90 source-anchored repair/audit packet is available",
+      "P91 reporting-worker decision packet is available",
+      "new or amended budget declaration is tracked and reviewed",
+      "one named model/provider lane is selected",
+      "runtime raw text chunks are confirmed ignored"
+    ],
+    "default_max_live_attempts": 1,
+    "direct_supervisor_baseline_allowed": false,
+    "direct_supervisor_baseline_gate": "only after a quality-valid delegated candidate exists"
+  },
+  "stop_rules": [
+    "stop on provider or SDK model-call failure",
+    "stop on malformed or truncated JSONL above the deterministic repair threshold",
+    "stop on any unknown chunk ID after deterministic repair",
+    "stop on missing token spans",
+    "stop on budget exceedance",
+    "stop before any broader page span, second attempt, added model lane, or direct-supervisor baseline without maintainer approval"
+  ],
+  "p89_handoff": {
+    "ticket_shape": "smaller section-level tickets, not the P63 all-in-one shape",
+    "chunk_id_enum": [
+      "tsa23_2012_23tsdp12::pages_001_008",
+      "tsa23_2012_23tsdp12::pages_008_015",
+      "tsa23_2012_23tsdp12::pages_015_022"
+    ],
+    "required_outputs": [
+      "dry-run manifests",
+      "section-level worker tickets",
+      "deterministic JSONL validation report",
+      "deterministic repair report or explicit no-repair-needed result"
+    ],
+    "not_authorized": [
+      "live worker execution",
+      "direct-supervisor baseline",
+      "full 2012 cycle expansion",
+      "full TSA23 corpus expansion"
+    ]
+  },
+  "public_safety": {
+    "raw_documents_tracked": false,
+    "raw_text_tracked": false,
+    "raw_prompts_tracked": false,
+    "raw_worker_outputs_tracked": false,
+    "provider_urls_or_headers_tracked": false,
+    "personal_paths_tracked": false
+  }
+}

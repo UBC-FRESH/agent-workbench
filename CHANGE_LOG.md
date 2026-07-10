@@ -2604,3 +2604,19 @@ issues, pull requests, and closeout comments.
 - Verified the planning-only change with `ruff format src tests`, `ruff check
   src tests`, `mypy src`, `pytest tests -q`, `pre-commit run --all-files`, and
   `git diff --check`.
+
+## 2026-07-10 - Selected P88 real-corpus benchmark slice
+
+- Created P88 branch `feature/p88-real-corpus-benchmark-registry`.
+- Opened P88 child issues #558 through #561 for candidate registry,
+  first-slice selection, budget/stop-rule record, and closeout handoff.
+- Added `planning/phase88_real_corpus_benchmark_registry.md`.
+- Added `benchmarks/document_library/p88_candidate_corpus_registry.json` and
+  `benchmarks/document_library/p88_selected_corpus_slice.json`.
+- Selected `p88_tsa23_2012_data_package_pages_001_022`, preserving the P63
+  source scope: `tsa23_2012_23tsdp12` pages 1-22 across three tracked chunks.
+- Deferred the full 2012 latest-cycle mini-corpus, full 1995-present TSA23
+  registry, and MP11-style repair-prepass seed until recipe v2 and audit-loop
+  gates are ready.
+- Recorded that P88 and P89 do not authorize live model execution; the first
+  possible live run remains P92 after P89-P91 gates are satisfied.
