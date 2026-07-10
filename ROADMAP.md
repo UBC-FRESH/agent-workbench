@@ -95,8 +95,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P84 Review-subject live access probe | #536 | `feature/p84-review-subject-live-access-probe` | Complete |
 | P85 Health-gated repaired profile-evidence-review battery rerun | #542 | `feature/p85-health-gated-repaired-battery-rerun` | Complete |
 | P86 Dev validation toolchain repair | #549 | `feature/p86-dev-validation-toolchain-repair` | Complete |
-| P87 Real-project ROI roadmap reset | #551 | `feature/p87-real-project-roi-roadmap-reset` | Closeout |
-| P88 Real-corpus benchmark registry | #552 | `feature/p88-real-corpus-benchmark-registry` | Planned |
+| P87 Real-project ROI roadmap reset | #551 | `feature/p87-real-project-roi-roadmap-reset` | Complete |
+| P88 Real-corpus benchmark registry | #552 | `feature/p88-real-corpus-benchmark-registry` | Closeout |
 | P89 Document-indexing recipe v2 | #553 | `feature/p89-document-indexing-recipe-v2` | Planned |
 | P90 Source-anchored repair and audit loop | #554 | `feature/p90-source-anchored-repair-audit` | Planned |
 | P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
@@ -4356,7 +4356,7 @@ Parent issue: #551
 
 Branch: `feature/p87-real-project-roi-roadmap-reset`
 
-Status: closeout
+Status: complete
 
 Goal: reset the Agent Workbench roadmap around real-project ROI and make
 P87-P92 the next detailed tranche.
@@ -4404,7 +4404,9 @@ P87-P92 planning note, opened P87-P92 parent issues, marked P86 complete, and
 parked profile/model batteries unless they answer a direct real-project ROI
 question. Validation passed with `ruff format src tests`, `ruff check src
 tests`, `mypy src`, `pytest tests -q`, `pre-commit run --all-files`, and
-`git diff --check`.
+`git diff --check`. P87 merged through PR #557 at
+`47dd779cad8c6c2dd9e7b745baf47d6de2f18924`, and parent issue #551 closed on
+merge.
 
 ## Phase 88: Real-Corpus Benchmark Registry
 
@@ -4412,7 +4414,7 @@ Parent issue: #552
 
 Branch: `feature/p88-real-corpus-benchmark-registry`
 
-Status: planned
+Status: closeout
 
 Goal: define the real-corpus benchmark registry for the real-project ROI
 tranche.
@@ -4433,12 +4435,47 @@ Out of scope:
 - Expanding to multiple corpora before the first slice is selected.
 - Creating a production index.
 
-Activation tasks:
+Completed tasks:
 
-- [ ] P88.1 Candidate corpus registry.
-- [ ] P88.2 First-slice selection.
-- [ ] P88.3 Budget and stop-rule record.
-- [ ] P88.4 Registry closeout and P89 handoff.
+- [x] P88.1 Candidate corpus registry (#558)
+  - [x] Compare candidate public technical corpus slices by readiness,
+        downstream value, risk, and audit burden.
+  - [x] Track a public-safe candidate registry.
+  - [x] Keep raw documents, raw text, prompts, and worker outputs out of
+        tracked files.
+- [x] P88.2 First-slice selection (#559)
+  - [x] Select exactly one bounded corpus slice.
+  - [x] Record source provenance, document ID, source hash, page/chunk scope,
+        and existing evidence.
+  - [x] Explain why broader or alternate slices are deferred.
+- [x] P88.3 Budget and stop-rule record (#560)
+  - [x] Define what later phases must provide before any live run.
+  - [x] Preserve the P63 single-attempt lesson.
+  - [x] Require one model/provider lane, one bounded corpus slice, hard stop
+        rules, and no direct-supervisor baseline until a quality-valid
+        delegated candidate exists.
+- [x] P88.4 Registry closeout and P89 handoff (#561)
+  - [x] Update roadmap, changelog, planning note, parent/child issue state, and
+        PR state.
+  - [x] Run full validation gates.
+  - [x] Record the P89 handoff constraints from P88.
+
+P88 selected `p88_tsa23_2012_data_package_pages_001_022`: the 2012
+100 Mile House TSA data package `tsa23_2012_23tsdp12`, pages 1-22, represented
+by the three tracked chunks already used by P63. This preserves source-scope
+comparability while requiring P89 to change execution shape before any live
+repeat.
+
+Tracked P88 artifacts:
+
+- `planning/phase88_real_corpus_benchmark_registry.md`;
+- `benchmarks/document_library/p88_candidate_corpus_registry.json`; and
+- `benchmarks/document_library/p88_selected_corpus_slice.json`.
+
+P88 does not authorize live model execution. P89 must stay dry-run and
+materialization-only: section-level tickets, explicit chunk-ID enum,
+deterministic JSONL validation, deterministic repair where possible, and no
+live worker call.
 
 ## Phase 89: Document-Indexing Recipe V2
 
