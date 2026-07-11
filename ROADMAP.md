@@ -98,8 +98,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P87 Real-project ROI roadmap reset | #551 | `feature/p87-real-project-roi-roadmap-reset` | Complete |
 | P88 Real-corpus benchmark registry | #552 | `feature/p88-real-corpus-benchmark-registry` | Closeout |
 | P89 Document-indexing recipe v2 | #553 | `feature/p89-document-indexing-recipe-v2` | Closeout |
-| P90 Full-document candidate extraction run | #554 | `feature/p90-full-document-candidate-extraction` | Active |
-| P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
+| P90 Full-document candidate extraction run | #554 | `feature/p90-full-document-candidate-extraction` | Complete |
+| P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Complete |
 | P92 Whole-document supervisor pilot | #556 | `feature/p92-whole-document-supervisor-pilot` | Closeout |
 | P93 Second public corpus application | #576 | `feature/p93-second-public-corpus-application` | Complete |
 | P94 Project-owned index promotion | #578 | `feature/p94-project-owned-index-promotion` | Complete |

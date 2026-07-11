@@ -33,10 +33,12 @@ delegate that work.
 
 ### Deputy Developer / Coordinator
 
-The coordinator is the paid high-capability agent lane today. In the current
-prototype, this is Codex. In the target system, this role may eventually be a
-free custom Copilot/Ollama agent when evidence shows that it can hold the role
-reliably.
+The coordinator is now a **free, local** lane. The committed direction is to run
+the coordinator as a self-hosted Ollama model (default `qwen3.6:35b-a3b-bf16`)
+inside the VS Code GitHub Copilot chat UI, rather than as a persistent paid
+GPT-5.x agent in a separate Codex surface. This trades some open-ended reasoning
+strength for large paid-token cash savings, with the gap covered on demand by
+the Advisor lane below.
 
 Responsibilities:
 
@@ -46,16 +48,46 @@ Responsibilities:
 - prepare bounded job tickets for supervisor agents;
 - define acceptance gates and scoring rubrics;
 - inspect compact supervisor reports rather than raw worker transcripts;
+- decide when a hard reasoning subset is worth spending the finite paid Advisor
+  budget, and manage that budget along an observed benefit/cost gradient; and
 - own final escalation to the developer when the workflow is ambiguous or
   risky.
 
 The coordinator should avoid reinventing orchestration rituals for every job.
 Recurring work should become explicit workflow graph structure.
 
+The coordinator profile is `agent-workbench-coordinator.agent.md`.
+
+### Advisor
+
+The advisor is a **paid, on-demand, advisory-only** lane. It is not a persistent
+authority level; it is a consultant the coordinator invokes through the existing
+subagent delegation plumbing for hard reasoning subsets where a wrong call is
+expensive and the local coordinator's confidence is low. The advisor runs an
+expensive paid Copilot model (default Claude Opus 4.8, optionally at high or
+very-high thinking effort).
+
+Responsibilities:
+
+- review coordinator reports and evidence before phase closeout;
+- critique roadmap plans and recommend strategic, tactical, or operational
+  shifts;
+- design several-phases-ahead roadmap extensions, expansions, or pivots; and
+- return a compact, decisive advisory packet with explicit confidence.
+
+The advisor is read-only. It must not mutate repository or GitHub state, invoke
+subagents, or make final decisions. The coordinator remains the authority that
+acts on the advice, records the outcome in its ROI ledger, and manages the paid
+budget. See `coordinator_advisor_paid_boost_strategy.md` for the budget model
+and ROI-gradient learning loop. The advisor profile is
+`agent-workbench-advisor.agent.md`.
+
 ### Supervisor
 
-The supervisor is the near-term free-agent target: a Copilot Chat agent using a
-local Ollama model, currently most promising with Qwen3.6-style models.
+The supervisor is a free local Copilot Chat agent using a local Ollama model,
+currently most promising with Qwen3.6-style models. Its profile is
+`agent-workbench-supervisor.agent.md` (with `agent-workbench-local-supervisor`
+as a trial-specific variant).
 
 Responsibilities:
 
