@@ -6,17 +6,33 @@
     "next_cost_gate": "Do not scale full audit until protocol defects and accepted/repairable sample yield are reviewed.",
     "task_economics": "P90 produced source-backed audited sample records without a direct-supervisor extraction baseline."
   },
-  "generated_utc": "2026-07-11T06:49:33+00:00",
+  "generated_utc": "2026-07-11T16:05:11+00:00",
   "packet_id": "p91_source_audit_decision_packet",
   "phase": "P91",
   "protocol_outcome": {
     "defect_class_counts": {
+      "malformed_or_not_useful": 1,
       "none": 8,
       "schema_or_protocol_defect": 2,
-      "source_quote_not_found": 6,
+      "source_quote_contains_exact_anchor_plus_synthesis": 3,
+      "source_quote_needs_human_anchor_repair": 2,
       "zero_record_defect": 6
     },
     "dominant_protocol_risk": "zero_record_defect",
+    "functional_success_level_counts": {
+      "A_accepted": 8,
+      "B_minor_repair": 3,
+      "C_repairable": 4,
+      "F_protocol_failure": 7
+    },
+    "repair_effort_counts": {
+      "bounded_schema_and_source_quote_repair": 1,
+      "bounded_schema_repair": 2,
+      "minor_source_quote_repair": 4,
+      "none": 8,
+      "not_repairable": 1,
+      "rerun_or_prompt_repair": 6
+    },
     "run_defect_count": 6
   },
   "public_safety": {
@@ -30,11 +46,11 @@
     "accepted_record_count": 8,
     "audited_record_count": 16,
     "needs_review_record_count": 0,
-    "rejected_record_count": 6,
-    "repairable_record_count": 2,
-    "sample_useful_yield": 0.625
+    "rejected_record_count": 1,
+    "repairable_record_count": 7,
+    "sample_useful_yield": 0.938
   },
-  "reporting_draft_summary": "The bounded P91 audit sample found 8 accepted records, 2 repairable records, 6 rejected records, and 6 run-level zero-record defects.",
+  "reporting_draft_summary": "The bounded P91 audit sample found 8 accepted records, 7 repairable records, 1 rejected records, and 6 run-level zero-record defects.",
   "reporting_worker_draft_path": "benchmarks/document_library/p91_reporting_worker_draft_packet.json",
   "schema_version": 1,
   "supervisor_authority_path": "benchmarks/document_library/p91_supervisor_source_audit_packet.json"
