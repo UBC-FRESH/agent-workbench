@@ -42,7 +42,9 @@ Record-level audit statuses:
 - `accepted`: source-backed, correctly typed, useful, and specific enough for
   downstream retrieval.
 - `repairable`: source-backed but needs bounded field, typing, page, quote, or
-  duplicate cleanup.
+  duplicate cleanup. This includes cases where `source_quote` contains an exact
+  source caption or line plus synthesized table-row material; these are quote
+  repair defects, not unsupported-record defects.
 - `rejected`: not source-backed, materially wrong, uselessly vague, or not a
   valid index record.
 - `needs_review`: cannot be decided from the bounded audit packet.
@@ -70,6 +72,26 @@ The audit row must include:
 - source-anchor verdict;
 - usefulness verdict;
 - short public-safe rationale.
+
+## Recalibrated Source-Quote Scoring
+
+P91 originally used exact contiguous `source_quote` containment as a hard
+accept/reject boundary. That was too blunt for table records, where a worker may
+correctly identify a table caption and values but combine an exact caption with
+normalized row content inside one `source_quote` field.
+
+The recalibrated rubric records a functional success level:
+
+- `A_accepted`: exact quote, useful record, schema-valid.
+- `B_minor_repair`: source-backed and schema-valid, but the quote contains an
+  exact source fragment plus synthesized or normalized material.
+- `C_repairable`: source-backed but needs bounded schema, quote-anchor, or
+  human anchor repair.
+- `E_rejected`: unsupported source anchor or materially wrong record.
+- `F_protocol_failure`: malformed, empty, or no candidate record.
+
+This keeps the exact quote requirement as the acceptance bar while avoiding the
+loss of useful work that only needs quote-anchor repair.
 
 ## Reporting-Worker Draft Packet
 

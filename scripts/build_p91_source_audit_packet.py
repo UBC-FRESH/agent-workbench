@@ -25,12 +25,29 @@ DEFAULT_SAMPLE_MANIFEST = DEFAULT_OUTPUT_DIR / "p91_source_audit_sample_manifest
 DEFAULT_AUDIT_PACKET = DEFAULT_OUTPUT_DIR / "p91_supervisor_source_audit_packet.json"
 DEFAULT_REPORTING_DRAFT = DEFAULT_OUTPUT_DIR / "p91_reporting_worker_draft_packet.json"
 DEFAULT_DECISION_PACKET = DEFAULT_OUTPUT_DIR / "p91_source_audit_decision_packet.json"
+DEFAULT_SCORING_DELTA = (
+    DEFAULT_OUTPUT_DIR / "p91_source_quote_scoring_recalibration_delta.json"
+)
 SAMPLE_SHAPE = {
     "valid_structure_records": 6,
     "valid_content_metadata_records": 6,
     "invalid_run_records": 4,
 }
 AUDITABLE_STATUSES = {"accepted", "repairable", "rejected", "needs_review"}
+ORIGINAL_BINARY_SCORING_BASELINE = {
+    "accepted_record_count": 8,
+    "repairable_record_count": 2,
+    "rejected_record_count": 6,
+    "needs_review_record_count": 0,
+    "sample_useful_yield": 0.625,
+    "decision": "promote_seed",
+    "defect_class_counts": {
+        "none": 8,
+        "schema_or_protocol_defect": 2,
+        "source_quote_not_found": 6,
+        "zero_record_defect": 6,
+    },
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -42,6 +59,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--audit-packet", type=Path, default=DEFAULT_AUDIT_PACKET)
     parser.add_argument("--reporting-draft", type=Path, default=DEFAULT_REPORTING_DRAFT)
     parser.add_argument("--decision-packet", type=Path, default=DEFAULT_DECISION_PACKET)
+    parser.add_argument("--scoring-delta", type=Path, default=DEFAULT_SCORING_DELTA)
     return parser.parse_args()
 
 
@@ -58,15 +76,18 @@ def main() -> int:
     decision_packet = build_decision_packet(
         generated_utc, audit_packet, reporting_draft
     )
+    scoring_delta = build_scoring_delta(generated_utc, audit_packet, decision_packet)
 
     write_json(args.sample_manifest, sample_manifest)
     write_json(args.audit_packet, audit_packet)
     write_json(args.reporting_draft, reporting_draft)
     write_json(args.decision_packet, decision_packet)
+    write_json(args.scoring_delta, scoring_delta)
     print(f"wrote {args.sample_manifest}")
     print(f"wrote {args.audit_packet}")
     print(f"wrote {args.reporting_draft}")
     print(f"wrote {args.decision_packet}")
+    print(f"wrote {args.scoring_delta}")
     print(
         "audited="
         f"{audit_packet['record_audit_count']} records, "
@@ -185,31 +206,53 @@ def audit_entry(entry: dict[str, Any]) -> dict[str, Any]:
     record = entry["record"]
     source_text = extract_source_excerpt(Path(entry["ticket_path"]))
     source_quote = str(record.get("source_quote", ""))
-    quote_present = contains_normalized(source_text, source_quote)
-    source_anchor_verdict = (
-        "source_quote_found" if quote_present else "source_quote_missing"
-    )
+    source_assessment = assess_source_anchor(source_text, source_quote)
+    source_anchor_verdict = source_assessment["source_anchor_verdict"]
     useful = is_useful_record(record)
     schema_valid = entry["validation_status"] == "valid"
 
-    if schema_valid and quote_present and useful:
+    if schema_valid and source_assessment["support_level"] == "exact" and useful:
         audit_status = "accepted"
         defect_class = "none"
-        rationale = "Schema-valid candidate with source quote present in the bounded ticket excerpt and enough title/summary specificity for retrieval."
-    elif quote_present and useful:
+        functional_success_level = "A_accepted"
+        repair_effort = "none"
+        rationale = "Schema-valid candidate with an exact source quote in the bounded ticket excerpt and enough title/summary specificity for retrieval."
+    elif useful and source_assessment["support_level"] in {"fragment", "fuzzy"}:
+        audit_status = "repairable"
+        defect_class = (
+            "source_quote_contains_exact_anchor_plus_synthesis"
+            if source_assessment["support_level"] == "fragment"
+            else "source_quote_needs_human_anchor_repair"
+        )
+        functional_success_level = (
+            "B_minor_repair"
+            if schema_valid and source_assessment["support_level"] == "fragment"
+            else "C_repairable"
+        )
+        repair_effort = (
+            "minor_source_quote_repair"
+            if schema_valid
+            else "bounded_schema_and_source_quote_repair"
+        )
+        rationale = "Candidate appears source-backed and useful, but the source_quote is not a clean exact quote; it needs quote-anchor repair rather than rejection."
+    elif source_assessment["support_level"] == "exact" and useful:
         audit_status = "repairable"
         defect_class = "schema_or_protocol_defect"
+        functional_success_level = "C_repairable"
+        repair_effort = "bounded_schema_repair"
         rationale = "Candidate appears source-backed, but deterministic validation already marked the run invalid."
-    elif not quote_present:
+    elif not useful:
         audit_status = "rejected"
-        defect_class = "source_quote_not_found"
-        rationale = (
-            "Candidate source quote was not found in the bounded ticket excerpt."
-        )
+        defect_class = "malformed_or_not_useful"
+        functional_success_level = "F_protocol_failure"
+        repair_effort = "not_repairable"
+        rationale = "Candidate lacks enough title, summary, or source quote specificity for retrieval."
     else:
         audit_status = "rejected"
-        defect_class = "not_useful"
-        rationale = "Candidate lacks enough title, summary, or source quote specificity for retrieval."
+        defect_class = "unsupported_source_anchor"
+        functional_success_level = "E_rejected"
+        repair_effort = "not_repairable"
+        rationale = "Candidate source_quote has no sufficient exact, fragment, or fuzzy support in the bounded ticket excerpt."
 
     return {
         "sample_id": entry["sample_id"],
@@ -225,6 +268,10 @@ def audit_entry(entry: dict[str, Any]) -> dict[str, Any]:
         "source_quote_sha256": entry["source_quote_sha256"],
         "source_quote_char_count": entry["source_quote_char_count"],
         "source_anchor_verdict": source_anchor_verdict,
+        "source_support_level": source_assessment["support_level"],
+        "source_support_reason": source_assessment["reason"],
+        "repair_effort": repair_effort,
+        "functional_success_level": functional_success_level,
         "usefulness_verdict": "useful" if useful else "not_useful",
         "audit_status": audit_status,
         "defect_class": defect_class,
@@ -245,6 +292,10 @@ def audit_run_defect(entry: dict[str, Any]) -> dict[str, Any]:
         "audit_status": "rejected",
         "defect_class": "zero_record_defect",
         "source_anchor_verdict": "not_applicable",
+        "source_support_level": "none",
+        "source_support_reason": "run emitted no repaired candidate record",
+        "repair_effort": "rerun_or_prompt_repair",
+        "functional_success_level": "F_protocol_failure",
         "usefulness_verdict": "not_useful",
         "rationale": "Worker completed but emitted no repaired candidate records for this ticket.",
     }
@@ -289,6 +340,10 @@ def build_audit_packet(
         "supervisor_audit_method": "bounded source-quote containment plus field usefulness check against ignored P89 ticket excerpts",
         "audit_status_counts": dict(Counter(row["audit_status"] for row in rows)),
         "defect_class_counts": dict(Counter(row["defect_class"] for row in rows)),
+        "functional_success_level_counts": dict(
+            Counter(row["functional_success_level"] for row in rows)
+        ),
+        "repair_effort_counts": dict(Counter(row["repair_effort"] for row in rows)),
         "record_audit_count": len(record_rows),
         "run_defect_count": len(defect_rows),
         "accepted_record_count": sum(
@@ -377,6 +432,10 @@ def build_decision_packet(
         "protocol_outcome": {
             "run_defect_count": audit_packet["run_defect_count"],
             "defect_class_counts": defect_counts,
+            "functional_success_level_counts": audit_packet[
+                "functional_success_level_counts"
+            ],
+            "repair_effort_counts": audit_packet["repair_effort_counts"],
             "dominant_protocol_risk": dominant_protocol_risk(defect_counts),
         },
         "economics_governance_outcome": {
@@ -389,6 +448,52 @@ def build_decision_packet(
         "accepted_record_scope_note": audit_packet["accepted_record_scope_note"],
         "public_safety": public_safety_flags(),
         "reporting_draft_summary": reporting_draft["summary"],
+    }
+
+
+def build_scoring_delta(
+    generated_utc: str,
+    audit_packet: dict[str, Any],
+    decision_packet: dict[str, Any],
+) -> dict[str, Any]:
+    recalibrated = {
+        "accepted_record_count": audit_packet["accepted_record_count"],
+        "repairable_record_count": audit_packet["repairable_record_count"],
+        "rejected_record_count": audit_packet["rejected_record_count"],
+        "needs_review_record_count": audit_packet["needs_review_record_count"],
+        "sample_useful_yield": decision_packet["quality_outcome"][
+            "sample_useful_yield"
+        ],
+        "decision": decision_packet["decision"],
+        "defect_class_counts": audit_packet["defect_class_counts"],
+    }
+    baseline = ORIGINAL_BINARY_SCORING_BASELINE
+    return {
+        "schema_version": 1,
+        "phase": "P91",
+        "report_id": "p91_source_quote_scoring_recalibration_delta",
+        "generated_utc": generated_utc,
+        "change_reason": "Exact source-quote containment was too blunt for tables and synthesized-but-source-backed quotes.",
+        "original_binary_scoring": baseline,
+        "recalibrated_scoring": recalibrated,
+        "delta": {
+            "accepted_record_count": recalibrated["accepted_record_count"]
+            - baseline["accepted_record_count"],
+            "repairable_record_count": recalibrated["repairable_record_count"]
+            - baseline["repairable_record_count"],
+            "rejected_record_count": recalibrated["rejected_record_count"]
+            - baseline["rejected_record_count"],
+            "sample_useful_yield": round(
+                recalibrated["sample_useful_yield"] - baseline["sample_useful_yield"],
+                3,
+            ),
+            "decision_changed": recalibrated["decision"] != baseline["decision"],
+        },
+        "functional_success_level_counts": audit_packet[
+            "functional_success_level_counts"
+        ],
+        "repair_effort_counts": audit_packet["repair_effort_counts"],
+        "public_safety": public_safety_flags(),
     }
 
 
@@ -438,6 +543,80 @@ def extract_source_excerpt(ticket_path: Path) -> str:
     if fenced:
         return fenced.group(1)
     return source
+
+
+def assess_source_anchor(source_text: str, quote: str) -> dict[str, str]:
+    normalized_source = normalize_text(source_text)
+    normalized_quote = normalize_text(quote)
+    if not normalized_quote:
+        return {
+            "source_anchor_verdict": "no_source_quote",
+            "support_level": "none",
+            "reason": "empty source_quote",
+        }
+    if normalized_quote in normalized_source:
+        return {
+            "source_anchor_verdict": "exact_source_quote",
+            "support_level": "exact",
+            "reason": "source_quote is an exact normalized substring of the bounded excerpt",
+        }
+    if quote_contains_source_line(source_text, quote):
+        return {
+            "source_anchor_verdict": "source_quote_contains_exact_fragment_plus_synthesis",
+            "support_level": "fragment",
+            "reason": "source_quote contains at least one exact source line plus synthesized or normalized material",
+        }
+    if token_support_ratio(source_text, quote) >= 0.72:
+        return {
+            "source_anchor_verdict": "source_quote_has_fuzzy_source_support",
+            "support_level": "fuzzy",
+            "reason": "source_quote terms are mostly present in the bounded excerpt but not as an exact quote",
+        }
+    return {
+        "source_anchor_verdict": "source_quote_missing",
+        "support_level": "none",
+        "reason": "source_quote is not sufficiently supported by the bounded excerpt",
+    }
+
+
+def quote_contains_source_line(source_text: str, quote: str) -> bool:
+    normalized_quote = normalize_text(quote)
+    for line in source_text.splitlines():
+        normalized_line = normalize_text(line)
+        if len(normalized_line) >= 24 and normalized_line in normalized_quote:
+            return True
+    return False
+
+
+def token_support_ratio(source_text: str, quote: str) -> float:
+    quote_tokens = content_tokens(quote)
+    if not quote_tokens:
+        return 0.0
+    source_tokens = set(content_tokens(source_text))
+    supported = [token for token in quote_tokens if token in source_tokens]
+    return len(supported) / len(quote_tokens)
+
+
+def content_tokens(value: str) -> list[str]:
+    stopwords = {
+        "a",
+        "an",
+        "and",
+        "are",
+        "as",
+        "for",
+        "in",
+        "is",
+        "of",
+        "or",
+        "the",
+        "to",
+    }
+    return [
+        token
+        for token in re.findall(r"[a-z0-9.]+", value.lower())
+        if len(token) > 1 and token not in stopwords
+    ]
 
 
 def contains_normalized(source_text: str, quote: str) -> bool:

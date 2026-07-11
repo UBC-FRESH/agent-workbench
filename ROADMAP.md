@@ -4706,6 +4706,14 @@ records, and no needs-review records. The decision is `promote_seed`, scoped to
 the audited sample only; the full P90 packet still requires additional audit
 before any broad index promotion.
 
+P91 source-quote scoring recalibration (#573) replaced binary exact quote
+containment with functional source-support levels. The recalibrated packet adds
+`benchmarks/document_library/p91_source_quote_scoring_recalibration_delta.json`.
+The accepted sample count remains eight, but repairable records rise from two
+to seven, rejected records fall from six to one, and useful sample yield rises
+from 0.625 to 0.938. The decision remains `promote_seed`; the change affects
+how much good work is preserved for repair, not the immediate next action.
+
 ## Phase 92: Packaged Graph-Shaped Pilot
 
 Parent issue: #556

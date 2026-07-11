@@ -2740,3 +2740,20 @@ issues, pull requests, and closeout comments.
 - Recorded the P91 decision as `promote_seed`. Accepted counts apply only to
   the bounded P91 sample; the full P90 packet still requires additional audit
   before broad index promotion.
+
+## 2026-07-11 - Recalibrated P91 source-quote scoring
+
+- Opened issue #573 for the P91 source-quote scoring recalibration.
+- Updated `scripts/build_p91_source_audit_packet.py` so table/caption cases
+  with an exact source fragment plus synthesized row material are classified as
+  repairable quote-anchor defects instead of unsupported rejected records.
+- Added functional success levels: `A_accepted`, `B_minor_repair`,
+  `C_repairable`, `E_rejected`, and `F_protocol_failure`.
+- Regenerated the P91 sample, supervisor audit, reporting draft, and decision
+  packets.
+- Added
+  `benchmarks/document_library/p91_source_quote_scoring_recalibration_delta.json`.
+- Re-evaluation kept accepted sample records at eight, raised repairable sample
+  records from two to seven, reduced rejected sample records from six to one,
+  and raised useful sample yield from 0.625 to 0.938. The P91 decision remains
+  `promote_seed`.
