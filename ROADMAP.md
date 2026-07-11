@@ -4550,9 +4550,9 @@ candidate JSONL placeholders, and deterministic validation/repair contract.
 
 Parent issue: #554
 
-Branch: `feature/p90-full-document-candidate-extraction`
+Branch: `feature/p90-full-document-candidate-packet`
 
-Status: active
+Status: complete
 
 Goal: run actual worker extraction against the P89 full-document packet and
 produce candidate records before doing more audit/reporting design.
@@ -4590,9 +4590,22 @@ Activation tasks:
   - [x] Validate or deterministically repair candidate JSONL for both lanes.
   - [x] Track a sanitized side-by-side summary without raw source text or raw
         worker output.
-- [ ] P90.2 Full-document extraction execution.
-- [ ] P90.3 Validation/repair summary and stop-rule decision.
-- [ ] P90.4 Candidate packet handoff for source audit.
+- [x] P90.2 Full-document extraction execution.
+  - [x] Add a resumable full-document q8 extraction runner.
+  - [x] Run all 60 `structure` tickets.
+  - [x] Run all 60 `content_metadata` tickets.
+  - [x] Keep raw worker outputs and candidate JSONL under ignored `runtime/`.
+- [x] P90.3 Validation/repair summary and stop-rule decision.
+  - [x] Validate every ticket output through the P89 deterministic validator.
+  - [x] Summarize attempted, completed, blocked, valid, invalid, repaired, and
+        zero-record counts by ticket type.
+  - [x] Record fatal validation error classes and extraction modes.
+  - [x] Decide `ready_for_source_audit`, `repair_protocol_first`,
+        `provider_or_runtime_blocked`, or `manual_review_needed`.
+- [x] P90.4 Candidate packet handoff for source audit.
+  - [x] Produce a public-safe packet manifest with runtime path inventory.
+  - [x] Recommend a bounded source-audit sample.
+  - [x] State explicitly that all records remain candidates until source audit.
 
 P90.0 actual extraction smoke produced
 `benchmarks/document_library/p90_actual_extraction_smoke_summary.json`. Two live
@@ -4613,6 +4626,22 @@ produced 64 schema-valid candidate records over 8 valid runs. Three completed
 runs emitted malformed/key-value records that deterministic validation rejected.
 These are still raw candidates only: P90 has not performed source audit or
 accepted records into an index.
+
+Detailed P90.2-P90.4 execution plan:
+`planning/phase90_full_document_candidate_packet.md`. The primary lane is
+`qwen3.6:35b-a3b-q8_0` because P90.1 showed better protocol validity than the
+bf16 lane. The target work product is one complete full-document candidate
+packet ready for source audit, not a production index.
+
+P90.2-P90.4 produced
+`benchmarks/document_library/p90_full_document_candidate_packet_summary.json`
+and
+`benchmarks/document_library/p90_full_document_candidate_packet_manifest.json`.
+All 120 P89 tickets completed: 60 `structure` and 60 `content_metadata`.
+Deterministic validation marked 94 runs valid and 26 invalid, with 800 repaired
+candidate records emitted across the full document. The stop decision is
+`ready_for_source_audit`; the packet is not an accepted index, and the accepted
+record count remains zero until source audit.
 
 ## Phase 91: Reporting-Worker Decision Packets
 
