@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PageChunkAnchorLookupQuery",
+  "description": "Input query schema for Use Case 1: Page/Chunk Anchor Lookup. Given a document_id and page_range, return index records whose page_anchor falls within the range.",
+  "type": "object",
+  "required": ["document_id", "page_range"],
+  "properties": {
+    "document_id": {
+      "type": "string",
+      "description": "Document identifier from P94 promoted index (e.g., tsa23_2012_23tsdp12). Must match a value present in the target corpus.",
+      "examples": ["tsa23_2012_23tsdp12", "tsa23_2012_23ts13ra"]
+    },
+    "page_range": {
+      "type": "object",
+      "description": "Inclusive page range for filtering results.",
+      "required": ["start", "end"],
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Starting page number (inclusive). Must be >= 1."
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Ending page number (inclusive). Must be >= start."
+        }
+      },
+      "additionalProperties": false
+    },
+    "include_source_hashes": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to include source_hash fields in output records."
+    },
+    "include_model_lane": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to include model_lane field in output records."
+    }
+  },
+  "additionalProperties": false
+}

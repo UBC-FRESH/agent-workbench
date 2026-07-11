@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FullDocumentProvenanceTraceOutput",
+  "description": "Output schema for Use Case 2: Full-Document Provenance Trace. Returns either a flat JSON array of all records from document D (group_by=none) or a grouped JSON object.",
+  "type": ["object"],
+  "properties": {
+    "flat_array": {
+      "description": "Present when group_by='none'. JSON array of all index records from document D, ordered by page_anchor ascending. Each record includes provenance chain fields.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["document_id", "page_anchor"],
+        "properties": {
+          "source_hash": {
+            "type": "string",
+            "description": "SHA-256 hash of the source document content."
+          },
+          "document_id": {
+            "type": "string",
+            "description": "Document identifier."
+          },
+          "page_anchor": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Page number within the document."
+          },
+          "chunk_id": {
+            "type": "string",
+            "description": "Chunk identifier from P90 chunk manifest."
+          },
+          "model_lane": {
+            "type": "string",
+            "description": "Worker model lane that produced this record."
+          },
+          "audit_status": {
+            "type": "string",
+            "enum": ["accepted", "accepted_pending_dedup", "rejected", "pending_repair"],
+            "description": "Current audit status from P94 promoted index."
+          },
+          "fact_content": {
+            "type": "object",
+            "description": "Extracted fact/content fields."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "grouped_by_audit_status": {
+      "description": "Present when group_by='audit_status'. JSON object with audit status values as keys, each containing the filtered record array.",
+      "type": ["object", "null"],
+      "patternProperties": {
+        "^(accepted|accepted_pending_dedup|rejected|pending_repair)$": {
+          "type": "array",
+          "items": { "$ref": "#/properties/flat_array/items" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "grouped_by_model_lane": {
+      "description": "Present when group_by='model_lane'. JSON object with model lane values as keys, each containing the filtered record array.",
+      "type": ["object", "null"],
+      "patternProperties": {
+        ".+": {
+          "type": "array",
+          "items": { "$ref": "#/properties/flat_array/items" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "description": "Summary metadata about the query result.",
+      "type": "object",
+      "required": ["document_id", "total_record_count"],
+      "properties": {
+        "document_id": { "type": "string" },
+        "total_record_count": { "type": "integer" },
+        "group_by": { "type": "string" },
+        "returned_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    { "required": ["flat_array"] },
+    { "required": ["grouped_by_audit_status"] },
+    { "required": ["grouped_by_model_lane"] }
+  ]
+}

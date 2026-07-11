@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FullDocumentProvenanceTraceQuery",
+  "description": "Input query schema for Use Case 2: Full-Document Provenance Trace. Given a document_id and optional group_by, return all index records for that document with provenance chain.",
+  "type": "object",
+  "required": ["document_id"],
+  "properties": {
+    "document_id": {
+      "type": "string",
+      "description": "Document identifier from P94 promoted index (e.g., tsa23_2012_23tsdp12). Must match a value present in the target corpus.",
+      "examples": ["tsa23_2012_23tsdp12", "tsa23_2012_23ts13ra"]
+    },
+    "group_by": {
+      "type": "string",
+      "enum": ["audit_status", "model_lane", "none"],
+      "default": "none",
+      "description": "How to group output records. 'none' returns flat array sorted by page_anchor; 'audit_status' groups by audit status; 'model_lane' groups by model lane."
+    }
+  },
+  "additionalProperties": false
+}

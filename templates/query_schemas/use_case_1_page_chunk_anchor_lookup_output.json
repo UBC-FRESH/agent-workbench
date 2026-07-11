@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PageChunkAnchorLookupOutput",
+  "description": "Output schema for Use Case 1: Page/Chunk Anchor Lookup. Returns index records whose page_anchor falls within the query's page_range, ordered by page_anchor ascending.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["document_id", "page_anchor"],
+    "properties": {
+      "source_hash": {
+        "type": "string",
+        "description": "SHA-256 hash of the source document content. Only included if include_source_hashes=true in input query."
+      },
+      "document_id": {
+        "type": "string",
+        "description": "Document identifier (e.g., tsa23_2012_23tsdp12)."
+      },
+      "page_anchor": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Page number within the document. Used for sorting results."
+      },
+      "chunk_id": {
+        "type": "string",
+        "description": "Chunk identifier from the P90 chunk manifest (e.g., structure or content_metadata chunk)."
+      },
+      "model_lane": {
+        "type": "string",
+        "description": "The worker model lane that produced this record (e.g., qwen3.6:35b-a3b-bf16). Only included if include_model_lane=true in input query."
+      },
+      "audit_status": {
+        "type": "string",
+        "enum": ["accepted", "accepted_pending_dedup", "rejected", "pending_repair"],
+        "description": "Current audit status from P94 promoted index."
+      },
+      "fact_content": {
+        "type": "object",
+        "description": "The extracted fact/content fields from the source document. Structure depends on chunk type (structure vs content_metadata)."
+      }
+    },
+    "additionalProperties": false
+  },
+  "sort_order": ["page_anchor"]
+}
