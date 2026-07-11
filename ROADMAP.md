@@ -4643,20 +4643,26 @@ candidate records emitted across the full document. The stop decision is
 `ready_for_source_audit`; the packet is not an accepted index, and the accepted
 record count remains zero until source audit.
 
-## Phase 91: Reporting-Worker Decision Packets
+## Phase 91: Source-Audit Decision Packets
 
 Parent issue: #555
 
-Branch: `feature/p91-reporting-worker-decision-packets`
+Branch: `feature/p91-source-audit-decision-packet`
 
-Status: planned
+Status: complete
 
-Goal: introduce reporting-worker decision packets for sanitized experiment
-summaries.
+Goal: source-audit a bounded sample from the P90 full-document candidate packet
+and produce a decision packet that separates quality, protocol, and economics
+implications.
 
 Planned scope:
 
-- Delegate sanitized experiment-summary reporting to a local worker.
+- Select a bounded mixed sample from the P90 packet.
+- Audit sampled candidate records against ignored P89 source excerpts.
+- Classify records as `accepted`, `repairable`, `rejected`, or
+  `needs_review`.
+- Classify zero-record and invalid-run defects separately from record quality.
+- Generate a non-authoritative reporting-worker draft from sanitized audit rows.
 - Keep the paid supervisor focused on source audit and final acceptance
   decisions.
 - Split task economics from repository governance overhead.
@@ -4671,10 +4677,34 @@ Out of scope:
 
 Activation tasks:
 
-- [ ] P91.1 Reporting-worker ticket.
-- [ ] P91.2 Decision-packet schema/template.
-- [ ] P91.3 Governance-overhead split in summaries.
-- [ ] P91.4 Reporting-worker closeout.
+- [x] P91.1 Audit-sample manifest.
+  - [x] Select valid `structure` and `content_metadata` records.
+  - [x] Include invalid-run records with emitted repaired candidates.
+  - [x] Include all zero-record runs as run-level defect rows.
+  - [x] Keep sample manifest public-safe.
+- [x] P91.2 Supervisor source-audit packet.
+  - [x] Define audit statuses and defect classes.
+  - [x] Audit sampled records against ignored source excerpts.
+  - [x] Report accepted, repairable, rejected, needs-review, and defect counts.
+- [x] P91.3 Reporting-worker draft packet.
+  - [x] Generate a sanitized non-authoritative summary draft from audit rows.
+  - [x] Keep the supervisor audit rows as the authority.
+- [x] P91.4 Decision and closeout.
+  - [x] Decide scale audit, repair protocol, promote seed, switch model/prompt,
+        or stop.
+  - [x] Split quality, protocol, and economics/governance implications.
+
+Detailed P91 plan: `planning/phase91_source_audit_decision_packet.md`.
+
+P91 produced `benchmarks/document_library/p91_source_audit_sample_manifest.json`,
+`benchmarks/document_library/p91_supervisor_source_audit_packet.json`,
+`benchmarks/document_library/p91_reporting_worker_draft_packet.json`, and
+`benchmarks/document_library/p91_source_audit_decision_packet.json`. The bounded
+sample audited 16 candidate records plus six zero-record run defects. The
+sample produced eight accepted records, two repairable records, six rejected
+records, and no needs-review records. The decision is `promote_seed`, scoped to
+the audited sample only; the full P90 packet still requires additional audit
+before any broad index promotion.
 
 ## Phase 92: Packaged Graph-Shaped Pilot
 
