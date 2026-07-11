@@ -2679,3 +2679,33 @@ issues, pull requests, and closeout comments.
   schema-valid bf16 candidate records over 8 valid runs. Three completed runs
   were rejected by deterministic validation. No candidate has been source
   audited or accepted into an index yet.
+
+## 2026-07-10 - Activated P90 full-document candidate packet tranche
+
+- Added `planning/phase90_full_document_candidate_packet.md` with the detailed
+  P90.2-P90.4 execution plan.
+- Expanded P90.2-P90.4 in `ROADMAP.md` into concrete full-document extraction,
+  validation/repair summary, stop-decision, and source-audit handoff tasks.
+- Selected `qwen3.6:35b-a3b-q8_0` as the primary full-document lane based on
+  P90.1 protocol validity.
+- Defined the next work product as one complete full-document candidate packet
+  ready for source audit, not a production index or another broad model
+  comparison.
+
+## 2026-07-10 - Completed P90 full-document candidate packet
+
+- Added `scripts/run_p90_full_document_candidate_packet.py` for resumable
+  full-document extraction against the selected q8 lane.
+- Ran all 120 P89 tickets for the complete `tsa23_2012_23tsdp12` data package:
+  60 `structure` tickets and 60 `content_metadata` tickets.
+- Captured raw worker output, candidate JSONL, repaired JSONL, and validation
+  reports under ignored
+  `runtime/document_library/tsa23_tsr/p90_full_document_candidate_packet/`.
+- Added sanitized tracked artifacts:
+  `benchmarks/document_library/p90_full_document_candidate_packet_summary.json`
+  and
+  `benchmarks/document_library/p90_full_document_candidate_packet_manifest.json`.
+- Recorded 120/120 completed runs, 94 valid runs, 26 invalid runs, 800 emitted
+  repaired candidate records, and zero blocked runs.
+- Recorded the stop decision as `ready_for_source_audit`. The packet is a
+  source-audit input only; no candidate record has been accepted into an index.
