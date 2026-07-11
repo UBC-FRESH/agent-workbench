@@ -2796,3 +2796,20 @@ issues, pull requests, and closeout comments.
 - Recorded the next action as `accept_seed_for_coordinator_audit` without
   authorizing broad scale-up or returning to chunk-level coordinator
   micromanagement.
+
+## 2026-07-11 - Completed P93 second public corpus application
+
+- Activated P93 on `feature/p93-second-public-corpus-application` to apply the
+  P90-P92 document-indexing protocol to a second public corpus.
+- Ran supervisor pilot work over the new corpus slice, validated record yield,
+  and confirmed the protocol generalizes beyond the original TSA23 source.
+- Verified zero bridge deviations against expected evidence format.
+- Merged via PR #577; parent issue #576 closed.
+
+## 2026-07-11 - Completed P94 project-owned index promotion
+
+- Activated P94 on `feature/p94-project-owned-index-promotion` to promote the
+  aggregated corpus records into a project-owned index with full provenance.
+- Promoted 47 records with complete source anchors and audit metadata.
+- Validated provenance chain integrity across all promoted records.
+- Merged via PR #579; parent issue #578 closed.
