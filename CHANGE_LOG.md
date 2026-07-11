@@ -2709,3 +2709,34 @@ issues, pull requests, and closeout comments.
   repaired candidate records, and zero blocked runs.
 - Recorded the stop decision as `ready_for_source_audit`. The packet is a
   source-audit input only; no candidate record has been accepted into an index.
+
+## 2026-07-10 - Activated P91 source-audit decision packet
+
+- Added `planning/phase91_source_audit_decision_packet.md` with the detailed
+  P91 audit and decision-packet plan.
+- Retargeted P91 from generic reporting-worker summarization to a bounded
+  source-audit decision packet over the P90 full-document candidate packet.
+- Defined audit statuses for `accepted`, `repairable`, `rejected`, and
+  `needs_review`, plus run-level defect handling for invalid or zero-record
+  outputs.
+- Kept reporting-worker output explicitly non-authoritative: the supervisor
+  audit rows remain the decision source of truth.
+
+## 2026-07-10 - Completed P91 source-audit decision packet
+
+- Added `scripts/build_p91_source_audit_packet.py` to build the P91 audit
+  sample, supervisor audit packet, reporting-worker draft packet, and decision
+  packet from the P90 candidate packet.
+- Added sanitized tracked artifacts:
+  `benchmarks/document_library/p91_source_audit_sample_manifest.json`,
+  `benchmarks/document_library/p91_supervisor_source_audit_packet.json`,
+  `benchmarks/document_library/p91_reporting_worker_draft_packet.json`, and
+  `benchmarks/document_library/p91_source_audit_decision_packet.json`.
+- Audited a bounded sample of 16 candidate records plus six zero-record run
+  defects against ignored P89 source excerpts.
+- Recorded eight accepted sample records, two repairable sample records, six
+  rejected sample records, no needs-review records, and six run-level
+  zero-record defects.
+- Recorded the P91 decision as `promote_seed`. Accepted counts apply only to
+  the bounded P91 sample; the full P90 packet still requires additional audit
+  before broad index promotion.
