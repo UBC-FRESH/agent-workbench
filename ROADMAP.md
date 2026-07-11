@@ -4752,16 +4752,62 @@ Out of scope:
 - Treating exact quote matching as the only valid source-anchor success mode.
 
 Activation tasks:
-
-- [x] P92.1 Whole-document supervisor graph and role skin.
-- [x] P92.2 Bounded pilot gate and ROI hypothesis.
+- [x] P92.1 Whole-document supervisor graph template and role skin.
+  - [x] Create `document_library_whole_document_supervisor_graph.json` under
+        templates/workbench_templates/ with a graph-shaped workflow:
+        select document → materialize whole-doc ticket → run delegated doc
+        supervisor → validate report → bounce once or audit seed → decide.
+  - [x] Create the `document-metadata-extraction-supervisor.agent.md` custom-agent
+        skin under `.github/agents/` with full local tool access for source
+        inspection, search, bounded validation, subagent audit, and writing
+        the assigned runtime report.
+  - [x] Ensure graph template is generic enough to apply to other corpora beyond
+        TSA23 once the P94 schema contract is stable.
+- [x] P92.2 Bounded pilot gate definition and ROI hypothesis.
+  - [x] Define the pilot gate: what conditions must hold before this run counts
+        as a valid test of whole-document delegation.
+  - [x] Formulate the ROI hypothesis: expected reduction in paid-coordinator
+        micromanagement tokens compared to the P90/P91 chunk-pipeline baseline
+        (recorded at 236,008 cached-input tokens minimum).
+  - [x] Record the ROI estimate at
+        `benchmarks/document_library/p92_whole_document_supervisor_roi_estimate.json`.
 - [x] P92.3 Runtime ticket, compact bounce ticket, and report contract
   materialization.
+  - [x] Materialize one ignored runtime ticket for the full
+        `tsa23_2012_23tsdp12` data-package text under
+        `runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/`.
+  - [x] Create a compact delegated-supervisor report contract at
+        `benchmarks/document_library/p92_whole_document_supervisor_report_contract.json`
+        specifying expected output schema, final marker string, and field
+        requirements.
+  - [x] Materialize a compact bounce ticket template for one audit/repair loop
+        if the report fails validation.
+  - [x] Write pilot manifest at
+        `benchmarks/document_library/p92_whole_document_supervisor_pilot_manifest.json`
+        and gate decision at
+        `benchmarks/document_library/p92_whole_document_supervisor_gate.json`.
 - [x] P92.4 One live delegated-supervisor run with token-span measurement.
+  - [x] Accept the R3 run: launched `qwen3.6:35b-a3b-bf16` through the
+        `document-metadata-extraction-supervisor` skin in autopilot mode.
+  - [x] Produced a deterministic-valid 28-record report.
+  - [x] Report reached the required final marker, used the expected model and
+        full-tool supervisor surface, and had zero bridge deviations.
+  - [x] Measured coordinator token span: 449,382 tokens (447,232 cached-input),
+        against the P90/P91 minimum of 236,008 tokens.
 - [x] P92.5 Report validation, compact audit, and scale/repair/switch/stop
   decision.
+  - [x] Run deterministic validation on the 28-record report — all fields pass.
+  - [x] Compile a compact audit summary verifying model lane, tool surface,
+        zero bridge deviations, and correct report schema.
+  - [x] Write the decision packet at
+        `benchmarks/document_library/p92_whole_document_supervisor_decision_packet.json`
+        separating quality-valid candidate (yes), protocol-accepted candidate
+        (yes), economics (not_yet_proven).
+  - [x] Final decision: `accept_seed_for_coordinator_audit` — authorize further
+        coordinator-level audit of the seed but block broader corpus scale-up
+        pending lower launch and cached-context overhead.
 
-P92.1-P92.3 retarget the pilot away from coordinator-built microtickets and
+P92.1-P92.3 retargeted the pilot away from coordinator-built microtickets and
 toward one whole-document delegated supervisor job. The tracked P92 artifacts
 are:
 `templates/workbench_templates/document_library_whole_document_supervisor_graph.json`,
