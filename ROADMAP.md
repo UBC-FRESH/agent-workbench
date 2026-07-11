@@ -100,7 +100,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P89 Document-indexing recipe v2 | #553 | `feature/p89-document-indexing-recipe-v2` | Closeout |
 | P90 Full-document candidate extraction run | #554 | `feature/p90-full-document-candidate-extraction` | Active |
 | P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
-| P92 Packaged graph-shaped pilot | #556 | `feature/p92-packaged-graph-shaped-pilot` | Planned |
+| P92 Whole-document supervisor pilot | #556 | `feature/p92-whole-document-supervisor-pilot` | Closeout |
 | P93 Second public corpus application | TBD | `feature/p93-second-public-corpus-application` | Planned |
 | P94 Project-owned index promotion | TBD | `feature/p94-project-owned-index-promotion` | Planned |
 | P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
@@ -4718,33 +4718,72 @@ how much good work is preserved for repair, not the immediate next action.
 
 Parent issue: #556
 
-Branch: `feature/p92-packaged-graph-shaped-pilot`
+Branch: `feature/p92-whole-document-supervisor-pilot`
 
-Status: planned
+Status: closeout
 
-Goal: run the packaged graph-shaped pilot for the repaired real-project ROI
-workflow.
+Goal: test whether one whole-document delegated supervisor job can produce a
+useful document-metadata seed with much lower paid coordinator micromanagement
+than the P89/P90 section-ticket battery.
 
-Planned scope:
+Active scope:
 
-- Represent the repaired workflow as a FreshForge-shaped graph template:
-  prepare, run, validate, repair-prepass, summarize, audit, decide.
-- Run one bounded pilot only after P88-P91 gates are satisfied.
-- Decide whether to scale, repair, switch model/provider, or stop.
+- Represent the P92 pilot as a graph template:
+  select, materialize whole-document ticket, run delegated document supervisor,
+  validate report, bounce once or audit seed, decide.
+- Materialize one ignored runtime ticket for the full
+  `tsa23_2012_23tsdp12` data-package text, with a compact delegated supervisor
+  report contract and bounce ticket.
+- Use a dedicated `document-metadata-extraction-supervisor` custom-agent skin
+  with full local tool access for source inspection, search, bounded validation,
+  subagent audit, and writing the assigned runtime report.
+- Keep the coordinator role thin: select the document, launch one job, run
+  deterministic report validation, issue at most one compact bounce, then make
+  the final decision.
+- Compare the whole-document delegated-supervisor shape against the measured
+  P90/P91 chunk-pipeline coordinator overhead.
 - Preserve separated quality, protocol, and economics outcomes.
 
 Out of scope:
 
-- Ungated live runs.
+- Ungated repeated live runs.
 - Production release.
 - Broad corpus scale-up before the pilot decision packet is reviewed.
+- Treating exact quote matching as the only valid source-anchor success mode.
 
 Activation tasks:
 
-- [ ] P92.1 Graph-shaped workflow template.
-- [ ] P92.2 Bounded pilot gate.
-- [ ] P92.3 Pilot execution and evidence packet.
-- [ ] P92.4 Scale/repair/switch/stop decision.
+- [x] P92.1 Whole-document supervisor graph and role skin.
+- [x] P92.2 Bounded pilot gate and ROI hypothesis.
+- [x] P92.3 Runtime ticket, compact bounce ticket, and report contract
+  materialization.
+- [x] P92.4 One live delegated-supervisor run with token-span measurement.
+- [x] P92.5 Report validation, compact audit, and scale/repair/switch/stop
+  decision.
+
+P92.1-P92.3 retarget the pilot away from coordinator-built microtickets and
+toward one whole-document delegated supervisor job. The tracked P92 artifacts
+are:
+`templates/workbench_templates/document_library_whole_document_supervisor_graph.json`,
+`.github/agents/document-metadata-extraction-supervisor.agent.md`,
+`benchmarks/document_library/p92_whole_document_supervisor_pilot_manifest.json`,
+`benchmarks/document_library/p92_whole_document_supervisor_gate.json`,
+`benchmarks/document_library/p92_whole_document_supervisor_report_contract.json`,
+and `benchmarks/document_library/p92_whole_document_supervisor_roi_estimate.json`.
+The raw full-document ticket and bounce ticket remain ignored under
+`runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/`.
+The accepted R3 live run used `qwen3.6:35b-a3b-bf16` through the
+`document-metadata-extraction-supervisor` skin in autopilot mode. It produced a
+deterministic-valid 28-record report, reached the required final marker, used
+the expected model and full-tool supervisor surface, and had zero bridge
+deviations. The tracked
+`benchmarks/document_library/p92_whole_document_supervisor_decision_packet.json`
+separates the result into a quality-valid candidate, a protocol-accepted
+candidate, and economics that are not yet proven. The measured coordinator span
+was 449,382 tokens, including 447,232 cached-input tokens, against the recorded
+236,008-token P90/P91 minimum. The decision is
+`accept_seed_for_coordinator_audit`; broader scale-up remains blocked on lower
+launch and cached-context overhead.
 
 ## Phase 93: Second Public Corpus Application
 

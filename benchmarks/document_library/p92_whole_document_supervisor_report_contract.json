@@ -1,0 +1,71 @@
+{
+  "allowed_confidence": [
+    "high",
+    "medium",
+    "low"
+  ],
+  "allowed_final_signals": [
+    "job_complete",
+    "job_complete_with_caveats",
+    "needs_coordinator_review",
+    "job_failed"
+  ],
+  "allowed_next_actions": [
+    "accept_seed",
+    "repair",
+    "bounce_redo",
+    "stop"
+  ],
+  "bounce_policy": {
+    "max_bounces": 1,
+    "ticket": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/tickets/p92_tsa23_2012_23tsdp12_bounce_redo.ticket.md",
+    "when": [
+      "missing report JSON",
+      "source_document_read is false",
+      "candidate_record_count is zero",
+      "records are mostly unsupported or unusable",
+      "final_signal is job_failed without a compact gap report"
+    ]
+  },
+  "contract_id": "p92_whole_document_supervisor_report_contract",
+  "document_id": "tsa23_2012_23tsdp12",
+  "generated_utc": "2026-07-11T17:06:40+00:00",
+  "minimum_candidate_records": 1,
+  "minimum_quality_bar": {
+    "each_record_required_fields": [
+      "record_id",
+      "object_type",
+      "title",
+      "summary",
+      "source_anchor",
+      "confidence"
+    ],
+    "records_must_be_list": true,
+    "source_anchor_policy": "Exact quotes are preferred, but table captions, page anchors, and clearly labeled synthesized table facts are repairable rather than automatic failures.",
+    "source_document_read": true
+  },
+  "phase": "P92",
+  "public_safety": {
+    "personal_paths_tracked": false,
+    "provider_urls_or_headers_tracked": false,
+    "raw_source_text_tracked": false,
+    "raw_worker_output_tracked": false,
+    "source_quotes_tracked": false
+  },
+  "required_fields": [
+    "report_id",
+    "document_id",
+    "supervisor_role",
+    "final_signal",
+    "source_document_read",
+    "output_quality",
+    "candidate_record_count",
+    "source_anchor_policy",
+    "records",
+    "gaps",
+    "self_grade",
+    "next_action"
+  ],
+  "schema_version": 1,
+  "supervisor_role": "document_metadata_extraction_supervisor"
+}

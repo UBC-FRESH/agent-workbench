@@ -195,6 +195,49 @@ def test_allowed_report_write_commands_are_benign() -> None:
     assert benign == extra_commands[:4]
 
 
+def test_allowed_document_library_report_write_commands_are_benign() -> None:
+    bridge = load_bridge_module()
+    report_path = (
+        "runtime\\document_library\\tsa23_tsr\\p92_whole_document_supervisor_pilot"
+        "\\reports\\p92_tsa23_2012_23tsdp12_supervisor_report.json"
+    )
+    extra_commands = [
+        f'$json | Set-Content -Path "{report_path}" -Encoding UTF8',
+        f"[System.IO.File]::WriteAllText('{report_path}', $json)",
+        f'Remove-Item "{report_path}"',
+    ]
+    allowed_files = [
+        report_path.replace("\\", "/"),
+    ]
+
+    remaining, benign = bridge.classify_allowed_report_write_commands(
+        extra_commands,
+        allowed_files,
+    )
+
+    assert remaining == [f'Remove-Item "{report_path}"']
+    assert benign == extra_commands[:2]
+
+
+def test_p92_ticket_report_path_is_extracted_as_allowed_file() -> None:
+    bridge = load_bridge_module()
+    ticket = """
+## Workspace
+
+- Report path to write: `runtime/document_library/tsa23_tsr/p92/reports/report.json`
+
+## Required Output File
+
+- `runtime/document_library/tsa23_tsr/p92/reports/report.json`
+"""
+
+    allowed_files = bridge.extract_allowed_files(ticket)
+
+    assert allowed_files == [
+        "runtime/document_library/tsa23_tsr/p92/reports/report.json"
+    ]
+
+
 def test_missing_conditional_repair_helper_is_not_a_deviation() -> None:
     bridge = load_bridge_module()
     expected = [

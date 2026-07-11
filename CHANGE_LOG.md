@@ -2757,3 +2757,42 @@ issues, pull requests, and closeout comments.
   records from two to seven, reduced rejected sample records from six to one,
   and raised useful sample yield from 0.625 to 0.938. The P91 decision remains
   `promote_seed`.
+
+## 2026-07-11 - Retargeted P92 to a whole-document delegated supervisor pilot
+
+- Activated P92 on `feature/p92-whole-document-supervisor-pilot` and retargeted
+  the packaged pilot away from coordinator-built section microtickets.
+- Added `scripts/build_p92_whole_document_supervisor_pilot.py` with
+  materialization and report-validation modes for one whole-document delegated
+  supervisor job.
+- Added the full-tool `document-metadata-extraction-supervisor` custom-agent
+  skin, its overlay, and a whole-document graph template.
+- Materialized tracked public-safe P92 artifacts under
+  `benchmarks/document_library/` and kept the raw full-document ticket plus
+  compact bounce ticket under ignored `runtime/`.
+- Recorded the ROI hypothesis explicitly: the paid coordinator should select
+  one document, launch one role-bound local supervisor job, validate one
+  returned report, issue at most one compact bounce, and then decide whether to
+  accept seed, repair, switch lane, or stop.
+
+## 2026-07-11 - Ran and evaluated P92 whole-document supervisor pilot
+
+- Repaired the local Copilot bridge so document-library runtime paths are
+  allowed and Agent Workbench is opened as the explicit workspace root.
+- Ran the accepted R3 whole-document supervisor job with
+  `qwen3.6:35b-a3b-bf16`, the `document-metadata-extraction-supervisor` skin,
+  and autopilot permission.
+- Validated a 28-record report with zero fatal errors, the expected model and
+  final marker, five observed supervisor tools, and zero bridge deviations.
+- Added `scripts/summarize_p92_whole_document_supervisor_pilot.py` and the
+  tracked compact decision packet at
+  `benchmarks/document_library/p92_whole_document_supervisor_decision_packet.json`.
+- Classified the report as a quality-valid and protocol-accepted seed for
+  coordinator audit while keeping economics `not_yet_proven`.
+- Measured a 449,382-token coordinator span, including 447,232 cached-input
+  tokens, with an estimated cash cost of $0.087798; this exceeded the recorded
+  236,008-token P90/P91 minimum because launch, retry, and context overhead
+  remained high.
+- Recorded the next action as `accept_seed_for_coordinator_audit` without
+  authorizing broad scale-up or returning to chunk-level coordinator
+  micromanagement.
