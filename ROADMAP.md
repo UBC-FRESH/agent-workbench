@@ -101,7 +101,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P90 Full-document candidate extraction run | #554 | `feature/p90-full-document-candidate-extraction` | Active |
 | P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
 | P92 Whole-document supervisor pilot | #556 | `feature/p92-whole-document-supervisor-pilot` | Closeout |
-| P93 Second public corpus application | TBD | `feature/p93-second-public-corpus-application` | Planned |
+| P93 Second public corpus application | #576 | `feature/p93-second-public-corpus-application` | Complete |
 | P94 Project-owned index promotion | TBD | `feature/p94-project-owned-index-promotion` | Planned |
 | P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
 | P96 Yield and audit-cost model comparison | TBD | `feature/p96-yield-audit-cost-model-comparison` | Planned |
