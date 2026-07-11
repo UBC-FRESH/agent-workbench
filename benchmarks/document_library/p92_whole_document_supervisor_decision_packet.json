@@ -1,0 +1,79 @@
+{
+  "decision": "accept_seed_for_coordinator_audit",
+  "decision_rationale": "The full-tool delegated supervisor produced a deterministic-valid whole-document seed with no bridge deviations. Promote the seed to coordinator audit, but do not claim an economics win until launch and cached-context overhead are reduced.",
+  "economics_outcome": {
+    "cash_cost_usd": 0.087798,
+    "codex_total_token_delta": 449382,
+    "economics_caveat": "This accepted run proves a useful quality/protocol seed, but the measured coordinator token delta is still larger than the P90/P91 chunk-pipeline minimum because launch/retry/context overhead remains high.",
+    "economics_decision": "not_yet_proven",
+    "p90_p91_minimum_coordinator_tokens_observed": 236008,
+    "supervisor_cached_input_tokens": 447232,
+    "supervisor_input_tokens": 1679,
+    "supervisor_output_tokens": 471,
+    "supervisor_reasoning_output_tokens": 0,
+    "token_record_scope": {
+      "model_or_worker": "codex-supervisor",
+      "phase": "P92",
+      "project": "agent-workbench",
+      "protocol": "codex-session-token-checkpoint",
+      "span_id": "p92-whole-document-supervisor-live-r3",
+      "span_kind": "live_delegated_supervisor_run",
+      "task_id": "P92.4"
+    }
+  },
+  "generated_utc": "2026-07-11T17:26:00+00:00",
+  "packet_id": "p92_whole_document_supervisor_decision_packet",
+  "phase": "P92",
+  "protocol_outcome": {
+    "bridge_deviation_count": 0,
+    "bridge_status": "accepted-candidate",
+    "final_marker_present": true,
+    "model_match": true,
+    "permission_levels": "autopilot",
+    "resolved_model": "qwen3.6:35b-a3b-bf16",
+    "tool_names": [
+      "agent",
+      "create_file",
+      "runSubagent",
+      "replace_string_in_file",
+      "run_in_terminal"
+    ],
+    "wrong_root_retry_note": "The first live attempt produced a useful report in the wrong workspace root. The bridge was repaired to open Agent Workbench before launch; retry R3 accepted.",
+    "wrong_root_retry_required": true
+  },
+  "public_safety": {
+    "personal_paths_tracked": false,
+    "provider_urls_or_headers_tracked": false,
+    "raw_source_text_tracked": false,
+    "raw_worker_output_tracked": false,
+    "source_quotes_tracked": false
+  },
+  "quality_outcome": {
+    "candidate_record_count": 28,
+    "confidence_counts": {
+      "high": 28
+    },
+    "final_signal": "job_complete_with_caveats",
+    "gap_count": 5,
+    "next_action": "accept_seed",
+    "object_type_counts": {
+      "assumption": 13,
+      "constraint": 8,
+      "document_metadata": 2,
+      "quantity": 4,
+      "scenario": 1
+    },
+    "output_quality": "medium",
+    "report_validation_status": "valid",
+    "source_document_read": true,
+    "validation_fatal_error_count": 0
+  },
+  "raw_evidence": {
+    "bridge_report_path": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/bridge/p92_bridge_report_r3.md",
+    "raw_evidence_policy": "runtime paths are ignored and not promoted",
+    "report_path": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/reports/p92_tsa23_2012_23tsdp12_supervisor_report.json",
+    "token_record_path": "runtime/supervisor_tokens/p92_whole_document_supervisor_live_r3/p92-whole-document-supervisor-live-r3.tokens.json",
+    "validation_path": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/reports/p92_tsa23_2012_23tsdp12_supervisor_report.validation.json"
+  },
+  "schema_version": 1
+}

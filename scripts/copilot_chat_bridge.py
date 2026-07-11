@@ -42,34 +42,83 @@ class SessionEvidence:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Launch and verify a Copilot Chat worker ticket.")
-    parser.add_argument("--ticket", required=True, help="Path to the worker ticket Markdown file.")
-    parser.add_argument("--marker", required=True, help="Unique marker expected in the session.")
-    parser.add_argument("--workspace-root", default=".", help="Repository root for the worker launch.")
-    parser.add_argument("--report", help="Supervisor report path. Defaults beside the ticket.")
-    parser.add_argument("--timeout-seconds", type=int, default=240, help="Session polling timeout.")
-    parser.add_argument("--poll-seconds", type=float, default=3.0, help="Polling interval.")
-    parser.add_argument("--code-command", default="code", help="VS Code command executable.")
-    parser.add_argument("--mode", default="agent", help="VS Code chat mode or custom agent identifier.")
-    parser.add_argument("--prompt", default=DEFAULT_PROMPT, help="One-line prompt for code chat.")
+    parser = argparse.ArgumentParser(
+        description="Launch and verify a Copilot Chat worker ticket."
+    )
+    parser.add_argument(
+        "--ticket", required=True, help="Path to the worker ticket Markdown file."
+    )
+    parser.add_argument(
+        "--marker", required=True, help="Unique marker expected in the session."
+    )
+    parser.add_argument(
+        "--workspace-root", default=".", help="Repository root for the worker launch."
+    )
+    parser.add_argument(
+        "--report", help="Supervisor report path. Defaults beside the ticket."
+    )
+    parser.add_argument(
+        "--timeout-seconds", type=int, default=240, help="Session polling timeout."
+    )
+    parser.add_argument(
+        "--poll-seconds", type=float, default=3.0, help="Polling interval."
+    )
+    parser.add_argument(
+        "--code-command", default="code", help="VS Code command executable."
+    )
+    parser.add_argument(
+        "--mode", default="agent", help="VS Code chat mode or custom agent identifier."
+    )
+    parser.add_argument(
+        "--prompt", default=DEFAULT_PROMPT, help="One-line prompt for code chat."
+    )
     parser.add_argument(
         "--expected-model",
         help="Optional required resolved model id for benchmark runs.",
     )
-    parser.add_argument("--maximize", action="store_true", help="Maximize the VS Code chat pane on launch.")
-    parser.add_argument("--no-launch", action="store_true", help="Skip launch and only parse existing sessions.")
+    parser.add_argument(
+        "--maximize",
+        action="store_true",
+        help="Maximize the VS Code chat pane on launch.",
+    )
+    parser.add_argument(
+        "--skip-open-workspace",
+        action="store_true",
+        help="Do not open --workspace-root in VS Code before launching chat.",
+    )
+    parser.add_argument(
+        "--no-launch",
+        action="store_true",
+        help="Skip launch and only parse existing sessions.",
+    )
     return parser.parse_args()
 
 
 def appdata_workspace_storage() -> Path:
     appdata = os.environ.get("APPDATA")
     if not appdata:
-        raise RuntimeError("APPDATA is not set; VS Code workspace storage cannot be located.")
+        raise RuntimeError(
+            "APPDATA is not set; VS Code workspace storage cannot be located."
+        )
     return Path(appdata) / "Code" / "User" / "workspaceStorage"
 
 
 def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
     code_command = resolve_code_command(args.code_command)
+    workspace_root = str(Path(args.workspace_root).resolve())
+    if not args.skip_open_workspace:
+        workspace_completed = subprocess.run(
+            [code_command, "--reuse-window", workspace_root],
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+        if workspace_completed.returncode != 0:
+            raise RuntimeError(
+                "code workspace open failed with exit code "
+                f"{workspace_completed.returncode}"
+            )
+        time.sleep(2.0)
     command = [
         code_command,
         "chat",
@@ -100,7 +149,13 @@ def resolve_code_command(code_command: str) -> str:
     if os.name == "nt" and code_command.lower() == "code":
         local_appdata = os.environ.get("LOCALAPPDATA")
         if local_appdata:
-            candidate = Path(local_appdata) / "Programs" / "Microsoft VS Code" / "bin" / "code.cmd"
+            candidate = (
+                Path(local_appdata)
+                / "Programs"
+                / "Microsoft VS Code"
+                / "bin"
+                / "code.cmd"
+            )
             if candidate.exists():
                 return str(candidate)
     return code_command
@@ -119,7 +174,9 @@ def iter_candidate_files(root: Path) -> list[Path]:
     return sorted(files, key=lambda path: path.stat().st_mtime, reverse=True)
 
 
-def find_session_files(marker: str, timeout: int, poll: float) -> tuple[Path | None, Path | None]:
+def find_session_files(
+    marker: str, timeout: int, poll: float
+) -> tuple[Path | None, Path | None]:
     storage_root = appdata_workspace_storage()
     deadline = time.time() + timeout
     session_path: Path | None = None
@@ -155,8 +212,12 @@ def unique(values: list[str]) -> list[str]:
     return result
 
 
-def load_evidence(marker: str, session_path: Path | None, transcript_path: Path | None) -> SessionEvidence:
-    evidence = SessionEvidence(session_path=session_path, transcript_path=transcript_path)
+def load_evidence(
+    marker: str, session_path: Path | None, transcript_path: Path | None
+) -> SessionEvidence:
+    evidence = SessionEvidence(
+        session_path=session_path, transcript_path=transcript_path
+    )
     if not session_path:
         return evidence
     text = session_path.read_text(encoding="utf-8", errors="replace")
@@ -164,8 +225,12 @@ def load_evidence(marker: str, session_path: Path | None, transcript_path: Path 
     resolved = re.findall(r'"resolvedModel":"([^"]+)"', text)
     model_ids = re.findall(r'"modelId":"([^"]+)"', text)
     model_values = resolved or model_ids
-    evidence.resolved_model = normalize_model_id(model_values[-1]) if model_values else None
-    evidence.permission_levels = sorted(set(re.findall(r'"permissionLevel":"([^"]+)"', text)))
+    evidence.resolved_model = (
+        normalize_model_id(model_values[-1]) if model_values else None
+    )
+    evidence.permission_levels = sorted(
+        set(re.findall(r'"permissionLevel":"([^"]+)"', text))
+    )
     evidence.completed = '"modelState":{"value":1' in text or f"{marker} done" in text
     evidence.final_marker_present = f"{marker} done" in text
     evidence.terminal_commands = re.findall(r'"original":"((?:\\.|[^"])*)"', text)
@@ -248,14 +313,19 @@ def extract_fenced_commands(section: str) -> list[str]:
 
 
 def extract_allowed_files(ticket: str) -> list[str]:
-    runtime_path_pattern = r"`?(runtime[/\\]agent_jobs[/\\][^`\s]+\.(?:md|json))`?"
-    read_paths = set(re.findall(runtime_path_pattern, section_text(ticket, "Required Reads")))
+    runtime_path_pattern = (
+        r"`?(runtime[/\\](?:agent_jobs|document_library)[/\\][^`\s]+\.(?:md|json))`?"
+    )
+    read_paths = set(
+        re.findall(runtime_path_pattern, section_text(ticket, "Required Reads"))
+    )
     output_sections = "\n".join(
         section_text(ticket, heading)
         for heading in (
             "Required Output File",
             "Required Output Files",
             "Allowed Actions",
+            "Workspace",
         )
     )
     output_paths = {
@@ -266,11 +336,7 @@ def extract_allowed_files(ticket: str) -> list[str]:
     read_paths = {path.replace("\\", "/") for path in read_paths}
     all_paths = [path.replace("\\", "/") for path in all_paths]
     return unique(
-        [
-            path
-            for path in all_paths
-            if path in output_paths or path not in read_paths
-        ]
+        [path for path in all_paths if path in output_paths or path not in read_paths]
     )
 
 
@@ -302,12 +368,16 @@ def check_required_json_fields(
         return []
     report_paths = [path for path in allowed_files if path.endswith(".json")]
     if not report_paths:
-        return [f"{field} (no allowed JSON report file found)" for field in required_fields]
+        return [
+            f"{field} (no allowed JSON report file found)" for field in required_fields
+        ]
     report_path = workspace_root / report_paths[0]
     try:
         data = json.loads(report_path.read_text(encoding="utf-8-sig"))
     except (OSError, json.JSONDecodeError) as exc:
-        return [f"{field} (cannot read JSON report: {exc})" for field in required_fields]
+        return [
+            f"{field} (cannot read JSON report: {exc})" for field in required_fields
+        ]
     return [field for field in required_fields if not json_field_present(data, field)]
 
 
@@ -320,10 +390,7 @@ def normalize_command(command: str) -> str:
     # ``runtime\agent_jobs`` contain ``\a``, which becomes a bell character and
     # causes false command mismatches.
     normalized = (
-        command.replace("\\\\", "\\")
-        .replace('\\"', '"')
-        .replace("\\'", "'")
-        .strip()
+        command.replace("\\\\", "\\").replace('\\"', '"').replace("\\'", "'").strip()
     )
     normalized = re.sub(
         r"^(?:cd|Set-Location)\s+[A-Za-z]:\\[^\n;]+;\s*",
@@ -373,7 +440,7 @@ def is_benign_extra_command(command: str) -> bool:
     stripped = lowered.lstrip("() ")
     if not stripped.startswith("test-path ") and "test-path " not in stripped:
         return False
-    return "runtime\\agent_jobs\\" in lowered or "runtime/agent_jobs/" in lowered
+    return any(path in lowered for path in runtime_path_needles())
 
 
 def is_repeatable_expected_command(command: str) -> bool:
@@ -412,7 +479,8 @@ def compare_commands(
         if index in matched_observed_indices:
             continue
         if any(
-            command_matches(expected, observed) and is_repeatable_expected_command(expected)
+            command_matches(expected, observed)
+            and is_repeatable_expected_command(expected)
             for expected in expected_commands
         ):
             # Repeated validation commands are useful repair-loop evidence.
@@ -443,7 +511,7 @@ def is_allowed_report_write_command(command: str, allowed_files: list[str]) -> b
         )
     ):
         return False
-    if "runtime\\agent_jobs\\" not in lowered and "runtime/agent_jobs/" not in lowered:
+    if not any(path in lowered for path in runtime_path_needles()):
         return False
     if has_forbidden_report_repair_command(lowered):
         return False
@@ -451,7 +519,7 @@ def is_allowed_report_write_command(command: str, allowed_files: list[str]) -> b
     allowed_report_paths = {
         path.replace("/", "\\").casefold()
         for path in allowed_files
-        if path.startswith("runtime/agent_jobs/") and path.endswith(".json")
+        if is_runtime_output_path(path) and path.endswith(".json")
     }
     return any(path in normalized for path in allowed_report_paths)
 
@@ -500,12 +568,27 @@ def normalize_path(path: str, workspace_root: Path) -> str:
     return cleaned
 
 
+def runtime_path_needles() -> tuple[str, ...]:
+    return (
+        "runtime\\agent_jobs\\",
+        "runtime/agent_jobs/",
+        "runtime\\document_library\\",
+        "runtime/document_library/",
+    )
+
+
+def is_runtime_output_path(path: str) -> bool:
+    normalized = path.replace("\\", "/")
+    return normalized.startswith(("runtime/agent_jobs/", "runtime/document_library/"))
+
+
 def model_matches(expected_model: str | None, observed_model: str | None) -> bool:
     if not expected_model:
         return True
-    return normalize_model_id(expected_model).casefold() == normalize_model_id(
-        observed_model or "unknown"
-    ).casefold()
+    return (
+        normalize_model_id(expected_model).casefold()
+        == normalize_model_id(observed_model or "unknown").casefold()
+    )
 
 
 def build_report(
@@ -527,12 +610,14 @@ def build_report(
     ]
     allowed_files = extract_allowed_files(ticket_text)
     required_json_fields = extract_required_json_fields(ticket_text)
-    observed_files = [normalize_path(path, workspace_root) for path in evidence.file_paths]
+    observed_files = [
+        normalize_path(path, workspace_root) for path in evidence.file_paths
+    ]
     expected_file_set = set(allowed_files)
     observed_runtime_files = [
         path
         for path in observed_files
-        if path.startswith("runtime/agent_jobs/") and path.endswith((".md", ".json"))
+        if is_runtime_output_path(path) and path.endswith((".md", ".json"))
     ]
     missing_commands, extra_commands, benign_extra_commands = compare_commands(
         expected_commands,
@@ -543,8 +628,14 @@ def build_report(
         allowed_files,
     )
     benign_extra_commands.extend(report_write_commands)
-    missing_files = [path for path in allowed_files if path not in observed_runtime_files and not (workspace_root / path).exists()]
-    extra_files = [path for path in observed_runtime_files if path not in expected_file_set]
+    missing_files = [
+        path
+        for path in allowed_files
+        if path not in observed_runtime_files and not (workspace_root / path).exists()
+    ]
+    extra_files = [
+        path for path in observed_runtime_files if path not in expected_file_set
+    ]
     missing_json_fields = check_required_json_fields(
         workspace_root,
         allowed_files,
@@ -579,12 +670,21 @@ def build_report(
         f"marker: {marker}",
         f"status: {status}",
         f"ticket: `{ticket_path.as_posix()}`",
-        f"session_artifact: `{evidence.session_path}`" if evidence.session_path else "session_artifact: missing",
-        f"transcript_artifact: `{evidence.transcript_path}`" if evidence.transcript_path else "transcript_artifact: missing",
+        f"session_artifact: `{evidence.session_path}`"
+        if evidence.session_path
+        else "session_artifact: missing",
+        f"transcript_artifact: `{evidence.transcript_path}`"
+        if evidence.transcript_path
+        else "transcript_artifact: missing",
         f"expected_model: {expected_model or 'unspecified'}",
         f"resolved_model: {evidence.resolved_model or 'unknown'}",
         f"model_match: {str(model_matches(expected_model, evidence.resolved_model)).lower()}",
-        "permission_levels: " + (", ".join(evidence.permission_levels) if evidence.permission_levels else "unknown"),
+        "permission_levels: "
+        + (
+            ", ".join(evidence.permission_levels)
+            if evidence.permission_levels
+            else "unknown"
+        ),
         f"completed: {str(evidence.completed).lower()}",
         f"final_marker_present: {str(evidence.final_marker_present).lower()}",
         "",
@@ -622,18 +722,26 @@ def build_report(
     if deviations:
         lines.extend(f"- {deviation}" for deviation in deviations)
         if missing_commands:
-            lines.extend(f"  - missing command: `{command}`" for command in missing_commands)
+            lines.extend(
+                f"  - missing command: `{command}`" for command in missing_commands
+            )
         if extra_commands:
-            lines.extend(f"  - extra command: `{command}`" for command in extra_commands)
+            lines.extend(
+                f"  - extra command: `{command}`" for command in extra_commands
+            )
         if missing_files:
             lines.extend(f"  - missing file: `{path}`" for path in missing_files)
         if extra_files:
             lines.extend(f"  - extra file: `{path}`" for path in extra_files)
         if missing_json_fields:
-            lines.extend(f"  - missing JSON field: `{field}`" for field in missing_json_fields)
+            lines.extend(
+                f"  - missing JSON field: `{field}`" for field in missing_json_fields
+            )
         if not model_matches(expected_model, evidence.resolved_model):
             lines.append(f"  - expected model: `{expected_model}`")
-            lines.append(f"  - resolved model: `{evidence.resolved_model or 'unknown'}`")
+            lines.append(
+                f"  - resolved model: `{evidence.resolved_model or 'unknown'}`"
+            )
     else:
         lines.append("- none")
     lines.append("")
@@ -650,7 +758,11 @@ def main() -> int:
     if not ticket_path.exists():
         print(f"Ticket not found: {ticket_path}", file=sys.stderr)
         return 2
-    report_path = Path(args.report).resolve() if args.report else ticket_path.with_suffix(".supervisor.md")
+    report_path = (
+        Path(args.report).resolve()
+        if args.report
+        else ticket_path.with_suffix(".supervisor.md")
+    )
     ticket_text = ticket_path.read_text(encoding="utf-8-sig")
     if not args.no_launch:
         launch_code_chat(args, ticket_text)

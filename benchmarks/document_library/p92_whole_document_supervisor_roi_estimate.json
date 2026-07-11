@@ -2,7 +2,7 @@
   "comparison": "whole_document_supervisor_vs_chunk_micro_management",
   "document_id": "tsa23_2012_23tsdp12",
   "estimated_whole_document_ticket_tokens_c4": 27966,
-  "generated_utc": "2026-07-11T16:54:52+00:00",
+  "generated_utc": "2026-07-11T17:06:40+00:00",
   "gross_local_worker_volume_token_equivalent_c4": 310000,
   "known_risks": [
     "whole-document context may exceed the practical local supervisor window",

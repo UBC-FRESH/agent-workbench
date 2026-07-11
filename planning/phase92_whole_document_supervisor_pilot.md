@@ -33,6 +33,7 @@ Tracked public-safe artifacts:
 - `benchmarks/document_library/p92_whole_document_supervisor_gate.json`
 - `benchmarks/document_library/p92_whole_document_supervisor_report_contract.json`
 - `benchmarks/document_library/p92_whole_document_supervisor_roi_estimate.json`
+- `benchmarks/document_library/p92_whole_document_supervisor_decision_packet.json`
 
 Ignored runtime artifacts:
 
@@ -72,3 +73,29 @@ The pilot succeeds only if the result separates:
 The pilot can still be useful if it returns `repair` rather than `accept_seed`.
 It fails the ROI test if the coordinator has to rebuild a chunk-level ritual to
 understand the result.
+
+## Live Result And Decision
+
+The accepted R3 run used `qwen3.6:35b-a3b-bf16` through the
+`document-metadata-extraction-supervisor` custom-agent skin with autopilot
+permission. The bridge observed `agent`, `create_file`, `runSubagent`,
+`replace_string_in_file`, and `run_in_terminal`; the expected model resolved,
+the final marker was present, and the bridge recorded no deviations.
+
+Deterministic report validation returned `valid` with 28 candidate records and
+zero fatal errors. The report read the source document, returned
+`job_complete_with_caveats`, and recommended `accept_seed`. This is enough to
+promote the report as a coordinator-audit seed without pretending all 28
+records are already accepted index entries.
+
+The economics outcome remains `not_yet_proven`. The measured coordinator span
+was 449,382 tokens: 1,679 fresh input, 447,232 cached input, and 471 output. The
+estimated cash cost was $0.087798, but the span exceeded the recorded 236,008
+token P90/P91 minimum because launch, retry, and cached-context overhead were
+still large.
+
+The P92 decision is `accept_seed_for_coordinator_audit`. The whole-document
+delegation shape produced useful auditable work and respected the intended
+protocol boundary. Do not scale the lane broadly until launch and context
+overhead are reduced; preserve the one-document report-and-decision-packet
+shape rather than returning to coordinator-built section microtickets.

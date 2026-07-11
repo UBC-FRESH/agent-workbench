@@ -33,6 +33,7 @@ DEFAULT_REPORT_PATH = (
     DEFAULT_RUNTIME_DIR / "reports" / "p92_tsa23_2012_23tsdp12_supervisor_report.json"
 )
 DEFAULT_MODEL = "document-metadata-extraction-supervisor"
+DEFAULT_FINAL_MARKER = "P92_WHOLE_DOCUMENT_SUPERVISOR_REPORT_READY"
 
 REQUIRED_REPORT_FIELDS = (
     "report_id",
@@ -83,6 +84,7 @@ def parse_args() -> argparse.Namespace:
     materialize.add_argument("--tracked-root", type=Path, default=DEFAULT_TRACKED_ROOT)
     materialize.add_argument("--supervisor-role", default=DEFAULT_SUPERVISOR_ROLE)
     materialize.add_argument("--supervisor-model", default=DEFAULT_MODEL)
+    materialize.add_argument("--final-marker", default=DEFAULT_FINAL_MARKER)
     materialize.add_argument(
         "--report-path",
         type=Path,
@@ -165,6 +167,7 @@ def materialize(args: argparse.Namespace, project_root: Path) -> None:
         source_sha256=source_sha,
         supervisor_role=str(args.supervisor_role),
         supervisor_model=str(args.supervisor_model),
+        final_marker=str(args.final_marker),
         project_root=project_root,
     )
     gate = build_gate(generated_utc, manifest, p90_summary, p91_decision)
@@ -178,6 +181,7 @@ def materialize(args: argparse.Namespace, project_root: Path) -> None:
             contract=contract,
             source_text=source_text,
             project_root=project_root,
+            final_marker=str(args.final_marker),
         ),
     )
     write_text(
@@ -266,6 +270,7 @@ def build_manifest(
     source_sha256: str,
     supervisor_role: str,
     supervisor_model: str,
+    final_marker: str,
     project_root: Path,
 ) -> dict[str, Any]:
     chunk_rows = [
@@ -298,6 +303,7 @@ def build_manifest(
         "delegated_supervisor": {
             "role": supervisor_role,
             "custom_agent": supervisor_model,
+            "final_marker": final_marker,
             "tool_access": [
                 "agent",
                 "read",
@@ -510,6 +516,7 @@ def render_supervisor_ticket(
     contract: dict[str, Any],
     source_text: str,
     project_root: Path,
+    final_marker: str,
 ) -> str:
     report_path = manifest["delegated_supervisor"]["report_path"]
     return f"""# P92 Whole-Document Document Metadata Extraction Supervisor Ticket
@@ -525,11 +532,19 @@ JSON report for coordinator validation.
 
 ## Workspace
 
-- Project root: `{repo_relative(project_root, project_root) or "."}`
+- Project root: `{project_root.as_posix()}`
 - Document ID: `{manifest["document_id"]}`
 - Pages: `{manifest["page_start"]}-{manifest["page_end"]}`
 - Report path to write: `{report_path}`
 - Custom agent skin: `{manifest["delegated_supervisor"]["custom_agent"]}`
+
+## Required Output File
+
+- `{report_path}`
+
+## Required Report JSON Fields
+
+{required_field_bullets(contract)}
 
 ## Authority Boundary
 
@@ -542,6 +557,9 @@ JSON report for coordinator validation.
 - Use tools to inspect/search the assigned source package and to validate the
   report shape when useful. Tool use is expected; do not treat this as a
   no-tool extraction task.
+- If your active workspace root is not the project root above, do not write a
+  report elsewhere. Return `needs_coordinator_review` and state that the
+  workspace root is wrong.
 - If the source is unreadable or too large to process, write a blocked report
   with `final_signal` set to `needs_coordinator_review` or `job_failed`.
 
@@ -579,7 +597,7 @@ a table, say so in the record summary and use a table caption/page anchor.
 
 After the report file exists, respond with exactly:
 
-`P92_WHOLE_DOCUMENT_SUPERVISOR_REPORT_READY`
+`{final_marker} done`
 """
 
 
@@ -616,6 +634,10 @@ report path.
 - If the job still cannot be completed, return a compact gap report rather
   than an empty or ceremonial result.
 """
+
+
+def required_field_bullets(contract: dict[str, Any]) -> str:
+    return "\n".join(f"- `{field}`" for field in contract["required_fields"])
 
 
 def build_runtime_index(manifest: dict[str, Any]) -> dict[str, Any]:

@@ -54,6 +54,7 @@
   "corpus_id": "bc_tsr_tsa23_public_1995_present",
   "delegated_supervisor": {
     "custom_agent": "document-metadata-extraction-supervisor",
+    "final_marker": "P92_WHOLE_DOCUMENT_SUPERVISOR_REPORT_READY_R3",
     "report_path": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/reports/p92_tsa23_2012_23tsdp12_supervisor_report.json",
     "role": "document_metadata_extraction_supervisor",
     "tool_access": [
@@ -68,7 +69,7 @@
   },
   "document_id": "tsa23_2012_23tsdp12",
   "document_title": "23tsdp12",
-  "generated_utc": "2026-07-11T16:54:52+00:00",
+  "generated_utc": "2026-07-11T17:06:40+00:00",
   "page_end": 41,
   "page_start": 1,
   "phase": "P92",

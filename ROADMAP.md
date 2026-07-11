@@ -100,7 +100,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P89 Document-indexing recipe v2 | #553 | `feature/p89-document-indexing-recipe-v2` | Closeout |
 | P90 Full-document candidate extraction run | #554 | `feature/p90-full-document-candidate-extraction` | Active |
 | P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
-| P92 Packaged graph-shaped pilot | #556 | `feature/p92-packaged-graph-shaped-pilot` | Planned |
+| P92 Whole-document supervisor pilot | #556 | `feature/p92-whole-document-supervisor-pilot` | Closeout |
 | P93 Second public corpus application | TBD | `feature/p93-second-public-corpus-application` | Planned |
 | P94 Project-owned index promotion | TBD | `feature/p94-project-owned-index-promotion` | Planned |
 | P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
@@ -4720,7 +4720,7 @@ Parent issue: #556
 
 Branch: `feature/p92-whole-document-supervisor-pilot`
 
-Status: active
+Status: closeout
 
 Goal: test whether one whole-document delegated supervisor job can produce a
 useful document-metadata seed with much lower paid coordinator micromanagement
@@ -4757,8 +4757,8 @@ Activation tasks:
 - [x] P92.2 Bounded pilot gate and ROI hypothesis.
 - [x] P92.3 Runtime ticket, compact bounce ticket, and report contract
   materialization.
-- [ ] P92.4 One live delegated-supervisor run with token-span measurement.
-- [ ] P92.5 Report validation, compact audit, and scale/repair/switch/stop
+- [x] P92.4 One live delegated-supervisor run with token-span measurement.
+- [x] P92.5 Report validation, compact audit, and scale/repair/switch/stop
   decision.
 
 P92.1-P92.3 retarget the pilot away from coordinator-built microtickets and
@@ -4772,9 +4772,18 @@ are:
 and `benchmarks/document_library/p92_whole_document_supervisor_roi_estimate.json`.
 The raw full-document ticket and bounce ticket remain ignored under
 `runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/`.
-The P92 gate passes on scope and prior evidence but does not authorize a live
-run by itself; the live run still requires an explicit token-span boundary and
-one named delegated supervisor lane.
+The accepted R3 live run used `qwen3.6:35b-a3b-bf16` through the
+`document-metadata-extraction-supervisor` skin in autopilot mode. It produced a
+deterministic-valid 28-record report, reached the required final marker, used
+the expected model and full-tool supervisor surface, and had zero bridge
+deviations. The tracked
+`benchmarks/document_library/p92_whole_document_supervisor_decision_packet.json`
+separates the result into a quality-valid candidate, a protocol-accepted
+candidate, and economics that are not yet proven. The measured coordinator span
+was 449,382 tokens, including 447,232 cached-input tokens, against the recorded
+236,008-token P90/P91 minimum. The decision is
+`accept_seed_for_coordinator_audit`; broader scale-up remains blocked on lower
+launch and cached-context overhead.
 
 ## Phase 93: Second Public Corpus Application
 

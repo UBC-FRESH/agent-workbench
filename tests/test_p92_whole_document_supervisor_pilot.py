@@ -82,7 +82,9 @@ def test_p92_materializer_writes_single_whole_document_ticket(
     ticket_text = ticket_path.read_text(encoding="utf-8")
     assert "Synthetic section text" in ticket_text
     assert "paid coordinator has intentionally" in ticket_text
-    assert "P92_WHOLE_DOCUMENT_SUPERVISOR_REPORT_READY" in ticket_text
+    assert "## Required Output File" in ticket_text
+    assert "- `report_id`" in ticket_text
+    assert "P92_WHOLE_DOCUMENT_SUPERVISOR_REPORT_READY done" in ticket_text
 
 
 def test_p92_report_validator_accepts_useful_seed(tmp_path: Path) -> None:
