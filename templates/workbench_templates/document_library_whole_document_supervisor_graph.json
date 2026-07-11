@@ -1,0 +1,124 @@
+{
+  "workflow": {
+    "id": "document_library_whole_document_supervisor_pilot",
+    "name": "Whole-Document Delegated Supervisor Pilot",
+    "description": "P92 graph template for delegating one complete public technical document to a local document metadata extraction supervisor with compact coordinator validation."
+  },
+  "nodes": [
+    {
+      "id": "select_document",
+      "provider": "agent_workbench.coordinator",
+      "name": "Select one bounded document",
+      "description": "Coordinator selects exactly one public document package and verifies source provenance, ignored runtime text, stop rules, and public-safety boundaries.",
+      "outputs": {
+        "corpus_slice": "tracked selected corpus slice"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "coordinator_prepare",
+          "owner": "paid_coordinator",
+          "execution_boundary": "Selection only; no semantic extraction.",
+          "token_accounting": "small coordinator span"
+        }
+      }
+    },
+    {
+      "id": "materialize_whole_document_ticket",
+      "provider": "scripts.build_p92_whole_document_supervisor_pilot",
+      "name": "Materialize whole-document supervisor ticket",
+      "description": "Script writes one ignored runtime ticket containing full source text plus tracked sanitized manifest, gate, report contract, and ROI estimate.",
+      "needs": [
+        "select_document"
+      ],
+      "outputs": {
+        "runtime_ticket": "ignored whole-document supervisor ticket",
+        "report_contract": "tracked report contract",
+        "roi_gate": "tracked ROI gate"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "script_materialize",
+          "owner": "deterministic_script",
+          "execution_boundary": "May write raw source text only under ignored runtime paths.",
+          "token_accounting": "none"
+        }
+      }
+    },
+    {
+      "id": "run_delegated_document_supervisor",
+      "provider": "vscode_custom_agent",
+      "name": "Run delegated document metadata supervisor",
+      "description": "Local supervisor receives the whole document and writes one compact JSON report with candidate records, confidence bins, gaps, self-grade, and next action.",
+      "needs": [
+        "materialize_whole_document_ticket"
+      ],
+      "outputs": {
+        "supervisor_report": "ignored runtime JSON report"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "delegated_supervisor_run",
+          "owner": "local_supervisor",
+          "custom_agent": "document-metadata-extraction-supervisor",
+          "overlay": ".github/agents/overlays/document-metadata-extraction-supervisor.md",
+          "allowed_tools": [
+            "agent",
+            "read",
+            "search",
+            "edit",
+            "runCommands"
+          ],
+          "allowed_authority": "full_tool_report_only",
+          "execution_boundary": "May use full local tools for source inspection, search, bounded validation, subagent audit, and writing the assigned runtime report. May not edit tracked files, create commits, or mutate GitHub state.",
+          "token_accounting": "local worker/provider tokens plus coordinator launch span"
+        }
+      }
+    },
+    {
+      "id": "validate_supervisor_report",
+      "provider": "scripts.build_p92_whole_document_supervisor_pilot",
+      "name": "Validate supervisor report",
+      "description": "Deterministic validator checks report shape, role, final signal, candidate count, record fields, confidence bins, and decision hint.",
+      "needs": [
+        "run_delegated_document_supervisor"
+      ],
+      "outputs": {
+        "validation_report": "ignored or tracked sanitized validation result"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "script_validate",
+          "owner": "deterministic_script",
+          "execution_boundary": "Format and minimum-quality gate only; semantic acceptance remains coordinator-owned.",
+          "token_accounting": "none"
+        }
+      }
+    },
+    {
+      "id": "bounce_or_audit",
+      "provider": "agent_workbench.coordinator",
+      "name": "Bounce once or audit seed",
+      "description": "Coordinator inspects the compact validation result and either audits the seed, issues one compact bounce ticket, or stops.",
+      "needs": [
+        "validate_supervisor_report"
+      ],
+      "outputs": {
+        "coordinator_decision": "compact decision packet"
+      },
+      "parameters": {
+        "agent_workbench": {
+          "node_kind": "coordinator_decide",
+          "owner": "paid_coordinator",
+          "execution_boundary": "One bounce maximum; final tracked decision remains coordinator-owned.",
+          "token_accounting": "required supervisor-token span for economics claims",
+          "outcome_fields": [
+            "quality_validated_candidate",
+            "protocol_accepted_candidate",
+            "economics_usable",
+            "final_decision"
+          ]
+        }
+      }
+    }
+  ]
+}

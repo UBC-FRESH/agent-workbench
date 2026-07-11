@@ -1,0 +1,107 @@
+{
+  "chunk_count": 6,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_001_008",
+      "page_end": 8,
+      "page_start": 1,
+      "text_char_count": 21046,
+      "text_sha256": "8ed2855531ad2ce126bc6b8c2ce4c6ca600d73b48fe8c9d7a4bff2eb0d0ec665"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_008_015",
+      "page_end": 15,
+      "page_start": 8,
+      "text_char_count": 18890,
+      "text_sha256": "9157a489d13d3862cc9264d6bbb1c0daeb74b2b802552021ade9c554f0151ba1"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_015_022",
+      "page_end": 22,
+      "page_start": 15,
+      "text_char_count": 18707,
+      "text_sha256": "a12a88d3be0e2f210796f251c6a6e44fc9e07543fdfcd9f47722a933701a797e"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_022_029",
+      "page_end": 29,
+      "page_start": 22,
+      "text_char_count": 16748,
+      "text_sha256": "112029e17bc8d50d3f9cd459433aaffecdf2dbb84c7b42a66288e9353adc6af4"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_029_036",
+      "page_end": 36,
+      "page_start": 29,
+      "text_char_count": 19004,
+      "text_sha256": "38b8bef63b77710725ed204ac88d70f6e9ab4602971435c1ba7b32aa3118db03"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12::pages_036_041",
+      "page_end": 41,
+      "page_start": 36,
+      "text_char_count": 12470,
+      "text_sha256": "5d44e9621d61b25ba74088043476a4f1d489a576388df9fb1aa098bc94bc48cf"
+    }
+  ],
+  "coordinator_boundary": [
+    "select one document",
+    "materialize one runtime ticket",
+    "validate one returned report",
+    "issue one compact bounce ticket only if minimum quality fails",
+    "make final tracked decision after inspection"
+  ],
+  "corpus_id": "bc_tsr_tsa23_public_1995_present",
+  "delegated_supervisor": {
+    "custom_agent": "document-metadata-extraction-supervisor",
+    "report_path": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/reports/p92_tsa23_2012_23tsdp12_supervisor_report.json",
+    "role": "document_metadata_extraction_supervisor",
+    "tool_access": [
+      "agent",
+      "read",
+      "search",
+      "edit",
+      "runCommands"
+    ],
+    "tool_policy": "Full local tool access is allowed for source inspection, search, bounded validation, subagent audit, and writing the assigned runtime report. Tracked-file and GitHub mutation remain forbidden.",
+    "upfront_coordinator_shape": "single whole-document ticket"
+  },
+  "document_id": "tsa23_2012_23tsdp12",
+  "document_title": "23tsdp12",
+  "generated_utc": "2026-07-11T16:54:52+00:00",
+  "page_end": 41,
+  "page_start": 1,
+  "phase": "P92",
+  "pilot_id": "p92_whole_document_supervisor_tsa23_2012_23tsdp12",
+  "prior_evidence": {
+    "p90_candidate_records": 800,
+    "p90_completed_runs": 120,
+    "p90_valid_run_rate": 0.783,
+    "p91_decision": "promote_seed",
+    "p91_useful_sample_yield": 0.938
+  },
+  "public_safety": {
+    "personal_paths_tracked": false,
+    "provider_urls_or_headers_tracked": false,
+    "raw_source_text_tracked": false,
+    "raw_worker_output_tracked": false,
+    "source_quotes_tracked": false
+  },
+  "runtime_artifacts": {
+    "bounce_ticket_path": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/tickets/p92_tsa23_2012_23tsdp12_bounce_redo.ticket.md",
+    "runtime_index_path": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/p92_runtime_index.json",
+    "ticket_path": "runtime/document_library/tsa23_tsr/p92_whole_document_supervisor_pilot/tickets/p92_tsa23_2012_23tsdp12_whole_document_supervisor.ticket.md"
+  },
+  "schema_version": 1,
+  "source_sha256": "b334d15b71824c91460ad59bc0cc1ed5a7bed7efea4dd4d22eba0279e26cfedf",
+  "status": "materialized_not_live_run",
+  "total_source_char_count": 106865,
+  "tracked_artifacts": {
+    "gate": "benchmarks/document_library/p92_whole_document_supervisor_gate.json",
+    "graph_template": "templates/workbench_templates/document_library_whole_document_supervisor_graph.json",
+    "manifest": "benchmarks/document_library/p92_whole_document_supervisor_pilot_manifest.json",
+    "report_contract": "benchmarks/document_library/p92_whole_document_supervisor_report_contract.json",
+    "roi_estimate": "benchmarks/document_library/p92_whole_document_supervisor_roi_estimate.json"
+  },
+  "whole_document_runtime_text_sha256": "7e7a52c6854136e5808e429fcee34a9b9f74314c8ce993f301fe9a5dae38d50b"
+}

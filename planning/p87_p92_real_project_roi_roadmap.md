@@ -107,9 +107,19 @@ experiment-summary reporting to a local worker while keeping source audit and
 final acceptance supervisor-owned. Task economics and repository governance
 overhead must be reported separately.
 
-P92 runs the packaged graph-shaped pilot. It represents the repaired workflow
-as a FreshForge-shaped graph template and runs one bounded pilot only after
-P88-P91 gates are satisfied.
+P92 runs the packaged graph-shaped pilot, but the P90/P91 evidence changes the
+shape of that pilot. The default P92 unit is now one whole-document delegated
+supervisor job, not another coordinator-built section-ticket battery. The paid
+coordinator should select the document, materialize one compact role-bound
+ticket, run deterministic report validation, issue at most one compact bounce,
+and then make the final scale/repair/switch/stop decision.
+
+The whole-document pilot is meant to test the actual ROI thesis: whether a
+custom local supervisor with a document-metadata extraction protocol can return
+a useful seed or compact failure report after a very small paid coordinator
+commitment. Exact source quotes remain preferred, but table captions, page
+anchors, and clearly labeled synthesized table facts are repairable source
+anchors rather than automatic failures.
 
 ## Interfaces And Artifacts
 

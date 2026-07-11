@@ -2757,3 +2757,20 @@ issues, pull requests, and closeout comments.
   records from two to seven, reduced rejected sample records from six to one,
   and raised useful sample yield from 0.625 to 0.938. The P91 decision remains
   `promote_seed`.
+
+## 2026-07-11 - Retargeted P92 to a whole-document delegated supervisor pilot
+
+- Activated P92 on `feature/p92-whole-document-supervisor-pilot` and retargeted
+  the packaged pilot away from coordinator-built section microtickets.
+- Added `scripts/build_p92_whole_document_supervisor_pilot.py` with
+  materialization and report-validation modes for one whole-document delegated
+  supervisor job.
+- Added the full-tool `document-metadata-extraction-supervisor` custom-agent
+  skin, its overlay, and a whole-document graph template.
+- Materialized tracked public-safe P92 artifacts under
+  `benchmarks/document_library/` and kept the raw full-document ticket plus
+  compact bounce ticket under ignored `runtime/`.
+- Recorded the ROI hypothesis explicitly: the paid coordinator should select
+  one document, launch one role-bound local supervisor job, validate one
+  returned report, issue at most one compact bounce, and then decide whether to
+  accept seed, repair, switch lane, or stop.
