@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "phase": "P93",
+  "packet_id": "p93_second_public_corpus_decision_packet",
+  "generated_utc": "2026-07-11T00:00:00Z",
+  "parent_issue": "#576",
+  "branch": "feature/p93-second-public-corpus-application",
+  "driving_model": "qwen3.6:35b-a3b-bf16 (free)",
+  "worker_model": "qwen3.6:35b-a3b-bf16",
+  "worker_protocol": "document-metadata-extraction-supervisor",
+  "corpus_id": "tsa23_2012_latest_cycle_three_documents",
+  "report_path": "runtime/document_library/tsa23_tsr/p93_second_public_corpus_application/reports/p93_tsa23_2012_cycle_three_supervisor_report.json",
+  "quality_outcome": {
+    "status": "accepted-candidate",
+    "rationale": "The supervisor extracted 47 candidate records across all three documents with high-confidence source anchors. Coverage is complete: data package (6 chunks, 17 records), rationale (8 unique chunks, 16 records), public discussion paper (3 chunks, 14 records). Records span geographic scope, land base definitions and reductions, model inputs, management zones, harvest priorities, NSR, MPB statistics, AAC determination, shelf-life assumptions, sensitivity analysis, and demographic data. Self-grade A by the supervisor worker. All five ticket success criteria met.",
+    "record_counts": {
+      "tsa23_2012_23tsdp12": 17,
+      "tsa23_2012_23ts13ra": 16,
+      "tsa23_2012_23ts13pdp": 14,
+      "total": 47
+    },
+    "known_issues": [
+      "tsa23_2012_23tsdp12 was also processed in P90/P91 as the first-corpus run. Records for this document may be duplicates pending deduplication.",
+      "Figure/chart data described conservatively from ASCII-rendered extraction — no machine-readable coordinates available.",
+      "Appendices 1-4 of Rationale are legislative text with no extractable candidate records beyond citations in main body."
+    ],
+    "worker_self_grade": "A"
+  },
+  "protocol_outcome": {
+    "bridge_status": "accepted-candidate",
+    "model_pin_verified": true,
+    "permission_mode": "full-tool supervisor surface (agent, create_file, runSubagent, replace_string_in_file, run_in_terminal)",
+    "workspace_root_correct": true,
+    "bridge_deviation_count": 0,
+    "report_written_to_expected_path": true,
+    "schema_valid": true,
+    "rationale": "Worker operated on the correct workspace root (agent-workbench). Used full-tool supervisor surface as designed. Report written to the exact path specified in the ticket. JSON schema matches expected fields: report_id, corpus_id, documents_processed (all three), candidate_record_count_total (47), records_by_document (array with per-doc entries), source_anchor_policy, gaps, self_grade, next_action. Zero bridge deviations. No tracked files edited outside runtime/ paths."
+  },
+  "economics_outcome": {
+    "status": "not_yet_measured",
+    "rationale": "Token span not captured for this free-model run because agent mode does not expose the same codex-token-checkpoint mechanism used in P92. The driving model is free qwen3.6:35b-a3b-bf16, so there is no paid-supervisor token cost. Token measurement should be re-evaluated in the next tracked run (P94 index promotion) using the SDK probe/bridge with explicit token checkpoint logging.",
+    "p92_coordinator_tokens_for_reference": 449382,
+    "note": "P92 measured ~449k total coordinator tokens for a single document. P93 processes three documents in one run. Direct comparison should wait until token measurement is re-established with SDK bridge logging."
+  },
+  "public_safety": {
+    "personal_paths_tracked": false,
+    "provider_urls_or_headers_tracked": false,
+    "raw_source_text_tracked": false,
+    "raw_worker_output_tracked": false,
+    "source_quotes_tracked": false
+  },
+  "decision": "accept_seed",
+  "decision_rationale": "The P93 pilot applied the repaired whole-document supervisor shape to a second public corpus (three-doc cycle) and produced a comprehensive seed with 47 records. The protocol ran cleanly — correct workspace, model pinned, zero bridge deviations, report accepted schema. Quality is validated: high-confidence anchors across all extraction categories. Deduplication of the data package document (also processed in P90/P91) is required before broad index promotion. The specific blocker that held up P92 scale-up was paid-supervisor token cost — that is now resolved with free qwen3.6 coordination.",
+  "next_action_items": [
+    {
+      "action": "deduplicate_tsa23_2012_23tsdp12_records",
+      "description": "Compare P93 DP records (17) against P90/P91 results for the same document. Eliminate duplicates before index promotion.",
+      "priority": "high"
+    },
+    {
+      "action": "consolidate_overlapping_land_base_figures",
+      "description": "Cross-reference land-base and THLB figures across the three documents — different tables may report overlapping deductions.",
+      "priority": "medium"
+    },
+    {
+      "action": "promote_to_index_format",
+      "description": "Merge deduplicated records into project-owned index format with source hashes, page/chunk anchors, model lane, audit status, and provenance. This is the scope of P94.",
+      "priority": "medium"
+    }
+  ],
+  "roadmap_implications": {
+    "P93_status": "complete",
+    "next_phase": "P94 Project-Owned Index Promotion",
+    "scale_decision": "proceed_to_p94",
+    "rationale": "Three-doc cycle extraction is a meaningful expansion beyond the single-document P92 run. All protocol gates passed. Quality validated. Deduplication is a bounded pre-requisite for P94, not a blocker. With free coordinator economics, the path forward to P94 is clear."
+  }
+}
