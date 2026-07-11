@@ -4906,11 +4906,11 @@ Key linkage to subsequent phases:
 
 ## Phase 95: Retrieval And Modelling-Agent Usability
 
-Parent issue: TBD (create on activation)
+Parent issue: #580
 
 Branch: `feature/p95-index-retrieval-usability`
 
-Status: planned — fleshed out per AGENTS.md governance rule requiring task/subtask level before readiness.
+Status: active — child issues created (#581-#584). Proceeding with P95.1 as next task.
 
 Goal: add retrieval and use-case surfaces that help modelling agents find and
 cite source-backed facts from promoted public-document indexes.
@@ -4922,15 +4922,15 @@ Key Advisor insight (2026-07-11):
   the P92 overhead measured at 449,382 tokens per document (~$0.087).
 
 Tasks:
-- [ ] P95.1 Select 1-2 retrieval use cases scoped to the P94 index format (#TBD)
+- [ ] P95.1 Select 1-2 retrieval use cases scoped to the P94 index format (#581)
   - e.g., "find all source-backed facts about page X in corpus Y"
   - Document scope/out-of-scope boundaries in a planning note
-- [ ] P95.2 Define query contract: input/output schema, provenance inclusion rules (#TBD)
+- [ ] P95.2 Define query contract: input/output schema, provenance inclusion rules (#582)
   - JSON schema or template; `agent-workbench` validation command if new CLI surface
-- [ ] P95.3 Implement retrieval against promoted index (#TBD)
+- [ ] P95.3 Implement retrieval against promoted index (#583)
   - Local script or CLI subcommand; test with synthetic queries in no-tool run
   - Acceptance: deterministic pass/fail on known-answer synthetic queries
-- [ ] P95.4 Write a modelling-agent usage example (#TBD)
+- [ ] P95.4 Write a modelling-agent usage example (#584)
   - Show how a downstream agent discovers and cites source-backed facts from the index
   - Example notebook or Markdown walkthrough under `templates/` or `playbooks/`
 
