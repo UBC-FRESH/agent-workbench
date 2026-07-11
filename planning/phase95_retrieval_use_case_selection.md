@@ -11,8 +11,18 @@
 Two viable targets were considered; both are acceptable for initial P95.1 work:
 
 ### Option A (initial): Re-process the existing 2012 TSA 23 TSR document bundle
-- The most recent TSA 23 data package (`tsa23_2012_23tsdp12`) is already available in `benchmarks/document_library/tsa23_tsr/` as a 41-page PDF (`23tsdp12.pdf`).
-- This bundle was previously chunked and indexed by the P90-P92 pipeline using `qwen3.6:35b-a3b-q8_0`.
+- The full corpus (`bc_tsr_tsa23_public_1995_present`) contains **19 documents** across 4 cycles:
+  - **1995 cycle (6):** `tsa23_1995_23ts95pdp`, `tsa23_1995_23ts95ra`, `tsa23_1995_23ts95sc`, `tsa23_1995_23ts95sc_supporting_doc_a`, `tsa23_1995_23ts95sc_supporting_doc_b`, `tsa23_1995_23ts95tfr`
+  - **2001 cycle (6):** `tsa23_2001_23ts01pdp`, `tsa23_2001_23ts01ra`, `tsa23_2001_23ts01sc`, `tsa23_2001_23ts01sc_supporting_doc_a`, `tsa23_2001_23ts01sc_supporting_doc_b`, `tsa23_2001_23ts01tfr`
+  - **2006 cycle (3):** `tsa23_2006_23ts06pdp`, `tsa23_2006_23ts06ra`, `tsa23_2006_23ts06sc`
+  - **2012 cycle (3):** `tsa23_2012_23ts13pdp`, `tsa23_2012_23ts13ra`, `tsa23_2012_23tsdp12`
+  - **2025 cycle (1):** `tsa23_2025_23ts25tfr`
+- The registry claims 18 but actually lists 19 (the 2025 doc is missing from the `counts.documents` tally).
+- Chunk manifests for the 3x 2012 docs exist at:
+  - `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23ts13pdp.json`
+  - `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23ts13ra.json`
+  - `benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23tsdp12.json`
+- The largest of the three (`tsa23_2012_23tsdp12`) is a 41-page data package PDF already chunked and indexed by the P90-P92 pipeline.
 - **Reuse approach:** re-process from scratch using the new custom-agent role hierarchy (supervisor + paid Advisor) rather than the old section-ticket battery. This tests whether the fresh role-hierarchy framework produces better yields or cheaper coordination overhead.
 - **FEMIC leveraged:** `femic tsr fetch` and `femic tsr index` handle document resolution and materialization; no need to re-invent these functions. The P95 retrieval layer queries against the promoted index format, not the raw PDFs.
 
