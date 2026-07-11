@@ -102,7 +102,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P91 Reporting-worker decision packets | #555 | `feature/p91-reporting-worker-decision-packets` | Planned |
 | P92 Whole-document supervisor pilot | #556 | `feature/p92-whole-document-supervisor-pilot` | Closeout |
 | P93 Second public corpus application | #576 | `feature/p93-second-public-corpus-application` | Complete |
-| P94 Project-owned index promotion | TBD | `feature/p94-project-owned-index-promotion` | Planned |
+| P94 Project-owned index promotion | #578 | `feature/p94-project-owned-index-promotion` | Complete |
 | P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
 | P96 Yield and audit-cost model comparison | TBD | `feature/p96-yield-audit-cost-model-comparison` | Planned |
 | P97 Reusable workflow graph packaging | TBD | `feature/p97-reusable-workflow-graphs` | Planned |
