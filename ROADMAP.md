@@ -4583,7 +4583,13 @@ Activation tasks:
   - [x] Validate or deterministically repair candidate JSONL.
   - [x] Track a sanitized smoke summary without raw source text or raw worker
         output.
-- [ ] P90.1 Full-document extraction batch plan.
+- [x] P90.1 Side-by-side model-lane extraction batch.
+  - [x] Run the first 10 P89 `structure` tickets against
+        `qwen3.6:35b-a3b-q8_0`.
+  - [x] Run the same 10 tickets against `qwen3.6:35b-a3b-bf16`.
+  - [x] Validate or deterministically repair candidate JSONL for both lanes.
+  - [x] Track a sanitized side-by-side summary without raw source text or raw
+        worker output.
 - [ ] P90.2 Full-document extraction execution.
 - [ ] P90.3 Validation/repair summary and stop-rule decision.
 - [ ] P90.4 Candidate packet handoff for source audit.
@@ -4597,6 +4603,16 @@ source audit has not run. Observed protocol defects are material and must shape
 P90.1: the structure pass returned prose plus fenced JSONL, and the content pass
 returned key/value blocks that required deterministic conversion before
 validation.
+
+P90.1 side-by-side model-lane batch produced
+`benchmarks/document_library/p90_qwen36_side_by_side_batch_summary.json`.
+Twenty live worker calls completed over the first 10 P89 `structure` tickets:
+10 with `qwen3.6:35b-a3b-q8_0` and 10 with `qwen3.6:35b-a3b-bf16`. The q8 lane
+produced 49 schema-valid candidate records over 9 valid runs; the bf16 lane
+produced 64 schema-valid candidate records over 8 valid runs. Three completed
+runs emitted malformed/key-value records that deterministic validation rejected.
+These are still raw candidates only: P90 has not performed source audit or
+accepted records into an index.
 
 ## Phase 91: Reporting-Worker Decision Packets
 

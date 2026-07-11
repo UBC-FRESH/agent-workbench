@@ -2663,3 +2663,19 @@ issues, pull requests, and closeout comments.
 - Added `benchmarks/document_library/p90_actual_extraction_smoke_summary.json`
   as the public-safe tracked summary. The records are raw candidates only; no
   source audit or acceptance has been performed.
+
+## 2026-07-10 - Ran P90 qwen3.6 side-by-side extraction batch
+
+- Added `scripts/run_p90_qwen36_comparison_batch.py` to run and resume a
+  bounded side-by-side extraction batch while keeping raw model output in
+  ignored runtime paths.
+- Restarted the interrupted batch after laptop sleep by clearing only the
+  partial side-by-side runtime output and rerunning the 10-ticket comparison.
+- Completed 20 live worker calls over the first 10 P89 `structure` tickets:
+  10 with `qwen3.6:35b-a3b-q8_0` and 10 with `qwen3.6:35b-a3b-bf16`.
+- Added `benchmarks/document_library/p90_qwen36_side_by_side_batch_summary.json`
+  as the sanitized comparison summary.
+- Recorded 49 schema-valid q8 candidate records over 9 valid runs and 64
+  schema-valid bf16 candidate records over 8 valid runs. Three completed runs
+  were rejected by deterministic validation. No candidate has been source
+  audited or accepted into an index yet.
