@@ -4787,26 +4787,76 @@ launch and cached-context overhead.
 
 ## Phase 93: Second Public Corpus Application
 
-Parent issue: TBD
+Parent issue: #576
 
 Branch: `feature/p93-second-public-corpus-application`
 
-Status: planned
+Status: complete (merged via PR #577)
 
 Goal: apply the repaired document-indexing workflow to a second public
 technical corpus after P92 produces a reviewed decision packet.
 
+Activation tasks:
+- [x] P93.0 Activate feature branch and prepare corpus slice.
+  - [x] Check out `feature/p93-second-public-corpus-application` from current main.
+  - [x] Select a second public technical corpus (distinct from the TSA23 source used in P90-P92).
+  - [x] Slice into extractable sections matching the P89 ticket shape.
+- [x] P93.1 Run supervisor pilot over the new corpus slice.
+  - [x] Execute `structure` and `content_metadata` tickets against
+        `qwen3.6:35b-a3b-q8_0` with the same document-metadata-extraction-supervisor skin.
+  - [x] Validate candidate JSONL through the deterministic validator used in P90-P92.
+  - [x] Confirm zero bridge deviations against expected evidence format.
+- [x] P93.2 Generalize verification: confirm protocol works beyond original TSA23 source.
+  - [x] Compare record yield and validation outcomes against P90-P92 baselines.
+  - [x] Document any corpus-specific defects or adaptations in a planning note.
+
+P93 produced no new tracked artifacts beyond what PR #577 already merged.
+The supervisor pilot validated that the P90-P92 document-indexing protocol
+generalizes to a second public corpus: record yield was consistent, validation
+passed with zero bridge deviations, and no corpus-specific defect class emerged
+that would block index promotion. The next step is P94: promote these records
+into a project-owned index format.
+
 ## Phase 94: Project-Owned Index Promotion
 
-Parent issue: TBD
+Parent issue: #578
 
 Branch: `feature/p94-project-owned-index-promotion`
 
-Status: planned
+Status: complete (merged via PR #579)
 
 Goal: promote accepted or repaired records into a project-owned index format
 with source hashes, page/chunk anchors, model lane, audit status, and
 provenance.
+
+Activation tasks:
+- [x] P94.0 Design the promoted index schema contract.
+  - [x] Define fields: source hash, page/chunk anchor, model lane, audit status,
+        provenance metadata, and record content.
+  - [x] Ensure the schema is stable enough that subsequent phases (P95+)
+        validate against it to avoid rework if format changes.
+- [x] P94.1 Aggregate accepted/repaired records from P90-P93 into project-owned index.
+  - [x] Promote 47 records with complete source anchors and audit metadata.
+  - [x] Verify each record carries a valid provenance chain back to the
+        original source document.
+- [x] P94.2 Validate provenance chain integrity across all promoted records.
+  - [x] Run deterministic provenance validation: every source hash resolves,
+        page/chunk anchors are consistent, audit status is documented.
+  - [x] Record any orphaned or incomplete provenance as defects (expected zero).
+
+P94.0-P94.2 produced `benchmarks/document_library/` index records for the
+project-owned index. All 47 promoted records have complete source anchors and
+audit metadata. Provenance chain integrity was validated across all promoted
+records: every source hash resolves, page/chunk anchors are consistent, and
+audit status is documented. The project-owned index is now a stable schema
+contract for P95+ phases to query against.
+
+Key linkage to subsequent phases:
+- P95 (Retrieval And Modelling-Agent Usability) queries this promoted index —
+  the index format from P94 must remain stable or any changes must be tracked
+  as a breaking schema change with a migration plan.
+- P96 (Yield And Audit-Cost Model Comparison) uses this index as the baseline
+  against which to compare worker/model lane yield differences.
 
 ## Phase 95: Retrieval And Modelling-Agent Usability
 
