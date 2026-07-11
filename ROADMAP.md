@@ -4810,66 +4810,171 @@ provenance.
 
 ## Phase 95: Retrieval And Modelling-Agent Usability
 
-Parent issue: TBD
+Parent issue: TBD (create on activation)
 
 Branch: `feature/p95-index-retrieval-usability`
 
-Status: planned
+Status: planned — fleshed out per AGENTS.md governance rule requiring task/subtask level before readiness.
 
 Goal: add retrieval and use-case surfaces that help modelling agents find and
 cite source-backed facts from promoted public-document indexes.
 
+Key Advisor insight (2026-07-11):
+- The P94 promoted index (47 records) must become a stable schema contract that
+  subsequent phases validate against to avoid rework if format changes.
+- Consider adding a coordinator ticket-assembly cost reduction subtask given
+  the P92 overhead measured at 449,382 tokens per document (~$0.087).
+
+Tasks:
+- [ ] P95.1 Select 1-2 retrieval use cases scoped to the P94 index format (#TBD)
+  - e.g., "find all source-backed facts about page X in corpus Y"
+  - Document scope/out-of-scope boundaries in a planning note
+- [ ] P95.2 Define query contract: input/output schema, provenance inclusion rules (#TBD)
+  - JSON schema or template; `agent-workbench` validation command if new CLI surface
+- [ ] P95.3 Implement retrieval against promoted index (#TBD)
+  - Local script or CLI subcommand; test with synthetic queries in no-tool run
+  - Acceptance: deterministic pass/fail on known-answer synthetic queries
+- [ ] P95.4 Write a modelling-agent usage example (#TBD)
+  - Show how a downstream agent discovers and cites source-backed facts from the index
+  - Example notebook or Markdown walkthrough under `templates/` or `playbooks/`
+
 ## Phase 96: Yield And Audit-Cost Model Comparison
 
-Parent issue: TBD
+Parent issue: TBD (create on activation)
 
 Branch: `feature/p96-yield-audit-cost-model-comparison`
 
-Status: planned
+Status: planned — fleshed out per AGENTS.md governance rule.
 
 Goal: compare worker/model lanes only where they affect accepted-record yield,
 repairable-record yield, or supervisor audit cost.
 
+Key Advisor insight (2026-07-11):
+- Frame this as a **recipe-stability confirmation**, not a deep model-lane ranking.
+  After P87-P94 the only model family with two variants is `qwen3.6:35b-a3b-q8_0`
+  vs `qwen3.6:35b-a3b-bf16`. A comparison between quantization variants alone
+  risks becoming profile-evidence-review-in-disguise, which the strategic arc
+  (p87_p92) has already decided to park.
+- Only compare lanes where they directly affect accepted-record yield or supervisor
+  audit cost per the ROI thesis; exclude pure latency/throughput claims.
+
+Tasks:
+- [ ] P96.1 Define comparison boundary and protocol (#TBD)
+  - Cite p87_p92 strategic arc rules; explicitly frame as recipe-stability check
+- [ ] P96.2 Select exactly one model lane to compare against baseline (#TBD)
+  - Use identical ticket shapes and corpus slice for fair comparison
+  - Reproducible run manifest with fixed variables declared
+- [ ] P96.3 Run bounded comparison on one document, one chunk set (#TBD)
+  - Record accepted/repairable/rejected yields and auditor-token spans per lane
+  - Sanitized summary split into `quality_validated_candidate` / `protocol_accepted_candidate`
+    / `economics_usable` (per P60 outcome semantics)
+- [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#TBD)
+  - With explicit boundary warnings
+  - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
+
 ## Phase 97: Reusable Workflow Graph Packaging
 
-Parent issue: TBD
+Parent issue: TBD (create on activation)
 
 Branch: `feature/p97-reusable-workflow-graphs`
 
-Status: planned
+Status: planned — fleshed out per AGENTS.md governance rule.
 
 Goal: package repeatable workflow graph templates for successful Agent
 Workbench real-project workflows.
 
+Key Advisor insight (2026-07-11):
+- P39 already produced reusable workbench graph templates and P43 produced
+  FreshForge-compatible proposal-assist graphs. Clarify whether P97 produces
+  **new** artifact families or **promotes existing TSA23-derived templates**
+  into the `workbench_templates/` namespace. If it's promotion, scope should
+  reflect that — changing both task decomposition and verification.
+
+Tasks:
+- [ ] P97.1 Audit existing graph templates for reuse (#TBD)
+  - Templates to audit: P39 `agentic_graph_envelope.json`, P43
+    `freshforge_proposal_assist_graph.json`, P92 `whole_document_graph_template`
+  - Decide "promote" / "retire" / "keep-as-example" per template
+- [ ] P97.2 Create canonical `document_library_index_workflow.json` (#TBD)
+  - Under `templates/workbench_templates/`; captures the P88-P94 recipe as a
+    FreshForge-compatible graph; JSON validated against existing graph validation;
+    public-safety scan required
+- [ ] P97.3 Write minimal instantiation guide (#TBD)
+  - How to select a corpus, run extraction, audit, promote — referencing the
+    graph template and the P62 indexing recipe playbook
+  - Markdown guide under `templates/` or promoted into `playbooks/`
+
 ## Phase 98: Reporting-Worker Template Packaging
 
-Parent issue: TBD
+Parent issue: TBD (create on activation)
 
 Branch: `feature/p98-reporting-worker-templates`
 
-Status: planned
+Status: planned — fleshed out per AGENTS.md governance rule.
 
 Goal: package reporting-worker templates and supervisor decision packets that
 proved useful in P91/P92.
 
+Tasks:
+- [ ] P98.1 Audit existing reporting artifacts for reuse (#TBD)
+  - Artifacts to audit: P91 source-audit decision packet, P73 overlay catalog,
+    P70-Ticket-C worker result templates
+  - Document scope boundaries and reusable vs. TSA23-specific structures
+- [ ] P98.2 Create `source_audit_decision_packet.md` template (#TBD)
+  - Derived from the P91 structure — generic enough for non-document-indexing use
+    but informed by TSA23 lessons; validated against P91's tracked artifacts;
+    source-anchor rules generalized
+- [ ] P98.3 Capture one supervisor decision packet pattern as reusable template (#TBD)
+  - The compact ROI decision: accept seed / repair / switch lane / stop
+  - Template with declared fields and validation semantics
+
 ## Phase 99: Economics Dashboard And Release Criteria
 
-Parent issue: TBD
+Parent issue: TBD (create on activation)
 
 Branch: `feature/p99-economics-dashboard-release-criteria`
 
-Status: planned
+Status: planned — fleshed out per AGENTS.md governance rule.
 
 Goal: make task economics, governance overhead, and release-readiness criteria
 visible enough for public-alpha decisions.
 
+Key Advisor insight (2026-07-11):
+- The ROI thesis target is "reduce paid supervisor cost per useful, source-backed
+  unit of real project work." P99 should include this as an **indexed-cost metric**
+  (not just task-level accounting): paid-supervisor tokens per promoted record,
+  broken into extraction, repair-prepass, audit, and index-assembly stages.
+
+Tasks:
+- [ ] P99.1 Define indexed-cost metric specification (#TBD)
+  - Paid-supervisor tokens per promoted record by stage; wire to existing `accounting`
+    and `tokens` commands (from P35/P40); calculation formula documented
+- [ ] P99.2 Implement dashboard surface: `agent-workbench economics render` (#TBD)
+  - Reads pilot-accounting records, token-cost records, and index metadata; produces
+    a Markdown table with per-corpus and aggregate indexed-cost values
+  - Dogfood on P90-P94 accounting data for verification
+- [ ] P99.3 Define release-readiness criteria for public alpha (#TBD)
+  - Minimum indexed cost target, provenance completeness threshold, governance-surface
+    checklist (AGENTS.md compliance, public-safety scan)
+  - Criteria document with pass/fail semantics; checked against current state
+
 ## Phase 100: Public Alpha Readiness Review
 
-Parent issue: TBD
+Parent issue: TBD (create on activation)
 
 Branch: `feature/p100-public-alpha-readiness-review`
 
-Status: planned
+Status: planned — fleshed out per AGENTS.md governance rule.
 
 Goal: prepare a public alpha only after one end-to-end real-project workflow
 shows net value.
+
+Tasks:
+- [ ] P100.1 Compile readiness checklist (#TBD)
+  - All tracked artifacts public-safe, all templates validated, ROI thesis statement
+    coherent, indexed-cost metric reported, AGENTS.md governance rules current
+  - Checklist with pass/fail per item; supervisor inspection required
+- [ ] P100.2 Produce `public_alpha_readiness_review.md` note (#TBD)
+  - Declare the workbench's current state: what is ready for external review, what
+    remains experimental, and what should not be assumed production-ready
+  - Review document with explicit scope boundaries and confidence level
