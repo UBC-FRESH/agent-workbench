@@ -4982,6 +4982,10 @@ Tasks:
     `Cannot find GitHub Copilot CLI ... Install GitHub Copilot CLI? (y/N)`.
   - Use `templates/p96_model_inventory_capture.md` to capture provider-picker
     model evidence when proceeding via VS Code UI path.
+  - Explicit model probes attempted for both lanes via
+    `scripts/copilot_sdk_ollama_probe.py`; blocked before model-call events with
+    `OSError: [WinError 193] %1 is not a valid Win32 application`.
+    Sanitized execution summary: `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json`.
 - [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
   - With explicit boundary warnings
   - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
