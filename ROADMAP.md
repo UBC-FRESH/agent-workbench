@@ -4978,6 +4978,8 @@ Tasks:
   - SDK model-list probe implemented via local `~/projects/copilot-sdk` clone;
     current blocker captured in `runtime/agent_jobs/p96_3_model_inventory_snapshot.md`
     (`Internal Windows PowerShell error ... 8009001d` during CLI start).
+  - Direct VS Code wrapper probe also blocked in this shell context:
+    `Cannot find GitHub Copilot CLI ... Install GitHub Copilot CLI? (y/N)`.
 - [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
   - With explicit boundary warnings
   - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
