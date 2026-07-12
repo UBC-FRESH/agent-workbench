@@ -6,7 +6,7 @@
   "recipe": {
     "recipe_id": "document-indexing-workflow-v1",
     "recipe_manifest_template": "templates/document_indexing_recipe_manifest.json",
-    "workflow_graph_template": "templates/workbench_templates/document_library_index_graph.json"
+    "workflow_graph_template": "templates/workbench_templates/document_library_index_workflow.json"
   },
   "budget_record": "benchmarks/document_library/tsa23_tsr/p63_bounded_tsa23_recipe_pilot_budget.json",
   "corpus": {
