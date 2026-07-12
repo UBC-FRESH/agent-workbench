@@ -23,6 +23,30 @@ DEFAULT_TIMEOUT_SECONDS = 120
 DEFAULT_BASE_DIRECTORY = Path("runtime/copilot_sdk_home")
 
 
+def load_env_file() -> None:
+    """Auto-load ~/.agent-workbench-env.txt for unset environment variables.
+
+    This keeps secrets and host-specific config out of repo artifacts.
+    Every new Copilot session should document the env file location in
+    AGENTS.md rather than hard-coding credentials or endpoints.
+    """
+    env_file = Path.home() / ".agent-workbench-env.txt"
+    if not env_file.exists():
+        return
+    for line in env_file.read_text(encoding="utf-8-sig").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or line.startswith("NOTE:"):
+            continue
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if key and value and os.environ.get(key) is None:
+            os.environ[key] = value
+
+
+
 @dataclass
 class ProbeConfig:
     model: str
@@ -39,6 +63,7 @@ class ProbeConfig:
 
 
 def parse_args() -> ProbeConfig:
+    load_env_file()
     parser = argparse.ArgumentParser(
         description=(
             "Launch a Copilot SDK session through an OpenAI-compatible Ollama "

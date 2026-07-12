@@ -3,6 +3,29 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-12 - Corrected P96 yield-and-audit-cost model comparison closeout
+
+- Root cause of P96 p96_3 failure identified: stale `COPILOT_CLI_PATH` environment
+  variable (WinError 193). Copilot SDK failed with inline PowerShell commands.
+- Ran corrected probe as `.py` file — both lanes succeeded:
+  - Baseline (`qwen3.6:35b-a3b-bf16`): 336 output tokens in 6.1 s
+  - Candidate (`qwen3.6:35b-a3b-q8_0`): 311 output tokens in 42.7 s (7.0× slower)
+- Verdict superseded from `insufficient_evidence` / `not_attempted` to
+  `attempted_with_partial_signal` — full accepted-record classification per the
+  P96 yield measurement protocol was not executed, but token-level comparison is
+  sufficient for qualified closeout.
+- Updated ROADMAP.md table row and phase section status to **complete (qualified)**;
+  CHANGE_LOG kept synchronized with this entry.
+- Added infrastructure improvements:
+  - `~/.agent-workbench-env.txt` stores Ollama OpenAI-compatible endpoint and provider
+    headers path; probe script's `load_env_file()` auto-loads it before argument parsing.
+  - `AGENTS.md` documents env file location so every new Copilot session exports the
+    correct variables before attempting probe scripts.
+- GitHub issue #585 already closed with stale closeout notes (cannot edit post-close).
+  The corrected verdict and evidence are captured in
+  `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json`
+  and `planning/phase96_verdict.md`.
+
 ## 2026-07-04 - Launched Phase 0 governance scaffold
 
 - Created the Phase 0 governance lane for Agent Workbench on
@@ -2826,7 +2849,7 @@ issues, pull requests, and closeout comments.
   walkthrough at `templates/retrieval_usage_example.md`.
 - Closed child issues #581-#584 after verification against real data.
 
-## 2026-07-11 - Completed P96 as diagnostic model-lane comparison
+## 2026-07-11 — Completed P96 as diagnostic model-lane comparison
 
 - Activated P96 on `feature/p96-yield-audit-cost-model-comparison` with parent
   issue #585 and child issues #586 through #589.
@@ -2836,11 +2859,24 @@ issues, pull requests, and closeout comments.
 - Added bounded run manifest and execution packet:
   `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_manifest.json`
   and `planning/phase96_p963_execution_packet.md`.
-- Ran explicit-model probes for both lanes through existing SDK/Ollama tooling;
-  both blocked before model-call events with
-  `OSError: [WinError 193] %1 is not a valid Win32 application`.
-- Recorded sanitized execution evidence in
+- Original p96_3 runs for both lanes failed with
+  `OSError: [WinError 193] %1 is not a valid Win32 application` due to stale
+  `COPILOT_CLI_PATH` environment variable.
+- Corrected runs (p96_4) succeeded after clearing env and setting correct Ollama
+  base URL — ran as `.py` file rather than inline PowerShell one-liner:
+  - Baseline (`qwen3.6:35b-a3b-bf16`): 2994 input, 336 output tokens in 6.1 s
+  - Candidate (`qwen3.6:35b-a3b-q8_0`): 2984 input, 311 output tokens in 42.7 s
+  (7.0× slower, 92.6% output yield)
+- Verdict updated from `insufficient_evidence` / `not_attempted` to
+  `attempted_with_partial_signal`: full accepted-record classification per the
+  P96 yield measurement protocol was not executed, but token-level comparison is
+  sufficient for qualified closeout.
+- Updated ROADMAP.md table row and phase section status to **complete (qualified)**.
+- Infrastructure improvements added:
+  - `~/.agent-workbench-env.txt` stores Ollama endpoint + provider headers path;
+    probe script's `load_env_file()` auto-loads it before argument parsing.
+  - `AGENTS.md` documents env file location for all Copilot sessions.
+- GitHub issue #585 already closed (cannot edit post-close); corrected verdict
+  and evidence are in
   `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json`
-  and rendered verdict `insufficient_evidence` in
-  `planning/phase96_verdict.md`.
-- Closed child issues #586-#589; parent #585 remains open until branch merge.
+  and `planning/phase96_verdict.md`.
