@@ -1,0 +1,60 @@
+{
+  "phase": "p96",
+  "run_id": "p96-3-lane-compare-tsa23-2012-23ts13ra-a",
+  "parent_issue": "#585",
+  "child_issue": "#588",
+  "comparison_scope": {
+    "corpus_id": "bc_tsr_tsa23_public_1995_present",
+    "document_id": "tsa23_2012_23ts13ra",
+    "chunk_set_id": "pages_001_022_three_chunk_slice",
+    "chunk_ids": [
+      "tsa23_2012_23ts13ra::pages_001_008",
+      "tsa23_2012_23ts13ra::pages_008_015",
+      "tsa23_2012_23ts13ra::pages_015_022"
+    ],
+    "page_span": "1-22",
+    "window_pages": 8,
+    "overlap_pages": 1
+  },
+  "lanes": {
+    "baseline_lane": {
+      "model_name": "qwen3.6:35b-a3b-bf16",
+      "verification_method": "copilot_chat_ollama_provider_list_snapshot",
+      "verification_evidence_path": "runtime/agent_jobs/p96_3_model_inventory_snapshot.md"
+    },
+    "candidate_lane": {
+      "model_name": "qwen3.6:35b-a3b-q8_0",
+      "verification_method": "copilot_chat_ollama_provider_list_snapshot",
+      "verification_evidence_path": "runtime/agent_jobs/p96_3_model_inventory_snapshot.md"
+    }
+  },
+  "fixed_variables": {
+    "ticket_shape": "single-document typed-fact extraction and audit packet",
+    "output_schema": "p94_promoted_index_record_compatible",
+    "validation_rules": [
+      "schema_parseable_jsonl",
+      "chunk_id_must_match_selected_set",
+      "source_hash_required",
+      "page_anchor_required"
+    ],
+    "yield_threshold_pct": 5,
+    "audit_cost_threshold_pct": 15
+  },
+  "expected_outputs": {
+    "runtime_ticket_path": "runtime/agent_jobs/p96_3_lane_comparison_ticket.md",
+    "result_path": "runtime/agent_jobs/p96_3_lane_comparison_result.md",
+    "blocker_path": "runtime/agent_jobs/p96_3_lane_comparison_blocker.md",
+    "heartbeat_path": "runtime/agent_jobs/p96_3_lane_comparison.heartbeat.jsonl",
+    "token_ledger_path": "runtime/supervisor_tokens/p96_3_lane_comparison/summary.md",
+    "sanitized_summary_path": "benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json"
+  },
+  "outcome_semantics_required": [
+    "quality_validated_candidate",
+    "protocol_accepted_candidate",
+    "economics_usable"
+  ],
+  "remote_ollama_assumption": {
+    "provider_path": "VS Code Copilot Chat provider dropdown -> ollama",
+    "localhost_checks_allowed": false
+  }
+}

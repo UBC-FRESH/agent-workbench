@@ -4971,6 +4971,8 @@ Tasks:
   - Record accepted/repairable/rejected yields and auditor-token spans per lane
   - Sanitized summary split into `quality_validated_candidate` / `protocol_accepted_candidate`
     / `economics_usable` (per P60 outcome semantics)
+  - Execution packet scaffolded in `planning/phase96_p963_execution_packet.md`
+    with concrete manifest `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_manifest.json`.
 - [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
   - With explicit boundary warnings
   - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
