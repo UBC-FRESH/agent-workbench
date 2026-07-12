@@ -45,6 +45,25 @@ issues, pull requests, and closeout comments.
   #595 (instantiation guide). #593 and #594 closed as complete; #595 pending.
 - ROADMAP.md updated to mark P97 In Progress with child issue numbers.
 
+## 2026-07-12 - P101: Sphinx technical documentation with GitHub Pages deployment
+
+- Created `docs/conf.py` with MyST parser, autodoc for CLI, RTD theme, and
+  freshforge import mocking. Added `[docs]` optional dependencies to
+  pyproject.toml (sphinx>=7.0, sphinx-rtd-theme>=2.0, myst-parser>=3.0,
+  linkify-it-py>=2.0).
+- Populated 19 content pages across 4 sections: guides (6 playbooks), concepts
+  (4 protocols), reference (4 specs), and roadmap/release (2 sections). All
+  cross-reference source markdown files in the repo.
+- Created `.github/workflows/docs.yml` GitHub Actions workflow — validates docs
+  on PRs, deploys to GitHub Pages on merge to main. `sphinx-build -b html docs
+  _build/html -W` passes with zero warnings across 21 source files.
+- Created GitHub Pages site at https://ubc-fresh.github.io/agent-workbench/.
+- Wrote `planning/p97_instantiation_guide_draft.md` (P97.3 — temporary markdown
+  for future RST translation into Sphinx docs).
+- Updated coordinator agent authority to include PR merge authority with
+  developer check-in requirement.
+- GitHub issues: #598 parent phase created and closed after PR #597 squash-merge.
+
 ## 2026-07-04 - Launched Phase 0 governance scaffold
 
 - Created the Phase 0 governance lane for Agent Workbench on

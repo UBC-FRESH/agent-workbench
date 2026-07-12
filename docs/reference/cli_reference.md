@@ -16,4 +16,4 @@ The CLI includes subcommands for:
 
 **Autodoc section**: Detailed API reference for the `agent_workbench.cli` module is generated from source via sphinx.ext.autodoc.
 
-For usage guides see the :doc:`guides/index` section.
+For usage guides see the [guides](../guides/index) section.

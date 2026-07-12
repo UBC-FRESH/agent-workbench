@@ -3,7 +3,7 @@ CLI Workflow Guide
 
 This guide covers the command-line interface workflow for Agent Workbench tooling.
 
-Source playbook: :doc:`../playbooks/cli_workflow`
+Source playbook: [../playbooks/cli_workflow](../playbooks/cli_workflow)
 
 The ``agent-workbench`` CLI provides commands for:
 
@@ -14,12 +14,12 @@ The ``agent-workbench`` CLI provides commands for:
 
 Install with:
 
-.. code-block:: bash
-
-   pip install -e ".[dev]"
+```bash
+pip install -e ".[dev]"
+```
 
 Run help:
 
-.. code-block:: bash
-
-   agent-workbench --help
+```bash
+agent-workbench --help
+```
