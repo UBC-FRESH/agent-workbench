@@ -155,3 +155,34 @@ The first tuning loop is rules-based:
 Machine-learning policy optimization is out of scope until the sanitized record
 set is large, varied, and independently verifiable. The current threshold is at
 least 100 records, 6 task types, and 3 model or project groups.
+
+## Model Attribution Risk
+
+Agent Workbench must never treat a `model:` frontmatter field in `.agent.md`
+files as proof of actual model selection for non-paid agents (local/worker).
+This is a known issue tracked at:
+https://github.com/microsoft/vscode/issues/310138
+
+**Rules:**
+
+- For **paid Copilot agents** (advisor), the `model:` frontmatter is pinned by
+  the native provider and reliably selects Claude Opus 4.8 / Claude Sonnet 4.5 /
+  GPT-5 via the picker.
+- For **local/self-hosted agents** (coordinator, supervisor, workers), `model:`
+  frontmatter is documentation of intent only. Actual model selection is
+  picker-dependent or must be enforced by out-of-band tooling
+  (`scripts/ollama_worker_call.py`).
+- **Do not accept** a worker's claim about which model produced its output based
+  solely on the agent file frontmatter. Persisted session evidence (event logs,
+  tool invocations, `ollama list` snapshots) must show the expected model before
+  a result counts for model comparison or audit.
+- **Do not treat** Copilot SDK provider/model configuration as proof of successful
+  model execution either — captured event/output evidence must show the run
+  reached its expected stop condition before it counts.
+- **Do not assume** any local agent ran on the "intended" model from frontmatter.
+  If model identity matters for a benchmark claim, verify it from persisted
+  evidence, not inference.
+
+This rule protects the ROI thesis and model comparison lane (P96+) from becoming
+unverifiable: you cannot compare models if you do not independently know which
+model produced each result.
