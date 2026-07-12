@@ -26,6 +26,25 @@ issues, pull requests, and closeout comments.
   `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json`
   and `planning/phase96_verdict.md`.
 
+## 2026-07-12 - P97: Reusable workflow graph packaging — classification, rename, README rewrite
+
+- Revised planning note (`planning/phase97_activation.md`) per Advisor review: promote=4,
+  retire=2, keep-as-example=2, not-in-scope=4. Phase overview reframed as "reusable
+  workflow graph catalog."
+- Updated `templates/workbench_templates/README.md` with full P97 classification table,
+  detailed descriptions of each promoted template's role in the graph family, and a future
+  requirements section documenting JSON Schema validation as a P98+ item.
+- Renamed `document_library_index_graph.json` →
+  `document_library_index_workflow.json` (internal `workflow.id` already had target name).
+  Git detected 100% rename.
+- Updated all references from old filename to new: README, test suite, manifest template,
+  benchmark plan JSON.
+- Validated all 4 promoted templates: valid JSON, correct workflow IDs, all nodes declare
+  provider, no hardcoded local paths or credentials. Existing pytest suite passes (4/4).
+- GitHub issues: #592 parent phase created with child tasks #593 (audit), #594 (rename),
+  #595 (instantiation guide). #593 and #594 closed as complete; #595 pending.
+- ROADMAP.md updated to mark P97 In Progress with child issue numbers.
+
 ## 2026-07-04 - Launched Phase 0 governance scaffold
 
 - Created the Phase 0 governance lane for Agent Workbench on

@@ -30,7 +30,7 @@ def test_document_artifact_audit_supervisor_graph_is_valid() -> None:
 
 def test_document_library_index_graph_is_valid() -> None:
     path = (
-        ROOT / "templates" / "workbench_templates" / "document_library_index_graph.json"
+        ROOT / "templates" / "workbench_templates" / "document_library_index_workflow.json""
     )
     data = load_graph_document(path)
 
