@@ -4942,11 +4942,11 @@ Tasks:
 ## Phase 96: Yield And Audit-Cost Model Comparison
 
 Parent issue: #585
-Child issues: TBD (#586-#589)
+Child issues: #586 closed, #587 closed, #588 open, #589 open
 
 Branch: `feature/p96-yield-audit-cost-model-comparison`
 
-Status: **active** — parent issue created (#585), child issues created (#586-#589). Proceeding with P96.1 as next task.
+Status: **active** — P96.1 and P96.2 complete. Proceeding with P96.3 bounded run execution (#588).
 
 Goal: compare worker/model lanes only where they affect accepted-record yield,
 repairable-record yield, or supervisor audit cost.
@@ -4964,15 +4964,20 @@ Tasks:
 - [x] P96.1 Define comparison boundary and protocol (#586)
   - `planning/phase96_comparison_protocol.md` created; includes recipe-stability framing,
     P87-P92 boundary rules, and remote Ollama model-verification assumptions.
-- [ ] P96.2 Select exactly one model lane to compare against baseline (#587)
-  - Use identical ticket shapes and corpus slice for fair comparison
-  - Reproducible run manifest with fixed variables declared
+- [x] P96.2 Select exactly one model lane to compare against baseline (#587)
+  - `planning/phase96_model_lane_selection.md` created with baseline/candidate lanes
+    and remote-ollama verification assumptions.
+  - Reproducible run manifest variables declared in
+    `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_manifest.json`.
 - [ ] P96.3 Run bounded comparison on one document, one chunk set (#588)
   - Record accepted/repairable/rejected yields and auditor-token spans per lane
   - Sanitized summary split into `quality_validated_candidate` / `protocol_accepted_candidate`
     / `economics_usable` (per P60 outcome semantics)
   - Execution packet scaffolded in `planning/phase96_p963_execution_packet.md`
     with concrete manifest `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_manifest.json`.
+  - SDK model-list probe implemented via local `~/projects/copilot-sdk` clone;
+    current blocker captured in `runtime/agent_jobs/p96_3_model_inventory_snapshot.md`
+    (`Internal Windows PowerShell error ... 8009001d` during CLI start).
 - [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
   - With explicit boundary warnings
   - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
