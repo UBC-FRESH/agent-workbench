@@ -109,7 +109,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P98 Reporting-worker template packaging | TBD | `feature/p98-reporting-worker-templates` | Planned |
 | P99 Economics dashboard and release criteria | TBD | `feature/p99-economics-dashboard-release-criteria` | Planned |
 | P100 Public alpha readiness review | TBD | `feature/p100-public-alpha-readiness-review` | Planned |
-| P101 Sphinx technical documentation and GitHub Pages | TBD | `feature/p101-sphinx-docs-github-pages` | Planned |
+| P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | In Progress: PR #597 open, CI running |
 
 ## Phase 0: Governance And Workflow Scaffold
 
