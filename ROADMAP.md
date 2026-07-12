@@ -4961,8 +4961,9 @@ Key Advisor insight (2026-07-11):
   audit cost per the ROI thesis; exclude pure latency/throughput claims.
 
 Tasks:
-- [ ] P96.1 Define comparison boundary and protocol (#586)
-  - Cite p87_p92 strategic arc rules; explicitly frame as recipe-stability check
+- [x] P96.1 Define comparison boundary and protocol (#586)
+  - `planning/phase96_comparison_protocol.md` created; includes recipe-stability framing,
+    P87-P92 boundary rules, and remote Ollama model-verification assumptions.
 - [ ] P96.2 Select exactly one model lane to compare against baseline (#587)
   - Use identical ticket shapes and corpus slice for fair comparison
   - Reproducible run manifest with fixed variables declared

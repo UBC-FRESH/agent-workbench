@@ -156,6 +156,19 @@ Machine-learning policy optimization is out of scope until the sanitized record
 set is large, varied, and independently verifiable. The current threshold is at
 least 100 records, 6 task types, and 3 model or project groups.
 
+## Remote Ollama Host (Workspace-Specific Note)
+
+The configured Ollama server is accessed via the **VS Code Ollama extension**, not a local `localhost:11434` endpoint. This workspace has no local Ollama instance running.
+
+**Rules for all P96+ model comparison work:**
+
+- Do **not** attempt to curl `http://localhost:11434/api/tags` or run `ollama list` in this terminal session — these will fail.
+- Model inventory must be verified by inspecting the **Copilot Chat provider dropdown → ollama models list** in VS Code (where the extension surfaces remote host models).
+- Worker tasks that require model availability checks must instruct the worker to capture a text listing of available ollama models from the Copilot Chat picker, not from local CLI commands.
+- Model installation (pull) is done through the VS Code Ollama extension context or via the configured remote host's own terminal/SSH session, never via `localhost:11434`.
+
+This rule applies to all coordinator, supervisor, and worker agent tasks in phases P96 through P100.
+
 ## Model Attribution Risk
 
 Agent Workbench must never treat a `model:` frontmatter field in `.agent.md`

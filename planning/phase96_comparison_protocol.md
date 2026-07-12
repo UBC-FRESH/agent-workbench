@@ -73,10 +73,13 @@ Per `planning/delegation_policy.md` § **Model Attribution Risk** (added 2026-07
 - A P96 comparison run **must** independently verify which model produced each
   lane's output via:
   - Persisted session evidence (event logs, tool invocations), or
-  - An `ollama list` snapshot taken before and after the run showing the expected
-    model in the configured host inventory.
+  - A Copilot Chat `ollama` provider model-list snapshot from VS Code showing
+    the expected model in the configured remote host inventory.
 - If model identity cannot be independently verified for a lane, that lane's
   data must be marked `model_unverified` and excluded from the final verdict.
+
+In this workspace, Ollama is remote via the VS Code extension. Do not rely on
+local `localhost:11434` probes from this terminal session.
 
 This is non-negotiable: without independent model verification, P96 evidence
 becomes unverifiable and any verdict is meaningless.
@@ -188,10 +191,10 @@ phase: p96
 run_id: <unique-id>
 baseline_lane:
   model_name: qwen3.6:35b-a3b-bf16   # example — replace with actual
-  verification_method: ollama_list_snapshot
+  verification_method: copilot_chat_ollama_provider_list_snapshot
 candidate_lane:
   model_name: <to-be-selected>        # P96.2 fills this in
-  verification_method: ollama_list_snapshot
+  verification_method: copilot_chat_ollama_provider_list_snapshot
 corpus_document: <document-id>         # e.g., tsa23_2012_23tsdp12
 chunk_boundaries: <matching-recipe>    # from P89 recipe
 ticket_shape: <exact-ticket-grammar>   # identical for both lanes
@@ -204,7 +207,7 @@ expected_output_format: yield_per_lane + audit_cost_per_lane + verdict
 
 | Task | Issue | Owner | Status |
 | --- | --- | --- | --- |
-| P96.1 Define boundary and protocol | #586 | This document | In progress (draft) |
+| P96.1 Define boundary and protocol | #586 | This document | Complete |
 | P96.2 Select model lane to compare | #587 | Supervisor worker | Pending |
 | P96.3 Run bounded comparison | #588 | Supervisor worker | Pending |
 | P96.4 Render verdict | #589 | Coordinator | Pending |
