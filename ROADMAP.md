@@ -4904,13 +4904,13 @@ Key linkage to subsequent phases:
 - P96 (Yield And Audit-Cost Model Comparison) uses this index as the baseline
   against which to compare worker/model lane yield differences.
 
-## Phase 95: Retrieval And Modelling-Agent Usability
+## Phase 95: Retrieval And Modelling-Agent Usability — COMPLETE
 
 Parent issue: #580
 
 Branch: `feature/p95-index-retrieval-usability`
 
-Status: active — child issues created (#581-#584). Proceeding with P95.1 as next task.
+Status: **complete** — all 4 child tasks closed (#581-#584). Close parent issue #580 after merging the feature branch.
 
 Goal: add retrieval and use-case surfaces that help modelling agents find and
 cite source-backed facts from promoted public-document indexes.
@@ -4922,25 +4922,31 @@ Key Advisor insight (2026-07-11):
   the P92 overhead measured at 449,382 tokens per document (~$0.087).
 
 Tasks:
-- [ ] P95.1 Select 1-2 retrieval use cases scoped to the P94 index format (#581)
-  - e.g., "find all source-backed facts about page X in corpus Y"
-  - Document scope/out-of-scope boundaries in a planning note
-- [ ] P95.2 Define query contract: input/output schema, provenance inclusion rules (#582)
-  - JSON schema or template; `agent-workbench` validation command if new CLI surface
-- [ ] P95.3 Implement retrieval against promoted index (#583)
-  - Local script or CLI subcommand; test with synthetic queries in no-tool run
-  - Acceptance: deterministic pass/fail on known-answer synthetic queries
-- [ ] P95.4 Write a modelling-agent usage example (#584)
-  - Show how a downstream agent discovers and cites source-backed facts from the index
-  - Example notebook or Markdown walkthrough under `templates/` or `playbooks/`
+- [x] P95.1 Select 1-2 retrieval use cases scoped to the P94 index format (#581)
+  - Use Case 1: Page/Chunk Anchor Lookup — "find all source-backed facts about page X-Y of document D"
+  - Use Case 2: Full-Document Provenance Trace — "show every record from document D grouped by model lane and audit status"
+  - Documented in `planning/phase95_retrieval_use_case_selection.md`
+- [x] P95.2 Define query contract: input/output schema, provenance inclusion rules (#582)
+  - 4 JSON schemas in `templates/query_schemas/`
+  - Field mapping grounded in P94 metadata (source_hash, document_id, page_anchor, chunk_id, model_lane, audit_status, is_dedup)
+  - Documented in `planning/phase95_query_contract.md`
+- [x] P95.3 Implement retrieval against promoted index (#583)
+  - `src/agent_workbench/retrieval.py` — IndexRecord, PromotedIndex, query_by_page_range(), trace_full_document()
+  - `src/agent_workbench/cli.py` — `retrieve` subcommand with list-docs/page-range/trace operations
+  - All three CLI operations verified against real data (3 docs, 16 records)
+  - Bugfix commit: `9e136a7` (missing page-range handler in cli.py)
+- [x] P95.4 Write a modelling-agent usage example (#584)
+  - `templates/retrieval_usage_example.md` — end-to-end walkthrough for both use cases
+  - Includes synthetic run script, schema reference, and agent guidance notes
 
 ## Phase 96: Yield And Audit-Cost Model Comparison
 
-Parent issue: TBD (create on activation)
+Parent issue: #585
+Child issues: #586 closed, #587 closed, #588 closed, #589 closed
 
 Branch: `feature/p96-yield-audit-cost-model-comparison`
 
-Status: planned — fleshed out per AGENTS.md governance rule.
+Status: **complete (diagnostic)** — bounded execution attempted; verdict is insufficient evidence.
 
 Goal: compare worker/model lanes only where they affect accepted-record yield,
 repairable-record yield, or supervisor audit cost.
@@ -4955,18 +4961,35 @@ Key Advisor insight (2026-07-11):
   audit cost per the ROI thesis; exclude pure latency/throughput claims.
 
 Tasks:
-- [ ] P96.1 Define comparison boundary and protocol (#TBD)
-  - Cite p87_p92 strategic arc rules; explicitly frame as recipe-stability check
-- [ ] P96.2 Select exactly one model lane to compare against baseline (#TBD)
-  - Use identical ticket shapes and corpus slice for fair comparison
-  - Reproducible run manifest with fixed variables declared
-- [ ] P96.3 Run bounded comparison on one document, one chunk set (#TBD)
+- [x] P96.1 Define comparison boundary and protocol (#586)
+  - `planning/phase96_comparison_protocol.md` created; includes recipe-stability framing,
+    P87-P92 boundary rules, and remote Ollama model-verification assumptions.
+- [x] P96.2 Select exactly one model lane to compare against baseline (#587)
+  - `planning/phase96_model_lane_selection.md` created with baseline/candidate lanes
+    and remote-ollama verification assumptions.
+  - Reproducible run manifest variables declared in
+    `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_manifest.json`.
+- [x] P96.3 Run bounded comparison on one document, one chunk set (#588)
   - Record accepted/repairable/rejected yields and auditor-token spans per lane
   - Sanitized summary split into `quality_validated_candidate` / `protocol_accepted_candidate`
     / `economics_usable` (per P60 outcome semantics)
-- [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#TBD)
+  - Execution packet scaffolded in `planning/phase96_p963_execution_packet.md`
+    with concrete manifest `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_manifest.json`.
+  - SDK model-list probe implemented via local `~/projects/copilot-sdk` clone;
+    current blocker captured in `runtime/agent_jobs/p96_3_model_inventory_snapshot.md`
+    (`Internal Windows PowerShell error ... 8009001d` during CLI start).
+  - Direct VS Code wrapper probe also blocked in this shell context:
+    `Cannot find GitHub Copilot CLI ... Install GitHub Copilot CLI? (y/N)`.
+  - Use `templates/p96_model_inventory_capture.md` to capture provider-picker
+    model evidence when proceeding via VS Code UI path.
+  - Explicit model probes attempted for both lanes via
+    `scripts/copilot_sdk_ollama_probe.py`; blocked before model-call events with
+    `OSError: [WinError 193] %1 is not a valid Win32 application`.
+    Sanitized execution summary: `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json`.
+- [x] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
   - With explicit boundary warnings
-  - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
+  - Verdict rendered in `planning/phase96_verdict.md` as `insufficient_evidence`.
+  - Diagnostic-only closeout: no broad scale-up authorization.
 
 ## Phase 97: Reusable Workflow Graph Packaging
 

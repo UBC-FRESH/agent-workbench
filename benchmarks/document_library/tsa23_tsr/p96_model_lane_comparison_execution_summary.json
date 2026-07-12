@@ -1,0 +1,44 @@
+{
+  "phase": "p96",
+  "run_id": "p96-3-lane-compare-tsa23-2012-23ts13ra-a",
+  "parent_issue": "#585",
+  "child_issue": "#588",
+  "status": "blocked",
+  "blocker": "sdk-runtime-error",
+  "blocker_error": "OSError: [WinError 193] %1 is not a valid Win32 application",
+  "model_inventory_verification": {
+    "method": "remote-provider evidence (VS Code Ollama extension / Copilot Chat ollama provider)",
+    "inventory_artifact": "runtime/agent_jobs/p96_3_model_inventory_snapshot.md",
+    "localhost_checks_used": false
+  },
+  "lanes": {
+    "baseline": {
+      "model": "qwen3.6:35b-a3b-bf16",
+      "probe_result": "runtime/agent_jobs/p96_3_baseline_probe.md",
+      "status": "blocked"
+    },
+    "candidate": {
+      "model": "qwen3.6:35b-a3b-q8_0",
+      "probe_result": "runtime/agent_jobs/p96_3_candidate_probe.md",
+      "status": "blocked"
+    }
+  },
+  "metrics": {
+    "accepted_count": null,
+    "repairable_count": null,
+    "rejected_count": null,
+    "baseline_audit_tokens": null,
+    "candidate_audit_tokens": null
+  },
+  "outcome_semantics": {
+    "quality_validated_candidate": false,
+    "protocol_accepted_candidate": false,
+    "economics_usable": false
+  },
+  "final_decision": "blocked_runtime_before_model_call",
+  "rejection_reasons": [
+    "sdk-runtime-error",
+    "winerror-193-invalid-win32-application"
+  ],
+  "generated_utc": "2026-07-12T03:06:00+00:00"
+}

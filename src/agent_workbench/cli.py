@@ -159,6 +159,7 @@ from .tokens import (
     synthesize_token_markdown,
     validate_token_record,
 )
+from .retrieval import PromotedIndex, query_by_page_range, trace_full_document
 from .workflow import (
     load_workflow_step,
     render_workflow_markdown,
@@ -214,6 +215,40 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional ignored Markdown report path.",
     )
     smoke_parser.set_defaults(func=run_smoke)
+
+    retrieve_parser = subparsers.add_parser(
+        "retrieve",
+        help="Query the P94 promoted index (P95 retrieval).",
+    )
+    retrieve_subparsers = retrieve_parser.add_subparsers(
+        dest="retrieve_command",
+        required=True,
+    )
+    retrieve_page = retrieve_subparsers.add_parser(
+        "page-range",
+        help="Use Case 1: page/chunk anchor lookup",
+    )
+    retrieve_page.add_argument("--document-id", required=True)
+    retrieve_page.add_argument("--page-start", type=int, required=True)
+    retrieve_page.add_argument("--page-end", type=int, required=True)
+    retrieve_page.add_argument("--no-source-hashes", action="store_true")
+    retrieve_page.add_argument("--no-model-lane", action="store_true")
+    retrieve_page.set_defaults(func=run_retrieve_page_range)
+    retrieve_subparsers.add_parser(
+        "list-docs",
+        help="List all indexed document IDs",
+    ).set_defaults(func=run_retrieve_list_docs)
+    retrieve_trace = retrieve_subparsers.add_parser(
+        "trace",
+        help="Use Case 2: full-document provenance trace",
+    )
+    retrieve_trace.add_argument("--document-id", required=True)
+    retrieve_trace.add_argument(
+        "--group-by",
+        choices=["none", "audit_status", "model_lane"],
+        default="none",
+    )
+    retrieve_trace.set_defaults(func=run_retrieve_trace)
 
     copilot_parser = subparsers.add_parser(
         "copilot",
@@ -1578,6 +1613,50 @@ def add_copilot_sdk_turn_args(parser: argparse.ArgumentParser) -> None:
 def run_overview(_args: argparse.Namespace) -> int:
     parser = build_parser()
     parser.print_help()
+    return 0
+
+
+def run_retrieve_list_docs(args: argparse.Namespace) -> int:
+    """CLI handler for 'agent-workbench retrieve list-docs'."""
+    repo_root = getattr(args, "repo_root", None)
+    index = PromotedIndex(repo_root=repo_root)
+    print(f"Indexed documents ({index.total_record_count} total records):")
+    for did in index.all_document_ids:
+        count = len(index.documents[did])
+        dedup = sum(1 for r in index.documents[did] if r.is_dedup)
+        status_line = f" [dedup={dedup}]" if dedup else ""
+        print(f"  {did}: {count} records{status_line}")
+    return 0
+
+
+def run_retrieve_page_range(args: argparse.Namespace) -> int:
+    """CLI handler for 'agent-workbench retrieve page-range'."""
+    repo_root = getattr(args, "repo_root", None)
+    index = PromotedIndex(repo_root=repo_root)
+    result = query_by_page_range(
+        doc_id=args.document_id,
+        start=args.page_start,
+        end=args.page_end,
+        include_source_hashes=not getattr(args, "no_source_hashes", False),
+        include_model_lane=not getattr(args, "no_model_lane", False),
+        index=index,
+    )
+    json.dump(result, sys.stdout, indent=2)
+    print()
+    return 0
+
+
+def run_retrieve_trace(args: argparse.Namespace) -> int:
+    """CLI handler for 'agent-workbench retrieve trace'."""
+    repo_root = getattr(args, "repo_root", None)
+    index = PromotedIndex(repo_root=repo_root)
+    result = trace_full_document(
+        doc_id=args.document_id,
+        group_by=args.group_by,
+        index=index,
+    )
+    json.dump(result, sys.stdout, indent=2)
+    print()
     return 0
 
 
