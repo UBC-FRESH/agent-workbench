@@ -4942,11 +4942,11 @@ Tasks:
 ## Phase 96: Yield And Audit-Cost Model Comparison
 
 Parent issue: #585
-Child issues: #586 closed, #587 closed, #588 open, #589 open
+Child issues: #586 closed, #587 closed, #588 closed, #589 closed
 
 Branch: `feature/p96-yield-audit-cost-model-comparison`
 
-Status: **active** — P96.1 and P96.2 complete. Proceeding with P96.3 bounded run execution (#588).
+Status: **complete (diagnostic)** — bounded execution attempted; verdict is insufficient evidence.
 
 Goal: compare worker/model lanes only where they affect accepted-record yield,
 repairable-record yield, or supervisor audit cost.
@@ -4969,7 +4969,7 @@ Tasks:
     and remote-ollama verification assumptions.
   - Reproducible run manifest variables declared in
     `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_manifest.json`.
-- [ ] P96.3 Run bounded comparison on one document, one chunk set (#588)
+- [x] P96.3 Run bounded comparison on one document, one chunk set (#588)
   - Record accepted/repairable/rejected yields and auditor-token spans per lane
   - Sanitized summary split into `quality_validated_candidate` / `protocol_accepted_candidate`
     / `economics_usable` (per P60 outcome semantics)
@@ -4986,9 +4986,10 @@ Tasks:
     `scripts/copilot_sdk_ollama_probe.py`; blocked before model-call events with
     `OSError: [WinError 193] %1 is not a valid Win32 application`.
     Sanitized execution summary: `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json`.
-- [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
+- [x] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
   - With explicit boundary warnings
-  - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
+  - Verdict rendered in `planning/phase96_verdict.md` as `insufficient_evidence`.
+  - Diagnostic-only closeout: no broad scale-up authorization.
 
 ## Phase 97: Reusable Workflow Graph Packaging
 
