@@ -107,7 +107,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P96 Yield and audit-cost model comparison | #585 | `feature/p96-yield-audit-cost-model-comparison` | Complete (qualified) |
 | P97 Reusable workflow graph packaging | #592 | `feature/p97-reusable-workflow-graphs` | Complete — merged via PR #596 at `b2b929f`; parent issue #592 closed |
 | P98 Reporting-worker template packaging | #599 | `feature/p98-reporting-worker-templates` | Complete |
-| P99 Economics dashboard and release criteria | TBD | `feature/p99-economics-dashboard-release-criteria` | Planned |
+| P99 Economics dashboard and release criteria | #601 | `feature/p99-economics-dashboard-release-criteria` | Active |
 | P100 Public alpha readiness review | TBD | `feature/p100-public-alpha-readiness-review` | Planned |
 | P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
 
@@ -5106,11 +5106,11 @@ run-validators-don't-reason, fresh session per task.
 
 ## Phase 99: Economics Dashboard And Release Criteria
 
-Parent issue: TBD (create on activation)
+Parent issue: #601
 
 Branch: `feature/p99-economics-dashboard-release-criteria`
 
-Status: planned — fleshed out per AGENTS.md governance rule.
+Status: active
 
 Goal: make task economics, governance overhead, and release-readiness criteria
 visible enough for public-alpha decisions.
@@ -5122,14 +5122,14 @@ Key Advisor insight (2026-07-11):
   broken into extraction, repair-prepass, audit, and index-assembly stages.
 
 Tasks:
-- [ ] P99.1 Define indexed-cost metric specification (#TBD)
+- [x] P99.1 Define indexed-cost metric specification (#601)
   - Paid-supervisor tokens per promoted record by stage; wire to existing `accounting`
     and `tokens` commands (from P35/P40); calculation formula documented
-- [ ] P99.2 Implement dashboard surface: `agent-workbench economics render` (#TBD)
+- [x] P99.2 Implement dashboard surface: `agent-workbench economics render` (#601)
   - Reads pilot-accounting records, token-cost records, and index metadata; produces
     a Markdown table with per-corpus and aggregate indexed-cost values
   - Dogfood on P90-P94 accounting data for verification
-- [ ] P99.3 Define release-readiness criteria for public alpha (#TBD)
+- [x] P99.3 Define release-readiness criteria for public alpha (#601)
   - Minimum indexed cost target, provenance completeness threshold, governance-surface
     checklist (AGENTS.md compliance, public-safety scan)
   - Criteria document with pass/fail semantics; checked against current state
