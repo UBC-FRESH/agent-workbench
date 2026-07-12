@@ -104,7 +104,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P93 Second public corpus application | #576 | `feature/p93-second-public-corpus-application` | Complete |
 | P94 Project-owned index promotion | #578 | `feature/p94-project-owned-index-promotion` | Complete |
 | P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
-| P96 Yield and audit-cost model comparison | TBD | `feature/p96-yield-audit-cost-model-comparison` | Planned |
+| P96 Yield and audit-cost model comparison | #585 | `feature/p96-yield-audit-cost-model-comparison` | Complete (qualified) |
 | P97 Reusable workflow graph packaging | TBD | `feature/p97-reusable-workflow-graphs` | Planned |
 | P98 Reporting-worker template packaging | TBD | `feature/p98-reporting-worker-templates` | Planned |
 | P99 Economics dashboard and release criteria | TBD | `feature/p99-economics-dashboard-release-criteria` | Planned |
@@ -4946,7 +4946,13 @@ Child issues: #586 closed, #587 closed, #588 closed, #589 closed
 
 Branch: `feature/p96-yield-audit-cost-model-comparison`
 
-Status: **complete (diagnostic)** — bounded execution attempted; verdict is insufficient evidence.
+Status: **complete (qualified)** — corrected run p96_4 produced token-level
+comparison; full accepted-record classification yield not executed.
+
+Corrected run metadata:
+- `runtime/agent_jobs/p96_4_baseline_probe.md` — status: completed, 336 output tokens
+- `runtime/agent_jobs/p96_4_candidate_probe.md` — status: completed, 311 output tokens
+- Verdict superseded from `insufficient_evidence` to `attempted_with_partial_signal`
 
 Goal: compare worker/model lanes only where they affect accepted-record yield,
 repairable-record yield, or supervisor audit cost.

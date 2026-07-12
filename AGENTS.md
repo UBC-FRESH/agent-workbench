@@ -2,6 +2,26 @@
 
 This file is the working contract for AI coding agents in this repository.
 
+## Ollama Endpoint & Provider Headers (Remote Worker)
+
+**Important: every new Copilot session MUST read this section before attempting to launch a probe script.**
+
+The remote Ollama OpenAI-compatible endpoint and provider credentials are stored at:
+- `~/.agent-workbench-env.txt` (user home, ignored from git)
+
+Contents of that file:
+```
+AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL=https://fresh01x.01101.dev/v1
+AGENT_WORKBENCH_PROVIDER_HEADERS_FILE=C:\Users\gep\Projects\agent-workbench\runtime\local_provider_headers.json
+```
+
+- `/v1` suffix is **required** for the SDK (the bare host `https://fresh01x.01101.dev` is for the VS Code extension only).
+- Provider headers use Cloudflare Access Client credentials stored in `runtime/local_provider_headers.json`.
+- To use: `. ~/.agent-workbench-env.txt` or read and export the variables in PowerShell:
+  ```powershell
+  Get-Content $env:USERPROFILE\.agent-workbench-env.txt | ForEach-Object { if ($_ -match '^(\w+)=(.+)$') { Set-Item "env:\$($matches[1])" "$($matches[2])" } }
+  ```
+
 ## Project Purpose
 
 `agent-workbench` exists to develop, test, and document supervised multi-agent
