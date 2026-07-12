@@ -105,10 +105,11 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P94 Project-owned index promotion | #578 | `feature/p94-project-owned-index-promotion` | Complete |
 | P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
 | P96 Yield and audit-cost model comparison | #585 | `feature/p96-yield-audit-cost-model-comparison` | Complete (qualified) |
-| P97 Reusable workflow graph packaging | TBD | `feature/p97-reusable-workflow-graphs` | Planned |
+| P97 Reusable workflow graph packaging | #592 | `feature/p97-reusable-workflow-graphs` | In Progress: #593 done, #594 done, #595 pending |
 | P98 Reporting-worker template packaging | TBD | `feature/p98-reporting-worker-templates` | Planned |
 | P99 Economics dashboard and release criteria | TBD | `feature/p99-economics-dashboard-release-criteria` | Planned |
 | P100 Public alpha readiness review | TBD | `feature/p100-public-alpha-readiness-review` | Planned |
+| P101 Sphinx technical documentation and GitHub Pages | TBD | `feature/p101-sphinx-docs-github-pages` | Planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
