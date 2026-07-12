@@ -14,6 +14,11 @@ The CLI includes subcommands for:
 - Copilot session archive operations (from Phase 65+)
 - Task validation, prompt generation, and review (from Phase 68+)
 
-**Autodoc section**: Detailed API reference for the `agent_workbench.cli` module is generated from source via sphinx.ext.autodoc.
+**Subcommand summary**: The CLI provides these main groups:
+
+- **Evidence** (`validate`, `render`) — evidence summary validation and rendering (Phase 23+)
+- **Heartbeat** (`heartbeat validate`, `heartbeat summarize`, `nudge suggest`) — heartbeat/nudge protocol management (Phase 67+)
+- **Archive** (`copilot archive`) — Copilot session archive operations (Phase 65+)
+- **Task** (`task-validate`, `task-prompt`, `task-review`) — task validation and prompt generation (Phase 68+)
 
 For usage guides see the [guides](../guides/index) section.

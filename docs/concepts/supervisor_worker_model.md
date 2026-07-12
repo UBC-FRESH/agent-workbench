@@ -9,4 +9,4 @@ The **worker** executes only the assigned task, stops at the boundary, reports e
 
 Authority flows from supervisor → worker. Supervisors coordinate; workers execute.
 
-For full details see: `AGENTS.md` in the repository root.
+For full details see [AGENTS.md](https://github.com/UBC-FRESH/agent-workbench/blob/main/AGENTS.md) in the repository root.

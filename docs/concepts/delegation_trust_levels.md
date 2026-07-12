@@ -1,7 +1,7 @@
 Delegation Trust Levels
 ======================
 
-Worker authority is governed by `planning/delegation_policy.md`.
+Worker authority is governed by the [delegation policy](https://github.com/UBC-FRESH/agent-workbench/blob/main/planning/delegation_policy.md).
 
 Current default boundary:
 
