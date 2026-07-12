@@ -2813,3 +2813,34 @@ issues, pull requests, and closeout comments.
 - Promoted 47 records with complete source anchors and audit metadata.
 - Validated provenance chain integrity across all promoted records.
 - Merged via PR #579; parent issue #578 closed.
+
+## 2026-07-11 - Completed P95 retrieval and modelling-agent usability
+
+- Activated P95 on `feature/p95-index-retrieval-usability` and created child
+  issues #581 through #584.
+- Added `src/agent_workbench/retrieval.py` with promoted-index loading,
+  page-range query, and full-document trace surfaces.
+- Wired `agent-workbench retrieve` command paths in CLI for `list-docs`,
+  `page-range`, and `trace`; fixed missing page-range handler wiring.
+- Added query-contract schemas under `templates/query_schemas/` and the usage
+  walkthrough at `templates/retrieval_usage_example.md`.
+- Closed child issues #581-#584 after verification against real data.
+
+## 2026-07-11 - Completed P96 as diagnostic model-lane comparison
+
+- Activated P96 on `feature/p96-yield-audit-cost-model-comparison` with parent
+  issue #585 and child issues #586 through #589.
+- Completed protocol and lane-selection artifacts:
+  `planning/phase96_comparison_protocol.md` and
+  `planning/phase96_model_lane_selection.md`.
+- Added bounded run manifest and execution packet:
+  `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_manifest.json`
+  and `planning/phase96_p963_execution_packet.md`.
+- Ran explicit-model probes for both lanes through existing SDK/Ollama tooling;
+  both blocked before model-call events with
+  `OSError: [WinError 193] %1 is not a valid Win32 application`.
+- Recorded sanitized execution evidence in
+  `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json`
+  and rendered verdict `insufficient_evidence` in
+  `planning/phase96_verdict.md`.
+- Closed child issues #586-#589; parent #585 remains open until branch merge.
