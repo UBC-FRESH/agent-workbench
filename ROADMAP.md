@@ -105,11 +105,11 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P94 Project-owned index promotion | #578 | `feature/p94-project-owned-index-promotion` | Complete |
 | P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
 | P96 Yield and audit-cost model comparison | #585 | `feature/p96-yield-audit-cost-model-comparison` | Complete (qualified) |
-| P97 Reusable workflow graph packaging | #592 | `feature/p97-reusable-workflow-graphs` | In Progress: #593 done, #594 done, #595 pending |
+| P97 Reusable workflow graph packaging | #592 | `feature/p97-reusable-workflow-graphs` | Complete — merged via PR #596 at `b2b929f`; parent issue #592 closed |
 | P98 Reporting-worker template packaging | TBD | `feature/p98-reporting-worker-templates` | Planned |
 | P99 Economics dashboard and release criteria | TBD | `feature/p99-economics-dashboard-release-criteria` | Planned |
 | P100 Public alpha readiness review | TBD | `feature/p100-public-alpha-readiness-review` | Planned |
-| P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | In Progress: PR #597 open, CI running |
+| P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5000,11 +5000,12 @@ Tasks:
 
 ## Phase 97: Reusable Workflow Graph Packaging
 
-Parent issue: TBD (create on activation)
+Parent issue: #592
+Child issues: #593 closed, #594 closed, #595 closed
 
 Branch: `feature/p97-reusable-workflow-graphs`
 
-Status: planned — fleshed out per AGENTS.md governance rule.
+Status: **complete** — merged via PR #596 at `b2b929f`; parent issue #592 closed.
 
 Goal: package repeatable workflow graph templates for successful Agent
 Workbench real-project workflows.
@@ -5016,19 +5017,35 @@ Key Advisor insight (2026-07-11):
   into the `workbench_templates/` namespace. If it's promotion, scope should
   reflect that — changing both task decomposition and verification.
 
+Outcome: P97 chose the promotion path. Audited 10 existing graph templates,
+retired 4 non-applicable ones, promoted 4 (renamed with `workbench_` prefix
+and updated JSON), and kept 2 as FreshForge-specific examples. The canonical
+`document_library_index_workflow.json` captures the P88-P94 document-indexing
+recipe. Merged through PR #596.
+
 Tasks:
-- [ ] P97.1 Audit existing graph templates for reuse (#TBD)
-  - Templates to audit: P39 `agentic_graph_envelope.json`, P43
-    `freshforge_proposal_assist_graph.json`, P92 `whole_document_graph_template`
-  - Decide "promote" / "retire" / "keep-as-example" per template
-- [ ] P97.2 Create canonical `document_library_index_workflow.json` (#TBD)
+- [x] P97.1 Audit existing graph templates for reuse (#593)
+  - Templates audited: P39 `agentic_graph_envelope.json`, P43
+    `freshforge_proposal_assist_graph.json`, P92 `whole_document_graph_template`,
+    and 7 additional historical graphs from P61/P88/P90
+  - Outcome: promote=4, retire=2, keep-as-example=2, not-in-scope=4
+  - Promoted templates renamed with `workbench_` prefix in `templates/workbench_templates/`
+- [x] P97.2 Create canonical `document_library_index_workflow.json` (#594)
+  - Renamed from `document_library_index_graph.json` (internal
+    `workflow.id` already had target name); git detected 100% rename
   - Under `templates/workbench_templates/`; captures the P88-P94 recipe as a
     FreshForge-compatible graph; JSON validated against existing graph validation;
-    public-safety scan required
-- [ ] P97.3 Write minimal instantiation guide (#TBD)
-  - How to select a corpus, run extraction, audit, promote — referencing the
-    graph template and the P62 indexing recipe playbook
-  - Markdown guide under `templates/` or promoted into `playbooks/`
+    public-safety scan passed
+- [x] P97.3 Write minimal instantiation guide (#595)
+  - Updated `templates/workbench_templates/README.md` with full classification table,
+    detailed descriptions of each promoted template's role, and a future requirements
+    section documenting JSON Schema validation as a P98+ item
+  - All references updated from old filename to new: README, test suite, manifest
+    template, benchmark plan JSON
+  - pytest suite passes (4/4)
+
+Closeout note: P97 merged through PR #596 at `b2b929f`, and parent issue #592
+closed on merge.
 
 ## Phase 98: Reporting-Worker Template Packaging
 
