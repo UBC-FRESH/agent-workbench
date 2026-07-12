@@ -2918,3 +2918,25 @@ issues, pull requests, and closeout comments.
   and evidence are in
   `benchmarks/document_library/tsa23_tsr/p96_model_lane_comparison_execution_summary.json`
   and `planning/phase96_verdict.md`.
+## Phase 98 — Reporting-Worker Template Packaging (2026-07-12)
+
+- Activated P98 on `feature/p98-reporting-worker-templates` with parent
+  issue #599.
+- P98.1: Audited P91 source-audit decision packet
+  (`benchmarks/document_library/p91_source_audit_decision_packet.json`),
+  P73 overlay catalog (`.github/agents/overlays/` — 8 files), and confirmed
+  P70 Ticket-C has no surviving worker result artifact.
+  Audit note: `runtime/agent_jobs/p98_1_audit_note.md`.
+- P98.2: Created `templates/source_audit_decision_packet.md` — generic
+  source-audit template derived from P91 structure.
+- P98.3: Created `templates/supervisor_decision_packet_template.md` — reusable
+  supervisor decision packet (accept seed / repair / switch lane / stop).
+- Planning note: `planning/phase98_reporting_worker_template_packaging.md`.
+- Agent consolidation: `agent-workbench-supervisor.agent.md` deleted;
+  `agent-workbench-local-supervisor.agent.md` promoted to canonical; worker
+  `tools:` unlocked to productive-delegation; `delegation_policy.md` L4 flip;
+  `AGENTS.md` L4 update; probe EVALUATION-ONLY guard added.
+- Code/test fixes: `src/agent_workbench/retrieval.py` (ruff F401 + mypy
+  no-redef); `tests/test_workbench_graph_templates.py` (SyntaxError). All
+  pre-commit gates pass.
+- PR merged and issue #599 closed.

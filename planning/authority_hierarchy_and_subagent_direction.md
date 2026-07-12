@@ -86,8 +86,7 @@ and ROI-gradient learning loop. The advisor profile is
 
 The supervisor is a free local Copilot Chat agent using a local Ollama model,
 currently most promising with Qwen3.6-style models. Its profile is
-`agent-workbench-supervisor.agent.md` (with `agent-workbench-local-supervisor`
-as a trial-specific variant).
+`agent-workbench-local-supervisor.agent.md`.
 
 Responsibilities:
 

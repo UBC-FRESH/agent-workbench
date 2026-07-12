@@ -171,8 +171,13 @@ Current default boundary:
   applies a worker proposal to an explicitly allowed ignored sandbox target.
 - L3 restricted worker tool use is allowed only for narrow trials against
   explicitly listed ignored runtime paths with observed tool evidence.
-- L4 tracked-file mutation, L5 GitHub mutation, and L6 release or phase-closeout
-  authority are not delegated to workers by default.
+- L4 tracked-file mutation is allowed in productive-delegation mode under an
+  explicit coordinator/developer-authorized implementation ticket that names the
+  allowed files, commands, and stop conditions, keeps edits within those allowed
+  paths, and has the supervisor review the diff and run validation before
+  returning. See `planning/delegation_policy.md` (Productive-Delegation Mode).
+- L5 GitHub mutation and L6 release or phase-closeout authority are not delegated
+  to workers.
 
 Nondelegable supervisor actions include tracked-file commits, branch pushes, PR
 creation, PR merge, issue closure, release publication, model/provider

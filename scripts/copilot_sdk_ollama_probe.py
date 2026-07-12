@@ -1,5 +1,12 @@
 """Probe Copilot SDK sessions against an Ollama OpenAI-compatible endpoint.
 
+EVALUATION ONLY. This helper launches sessions with ``available_tools=[]`` and
+therefore cannot perform delegated work: a worker launched through it has no
+read/edit/run tools by design. Do NOT use this script as the delegation path.
+Productive delegation must go through the tool-enabled bridge
+(``agent-workbench copilot-sdk`` over ``copilot_sdk_bridge.py``), which resolves
+``sdk.available_tools`` and custom agent profiles.
+
 This helper is intentionally local-only. It records observable SDK events to an
 ignored Markdown result file so a supervisor can compare model behavior without
 depending on VS Code Chat model-picker state.
