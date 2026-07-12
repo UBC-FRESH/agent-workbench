@@ -12,7 +12,7 @@ future phases produce stronger verification and rollback evidence.
 | L1 | Proposal-only work | Produce plans, summaries, comments, or patch proposals without mutation. | Allowed with parser/rubric checks. |
 | L2 | Supervisor-applied mutation | Worker proposes a bounded change; supervisor tooling applies it to an allowed sandbox. | Allowed for ignored sandbox targets. |
 | L3 | Restricted sandbox tool use | Worker may use approved tools on explicitly allowed ignored runtime paths. | Allowed for narrow trials only. |
-| L4 | Tracked-file mutation | Worker edits tracked repository files directly. | Not allowed. |
+| L4 | Tracked-file mutation | Worker edits tracked repository files directly. | Allowed in productive-delegation mode, only within the ticket's allowed paths, under an explicit coordinator/developer-authorized implementation ticket. |
 | L5 | GitHub mutation | Worker performs issue comments, edits, closure, PR creation, or PR merge. | Not allowed by default. |
 | L6 | Release or closeout authority | Worker merges PRs, closes parent phases, cuts releases, or declares final workflow completion. | Nondelegable. |
 
@@ -32,8 +32,8 @@ future phases produce stronger verification and rollback evidence.
 
 The supervisor must retain authority for:
 
-- editing tracked repository files unless a future phase explicitly permits a
-  narrower exception;
+- editing tracked repository files outside an explicit productive-delegation
+  ticket's allowed paths (see Productive-Delegation Mode);
 - committing changes;
 - pushing branches;
 - creating PRs;
@@ -59,10 +59,28 @@ Escalate to supervisor review when:
 
 ## Current Governance Decision
 
-Agent Workbench currently permits L0-L1 work broadly, L2 work only through
-supervisor-owned scripts and ignored sandbox targets, and L3 work only for
-explicitly bounded VS Code Chat sandbox trials. L4-L6 remain forbidden for
-worker agents.
+Agent Workbench permits L0-L1 work broadly, L2 work through supervisor-owned
+scripts and ignored sandbox targets, and L3 work for explicitly bounded tool
+trials.
+
+### Productive-Delegation Mode (L4)
+
+For real UBC-FRESH software, science, and engineering work, an explicit
+implementation ticket authorized by the coordinator or developer may raise a
+worker to **L4 (tracked-file mutation)**, subject to all of the following:
+
+- the ticket names the exact allowed files or path globs, allowed commands, and
+  stop conditions;
+- edits stay within those allowed paths; edits outside them are a boundary
+  violation and must be reverted;
+- the supervisor reviews the worker's diff and runs the ticket's validation
+  gates before returning a compact packet; and
+- L5 (GitHub mutation) and L6 (release/closeout) remain nondelegable and stay
+  with the coordinator/developer.
+
+Without such a ticket, workers default to L0-L1. Productive-delegation runs must
+go through the tool-enabled `copilot-sdk` bridge, not the no-tool probe (see the
+SDK Tool Boundary section).
 
 ## Managed Loop Policy V0
 
@@ -106,16 +124,23 @@ Blocked or unproven current task lanes:
 
 ## SDK Tool Boundary
 
-The Copilot SDK path can expose tool-capable behavior, but Agent Workbench does
-not treat tool access as the default worker authority. The no-tool SDK probe
-passes `available_tools=[]`; that remains the default for economic and model
-comparison benchmarks.
+Two distinct SDK paths exist and must not be confused:
 
-Restricted SDK tool use is a separate L3 lane. A valid L3 experiment must name
-the allowed tools, allowed filesystem roots, permission-handler behavior,
+- **No-tool evaluation probe** (`scripts/copilot_sdk_ollama_probe.py`) passes
+  `available_tools=[]` by design. It is for economic and model-comparison
+  benchmarks only. It cannot perform delegated work and must never be used as
+  the delegation path.
+- **Tool-enabled bridge** (`agent-workbench copilot-sdk` over
+  `src/agent_workbench/copilot_sdk_bridge.py`) resolves `sdk.available_tools`,
+  custom agent profiles, and Agent Workbench custom tools. Productive-delegation
+  (L4) runs must use this path with `sdk.available_tools` set to a productive
+  set and a worker-capable supervisor profile selected.
+
+Restricted SDK tool use below L4 remains a bounded lane: a valid experiment must
+name the allowed tools, allowed filesystem roots, permission-handler behavior,
 expected tool-event evidence, and rollback or discard boundary before the worker
-starts. Tool calls observed outside that lane are evidence of a confounded run,
-not evidence that a no-tool delegation protocol succeeded.
+starts. Tool calls observed outside the declared lane are evidence of a
+confounded run.
 
 ## Missing Evidence Rules
 

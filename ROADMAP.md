@@ -106,7 +106,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
 | P96 Yield and audit-cost model comparison | #585 | `feature/p96-yield-audit-cost-model-comparison` | Complete (qualified) |
 | P97 Reusable workflow graph packaging | #592 | `feature/p97-reusable-workflow-graphs` | Complete — merged via PR #596 at `b2b929f`; parent issue #592 closed |
-| P98 Reporting-worker template packaging | TBD | `feature/p98-reporting-worker-templates` | Planned |
+| P98 Reporting-worker template packaging | #599 | `feature/p98-reporting-worker-templates` | Complete |
 | P99 Economics dashboard and release criteria | TBD | `feature/p99-economics-dashboard-release-criteria` | Planned |
 | P100 Public alpha readiness review | TBD | `feature/p100-public-alpha-readiness-review` | Planned |
 | P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
@@ -5049,27 +5049,60 @@ closed on merge.
 
 ## Phase 98: Reporting-Worker Template Packaging
 
-Parent issue: TBD (create on activation)
+Parent issue: #599 (create on activation)
 
 Branch: `feature/p98-reporting-worker-templates`
 
-Status: planned — fleshed out per AGENTS.md governance rule.
+Status: complete — all tasks done; PR merged 2026-07-12.
 
 Goal: package reporting-worker templates and supervisor decision packets that
 proved useful in P91/P92.
 
+Coordination directive (2026-07-12): the free gpt-oss:120b Coordinator session
+may finish its current P98 pass. Do NOT run a second Coordinator on this branch
+concurrently. Its output stays untrusted until verified. The upgraded paid
+Coordinator (`gpt-5.4-mini`, thin-router contract) does mop-up as P98.4 below
+after the gpt-oss pass checkpoints — verify-and-closeout, do not race it.
+
+- [x] P98.4 Upgraded-Coordinator audit, review, and closeout (mop-up)
+  - Verify P98.1-P98.3 artifacts exist and are public-safe with deterministic
+    checks and validators (no re-reasoning, no raw-artifact reads).
+  - Reconcile ROADMAP.md / CHANGE_LOG.md / issue #599 / PR state.
+  - Run one Advisor pre-closeout review, then present a compact closeout packet
+    to the developer for merge approval. Do not merge or close #599 without it.
+
 Tasks:
-- [ ] P98.1 Audit existing reporting artifacts for reuse (#TBD)
-  - Artifacts to audit: P91 source-audit decision packet, P73 overlay catalog,
-    P70-Ticket-C worker result templates
-  - Document scope boundaries and reusable vs. TSA23-specific structures
-- [ ] P98.2 Create `source_audit_decision_packet.md` template (#TBD)
-  - Derived from the P91 structure — generic enough for non-document-indexing use
-    but informed by TSA23 lessons; validated against P91's tracked artifacts;
-    source-anchor rules generalized
-- [ ] P98.3 Capture one supervisor decision packet pattern as reusable template (#TBD)
-  - The compact ROI decision: accept seed / repair / switch lane / stop
-  - Template with declared fields and validation semantics
+ - [x] P98.1 Audit existing reporting artifacts for reuse (#599)
+   - Artifacts to audit: P91 source-audit decision packet, P73 overlay catalog,
+     P70-Ticket-C worker result templates
+   - Document scope boundaries and reusable vs. TSA23-specific structures
+ - [x] P98.2 Create `source_audit_decision_packet.md` template (#599)
+   - Derived from the P91 structure — generic enough for non-document-indexing use
+     but informed by TSA23 lessons; validated against P91's tracked artifacts;
+     source-anchor rules generalized
+ - [x] P98.3 Capture one supervisor decision packet pattern as reusable template (#599)
+   - The compact ROI decision: accept seed / repair / switch lane / stop
+   - Template with declared fields and validation semantics
+ - [x] P98.4 Audit, review, and closeout — upgraded Coordinator (#599)
+   - Runs AFTER the gpt-oss:120b Coordinator checkpoints its current pass; no
+     two Coordinators on the `feature/p98-reporting-worker-templates` branch at
+     once.
+   - Verify P98.1-P98.3 against tracked artifacts and `git diff`; treat the
+     local Coordinator's prose as untrusted until evidence-checked.
+   - Reconcile the P98 checklist and finish/verify P98.1.
+   - Run validation gates: `ruff format src tests`, `ruff check src tests`,
+     `mypy src`, `pytest tests -q`, `pre-commit run --all-files`,
+     `git diff --check`.
+   - Coordinator-owned closeout (nondelegable): confirm/create parent issue
+     #599, open PR, merge, close issue, sync `main`.
+
+Coordinator upgrade note (2026-07-12): the paid Coordinator role moves off the
+free gpt-oss:120b lane to `Claude Sonnet 4.8 (copilot)` (confirm exact label in
+the model picker), with `gpt-5.4-mini` at low reasoning as the cheaper verified
+fallback. The Coordinator delegates maximum work to the free gpt-oss:120b
+Supervisor, which drives free Ollama Worker sessions through the SDK bridge
+(option b). Coordinator contract: delegate-don't-do, compact-packets-only,
+run-validators-don't-reason, fresh session per task.
 
 ## Phase 99: Economics Dashboard And Release Criteria
 

@@ -37,8 +37,9 @@ Three profiles implement the hierarchy in `.github/agents/`:
 
 - `agent-workbench-coordinator.agent.md` — free local coordinator; owns process
   discipline, ticketing, verification, and the paid budget.
-- `agent-workbench-supervisor.agent.md` — free local supervisor; runs bounded
-  job tickets and returns compact evidence with an explicit job-end signal.
+- `agent-workbench-local-supervisor.agent.md` — free local supervisor; runs
+  bounded job tickets and returns compact evidence with an explicit job-end
+  signal.
 - `agent-workbench-advisor.agent.md` — paid, read-only, advisory-only node
   (default Claude Opus 4.8) invoked by the coordinator for hard reasoning.
 
