@@ -1,7 +1,7 @@
 ---
 name: document-metadata-extraction-supervisor
 description: Full-tool local supervisor for whole-document metadata extraction pilots.
-model: qwen3.6:35b-a3b-bf16
+model: ollama-models/qwen3.6:35b-a3b-bf16
 tools: ['agent', 'read', 'search', 'edit', 'runCommands']
 agents: ['agent-workbench-result-auditor']
 target: vscode

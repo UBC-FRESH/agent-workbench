@@ -1,7 +1,7 @@
 ---
 name: qwen3-coder-next-strict-worker
 description: Strict bounded worker using qwen3-coder-next for Agent Workbench probes.
-model: qwen3-coder-next:latest
+model: ollama-models/qwen3-coder-next:latest
 tools: ['read', 'search', 'edit', 'runCommands']
 target: vscode
 ---

@@ -1,7 +1,7 @@
 ---
 name: agent-workbench-result-auditor
 description: Internal read-only auditor for Agent Workbench supervisor spike outputs.
-model: qwen3.6:35b-a3b-bf16
+model: ollama-models/qwen3.6:35b-a3b-bf16
 tools: ['read', 'search']
 user-invocable: false
 target: vscode

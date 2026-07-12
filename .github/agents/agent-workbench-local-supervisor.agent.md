@@ -1,7 +1,7 @@
 ---
 name: agent-workbench-local-supervisor
 description: Free local supervisor for Agent Workbench. Accepts a coordinator-issued job ticket, runs the bounded workflow graph within its authority boundary, delegates bounded nodes to strict workers, runs local validation and repair, and returns a compact QA/QC packet with an explicit job-end signal.
-model: qwen3.6:35b-a3b-bf16
+model: ollama-models/qwen3.6:35b-a3b-bf16
 tools: ['agent', 'read', 'search', 'edit', 'runCommands']
 agents: ['qwen3-coder-strict-worker', 'qwen3-coder-next-strict-worker', 'agent-workbench-result-auditor']
 target: vscode
