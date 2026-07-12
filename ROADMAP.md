@@ -4904,13 +4904,13 @@ Key linkage to subsequent phases:
 - P96 (Yield And Audit-Cost Model Comparison) uses this index as the baseline
   against which to compare worker/model lane yield differences.
 
-## Phase 95: Retrieval And Modelling-Agent Usability
+## Phase 95: Retrieval And Modelling-Agent Usability — COMPLETE
 
 Parent issue: #580
 
 Branch: `feature/p95-index-retrieval-usability`
 
-Status: active — child issues created (#581-#584). Proceeding with P95.1 as next task.
+Status: **complete** — all 4 child tasks closed (#581-#584). Close parent issue #580 after merging the feature branch.
 
 Goal: add retrieval and use-case surfaces that help modelling agents find and
 cite source-backed facts from promoted public-document indexes.
@@ -4922,17 +4922,22 @@ Key Advisor insight (2026-07-11):
   the P92 overhead measured at 449,382 tokens per document (~$0.087).
 
 Tasks:
-- [ ] P95.1 Select 1-2 retrieval use cases scoped to the P94 index format (#581)
-  - e.g., "find all source-backed facts about page X in corpus Y"
-  - Document scope/out-of-scope boundaries in a planning note
-- [ ] P95.2 Define query contract: input/output schema, provenance inclusion rules (#582)
-  - JSON schema or template; `agent-workbench` validation command if new CLI surface
-- [ ] P95.3 Implement retrieval against promoted index (#583)
-  - Local script or CLI subcommand; test with synthetic queries in no-tool run
-  - Acceptance: deterministic pass/fail on known-answer synthetic queries
-- [ ] P95.4 Write a modelling-agent usage example (#584)
-  - Show how a downstream agent discovers and cites source-backed facts from the index
-  - Example notebook or Markdown walkthrough under `templates/` or `playbooks/`
+- [x] P95.1 Select 1-2 retrieval use cases scoped to the P94 index format (#581)
+  - Use Case 1: Page/Chunk Anchor Lookup — "find all source-backed facts about page X-Y of document D"
+  - Use Case 2: Full-Document Provenance Trace — "show every record from document D grouped by model lane and audit status"
+  - Documented in `planning/phase95_retrieval_use_case_selection.md`
+- [x] P95.2 Define query contract: input/output schema, provenance inclusion rules (#582)
+  - 4 JSON schemas in `templates/query_schemas/`
+  - Field mapping grounded in P94 metadata (source_hash, document_id, page_anchor, chunk_id, model_lane, audit_status, is_dedup)
+  - Documented in `planning/phase95_query_contract.md`
+- [x] P95.3 Implement retrieval against promoted index (#583)
+  - `src/agent_workbench/retrieval.py` — IndexRecord, PromotedIndex, query_by_page_range(), trace_full_document()
+  - `src/agent_workbench/cli.py` — `retrieve` subcommand with list-docs/page-range/trace operations
+  - All three CLI operations verified against real data (3 docs, 16 records)
+  - Bugfix commit: `9e136a7` (missing page-range handler in cli.py)
+- [x] P95.4 Write a modelling-agent usage example (#584)
+  - `templates/retrieval_usage_example.md` — end-to-end walkthrough for both use cases
+  - Includes synthetic run script, schema reference, and agent guidance notes
 
 ## Phase 96: Yield And Audit-Cost Model Comparison
 
