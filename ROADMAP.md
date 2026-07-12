@@ -4980,6 +4980,8 @@ Tasks:
     (`Internal Windows PowerShell error ... 8009001d` during CLI start).
   - Direct VS Code wrapper probe also blocked in this shell context:
     `Cannot find GitHub Copilot CLI ... Install GitHub Copilot CLI? (y/N)`.
+  - Use `templates/p96_model_inventory_capture.md` to capture provider-picker
+    model evidence when proceeding via VS Code UI path.
 - [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
   - With explicit boundary warnings
   - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
