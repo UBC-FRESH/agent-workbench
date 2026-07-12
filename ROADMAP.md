@@ -4941,11 +4941,12 @@ Tasks:
 
 ## Phase 96: Yield And Audit-Cost Model Comparison
 
-Parent issue: TBD (create on activation)
+Parent issue: #585
+Child issues: TBD (#586-#589)
 
 Branch: `feature/p96-yield-audit-cost-model-comparison`
 
-Status: planned — fleshed out per AGENTS.md governance rule.
+Status: **active** — parent issue created (#585), child issues created (#586-#589). Proceeding with P96.1 as next task.
 
 Goal: compare worker/model lanes only where they affect accepted-record yield,
 repairable-record yield, or supervisor audit cost.
@@ -4960,16 +4961,16 @@ Key Advisor insight (2026-07-11):
   audit cost per the ROI thesis; exclude pure latency/throughput claims.
 
 Tasks:
-- [ ] P96.1 Define comparison boundary and protocol (#TBD)
+- [ ] P96.1 Define comparison boundary and protocol (#586)
   - Cite p87_p92 strategic arc rules; explicitly frame as recipe-stability check
-- [ ] P96.2 Select exactly one model lane to compare against baseline (#TBD)
+- [ ] P96.2 Select exactly one model lane to compare against baseline (#587)
   - Use identical ticket shapes and corpus slice for fair comparison
   - Reproducible run manifest with fixed variables declared
-- [ ] P96.3 Run bounded comparison on one document, one chunk set (#TBD)
+- [ ] P96.3 Run bounded comparison on one document, one chunk set (#588)
   - Record accepted/repairable/rejected yields and auditor-token spans per lane
   - Sanitized summary split into `quality_validated_candidate` / `protocol_accepted_candidate`
     / `economics_usable` (per P60 outcome semantics)
-- [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#TBD)
+- [ ] P96.4 Render verdict: same-lane recommendation, switch, or insufficient evidence (#589)
   - With explicit boundary warnings
   - If "insufficient," close phase as diagnostic only (no broad scale-up authorization)
 
