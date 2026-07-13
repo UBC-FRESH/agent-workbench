@@ -110,7 +110,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P99 Economics dashboard and release criteria | #601 | `feature/p99-economics-dashboard-release-criteria` | Complete — merged via PR #602; parent issue #601 closed |
 | P100 Public alpha readiness review | #603 | `feature/p100-public-alpha-readiness-review` | Complete — merged via PR #604 |
 | P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
-| P102 Native Codex + remote Ollama orchestration | #605 | `feature/p102-native-codex-ollama-orchestration` | Active |
+| P102 Native Codex + remote Ollama orchestration | #605 | `feature/p102-native-codex-ollama-orchestration` | Complete (qualified) |
+| P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5161,7 +5162,7 @@ Parent issue: #605
 
 Branch: `feature/p102-native-codex-ollama-orchestration`
 
-Status: active
+Status: complete (qualified) — merged via PR #610; parent issue #605 closed.
 
 Goal: make native Codex the primary Coordinator host while using an
 operator-configured OpenAI-compatible Ollama provider for default Supervisor
@@ -5200,3 +5201,66 @@ Tasks:
     substantive native-hierarchy job is authorized.
   - Do not authorize substantive TSA23 work until a Supervisor-owned dispatch
     path reaches the persistent Worker host with observed evidence.
+
+## Phase 103: Paid Coordinator Economics Trial
+
+Parent issue: #611
+
+Branch: `feature/p103-paid-coordinator-economics-trial`
+
+Status: complete (qualified) — bounded run accepted; economics backfilled from Codex session accounting.
+
+Goal: measure one bounded non-trivial Supervisor-authored Worker handoff with
+paid Coordinator token-span accounting before authorizing substantive TSA23
+delegation.
+
+Scope:
+
+- Record the paid Coordinator token-span start and end metadata.
+- Run one structured ignored-runtime ticket through the accepted P102 hybrid
+  Supervisor-authored handoff and persistent Worker host.
+- Independently verify the Worker result and return separate quality, protocol,
+  and economics verdicts.
+
+Out of scope:
+
+- TSA23 source extraction or substantive project work.
+- Provider, header, or model-inventory changes.
+- Nested `codex exec` Worker launches.
+- Tracked-file Worker mutation, release actions, or phase closeout.
+
+Tasks:
+
+- [x] P103.1 Bounded structured handoff run (#612)
+  - [x] Capture Coordinator token-span start/end metadata and selected model.
+  - [x] Have the Supervisor author one structured Worker ticket under
+        `runtime/agent_jobs/`.
+  - [x] Execute the persistent Worker and capture exact result evidence.
+  - [x] Verify the result in a fresh Supervisor turn.
+  - [x] Stop after one run and at most one evidence-based repair.
+  - [x] Record separate quality, protocol, and economics verdicts.
+
+Closeout decision: quality PASS; protocol PASS, qualified; economics PASS,
+qualified for actual paid Coordinator cost. The backfilled span records 1,922
+fresh input tokens, 110,218 cached input tokens, 629 output tokens, 186
+  reasoning tokens, and approximately `$0.017834` Coordinator cost using GPT-5.6
+  Luna pricing. No direct-supervisor
+  counterfactual was captured, so this is not an ROI/savings claim and no
+  substantive TSA23 authorization follows from this trial.
+
+Next-step plan:
+
+- [ ] Establish a dated model-price catalog for future economics records.
+- [ ] Design one separately authorized counterfactual benchmark with matching
+      task, model, and token-span checkpoints.
+- [ ] Compare delegated actual cost with direct-supervisor cost before making
+      any savings or ROI claim.
+
+Acceptance criteria:
+
+- The ticket, Worker result, Supervisor dispatch/verification evidence, and
+  token ledger are persisted under ignored runtime paths.
+- No substantive TSA23 work, provider change, release action, or nested
+  `codex exec` launch occurs.
+- The decision packet distinguishes quality validation, protocol acceptance, and
+  economics usability.
