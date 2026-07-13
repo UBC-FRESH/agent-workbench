@@ -104,8 +104,10 @@ config_file = "agents/agent_workbench_ollama_worker.toml"
 [shell_environment_policy]
 exclude = ["AW_CF_CLIENT_ID", "AW_CF_CLIENT_SECRET", "AW_PROVIDER_USER_AGENT", "AGENT_WORKBENCH_*"]
 
+[permissions]
+
 [permissions.agent_workbench_ollama_readonly]
-extends = ":workspace"
+extends = ":read-only"
 
 [permissions.agent_workbench_ollama_readonly.filesystem.":workspace_roots"]
 "runtime/local_provider_headers.json" = "deny"

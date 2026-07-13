@@ -5161,7 +5161,7 @@ Parent issue: #605
 
 Branch: `feature/p102-native-codex-ollama-orchestration`
 
-Status: complete — merged via PR #604; parent issue #603 closed.
+Status: active
 
 Goal: make native Codex the primary Coordinator host while using an
 operator-configured OpenAI-compatible Ollama provider for default Supervisor
@@ -5191,8 +5191,11 @@ Tasks:
   - Add generic project role profiles; keep provider configuration machine-local.
 - [x] P102.2 Native configuration and evidence contracts (#607)
   - Implement fail-closed role/configuration and proof-artifact validation.
-- [ ] P102.3 Bounded native delegation proof (#608) — blocked after two pre-inference launcher failures
+- [ ] P102.3 Bounded native delegation proof (#608) — persistent no-modal Worker quality candidate validated; two-edge protocol remains unproven
   - Run one trivial two-edge proof with one evidence-based repair at most.
-- [ ] P102.4 Native proof decision packet (#609)
+  - Keep app-server completion stalls and the missing Supervisor-direct Worker edge explicit.
+- [ ] P102.4 Native proof decision packet (#609) — in progress
   - Inspect proof evidence, record distinct verdicts, and decide whether a
     substantive native-hierarchy job is authorized.
+  - Do not authorize substantive TSA23 work until a Supervisor-owned dispatch
+    path reaches the persistent Worker host with observed evidence.

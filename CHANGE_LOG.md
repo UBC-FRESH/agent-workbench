@@ -3004,3 +3004,23 @@ issues, pull requests, and closeout comments.
 - The first proof lane stopped before inference after two concrete launcher
   failures. The ignored result records the exact configuration error; no
   delegation, marker, or live-model claim was accepted.
+
+## 2026-07-13 - P102 persistent no-modal Worker-host result
+
+- Verified the installed native Codex app-server exposes a one-time Windows
+  sandbox readiness/setup boundary; the local sandbox is now ready rather than
+  requiring a sandbox authorization dialog per Worker task.
+- Native app-server marker turns can reach the configured remote Ollama model
+  under read-only permissions, but one observed turn emitted its marker and
+  then failed to emit a terminal completion event. This remains an alpha
+  app-server completion limitation, not a model-latency conclusion.
+- Added a persistent, no-tool OpenAI-compatible Responses Worker host that
+  keeps provider configuration local, accepts only ignored runtime ticket and
+  result paths, and reports compact request start/completion records.
+- Two sequential marker tickets completed through that host with HTTP 200 and
+  exact result markers; the first took about three seconds and the warmed
+  second completed in under one second. No nested Codex sandbox was launched.
+- This is accepted as a `quality_validated_candidate` for the Worker-host
+  boundary only. It is not a `protocol_accepted_candidate`: an observed
+  Supervisor-direct Worker dispatch edge is still required before substantive
+  native-hierarchy work is authorized.
