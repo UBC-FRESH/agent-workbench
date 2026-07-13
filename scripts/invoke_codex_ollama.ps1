@@ -73,6 +73,9 @@ $escapedBaseUrl = ConvertTo-TomlString -Value $baseUrl
 $escapedClientId = ConvertTo-TomlString -Value $headers.'CF-Access-Client-Id'
 $escapedClientSecret = ConvertTo-TomlString -Value $headers.'CF-Access-Client-Secret'
 $escapedUserAgent = ConvertTo-TomlString -Value $headers.'User-Agent'
+$env:AW_CF_CLIENT_ID = $headers.'CF-Access-Client-Id'
+$env:AW_CF_CLIENT_SECRET = $headers.'CF-Access-Client-Secret'
+$env:AW_PROVIDER_USER_AGENT = $headers.'User-Agent'
 $codexHome = Join-Path $HOME '.codex'
 New-Item -ItemType Directory -Force -Path $codexHome | Out-Null
 $configPath = Join-Path $codexHome 'config.toml'
@@ -86,10 +89,11 @@ name = "Agent Workbench Ollama"
 base_url = "$escapedBaseUrl"
 wire_api = "responses"
 
-[model_providers.agent_workbench_ollama.http_headers]
-"CF-Access-Client-Id" = "$escapedClientId"
-"CF-Access-Client-Secret" = "$escapedClientSecret"
-"User-Agent" = "$escapedUserAgent"
+env_http_headers = {
+  "CF-Access-Client-Id" = "AW_CF_CLIENT_ID",
+  "CF-Access-Client-Secret" = "AW_CF_CLIENT_SECRET",
+  "User-Agent" = "AW_PROVIDER_USER_AGENT"
+}
 
 [agents.agent_workbench_ollama_supervisor]
 description = "Bounded local Ollama Supervisor for Agent Workbench delegation."
@@ -121,6 +125,10 @@ if (Test-Path -LiteralPath $configPath) {
 $pattern = '(?s)' + [regex]::Escape($managedStart) + '.*?' + [regex]::Escape($managedEnd)
 if ($baseConfig -match $pattern) {
     $updatedConfig = [regex]::Replace($baseConfig, $pattern, $managedBlock)
+} elseif ($baseConfig -match '(?m)^\[model_providers\.agent_workbench_ollama\]') {
+    # The user-level Honeycomb configuration already owns the provider and
+    # role registration. Do not append a duplicate generated provider block.
+    $updatedConfig = $baseConfig
 } else {
     $updatedConfig = $baseConfig.TrimEnd() + "`r`n`r`n" + $managedBlock + "`r`n"
 }

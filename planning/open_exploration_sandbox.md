@@ -20,3 +20,12 @@ This sandbox does not alter the historical P106 contract on
 `feature/p106-matched-roi-benchmark`. Productization, phase activation, GitHub
 mutation, provider changes, releases, and phase-closeout claims require a
 separate maintainer instruction.
+
+## Native Honeycomb result
+
+The machine-local configuration now registers canonical Terra, Luna, Sol, and
+Ollama roles with environment-backed provider headers. The direct native
+fan-out proof was nonetheless negative: a Terra Coordinator completed after an
+empty native `wait` call and emitted no `spawnAgent` event, child thread ID, or
+provider evidence. The configuration is valid; the current runtime did not
+honour the requested named-role fan-out.

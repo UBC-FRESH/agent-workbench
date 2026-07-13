@@ -3279,3 +3279,12 @@ issues, pull requests, and closeout comments.
   Coordinator budget, token spans, honeycomb depth, and thread count.
 - The sandbox remains evidence-driven and keeps authority, privacy, and
   provider-change boundaries; it is not a P106 continuation or a phase claim.
+
+## 2026-07-13 - Native Honeycomb role-provenance probe
+
+- Consolidated machine-local Coordinator and named-agent configuration, with
+  canonical roles and environment-backed Ollama provider headers.
+- The native Terra Coordinator completed the direct-fan-out prompt without any
+  `spawnAgent` event or child thread; it emitted one empty `wait` call instead.
+- The result is a fail-closed negative capability finding: current native
+  runtime evidence does not establish named-role or Ollama Worker fan-out.
