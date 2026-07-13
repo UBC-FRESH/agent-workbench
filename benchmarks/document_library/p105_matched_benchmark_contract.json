@@ -12,7 +12,9 @@
     "source_manifest_sha256": "A0A2E1D80B306152C2EB246ED069D77DC450A96CAE8F66B4D5D68DC521FD25D7",
     "source_sha256": "b334d15b71824c91460ad59bc0cc1ed5a7bed7efea4dd4d22eba0279e26cfedf",
     "page_start": 1,
-    "page_end": 8
+    "page_end": 8,
+    "text_sha256": "8ed2855531ad2ce126bc6b8c2ce4c6ca600d73b48fe8c9d7a4bff2eb0d0ec665",
+    "text_char_count": 21045
   },
   "p89_contract": {
     "materialization_manifest": "benchmarks/document_library/p89_recipe_v2_materialization_manifest.json",
@@ -50,6 +52,15 @@
       "coordinator": {"role": "Coordinator", "model": "GPT-5.6 Luna"},
       "supervisor": {"role": "Supervisor", "model": "qwen3-coder:latest"},
       "worker": {"role": "Worker", "model": "qwen3.6:35b-a3b-bf16"}
+    },
+    "model_argument_contract": {
+      "direct_model_argument": "--direct-model",
+      "supervisor_model_argument": "--supervisor-model",
+      "worker_model_argument": "--worker-model",
+      "direct_model": "GPT-5.6 Luna",
+      "supervisor_model": "qwen3-coder:latest",
+      "worker_model": "qwen3.6:35b-a3b-bf16",
+      "runtime_evidence_required_before_p106": true
     }
   },
   "stop_rules": [
