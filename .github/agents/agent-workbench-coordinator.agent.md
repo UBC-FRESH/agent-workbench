@@ -167,25 +167,23 @@ few. Non-negotiable rules:
 - **Waiting is free.** Blocking on a subagent (`agent`) or a CLI command costs
   nothing. Prefer delegating and waiting over doing work yourself.
 
-## Supervisor Delegation: SDK Bridge Required
+## Supervisor Delegation: Model ID Note
 
-**Never invoke `agent-workbench-local-supervisor` via VS Code's native `agent`
-tool.** Native VS Code subagent invocation ignores the profile's `model:`
-frontmatter and routes through the active VS Code model picker — you will get
-Claude Sonnet running as the "supervisor", not qwen3.6 on Ollama.
+The Supervisor and Worker profiles declare Ollama models using the
+`ollama-models/<name>:<tag>` prefix that matches VS Code's model registry
+(configured via `ollama.endpoint` in VS Code settings). When VS Code can resolve
+the model ID, it pins the subagent session to the correct Ollama model.
 
-To route supervisor delegation to the Ollama qwen3.6 model, use the SDK bridge:
+If a subagent session appears to use the wrong model (verify by hovering the
+model indicator in the Copilot Chat UI), check that:
+1. The `ollama.endpoint` setting in VS Code points to the correct server.
+2. The model (`qwen3.6:35b-a3b-bf16`, `qwen3-coder:latest`, etc.) is available
+   in the server's `ollama list` inventory.
+3. The `model:` frontmatter in the profile matches the `ollama-models/<name>:<tag>`
+   format exactly.
 
-1. Write the job ticket to `runtime/agent_jobs/<task>_ticket.md`.
-2. Prepare a manifest with `sdk.agent_profiles.selected: agent-workbench-local-supervisor`
-   and provider headers pointing to the Ollama endpoint
-   (see `~/.agent-workbench-env.txt` and `runtime/local_provider_headers.json`).
-3. Run via terminal: `agent-workbench copilot-sdk start --manifest <path>`.
-4. Monitor: `agent-workbench copilot-sdk monitor --manifest <path>`.
-5. Read the compact QA/QC packet from the result path in the manifest.
-
-Use the native `agent` tool **only for `agent-workbench-advisor`**, which
-correctly targets a paid VS Code model.
+Use the native `agent` tool for both `agent-workbench-local-supervisor` (Ollama)
+and `agent-workbench-advisor` (paid VS Code model).
 
 ## Delegating To Supervisors
 
