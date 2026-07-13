@@ -112,6 +112,13 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
 | P102 Native Codex + remote Ollama orchestration | #605 | `feature/p102-native-codex-ollama-orchestration` | Complete (qualified) |
 | P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
+| P104 Canonical model pricing and economics provenance | #614 | `feature/p104-model-pricing-provenance` | Active |
+| P105 Matched public-corpus benchmark contract | TBD | `feature/p105-matched-public-corpus-contract` | Planned |
+| P106 Matched direct-vs-delegated execution | TBD | `feature/p106-matched-roi-benchmark` | Planned — live-run gated |
+| P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
+| P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
+| P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
+| P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5264,3 +5271,175 @@ Acceptance criteria:
   `codex exec` launch occurs.
 - The decision packet distinguishes quality validation, protocol acceptance, and
   economics usability.
+
+## Phase 104: Canonical Model Pricing And Economics Provenance
+
+Parent issue: #614
+
+Branch: `feature/p104-model-pricing-provenance`
+
+Status: active — implementation and validation complete; phase PR/closeout pending.
+
+Goal: replace conflicting hard-coded model prices with a dated, validated
+catalog and make economics claims carry explicit model and pricing provenance.
+
+Tasks:
+
+- [x] P104.1 Canonical price catalog and resolver (#615)
+  - [x] Add dated GPT-5.6 Sol, Terra, and Luna input, cached-read, cache-write,
+        output, and long-context pricing.
+  - [x] Add fail-closed catalog validation and effective-date resolution.
+- [x] P104.2 Pricing CLI and supervisor-token integration (#616)
+  - [x] Add `agent-workbench pricing validate` and `pricing resolve`.
+  - [x] Add model/catalog/as-of options to `supervisor-tokens span`.
+  - [x] Keep legacy token records readable while rejecting unproven economics
+        claims from legacy defaults.
+- [x] P104.3 Token provenance and bounded-cost semantics (#617)
+  - [x] Record price source, effective date, model ID, cache-write observability,
+        long-context status, and lower/upper cost bounds.
+  - [x] Reprice P103 as a qualified bounded estimate.
+- [x] P104.4 Validation and closeout (#618)
+  - [x] Test catalog resolution, unknown models, effective dates, cache pricing,
+        long-context multipliers, and legacy compatibility.
+  - [x] Run scoped validation and synchronize governance surfaces.
+
+P104 performs no live model call, provider change, TSA23 extraction, or release.
+
+## Phase 105: Matched Public-Corpus Benchmark Contract
+
+Parent issue: TBD
+
+Branch: `feature/p105-matched-public-corpus-contract`
+
+Status: planned.
+
+Goal: materialize a deterministic, dry-run-only matched benchmark contract over
+`tsa23_2012_23tsdp12::pages_001_008` before spending paid or remote-worker
+tokens.
+
+Tasks:
+
+- [ ] P105.1 Immutable source/task fixture
+  - [ ] Pin the existing source chunk hash and P89 record schema.
+  - [ ] Require 8-12 records with at least three structure and three
+        content-metadata records.
+- [ ] P105.2 Lane-symmetry contract
+  - [ ] Give direct and delegated lanes the same source bundle, schema, repair
+        allowance, audit rules, and scoring.
+  - [ ] Declare GPT-5.6 Luna direct/Coordinator, `qwen3-coder:latest`
+        Supervisor, and `qwen3.6:35b-a3b-bf16` Worker identities.
+- [ ] P105.3 Hybrid-runner model separation
+  - [ ] Add separate Supervisor and Worker model arguments.
+  - [ ] Persist exact-model evidence without changing provider configuration.
+- [ ] P105.4 Dry-run validation
+  - [ ] Validate fixture hashes, manifests, stop rules, and output contracts.
+
+P105 permits no live inference.
+
+## Phase 106: Matched Direct-Vs-Delegated Execution
+
+Parent issue: TBD
+
+Branch: `feature/p106-matched-roi-benchmark`
+
+Status: planned — requires explicit live-run activation after P105 closeout.
+
+Goal: measure quality and paid cost for the P105 task through delegated and
+direct GPT-5.6 Luna lanes.
+
+Tasks:
+
+- [ ] P106.1 Budget and checkpoint gate
+  - [ ] Set a `$0.25` total paid cap and `$0.125` delegated-lane stop threshold.
+  - [ ] Require catalog-backed pricing and exact-model evidence.
+- [ ] P106.2 Delegated lane
+  - [ ] Run one attempt and at most one evidence-based repair.
+  - [ ] Audit every emitted record; require at least 90% useful yield and no
+        critical source-anchor defect before the direct lane.
+- [ ] P106.3 Direct lane
+  - [ ] Run the identical ticket directly with GPT-5.6 Luna.
+  - [ ] Apply the same attempt, repair, audit, and stop rules.
+- [ ] P106.4 Sanitized comparison packet
+  - [ ] Record quality, protocol, latency, token classes, and bounded costs.
+  - [ ] Keep raw source text, prompts, transcripts, and outputs ignored.
+
+## Phase 107: Economics Decision And Delegation Policy
+
+Parent issue: TBD
+
+Branch: `feature/p107-delegation-economics-policy`
+
+Status: planned.
+
+Goal: convert P106 evidence into a fail-closed authorization decision.
+
+Tasks:
+
+- [ ] P107.1 Evaluate quality non-inferiority
+  - [ ] Require delegated useful yield at least 90% and within five percentage
+        points of direct.
+  - [ ] Reject any critical provenance or protocol defect.
+- [ ] P107.2 Evaluate economics
+  - [ ] Require conservative delegated paid cost at least 20% below direct.
+  - [ ] Reject missing spans, unverified model identity, or legacy pricing.
+- [ ] P107.3 Encode and document policy
+  - [ ] Authorize P108 only when every gate passes.
+  - [ ] Otherwise stop the alpha arc and open one targeted repair phase.
+
+## Phase 108: Fresh TSA23 Slice Preparation
+
+Parent issue: TBD
+
+Branch: `feature/p108-fresh-tsa23-slice-prep`
+
+Status: planned — activate only after a passing P107 decision.
+
+Goal: prepare pages 1-8 of `tsa23_2006_23ts06ra` as a fresh, bounded,
+public-corpus slice without live inference.
+
+Tasks:
+
+- [ ] P108.1 Record source URL, hash, and provenance.
+- [ ] P108.2 Materialize an ignored raw-text slice and tracked chunk manifest.
+- [ ] P108.3 Reuse P89 validation, P91 audit, and P107 economics contracts.
+- [ ] P108.4 Validate a one-run/one-repair `$0.125` P109 budget gate.
+
+## Phase 109: Productive Delegated TSA23 Pilot
+
+Parent issue: TBD
+
+Branch: `feature/p109-productive-tsa23-pilot`
+
+Status: planned — requires explicit live-run activation after P108 closeout.
+
+Goal: produce and audit one useful fresh-corpus result under the measured P107
+policy.
+
+Tasks:
+
+- [ ] P109.1 Run one delegated extraction with at most one evidence-based repair.
+- [ ] P109.2 Audit every candidate and promote accepted records only.
+- [ ] P109.3 Require at least 90% useful yield, zero critical defects, protocol
+      acceptance, catalog-backed economics, and cost within the P107 threshold.
+- [ ] P109.4 Stop without promotion or scope expansion when any gate fails.
+
+## Phase 110: Alpha Readiness Refresh And GitHub Pre-Release
+
+Parent issue: TBD
+
+Branch: `feature/p110-public-alpha-prerelease`
+
+Status: planned — release action requires passing P107 and P109 decisions.
+
+Goal: make one explicit release/no-go decision and, only on passing evidence,
+publish the first GitHub public-alpha pre-release.
+
+Tasks:
+
+- [ ] P110.1 Refresh stale roadmap, docs, and economics claims.
+- [ ] P110.2 Run public-safety, CLI, package, docs, and full validation gates.
+- [ ] P110.3 Produce separate quality, protocol, and economics release verdicts.
+- [ ] P110.4 If all gates pass, merge normally and publish GitHub pre-release
+      `v0.1.0a1`; otherwise publish a no-go packet.
+
+P110 does not publish to PyPI.

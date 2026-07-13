@@ -156,6 +156,7 @@ from .supervisor_tokens import (
     synthesize_supervisor_token_spans,
     write_checkpoint,
 )
+from .pricing import DEFAULT_CATALOG, load_catalog, resolve_price
 from .tokens import (
     load_token_record,
     synthesize_graph_token_markdown,
@@ -1094,7 +1095,23 @@ def build_parser() -> argparse.ArgumentParser:
         type=float,
         default=14.0,
     )
+    supervisor_tokens_span_parser.add_argument("--model", dest="model_id", default=None)
+    supervisor_tokens_span_parser.add_argument("--catalog", type=Path, default=DEFAULT_CATALOG)
+    supervisor_tokens_span_parser.add_argument("--as-of", default=None)
+    supervisor_tokens_span_parser.add_argument("--cache-write-observable", action="store_true")
+    supervisor_tokens_span_parser.add_argument("--long-context", action="store_true")
     supervisor_tokens_span_parser.set_defaults(func=run_supervisor_tokens_span)
+
+    pricing_parser = subparsers.add_parser("pricing", help="Validate and resolve model pricing.")
+    pricing_subparsers = pricing_parser.add_subparsers(dest="pricing_command", required=True)
+    pricing_validate = pricing_subparsers.add_parser("validate")
+    pricing_validate.add_argument("--catalog", type=Path, default=DEFAULT_CATALOG)
+    pricing_validate.set_defaults(func=run_pricing_validate)
+    pricing_resolve = pricing_subparsers.add_parser("resolve")
+    pricing_resolve.add_argument("--model", required=True)
+    pricing_resolve.add_argument("--as-of", default=None)
+    pricing_resolve.add_argument("--catalog", type=Path, default=DEFAULT_CATALOG)
+    pricing_resolve.set_defaults(func=run_pricing_resolve)
 
     supervisor_tokens_synthesize_parser = supervisor_tokens_subparsers.add_parser(
         "synthesize",
@@ -2810,11 +2827,36 @@ def run_supervisor_tokens_span(args: argparse.Namespace) -> int:
                 args.supervisor_cached_input_price_per_1m_usd
             ),
             supervisor_output_price_per_1m_usd=args.supervisor_output_price_per_1m_usd,
+            model_id=args.model_id,
+            catalog_path=args.catalog,
+            as_of=args.as_of,
+            cache_write_observable=args.cache_write_observable,
+            long_context=args.long_context,
         )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     print(f"wrote {args.output}")
+    return 0
+
+
+def run_pricing_validate(args: argparse.Namespace) -> int:
+    try:
+        load_catalog(args.catalog)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"valid pricing catalog: {args.catalog}")
+    return 0
+
+
+def run_pricing_resolve(args: argparse.Namespace) -> int:
+    try:
+        price = resolve_price(args.model, args.as_of, args.catalog)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(json.dumps(price.to_dict(), indent=2))
     return 0
 
 
