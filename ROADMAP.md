@@ -5361,15 +5361,36 @@ Tasks:
   - [x] Set a `$0.25` total paid cap and `$0.125` delegated-lane stop threshold.
   - [x] Require catalog-backed pricing and exact-model evidence.
 - [ ] P106.2 Delegated lane (#631)
-  - [ ] Run one attempt and at most one evidence-based repair.
-  - [ ] Audit every emitted record; require at least 90% useful yield and no
+  - [x] Run one attempt and at most one evidence-based repair.
+  - [x] Audit every emitted record; require at least 90% useful yield and no
         critical source-anchor defect before the direct lane.
+  - [ ] Re-run in prescribed delegated-first order with Coordinator span and
+        complete Supervisor-authored ticket evidence.
 - [ ] P106.3 Direct lane (#632)
-  - [ ] Run the identical ticket directly with GPT-5.6 Luna.
-  - [ ] Apply the same attempt, repair, audit, and stop rules.
+  - [x] Run the identical source/schema task directly with GPT-5.6 Luna.
+  - [x] Apply the same audit and quality rules; strict structured output passed.
+  - [ ] Re-run only as the post-delegated lane after protocol ordering is fixed.
 - [ ] P106.4 Sanitized comparison packet (#633)
   - [ ] Record quality, protocol, latency, token classes, and bounded costs.
   - [ ] Keep raw source text, prompts, transcripts, and outputs ignored.
+
+Observed quality evidence (ignored runtime, 2026-07-13): the strict direct
+Luna lane produced 11 valid records with 100% useful yield and zero critical
+anchor defects. The delegated Worker produced 8 valid records after one
+evidence-based quote repair; the Supervisor independently verified the
+repaired output, which also reached 100% useful yield and zero anchor defects.
+These are quality candidates only: the direct call occurred before the
+delegated-first protocol was recovered, and paid Coordinator span/economics
+evidence is still missing.
+
+Planned next steps:
+
+1. Run the delegated-first native path with a Supervisor-authored ticket and
+   complete Coordinator start/end checkpoints.
+2. Run the strict structured Luna direct lane only after delegated quality and
+   protocol acceptance.
+3. Build the sanitized comparison packet with catalog-backed pricing, token
+   classes, latency, and separate quality/protocol/economics verdicts.
 
 ## Phase 107: Economics Decision And Delegation Policy
 

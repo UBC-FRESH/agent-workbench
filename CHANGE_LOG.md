@@ -3226,6 +3226,23 @@ issues, pull requests, and closeout comments.
 - No P106 model/configuration change was made; reconciling that binding is a
   separately authorized prerequisite.
 
+## 2026-07-13 - Recovered P106 quality candidates with strict schema evidence
+
+- Added the strict Responses API JSON Schema runner in
+  `scripts/run_p106_luna_structured.py` after two prompt-only Luna outputs
+  failed P89 required-field/enum validation.
+- The strict direct Luna probe produced 11 valid records, 100% useful yield,
+  and zero critical source-anchor defects.
+- The delegated Worker first produced 8 records at 87.5% useful yield with one
+  bad source quote; one evidence-based repair produced 8 valid records at
+  100% useful yield with zero critical anchor defects.
+- A native `qwen3-coder:latest` Supervisor independently inspected the repaired
+  Worker output and returned `P106_DELEGATED_SUPERVISOR_VERIFIED`.
+- These are quality candidates, not a completed P106 comparison: the direct
+  probe occurred before the prescribed delegated-first ordering was recovered,
+  and Coordinator span/economics evidence plus the sanitized comparison packet
+  remain open.
+
 ## 2026-07-13 - Ran bounded native P106 delegated attempts
 
 - Corrected the native `ollama_worker` binding to the P105-required
