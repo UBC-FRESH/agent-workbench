@@ -3188,3 +3188,17 @@ issues, pull requests, and closeout comments.
   and output contracts, lane roles/models, and model-argument declarations.
 - Negative tampering and missing-artifact tests pass; P106 remains separately
   gated and unactivated.
+
+## 2026-07-13 - Activated P106 matched direct-vs-delegated execution
+
+- Activated parent issue #629 with child issues #630-#633 on
+  `feature/p106-matched-roi-benchmark` after P105 corrective closeout.
+- Added the public execution protocol and deterministic gate manifest at
+  `planning/phase106_matched_execution_protocol.md` and
+  `benchmarks/document_library/p106_matched_execution_gate.json`.
+- Added `scripts/validate_p106_execution_gate.py`, which validates the P106
+  budget, attempt, pricing, exact-model, delegated-quality, and P105 contract
+  prerequisites fail-closed.
+- Live inference remains closed pending Coordinator inspection of current
+  pricing/model evidence and paid token-span checkpoints. Raw prompts, source
+  text, transcripts, provider details, and outputs remain ignored.

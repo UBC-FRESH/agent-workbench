@@ -114,7 +114,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
-| P106 Matched direct-vs-delegated execution | TBD | `feature/p106-matched-roi-benchmark` | Planned — live-run gated |
+| P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Active — live-run evidence gated |
 | P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
@@ -5345,28 +5345,29 @@ P105 permits no live inference.
 
 ## Phase 106: Matched Direct-Vs-Delegated Execution
 
-Parent issue: TBD
+Parent issue: #629
 
 Branch: `feature/p106-matched-roi-benchmark`
 
-Status: planned — requires explicit live-run activation after P105 closeout.
+Status: active — implementation and gate preparation; live inference remains
+closed until the Coordinator approves the inspected gate evidence.
 
 Goal: measure quality and paid cost for the P105 task through delegated and
 direct GPT-5.6 Luna lanes.
 
 Tasks:
 
-- [ ] P106.1 Budget and checkpoint gate
-  - [ ] Set a `$0.25` total paid cap and `$0.125` delegated-lane stop threshold.
-  - [ ] Require catalog-backed pricing and exact-model evidence.
-- [ ] P106.2 Delegated lane
+- [ ] P106.1 Budget and checkpoint gate (#630)
+  - [x] Set a `$0.25` total paid cap and `$0.125` delegated-lane stop threshold.
+  - [x] Require catalog-backed pricing and exact-model evidence.
+- [ ] P106.2 Delegated lane (#631)
   - [ ] Run one attempt and at most one evidence-based repair.
   - [ ] Audit every emitted record; require at least 90% useful yield and no
         critical source-anchor defect before the direct lane.
-- [ ] P106.3 Direct lane
+- [ ] P106.3 Direct lane (#632)
   - [ ] Run the identical ticket directly with GPT-5.6 Luna.
   - [ ] Apply the same attempt, repair, audit, and stop rules.
-- [ ] P106.4 Sanitized comparison packet
+- [ ] P106.4 Sanitized comparison packet (#633)
   - [ ] Record quality, protocol, latency, token classes, and bounded costs.
   - [ ] Keep raw source text, prompts, transcripts, and outputs ignored.
 
