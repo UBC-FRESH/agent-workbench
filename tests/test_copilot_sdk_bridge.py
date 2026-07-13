@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import asyncio
 import json
+from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
+from agent_workbench.cli import run_copilot_sdk_new_manifest
 from agent_workbench.copilot_sdk_bridge import (
     LiveCopilotSdkAdapter,
     SdkTurnConfig,
@@ -131,6 +133,67 @@ def test_validate_sdk_session_manifest_accepts_complete_manifest(
     result = validate_sdk_session_manifest(manifest, manifest_path=manifest_path)
 
     assert result.ok, result.errors
+
+
+def test_new_manifest_cli_generates_validator_accepted_manifest(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    monkeypatch.chdir(Path(__file__).parents[1])
+    monkeypatch.setenv(
+        "AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL", "https://ollama.example.test/v1"
+    )
+    ticket = tmp_path / "bootstrap_ticket.md"
+    ticket.write_text("Implement the bounded bootstrap task.\n", encoding="utf-8")
+
+    exit_code = run_copilot_sdk_new_manifest(
+        Namespace(
+            ticket=ticket,
+            profile="agent-workbench-local-supervisor",
+            run_id="p100-bootstrap",
+        )
+    )
+
+    manifest_path = tmp_path / "p100-bootstrap_manifest.json"
+    manifest = load_sdk_session_manifest(manifest_path)
+    validation = validate_sdk_session_manifest(manifest, manifest_path=manifest_path)
+    assert exit_code == 0
+    assert validation.ok, validation.errors
+    assert manifest["sdk"]["model"] == "qwen3.6:35b-a3b-bf16"
+    assert manifest["sdk"]["provider_config"] == {
+        "type": "openai",
+        "base_url": "https://ollama.example.test/v1",
+        "wire_api": "completions",
+    }
+    assert manifest["sdk"]["available_tools"] == "builtin-isolated"
+    assert (
+        manifest["sdk"]["agent_profiles"]["selected"]
+        == "agent-workbench-local-supervisor"
+    )
+
+
+def test_live_adapter_injects_provider_headers_from_local_file(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    headers_path = tmp_path / "headers.json"
+    headers_path.write_text(json.dumps({"X-Test-Header": "local-secret"}))
+    monkeypatch.setenv("AGENT_WORKBENCH_PROVIDER_HEADERS_FILE", str(headers_path))
+    adapter = LiveCopilotSdkAdapter()
+    adapter.permission_handler = type(
+        "PermissionHandler", (), {"approve_all": lambda *args: None}
+    )()
+
+    kwargs = adapter._session_kwargs(
+        {
+            "sdk": {
+                "provider_config": {
+                    "type": "openai",
+                    "base_url": "https://example.test/v1",
+                }
+            }
+        }
+    )
+
+    assert kwargs["provider"]["headers"] == {"X-Test-Header": "local-secret"}
 
 
 def test_validate_sdk_session_manifest_rejects_missing_ticket(tmp_path: Path) -> None:

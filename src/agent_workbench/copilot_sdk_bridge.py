@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from html import escape
@@ -1551,7 +1552,16 @@ class LiveCopilotSdkAdapter:
             kwargs["model"] = model
         provider_config = sdk.get("provider_config")
         if isinstance(provider_config, dict):
-            kwargs["provider"] = provider_config
+            provider = dict(provider_config)
+            headers_file = os.environ.get("AGENT_WORKBENCH_PROVIDER_HEADERS_FILE", "")
+            if provider.get("type") == "openai" and headers_file:
+                headers = json.loads(Path(headers_file).read_text(encoding="utf-8-sig"))
+                if not isinstance(headers, dict):
+                    raise ValueError("provider headers file must contain a JSON object")
+                provider["headers"] = {
+                    str(key): str(value) for key, value in headers.items()
+                }
+            kwargs["provider"] = provider
         working_directory = str(sdk.get("working_directory", "")).strip()
         if working_directory:
             working_directory_path = Path(working_directory)
