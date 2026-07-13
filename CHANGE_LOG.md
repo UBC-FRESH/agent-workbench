@@ -3060,3 +3060,60 @@ issues, pull requests, and closeout comments.
 - The phase does not authorize substantive TSA23 delegation: paid Coordinator
   economics and a small non-trivial repeat remain prerequisites for any future
   activation.
+
+## 2026-07-13 - Activated P103 paid Coordinator economics trial
+
+- Added P103 to the roadmap with parent issue #611 and child issue #612.
+- P103 is the next bounded development goal after the qualified P102 closeout:
+  one structured Supervisor-authored Worker handoff with paid Coordinator
+  token-span metadata and separate quality, protocol, and economics verdicts.
+- The trial remains explicitly out of scope for substantive TSA23 work,
+  provider/model changes, release actions, tracked-file Worker mutation, and
+  nested `codex exec` launches.
+
+## 2026-07-13 - Closed P103 paid Coordinator economics trial (qualified)
+
+- Completed the single allowed P103 structured handoff run after one
+  evidence-based dispatch repair.
+- Quality verdict: PASS. The persistent Worker returned the exact expected JSON
+  result with HTTP 200, and a fresh Supervisor returned `P103_VERIFIED`.
+- Protocol verdict: PASS, qualified. The Supervisor authored the ignored Worker
+  ticket; no nested `codex exec`, provider change, TSA23 work, release action,
+  or tracked-file Worker mutation occurred.
+- Economics verdict: INSUFFICIENT. Coordinator span start/end metadata was
+  captured, but native token counts and the exact picker model label were not
+  available. This does not authorize substantive TSA23 delegation.
+- Evidence remains under ignored path
+  `runtime/agent_jobs/p103_economics_trial/`; no raw provider details were
+  promoted into tracked files.
+
+## 2026-07-13 - Backfilled P103 Coordinator economics
+
+- Activated the existing P50 `supervisor_tokens` / `tokens` accounting
+  functions against the preserved native Codex session JSONL; no P103 rerun was
+  performed.
+- Generated and validated the sanitized record under
+  `runtime/supervisor_tokens/p103_economics_backfill/`.
+- Recovered span usage: 1,922 fresh input tokens, 110,218 cached input tokens,
+  629 output tokens, and 186 reasoning output tokens.
+- At the recorded pricing defaults, paid Coordinator cost is `$0.034062`; the
+  persistent Ollama Worker cost is `$0.000000`.
+- Economics verdict is upgraded to **PASS, qualified** for actual-cost
+  accounting. No direct-supervisor counterfactual exists, so no savings or ROI
+  claim is made.
+- The accounting snapshots bracket the recorded wall-clock end using the last
+  available pre-end token event; that boundary choice is retained as an
+  evidence caveat.
+
+## 2026-07-13 - Corrected P103 economics to GPT-5.6 Luna pricing
+
+- Repriced the validated P103 span using the confirmed GPT-5.6 Luna schedule:
+  `$1.00` fresh input, `$0.10` cached input, and `$6.00` output per million
+  tokens.
+- Corrected paid Coordinator cost: `$0.017834` approximately, with Worker cost
+  remaining `$0.000000`.
+- The original `$0.034062` figure is retained only as a superseded repository-
+  default estimate; it is not the P103 decision value.
+- Next economics step: establish a current-model price catalog and capture a
+  direct-supervisor counterfactual in a separately authorized benchmark before
+  making any savings claim.
