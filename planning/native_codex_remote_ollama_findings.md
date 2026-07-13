@@ -200,14 +200,7 @@ agent loop can mediate tool execution for the remote model.
 
 ## What Is Not Yet Proven
 
-- A paid Codex Coordinator can spawn a custom agent whose configuration switches
-  from the Coordinator's OpenAI provider to the Ollama provider.
 - A custom Ollama Supervisor can spawn a second custom Ollama Worker.
-- The tactical default is now `max_depth = 1` with six first-level threads:
-  recursive delegation is intentionally disabled while the Coordinator hub is
-  stabilized. A future recursive probe must explicitly raise this setting and
-  capture child-session evidence.
-  this installed alpha Codex build.
 - Both delegation edges are visible in durable session evidence.
 - A Supervisor can monitor, nudge, validate, and stop a Worker economically.
 - The TSA23 extraction workflow succeeds through the native nested hierarchy.
@@ -215,6 +208,13 @@ agent loop can mediate tool execution for the remote model.
   that requires measured runs, not architectural intuition.
 - VS Code-hosted Codex inherits the provider-header environment variables in a
   convenient and safe way. The successful probes used a controlled CLI process.
+
+Direct Coordinator fan-out to configured OpenAI and Ollama child roles is now
+proven in a fresh VS Code Codex session. The first recursive probe was invalid
+because Codex applied the unset `agents.max_depth` default of `1`, leaving the
+depth-`1` Supervisor unable to create a depth-`2` Worker. Project configuration
+now explicitly sets `max_depth = 2` with six available threads; a fresh-session
+recursive probe must capture the second delegation edge before it is accepted.
 
 ## Warnings and Non-Blocking Observations
 

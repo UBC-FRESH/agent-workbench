@@ -24,16 +24,24 @@ def read_toml(path: Path, errors: list[str]) -> dict[str, object]:
         return {}
 
 
-def validate(codex_home: Path) -> list[str]:
+def validate(codex_home: Path, project_config: Path | None = None) -> list[str]:
     errors: list[str] = []
     config = read_toml(codex_home / "config.toml", errors)
     agents = config.get("agents")
     if not isinstance(agents, dict):
         return errors + ["config.toml must define [agents]"]
-    if agents.get("max_threads") != 6:
+    project_agents: dict[str, object] = {}
+    if project_config is not None:
+        project = read_toml(project_config, errors)
+        candidate = project.get("agents", {})
+        if isinstance(candidate, dict):
+            project_agents = candidate
+    max_threads = project_agents.get("max_threads", agents.get("max_threads"))
+    max_depth = project_agents.get("max_depth", agents.get("max_depth"))
+    if max_threads != 6:
         errors.append("agents.max_threads must be 6")
-    if agents.get("max_depth") != 1:
-        errors.append("agents.max_depth must be 1")
+    if max_depth != 2:
+        errors.append("effective agents.max_depth must be 2")
     features = config.get("features", {})
     if not isinstance(features, dict) or features.get("multi_agent") is not True:
         errors.append("features.multi_agent must be true")
@@ -65,8 +73,14 @@ def validate(codex_home: Path) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--codex-home", type=Path, default=Path.home() / ".codex")
+    parser.add_argument(
+        "--project-config",
+        type=Path,
+        default=Path.cwd() / ".codex" / "config.toml",
+    )
     args = parser.parse_args()
-    errors = validate(args.codex_home)
+    project_config = args.project_config if args.project_config.exists() else None
+    errors = validate(args.codex_home, project_config)
     print(json.dumps({"valid": not errors, "errors": errors}, indent=2))
     return int(bool(errors))
 

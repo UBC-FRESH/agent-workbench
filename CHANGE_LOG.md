@@ -3341,3 +3341,18 @@ issues, pull requests, and closeout comments.
   routine commands do not depend on intermittent inherited `PATH` state.
 - Updated contributor and agent instructions to run the bootstrap before
   declaring routine development tooling unavailable.
+
+## 2026-07-13 - Corrected invalid recursive Honeycomb verdict
+
+- Re-examined the nested-edge probe against the official Codex configuration
+  reference and the recorded session depth.
+- The probe ran with `agents.max_depth` unset, so Codex applied the default of
+  `1`; the Luna Supervisor was already at that maximum depth.
+- The missing spawn tool, `Native spawn tool unavailable.` response, and absent
+  descendant were therefore expected configuration effects, not evidence that
+  recursive Supervisor-to-Worker spawning is unsupported.
+- Retracted the unsupported-topology conclusion and restored recursive
+  capability to unresolved status. Direct Coordinator spokes remain proven as
+  a fallback only.
+- Set project `agents.max_depth = 2` and `agents.max_threads = 6`. A fresh Codex
+  session is required before running the valid depth-`2` nested-edge proof.

@@ -39,13 +39,16 @@ reproduction contract is in `planning/honeycomb_single_level_delegation.md`;
 the sanitized local evidence is under
 `runtime/agent_jobs/honeycomb-native-fresh-session/`.
 
-This is accepted evidence for direct single-level role provenance. A bounded
-follow-on test supplied the configured Luna Supervisor with an explicit
-Supervisor-to-Ollama-Worker task, but its tool inventory contained no native
-spawn capability. It returned `Native spawn tool unavailable.`, created no
-descendant thread, and produced no Worker marker.
+This is accepted evidence for direct single-level role provenance. The first
+follow-on Supervisor-to-Ollama-Worker probe was invalid because
+`agents.max_depth` was unset and Codex applied the default of `1`. The Luna
+Supervisor was already at depth `1`, so the missing native spawn tool and absent
+Worker descendant were expected consequences of configuration, not evidence
+that recursive spawning is unsupported.
 
-The supported runtime topology is therefore Coordinator-owned direct spokes.
-Supervisors may decompose work and review Worker evidence, while the Coordinator
-performs every native spawn. This does not change the historical P106 gate and
-economics contract.
+The project now explicitly sets `agents.max_depth = 2`. Recursive capability
+remains unresolved until a fresh Codex session reloads that configuration and
+captures a real depth-`2` Worker child or a new fail-closed result. Direct
+Coordinator spokes remain the proven fallback, not a final rejection of nested
+delegation. This does not change the historical P106 gate and economics
+contract.

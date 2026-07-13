@@ -161,40 +161,40 @@ Ollama execution from a fresh native Codex session. It does not prove recursive
 Supervisor-to-Worker spawning, tracked-file mutation authority, benchmark
 quality, or usable Coordinator economics.
 
-## Nested-edge result and supported topology
+## Invalid nested-edge probe and required rerun
 
-The immediate follow-on probe tested the missing edge directly. The Coordinator
+The immediate follow-on probe attempted to test the missing edge. The Coordinator
 spawned `gpt_luna_supervisor` thread
 `019f5d1f-4add-7b00-be43-b8cb3213c562` and instructed it to spawn exactly one
 configured `ollama_worker` without a model override.
 
-The Supervisor's supplied tool inventory contained no native spawn or subagent
-capability. It returned the exact limitation `Native spawn tool unavailable.`
-and terminated with `task_complete`. Inspection found no descendant rollout
-with the Supervisor thread as its parent and no Worker marker. Therefore the
-recursive edge is unsupported in the tested runtime; repeated prompting cannot
-create a capability that was not supplied to the child role.
+That test ran with `agents.max_depth` unset. Codex therefore applied its
+documented default of `1`: the root Coordinator was depth `0`, and the Luna
+Supervisor was already at the maximum depth `1`. Codex correctly withheld the
+native spawn tool from that child. The Supervisor returned
+`Native spawn tool unavailable.`, and no descendant was created, but those
+observations are expected under the depth limit and do not establish whether
+recursive spawning works when depth `2` is allowed.
 
-The supported native Honeycomb topology is consequently Coordinator-owned
-direct spokes:
+The previous `unsupported` verdict and the decision to adopt Coordinator-owned
+direct spokes as the only supported topology were invalid conclusions. Direct
+Coordinator spokes remain proven and usable, but recursive
+Supervisor-to-Worker capability is unresolved until a correctly configured
+fresh-session test runs.
+
+The valid nested topology under test is:
 
 ```text
-                    [Luna Supervisor]
-                           |
-          [Ollama Worker]--+--[Ollama Worker]
-                           |
                       [Coordinator]
                            |
-                       [Sol Advisor]
+                    [Luna Supervisor]
+                           |
+                    [Ollama Worker]
 ```
 
-The Coordinator directly launches, reuses, waits on, and closes every native
-child thread. A Supervisor may decompose an objective, inspect returned Worker
-evidence, and recommend further Worker tickets, but the Coordinator performs
-the actual Worker spawn. This preserves the useful Supervisor role without
-claiming a nonexistent recursive delegation edge.
-
-Re-test recursive spawning only after runtime/tool evidence shows that a child
-Supervisor is actually supplied a native spawn capability. Configuration depth,
-role prose, or emitted function-call text is not sufficient reason to rerun the
-same probe.
+The project configuration now explicitly sets `agents.max_depth = 2` and
+`agents.max_threads = 6`. A fresh Codex session must reload that configuration
+before the test is rerun. Acceptance requires a real depth-`2` Worker child,
+correct parentage to the Luna Supervisor, expected Ollama provider/model
+metadata, the exact Worker marker, and a Supervisor verification marker. The
+current session and the invalid depth-`1` result cannot supply that evidence.

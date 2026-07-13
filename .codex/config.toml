@@ -3,3 +3,8 @@
 
 model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
+
+[agents]
+# Root Coordinator (depth 0) -> Supervisor (depth 1) -> Worker (depth 2).
+max_depth = 2
+max_threads = 6

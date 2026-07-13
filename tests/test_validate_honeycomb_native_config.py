@@ -27,7 +27,7 @@ def test_accepts_complete_machine_local_honeycomb_config(tmp_path: Path) -> None
     write(home / "config.toml", """
 [agents]
 max_threads = 6
-max_depth = 1
+max_depth = 2
 [features]
 multi_agent = true
 [model_providers.agent_workbench_ollama]
@@ -46,6 +46,31 @@ env_http_headers = { "X-Test" = "TEST_ENV" }
 def test_rejects_missing_ollama_provider_provenance(tmp_path: Path) -> None:
     module = load_module()
     home = tmp_path / ".codex"
-    write(home / "config.toml", "[agents]\nmax_threads = 6\nmax_depth = 1\n[features]\nmulti_agent = true\n")
+    write(home / "config.toml", "[agents]\nmax_threads = 6\nmax_depth = 2\n[features]\nmulti_agent = true\n")
     errors = module.validate(home)
     assert "Ollama provider must use environment-backed headers" in errors
+
+
+def test_project_config_overrides_depth_one_machine_default(tmp_path: Path) -> None:
+    module = load_module()
+    home = tmp_path / ".codex"
+    project_config = tmp_path / "project" / ".codex" / "config.toml"
+    write(home / "config.toml", """
+[agents]
+max_threads = 6
+max_depth = 1
+[features]
+multi_agent = true
+[model_providers.agent_workbench_ollama]
+env_http_headers = { "X-Test" = "TEST_ENV" }
+""" + "\n".join(
+        f'\n[agents.{name}]\nconfig_file = "agents/{filename}"'
+        for name, (filename, _, _) in module.ROLES.items()
+    ))
+    for name, (filename, model, effort) in module.ROLES.items():
+        provider = '\nmodel_provider = "agent_workbench_ollama"' if name == "ollama_worker" else ""
+        write(home / "agents" / filename, f'name = "{name}"\nmodel = "{model}"\nmodel_reasoning_effort = "{effort}"{provider}\n')
+    write(home / "agent-workbench-coordinator.config.toml", 'model = "gpt-5.6-terra"\nmodel_reasoning_effort = "medium"\n')
+    write(project_config, "[agents]\nmax_threads = 6\nmax_depth = 2\n")
+
+    assert module.validate(home, project_config) == []
