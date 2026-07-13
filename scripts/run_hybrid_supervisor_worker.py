@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -66,7 +67,12 @@ def supervisor_turn(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-id", required=True)
-    parser.add_argument("--model", default="qwen3-coder:latest")
+    parser.add_argument("--model", default="qwen3-coder:latest", help="Supervisor model")
+    parser.add_argument(
+        "--worker-model",
+        default="qwen3.6:35b-a3b-bf16",
+        help="Worker model",
+    )
     args = parser.parse_args()
     if not args.run_id.replace("-", "").replace("_", "").isalnum():
         parser.error("--run-id may contain only letters, digits, hyphens, and underscores")
@@ -101,7 +107,7 @@ def main() -> int:
             )
             if dispatch != dispatch_marker or not ticket.is_file():
                 raise RuntimeError("Supervisor did not create the expected Worker ticket")
-            worker = run_ticket(repo_root, ticket, worker_output, args.model, 45.0)
+            worker = run_ticket(repo_root, ticket, worker_output, args.worker_model, 45.0)
             if worker_output.read_text(encoding="utf-8").strip() != worker_marker:
                 raise RuntimeError("Worker marker did not match")
             verify_prompt = (
@@ -122,7 +128,16 @@ def main() -> int:
         (run_dir / "supervisor_dispatch.txt").write_text(dispatch + "\n", encoding="utf-8")
         (run_dir / "supervisor_verify.txt").write_text(verify + "\n", encoding="utf-8")
         (run_dir / "supervisor_evidence.json").write_text(
-            json.dumps({"dispatch": dispatch_evidence, "verify": verify_evidence}, indent=2), encoding="utf-8"
+            json.dumps(
+                {
+                    "supervisor_model": args.model,
+                    "worker_model": args.worker_model,
+                    "dispatch": dispatch_evidence,
+                    "verify": verify_evidence,
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
         )
         print(json.dumps({"ok": True, "worker": worker, "dispatch": dispatch, "verify": verify}, sort_keys=True))
         return 0

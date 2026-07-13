@@ -13,3 +13,6 @@ def test_hybrid_proof_uses_restricted_supervisor_ticket_authorship() -> None:
     assert '"type": "readOnly"' in text
     assert '"approvalPolicy": "never"' in text
     assert "supervisor_evidence.json" in text
+    assert '"--worker-model"' in text
+    assert '"supervisor_model": args.model' in text
+    assert '"worker_model": args.worker_model' in text
