@@ -6,7 +6,10 @@ import argparse
 import json
 from pathlib import Path
 
-from validate_p105_matched_benchmark import validate as validate_p105
+try:
+    from scripts.validate_p105_matched_benchmark import validate as validate_p105
+except ModuleNotFoundError:  # direct script execution from the scripts directory
+    from validate_p105_matched_benchmark import validate as validate_p105
 
 
 def validate(gate_path: Path, root: Path) -> list[str]:
