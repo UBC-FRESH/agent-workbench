@@ -23,6 +23,26 @@ Do not assume this agent's `model:` frontmatter deterministically pins the
 Ollama model; it documents intent only. If model identity matters for a claim,
 verify it from persisted evidence rather than trusting frontmatter.
 
+## Model Self-Verification
+
+At the start of every job, emit a model identity check and include the result
+in the QA/QC packet header.
+
+Steps:
+1. Run: `python scripts/copilot_sdk_ollama_probe.py --model <intended-model> --provider-headers-file runtime/local_provider_headers.json --prompt "respond with only: MODEL_IDENTITY_OK" --output runtime/agent_jobs/model_identity_check.md`
+2. Read the result file and extract the `model` field from the first SDK response event.
+3. Include in the QA/QC packet:
+   ```
+   resolved_model: <value from response event, or "unverified" if probe failed>
+   model_identity_check: passed | failed | skipped
+   ```
+
+If the probe fails (import error, endpoint unreachable, timeout), set
+`model_identity_check: skipped` and continue — do not abort the job over a
+missing probe. If the probe succeeds but the `model` field does not match the
+intended model, set `model_identity_check: failed` and include it as a caveat
+in the job-end signal (`job_complete_with_caveats`).
+
 ## Rules
 
 - Treat the coordinator-provided ticket and any embedded job contract as

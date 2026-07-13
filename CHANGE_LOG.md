@@ -3,6 +3,26 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-12 - P100: Public Alpha Readiness Review — artifacts produced
+
+- Created `planning/public_alpha_readiness_checklist.md` — pass/fail checklist
+  across 5 areas: public-safety, templates and schema, CLI surface, ROI thesis
+  and indexed-cost metric, and governance. Overall verdict: PASS WITH NOTED
+  LIMITATIONS (25 items pass, 2 partial).
+- Created `planning/public_alpha_readiness_review.md` — declares what is ready
+  for external review (governance, CLI, graph templates, TSA23 pilot evidence,
+  P95 retrieval, P101 docs), what remains experimental (whole-doc P92 economics,
+  P85 profile battery, P96 model comparison, indexed-cost scale attribution),
+  what should not be assumed production-ready (TSA23 index completeness, economics
+  certification, worker model generalization, SDK infrastructure requirements).
+  Contains ROI thesis statement, indexed-cost metric summary, open questions for
+  external reviewers, and confidence assessment (MEDIUM-HIGH overall).
+- Updated `ROADMAP.md`: P100 table row changed from TBD/Planned to #603/Active;
+  phase section updated with parent issue and P100.1/P100.2 checklist marked [x].
+- Also committed in this branch: agent profile updates (.github/agents/) and
+  delegation_policy.md clarifications from the active coordinator session.
+- Parent issue: #603. Branch: `feature/p100-public-alpha-readiness-review`.
+
 ## 2026-07-12 - P99: Economics Dashboard And Release Criteria — implementation
 
 - Created `src/agent_workbench/economics.py` with `IndexedCostStage`, `IndexedCostRecord`,

@@ -108,7 +108,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P97 Reusable workflow graph packaging | #592 | `feature/p97-reusable-workflow-graphs` | Complete — merged via PR #596 at `b2b929f`; parent issue #592 closed |
 | P98 Reporting-worker template packaging | #599 | `feature/p98-reporting-worker-templates` | Complete |
 | P99 Economics dashboard and release criteria | #601 | `feature/p99-economics-dashboard-release-criteria` | Active |
-| P100 Public alpha readiness review | TBD | `feature/p100-public-alpha-readiness-review` | Planned |
+| P100 Public alpha readiness review | #603 | `feature/p100-public-alpha-readiness-review` | Active |
 | P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
 
 ## Phase 0: Governance And Workflow Scaffold
@@ -5136,21 +5136,20 @@ Tasks:
 
 ## Phase 100: Public Alpha Readiness Review
 
-Parent issue: TBD (create on activation)
+Parent issue: #603
 
 Branch: `feature/p100-public-alpha-readiness-review`
 
-Status: planned — fleshed out per AGENTS.md governance rule.
+Status: active
 
 Goal: prepare a public alpha only after one end-to-end real-project workflow
 shows net value.
 
 Tasks:
-- [ ] P100.1 Compile readiness checklist (#TBD)
+- [x] P100.1 Compile readiness checklist (#603)
   - All tracked artifacts public-safe, all templates validated, ROI thesis statement
     coherent, indexed-cost metric reported, AGENTS.md governance rules current
-  - Checklist with pass/fail per item; supervisor inspection required
-- [ ] P100.2 Produce `public_alpha_readiness_review.md` note (#TBD)
-  - Declare the workbench's current state: what is ready for external review, what
-    remains experimental, and what should not be assumed production-ready
-  - Review document with explicit scope boundaries and confidence level
+  - `planning/public_alpha_readiness_checklist.md` — PASS WITH NOTED LIMITATIONS
+- [x] P100.2 Produce `public_alpha_readiness_review.md` note (#603)
+  - Declares workbench current state: what is ready, what is experimental, what is not production-ready
+  - `planning/public_alpha_readiness_review.md` — confidence MEDIUM-HIGH; open questions for reviewers documented
