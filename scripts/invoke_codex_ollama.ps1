@@ -19,9 +19,7 @@ param(
     # as -o as its own common parameters. The decoded value is like
     # ["exec","--version"].
     [Parameter(Mandatory = $true)]
-    [string]$CodexArgsBase64,
-
-    [string]$ProfileName = 'agent-workbench-ollama'
+    [string]$CodexArgsBase64
 )
 
 $ErrorActionPreference = 'Stop'
@@ -69,19 +67,54 @@ foreach ($headerName in $headerMap.Keys) {
 $escapedBaseUrl = $baseUrl.Replace('\', '\\').Replace('"', '\"')
 $codexHome = Join-Path $HOME '.codex'
 New-Item -ItemType Directory -Force -Path $codexHome | Out-Null
-$profilePath = Join-Path $codexHome "$ProfileName.config.toml"
-@"
-# Generated locally by Agent Workbench. Do not commit this file.
+$configPath = Join-Path $codexHome 'config.toml'
+$managedStart = '# BEGIN AGENT WORKBENCH OLLAMA'
+$managedEnd = '# END AGENT WORKBENCH OLLAMA'
+$managedBlock = @"
+$managedStart
+# Generated locally by Agent Workbench. Do not commit this block.
 [model_providers.agent_workbench_ollama]
 name = "Agent Workbench Ollama"
 base_url = "$escapedBaseUrl"
 wire_api = "responses"
-env_http_headers = {
-  "CF-Access-Client-Id" = "AW_CF_CLIENT_ID",
-  "CF-Access-Client-Secret" = "AW_CF_CLIENT_SECRET",
-  "User-Agent" = "AW_PROVIDER_USER_AGENT"
+
+[model_providers.agent_workbench_ollama.env_http_headers]
+"CF-Access-Client-Id" = "AW_CF_CLIENT_ID"
+"CF-Access-Client-Secret" = "AW_CF_CLIENT_SECRET"
+"User-Agent" = "AW_PROVIDER_USER_AGENT"
+
+[agents.agent_workbench_ollama_supervisor]
+description = "Bounded local Ollama Supervisor for Agent Workbench delegation."
+config_file = "agents/agent_workbench_ollama_supervisor.toml"
+
+[agents.agent_workbench_ollama_worker]
+description = "Bounded local Ollama Worker for Agent Workbench delegation."
+config_file = "agents/agent_workbench_ollama_worker.toml"
+
+# Keep provider credentials available to Codex itself but out of model-launched
+# shell processes. The header file is likewise not readable by those processes.
+[shell_environment_policy]
+exclude = ["AW_CF_CLIENT_ID", "AW_CF_CLIENT_SECRET", "AW_PROVIDER_USER_AGENT", "AGENT_WORKBENCH_*"]
+
+[permissions.agent_workbench_ollama_readonly]
+extends = ":workspace"
+
+[permissions.agent_workbench_ollama_readonly.filesystem.":workspace_roots"]
+"runtime/local_provider_headers.json" = "deny"
+$managedEnd
+"@
+if (Test-Path -LiteralPath $configPath) {
+    $baseConfig = Get-Content -LiteralPath $configPath -Raw
+} else {
+    $baseConfig = ''
 }
-"@ | Set-Content -LiteralPath $profilePath -Encoding utf8
+$pattern = '(?s)' + [regex]::Escape($managedStart) + '.*?' + [regex]::Escape($managedEnd)
+if ($baseConfig -match $pattern) {
+    $updatedConfig = [regex]::Replace($baseConfig, $pattern, $managedBlock)
+} else {
+    $updatedConfig = $baseConfig.TrimEnd() + "`r`n`r`n" + $managedBlock + "`r`n"
+}
+Set-Content -LiteralPath $configPath -Value $updatedConfig -Encoding utf8
 
 # Project-scoped config cannot own a provider definition. Materialize the
 # generic role files into the operator's Codex home so their model-provider
@@ -106,7 +139,7 @@ foreach ($agentFile in @('ollama_supervisor.toml', 'ollama_worker.toml')) {
     Set-Content -LiteralPath (Join-Path $localAgents "$localName.toml") -Value $content -Encoding utf8
 }
 
-$arguments = @('-p', $ProfileName)
+$arguments = @()
 try {
     $json = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($CodexArgsBase64))
     $codexArgs = ConvertFrom-Json -InputObject $json

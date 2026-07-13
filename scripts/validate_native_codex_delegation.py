@@ -53,8 +53,10 @@ def validate_profiles(config_root: Path) -> list[str]:
             errors.append(f"{filename} must use provider {EXPECTED_PROVIDER}")
         if not isinstance(profile.get("model"), str) or not profile["model"].strip():
             errors.append(f"{filename} must declare a model")
-        if profile.get("sandbox_mode") != "workspace-write":
-            errors.append(f"{filename} must use workspace-write sandbox mode")
+        if profile.get("default_permissions") != "agent_workbench_ollama_readonly":
+            errors.append(
+                f"{filename} must use the agent_workbench_ollama_readonly permission profile"
+            )
     return errors
 
 

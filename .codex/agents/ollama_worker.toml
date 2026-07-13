@@ -3,7 +3,7 @@ description = "Use for one narrow, explicitly bounded implementation or inspecti
 model = "qwen3-coder:latest"
 model_provider = "agent_workbench_ollama"
 model_reasoning_effort = "low"
-sandbox_mode = "workspace-write"
+default_permissions = "agent_workbench_ollama_readonly"
 
 developer_instructions = """
 You are the free local Worker in an evidence-driven delegation workflow.
