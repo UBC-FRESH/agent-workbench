@@ -24,6 +24,8 @@ New-Item -ItemType Directory -Force -Path $outPath | Out-Null
 
 $prompt = Get-Content -LiteralPath $promptPath -Raw
 # The bootstrap renames tracked role profiles at user level.
+$prompt = $prompt.Replace('runtime/agent_jobs/p106-native-delegated-r2', ($OutputDir -replace '\\', '/').TrimEnd('/'))
+$prompt = $prompt.Replace('runtime/agent_jobs/p106-native-delegated-r1', ($OutputDir -replace '\\', '/').TrimEnd('/'))
 $prompt = $prompt.Replace('agent_type="ollama_supervisor"', 'agent_type="agent_workbench_ollama_supervisor"')
 $prompt = $prompt.Replace('agent_type="ollama_worker"', 'agent_type="agent_workbench_ollama_worker"')
 $prompt = $prompt.Replace('`ollama_supervisor`', '`agent_workbench_ollama_supervisor`')
