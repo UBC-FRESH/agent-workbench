@@ -69,6 +69,12 @@ function ConvertTo-TomlString {
     return $Value.Replace('\', '\\').Replace('"', '\"')
 }
 
+function Write-Utf8NoBom {
+    param([string]$Path, [string]$Content)
+
+    [IO.File]::WriteAllText($Path, $Content, [Text.UTF8Encoding]::new($false))
+}
+
 $escapedBaseUrl = ConvertTo-TomlString -Value $baseUrl
 $escapedClientId = ConvertTo-TomlString -Value $headers.'CF-Access-Client-Id'
 $escapedClientSecret = ConvertTo-TomlString -Value $headers.'CF-Access-Client-Secret'
@@ -132,7 +138,7 @@ if ($baseConfig -match $pattern) {
 } else {
     $updatedConfig = $baseConfig.TrimEnd() + "`r`n`r`n" + $managedBlock + "`r`n"
 }
-Set-Content -LiteralPath $configPath -Value $updatedConfig -Encoding utf8
+Write-Utf8NoBom -Path $configPath -Content $updatedConfig
 
 # Project-scoped config cannot own a provider definition. Materialize the
 # generic role files into the operator's Codex home so their model-provider
@@ -154,7 +160,7 @@ foreach ($agentFile in @('ollama_supervisor.toml', 'ollama_worker.toml')) {
     if ($role -eq 'supervisor') {
         $content = $content.Replace('`ollama_worker`', '`agent_workbench_ollama_worker`')
     }
-    Set-Content -LiteralPath (Join-Path $localAgents "$localName.toml") -Value $content -Encoding utf8
+    Write-Utf8NoBom -Path (Join-Path $localAgents "$localName.toml") -Content $content
 }
 
 $arguments = @()
