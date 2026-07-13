@@ -21,7 +21,7 @@ EXPECTED_AGENTS = {
     "ollama_worker": "ollama_worker.toml",
 }
 EXPECTED_HONEYCOMB_AGENTS = {
-    "gpt_luna_supervisor": ("gpt_luna_supervisor.toml", "gpt-5.6-luna", "low"),
+    "gpt_luna_supervisor": ("gpt_luna_supervisor.toml", "gpt-5.6-luna", "medium"),
     "gpt_luna_worker": ("gpt_luna_worker.toml", "gpt-5.6-luna", "low"),
     "gpt_sol_advisor": ("gpt_sol_advisor.toml", "gpt-5.6-sol", "high"),
 }

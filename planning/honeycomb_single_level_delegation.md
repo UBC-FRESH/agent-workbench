@@ -34,7 +34,7 @@ without requiring recursive tool access inside a Supervisor.
 Default role configuration:
 
 - Coordinator: `gpt-5.6-terra`, `medium` reasoning effort.
-- Supervisor: `gpt-5.6-luna`, `low` reasoning effort.
+- Supervisor: `gpt-5.6-luna`, `medium` reasoning effort.
 - Worker: task-selected; use `qwen3.6:35b-a3b-bf16` or another configured
   Ollama model for zero paid-token-cost grind work, or GPT-5.6 Luna when paid
   speed/reliability is preferable.
