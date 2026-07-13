@@ -160,3 +160,41 @@ This acceptance proves direct single-level named-role selection and remote
 Ollama execution from a fresh native Codex session. It does not prove recursive
 Supervisor-to-Worker spawning, tracked-file mutation authority, benchmark
 quality, or usable Coordinator economics.
+
+## Nested-edge result and supported topology
+
+The immediate follow-on probe tested the missing edge directly. The Coordinator
+spawned `gpt_luna_supervisor` thread
+`019f5d1f-4add-7b00-be43-b8cb3213c562` and instructed it to spawn exactly one
+configured `ollama_worker` without a model override.
+
+The Supervisor's supplied tool inventory contained no native spawn or subagent
+capability. It returned the exact limitation `Native spawn tool unavailable.`
+and terminated with `task_complete`. Inspection found no descendant rollout
+with the Supervisor thread as its parent and no Worker marker. Therefore the
+recursive edge is unsupported in the tested runtime; repeated prompting cannot
+create a capability that was not supplied to the child role.
+
+The supported native Honeycomb topology is consequently Coordinator-owned
+direct spokes:
+
+```text
+                    [Luna Supervisor]
+                           |
+          [Ollama Worker]--+--[Ollama Worker]
+                           |
+                      [Coordinator]
+                           |
+                       [Sol Advisor]
+```
+
+The Coordinator directly launches, reuses, waits on, and closes every native
+child thread. A Supervisor may decompose an objective, inspect returned Worker
+evidence, and recommend further Worker tickets, but the Coordinator performs
+the actual Worker spawn. This preserves the useful Supervisor role without
+claiming a nonexistent recursive delegation edge.
+
+Re-test recursive spawning only after runtime/tool evidence shows that a child
+Supervisor is actually supplied a native spawn capability. Configuration depth,
+role prose, or emitted function-call text is not sufficient reason to rerun the
+same probe.

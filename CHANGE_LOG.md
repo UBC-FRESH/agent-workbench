@@ -3308,3 +3308,21 @@ issues, pull requests, and closeout comments.
   is stored under `runtime/agent_jobs/honeycomb-native-fresh-session/`.
 - The result proves direct single-level named-role provenance, not recursive
   Supervisor spawning, benchmark quality, or usable Coordinator economics.
+
+## 2026-07-13 - Closed the recursive Honeycomb capability question
+
+- Launched one configured `gpt_luna_supervisor` through the proven native
+  Coordinator interface and assigned a single bounded
+  Supervisor-to-`ollama_worker` marker task.
+- The Supervisor's supplied tool inventory contained no native spawn or
+  subagent capability. It returned `Native spawn tool unavailable.` and
+  terminated normally.
+- Session inspection found no descendant thread parented by the Supervisor and
+  no Worker marker; the recursive edge is therefore unsupported in the tested
+  runtime rather than merely prompt-sensitive.
+- Adopted Coordinator-owned direct spokes as the supported native Honeycomb
+  topology: Supervisors decompose and review, while the Coordinator performs
+  every actual Worker spawn.
+- Preserved the sanitized local verdict under
+  `runtime/agent_jobs/honeycomb-nested-edge/`. Re-testing is gated on observed
+  runtime/tool changes that expose native spawn capability to child roles.

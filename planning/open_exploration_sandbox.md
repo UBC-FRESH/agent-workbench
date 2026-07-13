@@ -39,6 +39,13 @@ reproduction contract is in `planning/honeycomb_single_level_delegation.md`;
 the sanitized local evidence is under
 `runtime/agent_jobs/honeycomb-native-fresh-session/`.
 
-This is accepted evidence for direct single-level role provenance only. It does
-not establish recursive Supervisor-to-Worker spawning or change the historical
-P106 gate and economics contract.
+This is accepted evidence for direct single-level role provenance. A bounded
+follow-on test supplied the configured Luna Supervisor with an explicit
+Supervisor-to-Ollama-Worker task, but its tool inventory contained no native
+spawn capability. It returned `Native spawn tool unavailable.`, created no
+descendant thread, and produced no Worker marker.
+
+The supported runtime topology is therefore Coordinator-owned direct spokes.
+Supervisors may decompose work and review Worker evidence, while the Coordinator
+performs every native spawn. This does not change the historical P106 gate and
+economics contract.
