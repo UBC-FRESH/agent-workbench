@@ -3326,3 +3326,18 @@ issues, pull requests, and closeout comments.
 - Preserved the sanitized local verdict under
   `runtime/agent_jobs/honeycomb-nested-edge/`. Re-testing is gated on observed
   runtime/tool changes that expose native spawn capability to child roles.
+
+## 2026-07-13 - Added deterministic project-local development bootstrap
+
+- Expanded the package `dev` extra to include build, Node bootstrap,
+  documentation, and distribution-check tooling alongside the existing test,
+  lint, typing, pre-commit, and Copilot SDK dependencies.
+- Added `scripts/bootstrap_dev_environment.ps1` to create or refresh the
+  project-root `.venv`, install the editable package, and install Node/npm.
+- The bootstrap downloads pinned official GitHub CLI and ripgrep Windows x64
+  archives, verifies their SHA-256 checksums, and places `gh.exe` and `rg.exe`
+  under `.venv\Scripts`.
+- Added project-local command shims for host Git and Codex installations so
+  routine commands do not depend on intermittent inherited `PATH` state.
+- Updated contributor and agent instructions to run the bootstrap before
+  declaring routine development tooling unavailable.

@@ -30,6 +30,18 @@ generic, public-safe, and aligned with the active roadmap phase.
 
 ## Local Checks
 
+Create or refresh the project-local development environment before running
+checks:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\bootstrap_dev_environment.ps1
+```
+
+The bootstrap installs Python development and documentation dependencies plus
+project-local Node/npm, `gh`, and `rg` commands under `.venv\Scripts`. It also
+creates stable shims for the host `git` and `codex` commands. Use these local
+commands before concluding that required tooling is unavailable.
+
 For governance-only changes, run:
 
 ```bash

@@ -79,6 +79,24 @@ suite until a later roadmap phase records that evidence.
 - Preserve uncertainty. If a worker cannot prove a command ran or a file changed,
   record that as a blocker rather than smoothing it into success.
 
+## Project-Local Development Tools
+
+The project-root `.venv` is the canonical development-tool environment. Before
+claiming that a package or routine development command is unavailable, run:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\bootstrap_dev_environment.ps1
+```
+
+The bootstrap installs the package with its `dev` extra, Node/npm, verified
+official `gh` and `rg` binaries, and stable `.venv\Scripts` shims for host
+`git` and `codex` commands. Agents should invoke `.venv\Scripts\python.exe`,
+`.venv\Scripts\pytest.exe`, `.venv\Scripts\gh.exe`,
+`.venv\Scripts\rg.exe`, and the other local commands directly when shell
+activation or inherited `PATH` state is uncertain. Do not substitute unrelated
+PyPI packages named `gh`, `github-cli`, or `ripgrep` for the official native
+executables.
+
 ## Paid Supervisor Cost Discipline
 
 Agent Workbench exists to reduce paid supervisor-token spend, not to create

@@ -32,7 +32,20 @@ paths stay out of tracked files.
 
 ## Local CLI
 
-Install from a checkout:
+Bootstrap the complete Windows development environment into the project-root
+`.venv`:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\bootstrap_dev_environment.ps1
+```
+
+This installs the editable package and `dev` extra, Node/npm, verified official
+GitHub CLI and ripgrep binaries, and stable `.venv` shims for the host Git and
+Codex commands. Activate `.venv` or invoke tools directly from
+`.venv\Scripts\` so availability does not depend on the current terminal or VS
+Code extension `PATH`.
+
+For a package-only installation:
 
 ```powershell
 python -m pip install -e .
