@@ -240,6 +240,10 @@ def validate_sdk_session_manifest(
 
     public_scan = dict(manifest)
     public_scan.pop("workspace_root", None)
+    public_sdk = public_scan.get("sdk")
+    if isinstance(public_sdk, dict):
+        public_scan["sdk"] = dict(public_sdk)
+        public_scan["sdk"].pop("working_directory", None)
     for finding in find_private_values(public_scan):
         errors.append(f"private-looking value detected: {finding}")
 
@@ -1568,6 +1572,13 @@ class LiveCopilotSdkAdapter:
             if not working_directory_path.is_absolute():
                 working_directory_path = working_directory_path.resolve()
             kwargs["working_directory"] = str(working_directory_path)
+        excluded_builtin_agents = sdk.get("excluded_builtin_agents")
+        if isinstance(excluded_builtin_agents, list):
+            kwargs["excluded_builtin_agents"] = [
+                str(name).strip()
+                for name in excluded_builtin_agents
+                if str(name).strip()
+            ]
         available_tools = sdk.get("available_tools", "default")
         if isinstance(available_tools, list):
             kwargs["available_tools"] = available_tools

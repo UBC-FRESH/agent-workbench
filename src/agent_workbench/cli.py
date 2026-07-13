@@ -371,6 +371,15 @@ def build_parser() -> argparse.ArgumentParser:
         default=300,
         help="Hard idle timeout for the generated SDK run (default: 300).",
     )
+    copilot_sdk_new_manifest_parser.add_argument(
+        "--tool-mode",
+        choices=("isolated", "workspace"),
+        default="isolated",
+        help=(
+            "Use bounded custom tools only, or the Copilot CLI workspace toolset "
+            "for an implementation-authorized ticket (default: isolated)."
+        ),
+    )
     copilot_sdk_new_manifest_parser.set_defaults(func=run_copilot_sdk_new_manifest)
 
     copilot_sdk_validate_parser = copilot_sdk_subparsers.add_parser(
@@ -1867,6 +1876,7 @@ def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         return 1
+    workspace_tools = args.tool_mode == "workspace"
     manifest = {
         "schema_version": 1,
         "run_id": args.run_id,
@@ -1887,10 +1897,11 @@ def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
                 "wire_api": "completions",
             },
             "permission_mode": "operator-configured",
-            "mode": "empty",
+            "mode": "copilot-cli" if workspace_tools else "empty",
             "base_directory": f"runtime/copilot_sdk_home/{args.run_id}",
-            "available_tools": "builtin-isolated",
-            "working_directory": "",
+            "available_tools": "default" if workspace_tools else "builtin-isolated",
+            "working_directory": str(Path.cwd().resolve()) if workspace_tools else "",
+            "excluded_builtin_agents": ["general-purpose", "explore", "task"],
             "agent_profiles": {
                 "source_paths": profile_paths,
                 "selected": args.profile,

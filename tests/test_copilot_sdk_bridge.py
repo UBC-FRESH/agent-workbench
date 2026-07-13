@@ -152,6 +152,7 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
             profile="agent-workbench-local-supervisor",
             run_id="p100-bootstrap",
             timeout_seconds=45,
+            tool_mode="isolated",
         )
     )
 
@@ -167,6 +168,12 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
         "wire_api": "completions",
     }
     assert manifest["sdk"]["available_tools"] == "builtin-isolated"
+    assert manifest["sdk"]["mode"] == "empty"
+    assert manifest["sdk"]["excluded_builtin_agents"] == [
+        "general-purpose",
+        "explore",
+        "task",
+    ]
     assert manifest["control"]["stall_seconds"] == 45
     assert (
         manifest["sdk"]["agent_profiles"]["selected"]
@@ -208,6 +215,48 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
     kwargs = adapter._session_kwargs(manifest)
     assert len(kwargs["tools"]) == 5
     assert "custom:agent_workbench_write_result" in kwargs["available_tools"]
+    assert kwargs["excluded_builtin_agents"] == [
+        "general-purpose",
+        "explore",
+        "task",
+    ]
+
+
+def test_new_manifest_cli_workspace_mode_enables_host_tools(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    repo_root = Path(__file__).parents[1]
+    monkeypatch.chdir(repo_root)
+    monkeypatch.setenv(
+        "AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL", "https://ollama.example.test/v1"
+    )
+    ticket = tmp_path / "workspace_ticket.md"
+    ticket.write_text("Run the implementation-authorized task.\n", encoding="utf-8")
+
+    exit_code = run_copilot_sdk_new_manifest(
+        Namespace(
+            ticket=ticket,
+            profile="agent-workbench-local-supervisor",
+            run_id="workspace-tools",
+            timeout_seconds=90,
+            tool_mode="workspace",
+        )
+    )
+
+    manifest = load_sdk_session_manifest(tmp_path / "workspace-tools_manifest.json")
+    assert exit_code == 0
+    assert manifest["sdk"]["mode"] == "copilot-cli"
+    assert manifest["sdk"]["available_tools"] == "default"
+    assert manifest["sdk"]["working_directory"] == str(repo_root.resolve())
+    adapter = LiveCopilotSdkAdapter()
+    adapter.permission_handler = type(
+        "PermissionHandler",
+        (),
+        {"approve_all": object()},
+    )
+    kwargs = adapter._session_kwargs(manifest)
+    assert "available_tools" not in kwargs
+    assert kwargs["working_directory"] == str(repo_root.resolve())
 
 
 def test_live_adapter_injects_provider_headers_from_local_file(

@@ -62,6 +62,17 @@ When this profile runs through the Agent Workbench Copilot SDK bridge in
   registered SDK custom tool, write the blocker through
   `agent_workbench_write_result` and stop. Do not improvise a shell tool.
 
+In an implementation-authorized SDK workspace session, use the runtime's
+workspace file and command tools directly. The host is Windows 11: commands
+must be PowerShell (`Get-Content`, `Get-ChildItem`, `Test-Path`, and the
+repo-local `.venv\Scripts\python.exe`), never Unix `cat`, `ls`, or shell
+heredocs.
+
+When invoking a registered custom Worker, set `agent_type` to the exact custom
+agent name and omit the `model` argument. Never put a custom-agent name such as
+`qwen3-coder-next-strict-worker` in the `model` field. The SDK resolves the
+Worker's Ollama model from its registered custom-agent profile.
+
 ## Rules
 
 - Treat the coordinator-provided ticket and any embedded job contract as
