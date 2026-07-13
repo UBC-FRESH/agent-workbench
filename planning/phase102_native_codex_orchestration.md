@@ -62,3 +62,17 @@ The already accepted low-level endpoint and tool-loop probes do not prove
 nested delegation. Neither the tracked profiles nor this planning note claim
 that the Supervisor can yet spawn the Worker; that claim requires P102.3
 evidence.
+
+## R2 and R4 Proof Evidence
+
+The ignored R2 and R4 marker runs established that native Codex can produce the
+required two-edge thread shape, including a Supervisor that spawns a Worker and
+independently reports the Worker's marker. R4 used distinct user-level role
+names to avoid project/global agent-name ambiguity.
+
+This is accepted only as a **nesting and role-selection** result. The persisted
+session metadata for the spawned roles still reported the default `openai`
+provider, so the evidence does not yet prove that the configured Ollama model
+was selected. The next P102.3 step must add model/provider observability at the
+spawned-session boundary before any free-worker economics or substantive TSA23
+claim is made.

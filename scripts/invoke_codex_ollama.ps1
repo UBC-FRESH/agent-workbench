@@ -19,7 +19,9 @@ param(
     # as -o as its own common parameters. The decoded value is like
     # ["exec","--version"].
     [Parameter(Mandatory = $true)]
-    [string]$CodexArgsBase64
+    [string]$CodexArgsBase64,
+
+    [string]$ProfileName = 'agent-workbench-ollama'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -64,17 +66,47 @@ foreach ($headerName in $headerMap.Keys) {
     Set-Item -Path "env:$($headerMap[$headerName])" -Value $value
 }
 
-$providerOverrides = @(
-    'model_providers.agent_workbench_ollama.name="Agent Workbench Ollama"',
-    ('model_providers.agent_workbench_ollama.base_url="{0}"' -f $baseUrl),
-    'model_providers.agent_workbench_ollama.wire_api="responses"',
-    'model_providers.agent_workbench_ollama.env_http_headers={"CF-Access-Client-Id"="AW_CF_CLIENT_ID","CF-Access-Client-Secret"="AW_CF_CLIENT_SECRET","User-Agent"="AW_PROVIDER_USER_AGENT"}'
-)
-
-$arguments = @()
-foreach ($override in $providerOverrides) {
-    $arguments += @('-c', $override)
+$escapedBaseUrl = $baseUrl.Replace('\', '\\').Replace('"', '\"')
+$codexHome = Join-Path $HOME '.codex'
+New-Item -ItemType Directory -Force -Path $codexHome | Out-Null
+$profilePath = Join-Path $codexHome "$ProfileName.config.toml"
+@"
+# Generated locally by Agent Workbench. Do not commit this file.
+[model_providers.agent_workbench_ollama]
+name = "Agent Workbench Ollama"
+base_url = "$escapedBaseUrl"
+wire_api = "responses"
+env_http_headers = {
+  "CF-Access-Client-Id" = "AW_CF_CLIENT_ID",
+  "CF-Access-Client-Secret" = "AW_CF_CLIENT_SECRET",
+  "User-Agent" = "AW_PROVIDER_USER_AGENT"
 }
+"@ | Set-Content -LiteralPath $profilePath -Encoding utf8
+
+# Project-scoped config cannot own a provider definition. Materialize the
+# generic role files into the operator's Codex home so their model-provider
+# overrides are loaded as user-level agent configuration. The source profiles
+# contain no endpoint or credential values.
+$repoRoot = Split-Path -Parent $PSScriptRoot
+$projectAgents = Join-Path $repoRoot '.codex\agents'
+$localAgents = Join-Path $codexHome 'agents'
+New-Item -ItemType Directory -Force -Path $localAgents | Out-Null
+foreach ($agentFile in @('ollama_supervisor.toml', 'ollama_worker.toml')) {
+    $source = Join-Path $projectAgents $agentFile
+    if (-not (Test-Path -LiteralPath $source)) {
+        throw "Project agent profile is missing: $source"
+    }
+    $role = if ($agentFile -eq 'ollama_supervisor.toml') { 'supervisor' } else { 'worker' }
+    $localName = "agent_workbench_ollama_$role"
+    $content = Get-Content -LiteralPath $source -Raw
+    $content = $content.Replace("name = `"ollama_$role`"", "name = `"$localName`"")
+    if ($role -eq 'supervisor') {
+        $content = $content.Replace('`ollama_worker`', '`agent_workbench_ollama_worker`')
+    }
+    Set-Content -LiteralPath (Join-Path $localAgents "$localName.toml") -Value $content -Encoding utf8
+}
+
+$arguments = @('-p', $ProfileName)
 try {
     $json = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($CodexArgsBase64))
     $codexArgs = ConvertFrom-Json -InputObject $json
