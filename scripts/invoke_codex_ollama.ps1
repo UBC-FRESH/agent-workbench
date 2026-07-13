@@ -4,14 +4,15 @@ Starts Codex with the local Agent Workbench Ollama provider configuration.
 
 .DESCRIPTION
 Reads the ignored operator environment file and provider-header JSON named by
-it. The endpoint and header values are placed only in this PowerShell process.
-The script then invokes the installed Codex CLI, whose project-local role files
-may reference the generic `agent_workbench_ollama` provider identifier.
+it. The endpoint and header values are written only to the protected user-level
+Codex configuration block; model-launched shell processes do not inherit them.
+The script then invokes the installed Codex CLI, whose role files may reference
+the generic `agent_workbench_ollama` provider identifier.
 
 No endpoint, header value, or generated provider configuration is written to
 the repository. The root Codex session continues to use the caller's normal
-Codex account/configuration, so a paid Coordinator can spawn the configured
-Ollama Supervisor and Worker profiles.
+Codex account/configuration, so a paid Coordinator can invoke configured
+Ollama Supervisor and Worker processes.
 #>
 [CmdletBinding(PositionalBinding = $false)]
 param(
@@ -61,10 +62,17 @@ foreach ($headerName in $headerMap.Keys) {
     if ([string]::IsNullOrWhiteSpace($value)) {
         throw "Provider headers file does not contain required header: $headerName"
     }
-    Set-Item -Path "env:$($headerMap[$headerName])" -Value $value
 }
 
-$escapedBaseUrl = $baseUrl.Replace('\', '\\').Replace('"', '\"')
+function ConvertTo-TomlString {
+    param([string]$Value)
+    return $Value.Replace('\', '\\').Replace('"', '\"')
+}
+
+$escapedBaseUrl = ConvertTo-TomlString -Value $baseUrl
+$escapedClientId = ConvertTo-TomlString -Value $headers.'CF-Access-Client-Id'
+$escapedClientSecret = ConvertTo-TomlString -Value $headers.'CF-Access-Client-Secret'
+$escapedUserAgent = ConvertTo-TomlString -Value $headers.'User-Agent'
 $codexHome = Join-Path $HOME '.codex'
 New-Item -ItemType Directory -Force -Path $codexHome | Out-Null
 $configPath = Join-Path $codexHome 'config.toml'
@@ -78,10 +86,10 @@ name = "Agent Workbench Ollama"
 base_url = "$escapedBaseUrl"
 wire_api = "responses"
 
-[model_providers.agent_workbench_ollama.env_http_headers]
-"CF-Access-Client-Id" = "AW_CF_CLIENT_ID"
-"CF-Access-Client-Secret" = "AW_CF_CLIENT_SECRET"
-"User-Agent" = "AW_PROVIDER_USER_AGENT"
+[model_providers.agent_workbench_ollama.http_headers]
+"CF-Access-Client-Id" = "$escapedClientId"
+"CF-Access-Client-Secret" = "$escapedClientSecret"
+"User-Agent" = "$escapedUserAgent"
 
 [agents.agent_workbench_ollama_supervisor]
 description = "Bounded local Ollama Supervisor for Agent Workbench delegation."
