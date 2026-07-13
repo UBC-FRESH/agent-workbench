@@ -112,7 +112,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
 | P102 Native Codex + remote Ollama orchestration | #605 | `feature/p102-native-codex-ollama-orchestration` | Complete (qualified) |
 | P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
-| P104 Canonical model pricing and economics provenance | #614 | `feature/p104-model-pricing-provenance` | Active |
+| P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
 | P105 Matched public-corpus benchmark contract | TBD | `feature/p105-matched-public-corpus-contract` | Planned |
 | P106 Matched direct-vs-delegated execution | TBD | `feature/p106-matched-roi-benchmark` | Planned — live-run gated |
 | P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
@@ -5278,7 +5278,7 @@ Parent issue: #614
 
 Branch: `feature/p104-model-pricing-provenance`
 
-Status: active — implementation and validation complete; phase PR/closeout pending.
+Status: complete.
 
 Goal: replace conflicting hard-coded model prices with a dated, validated
 catalog and make economics claims carry explicit model and pricing provenance.

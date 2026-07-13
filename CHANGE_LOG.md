@@ -3141,3 +3141,10 @@ issues, pull requests, and closeout comments.
   effective dates, cache pricing, long-context bounds, and legacy token
   compatibility; full repository collection remains unsuitable because ignored
   worktrees and virtual-environment packages are discovered by default.
+## 2026-07-13 - Closed P104 canonical pricing provenance
+
+- Merged PR #619 (`3ea94e8`) and closed parent issue #614 plus child issues
+  #615-#618.
+- P104 is complete with separate quality, protocol, and economics semantics;
+  no live model call, provider change, TSA23 extraction, or release action was
+  performed.
