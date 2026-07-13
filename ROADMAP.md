@@ -103,11 +103,11 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P92 Whole-document supervisor pilot | #556 | `feature/p92-whole-document-supervisor-pilot` | Closeout |
 | P93 Second public corpus application | #576 | `feature/p93-second-public-corpus-application` | Complete |
 | P94 Project-owned index promotion | #578 | `feature/p94-project-owned-index-promotion` | Complete |
-| P95 Retrieval and modelling-agent usability | TBD | `feature/p95-index-retrieval-usability` | Planned |
+| P95 Retrieval and modelling-agent usability | #580 | `feature/p95-index-retrieval-usability` | Complete |
 | P96 Yield and audit-cost model comparison | #585 | `feature/p96-yield-audit-cost-model-comparison` | Complete (qualified) |
 | P97 Reusable workflow graph packaging | #592 | `feature/p97-reusable-workflow-graphs` | Complete — merged via PR #596 at `b2b929f`; parent issue #592 closed |
 | P98 Reporting-worker template packaging | #599 | `feature/p98-reporting-worker-templates` | Complete |
-| P99 Economics dashboard and release criteria | #601 | `feature/p99-economics-dashboard-release-criteria` | Active |
+| P99 Economics dashboard and release criteria | #601 | `feature/p99-economics-dashboard-release-criteria` | Complete — merged via PR #602; parent issue #601 closed |
 | P100 Public alpha readiness review | #603 | `feature/p100-public-alpha-readiness-review` | Active |
 | P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
 

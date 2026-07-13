@@ -167,31 +167,31 @@ few. Non-negotiable rules:
 - **Waiting is free.** Blocking on a subagent (`agent`) or a CLI command costs
   nothing. Prefer delegating and waiting over doing work yourself.
 
-## Supervisor Delegation: SDK Bridge Required
+## Supervisor Delegation: One Command
 
-To route supervisor delegation to the Ollama qwen3.6 model, use the SDK
-bridge CLI:
+**To delegate a job to the Supervisor, run one command:**
 
-1. Write the job ticket to `runtime/agent_jobs/<task>_ticket.md`.
-2. Prepare a manifest with `sdk.agent_profiles.selected: agent-workbench-local-supervisor`
-   and provider headers pointing to the Ollama endpoint
-   (see `~/.agent-workbench-env.txt` and `runtime/local_provider_headers.json`).
-3. Run via terminal: `agent-workbench copilot-sdk start --manifest <path>`.
-4. Monitor: `agent-workbench copilot-sdk monitor --manifest <path>`.
-5. Read the compact QA/QC packet from the result path in the manifest.
+```
+scripts\sdk_delegate.cmd start --manifest <manifest-path>
+```
 
-**FORBIDDEN — do not do any of these:**
-- Do NOT run `scripts/copilot_sdk_ollama_probe.py` for delegation. That script
-  is the EVALUATION-ONLY probe (P6-era); it requires a raw `copilot` module
-  import and is not the delegation path.
-- Do NOT attempt `--wire-api`, `--mode empty`, or any flag on the probe script.
-- Do NOT try to write Python scripts using `requests`, `urllib`, or any HTTP
-  library to bypass the SDK bridge.
-- Do NOT try to reinvent the bridge. It already exists at
-  `src/agent_workbench/copilot_sdk_bridge.py`.
+To monitor a running session:
+```
+scripts\sdk_delegate.cmd monitor --manifest <manifest-path>
+```
 
-Use the native `agent` tool **only for `agent-workbench-advisor`**, which
-targets a Copilot-native paid model and routes correctly.
+The script loads provider credentials from `~/.agent-workbench-env.txt`, uses
+the project `.venv` Python (not a system Python), and routes to the Ollama
+supervisor session. No venv activation, env sourcing, or path knowledge needed.
+
+**FORBIDDEN — never do these instead:**
+- Do NOT run `scripts/copilot_sdk_ollama_probe.py` — that is the P6 evaluation
+  probe, not the delegation path.
+- Do NOT try to write your own Python/HTTP bridge.
+- Do NOT call `agent-workbench copilot-sdk start` directly without going through
+  `scripts\sdk_delegate.cmd` — the shim ensures the correct Python environment.
+
+Use the native `agent` tool only for `agent-workbench-advisor`.
 
 ## Delegating To Supervisors
 
