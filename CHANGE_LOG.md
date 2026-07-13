@@ -3117,3 +3117,27 @@ issues, pull requests, and closeout comments.
 - Next economics step: establish a current-model price catalog and capture a
   direct-supervisor counterfactual in a separately authorized benchmark before
   making any savings claim.
+
+## 2026-07-13 - Planned P104-P110 ROI-to-alpha roadmap arc
+
+- Activated the P104 implementation branch for canonical model pricing and
+  economics provenance; GitHub parent issue #614 and child issues #615-#618
+  are now active.
+- Added fully decomposed P105-P110 phases covering a dry-run matched benchmark
+  contract, separately gated live A/B execution, economics policy, fresh TSA23
+  preparation, a separately gated productive pilot, and a conditional GitHub
+  public-alpha pre-release.
+- Kept live inference, substantive TSA23 work, and release publication behind
+  explicit phase gates rather than treating roadmap planning as authorization.
+- Selected a GitHub-only `v0.1.0a1` pre-release endpoint; PyPI publication stays
+  out of scope for this arc.
+
+## 2026-07-13 - Prepared P104 for phase PR closeout
+
+- Synchronized `ROADMAP.md` with parent issue #614 and child issues #615-#618.
+- Confirmed the implementation is isolated on
+  `feature/p104-model-pricing-provenance`.
+- Scoped validation covers catalog resolution, fail-closed unknown models,
+  effective dates, cache pricing, long-context bounds, and legacy token
+  compatibility; full repository collection remains unsuitable because ignored
+  worktrees and virtual-environment packages are discovered by default.

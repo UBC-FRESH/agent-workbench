@@ -8,6 +8,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from .pricing import DEFAULT_CATALOG, resolve_price
+
 from .tokens import synthesize_token_markdown
 
 
@@ -152,6 +154,11 @@ def span_record_from_checkpoints(
         DEFAULT_SUPERVISOR_CACHED_INPUT_PRICE_PER_1M_USD
     ),
     supervisor_output_price_per_1m_usd: float = DEFAULT_SUPERVISOR_OUTPUT_PRICE_PER_1M_USD,
+    model_id: str | None = None,
+    catalog_path: Path = DEFAULT_CATALOG,
+    as_of: str | None = None,
+    cache_write_observable: bool = False,
+    long_context: bool = False,
 ) -> dict[str, Any]:
     start = load_checkpoint(start_path)
     end = load_checkpoint(end_path)
@@ -162,6 +169,27 @@ def span_record_from_checkpoints(
     output_tokens = delta_total["output_tokens"]
     reasoning_output = delta_total["reasoning_output_tokens"]
     span_id = str(start["span_id"])
+    provenance: dict[str, Any] = {"qualified": False, "status": "legacy-unproven"}
+    if model_id:
+        price = resolve_price(model_id, as_of, catalog_path)
+        multiplier = (
+            max(price.long_context_input_multiplier, price.long_context_output_multiplier)
+            if long_context else 1.0
+        )
+        supervisor_input_price_per_1m_usd = price.input_per_1m_usd * multiplier
+        supervisor_cached_input_price_per_1m_usd = price.cached_input_read_per_1m_usd * multiplier
+        supervisor_output_price_per_1m_usd = price.output_per_1m_usd * multiplier
+        provenance = {
+            "qualified": True,
+            "status": "qualified-bounded-estimate",
+            "model_id": price.model_id,
+            "price_source": price.source_url,
+            "effective_date": price.effective_from,
+            "cache_write_observable": cache_write_observable,
+            "long_context": long_context,
+            "long_context_multiplier": multiplier,
+            "cost_bounds": {"lower": "cached-read-or-observed", "upper": "cache-write-or-long-context"},
+        }
     record_suffix = f"{span_id}-{span_kind}" if span_kind else span_id
     record = {
         "record_id": f"{record_suffix}-supervisor-token-span",
@@ -195,6 +223,7 @@ def span_record_from_checkpoints(
             "worker_input_price_per_1m_usd": 0.0,
             "worker_output_price_per_1m_usd": 0.0,
         },
+        "pricing_provenance": provenance,
         "public_safety": {
             "raw_prompts_excluded": True,
             "raw_traces_excluded": True,
