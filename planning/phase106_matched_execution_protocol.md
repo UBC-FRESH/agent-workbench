@@ -17,6 +17,8 @@ installation, substantive TSA23 expansion, or release work.
    defect is present.
 5. Capture the delegated end checkpoint and inspect the complete ticket/result,
    heartbeat, archive manifest, token ledger, and provider evidence pair.
+   Run `scripts/audit_p106_lane.py` against the ignored JSONL output and source
+   text; its sanitized summary is the quality gate input.
 6. Start the direct lane only after delegated quality and protocol gates pass.
    Use the identical source bundle, schema, audit, scoring, and repair rules.
 7. Stop the complete phase at `$0.25` paid Coordinator cost, missing exact-model
