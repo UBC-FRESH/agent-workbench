@@ -3180,3 +3180,11 @@ issues, pull requests, and closeout comments.
   lane roles, model-argument contract, stop rules, and output-contract drift.
 - Added tampering and missing-artifact tests. P106 remains unactivated until
   this corrective PR is merged and the repair issue is closed.
+
+## 2026-07-13 - Closed P105 Advisor corrective validation
+
+- Merged PR #628 and closed corrective issue #627 and parent issue #621.
+- P105 now fails closed on referenced artifact hashes and semantics, exact stop
+  and output contracts, lane roles/models, and model-argument declarations.
+- Negative tampering and missing-artifact tests pass; P106 remains separately
+  gated and unactivated.
