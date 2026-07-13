@@ -29,6 +29,8 @@ def test_p106_gate_validates_native_bindings() -> None:
         (lambda data: data["pricing"].__setitem__("catalog_required", False), "pricing requirement missing"),
         (lambda data: data["attempts"].__setitem__("initial", 2), "attempt and repair limits"),
         (lambda data: data["delegated_quality_gate"].__setitem__("minimum_useful_yield", 0.8), "delegated quality gate"),
+        (lambda data: data["structured_output"].__setitem__("required", False), "structured output must be required"),
+        (lambda data: data["structured_output"].__setitem__("enforce_required_fields", False), "structured output must enforce required fields"),
         (lambda data: data.__setitem__("p105_contract", "missing.json"), "referenced P105 contract"),
     ],
 )

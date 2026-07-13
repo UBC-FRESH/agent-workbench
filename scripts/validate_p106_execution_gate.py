@@ -37,6 +37,15 @@ def validate(gate_path: Path, root: Path) -> list[str]:
     quality = gate.get("delegated_quality_gate", {})
     if quality.get("minimum_useful_yield") != 0.9 or quality.get("critical_source_anchor_defects_max") != 0:
         errors.append("delegated quality gate must require 90% useful yield and zero critical anchor defects")
+    structured = gate.get("structured_output", {})
+    if structured.get("required") is not True:
+        errors.append("structured output must be required")
+    if structured.get("enforce_required_fields") is not True:
+        errors.append("structured output must enforce required fields")
+    if structured.get("enforce_allowed_object_types") is not True:
+        errors.append("structured output must enforce allowed object types")
+    if structured.get("repair_missing_fields") is not False:
+        errors.append("missing fields must not be repaired after emission")
     if gate.get("native_bindings_required") is True:
         expected = gate.get("lanes", {}).get("delegated", {})
         for role, expected_model in (("ollama_supervisor", expected.get("supervisor_model")), ("ollama_worker", expected.get("worker_model"))):

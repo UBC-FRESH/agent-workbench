@@ -13,6 +13,9 @@ installation, substantive TSA23 expansion, or release work.
    Launch native Codex only through `scripts/run_p106_native_codex.ps1`; this
    bootstraps the operator provider and registers the user-level role names
    `agent_workbench_ollama_supervisor` and `agent_workbench_ollama_worker`.
+   Require provider-enforced structured output using the P89 required-field and
+   allowed-`object_type` schema. Prompt instructions alone do not count as
+   schema evidence; missing fields remain non-repairable output defects.
 3. Capture a Coordinator token-span start checkpoint before the delegated lane.
 4. Run one delegated attempt. Permit one repair only when the inspected result
    identifies a concrete deterministic defect. Stop if delegated bounded cost

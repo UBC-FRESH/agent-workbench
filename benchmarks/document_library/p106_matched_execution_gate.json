@@ -19,6 +19,12 @@
   },
   "attempts": {"initial": 1, "evidence_based_repairs_max": 1},
   "delegated_quality_gate": {"minimum_useful_yield": 0.9, "critical_source_anchor_defects_max": 0},
-  "required_evidence": ["coordinator_span_start", "coordinator_span_end", "token_classes", "pricing_provenance", "exact_model_evidence"],
+  "required_evidence": ["coordinator_span_start", "coordinator_span_end", "token_classes", "pricing_provenance", "exact_model_evidence", "structured_output_schema_evidence"],
+  "structured_output": {
+    "required": true,
+    "enforce_required_fields": true,
+    "enforce_allowed_object_types": true,
+    "repair_missing_fields": false
+  },
   "activation_decision": "pending_coordinator_evidence_review"
 }
