@@ -1,11 +1,12 @@
 # Project-scoped Codex settings. Provider definitions remain machine-local;
 # see planning/phase102_native_codex_orchestration.md.
 
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"
+
 [agents]
 # Honeycomb hub: one Coordinator with up to six first-level subagents.
 # Recursive delegation is disabled by default; the Coordinator can fan out
 # non-colliding work and relay Worker recommendations between rounds.
 max_depth = 1
 max_threads = 6
-model = "gpt-5.6-terra"
-model_reasoning_effort = "medium"
