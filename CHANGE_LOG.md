@@ -2981,3 +2981,26 @@ issues, pull requests, and closeout comments.
   no-redef); `tests/test_workbench_graph_templates.py` (SyntaxError). All
   pre-commit gates pass.
 - PR merged and issue #599 closed.
+
+## 2026-07-12 - Closed P100 and activated P102 native Codex orchestration
+
+- Merged P100 through PR #604 and closed parent issue #603; the public-alpha
+  readiness review remains a documented snapshot rather than the active lane.
+- Activated P102 on `feature/p102-native-codex-ollama-orchestration` with
+  parent issue #605 and child tasks #606 through #609.
+- P102 treats native Codex as the Coordinator host and keeps the configured
+  remote Ollama provider as an operator-local Supervisor/Worker dependency.
+- The first gate is a bounded two-edge delegation proof. A substantive TSA23
+  job remains out of scope until that proof has an explicit quality, protocol,
+  and economics decision.
+
+## 2026-07-12 - P102 native profile and proof-contract baseline
+
+- Added project-scoped native Codex nesting configuration and generic
+  `ollama_supervisor` / `ollama_worker` role profiles. Provider definitions,
+  endpoint values, and Access headers remain machine-local.
+- Added a local-only launcher plus deterministic validation for the two role
+  files and a sanitized two-edge proof manifest.
+- The first proof lane stopped before inference after two concrete launcher
+  failures. The ignored result records the exact configuration error; no
+  delegation, marker, or live-model claim was accepted.

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "run_id": "p102-native-vertical-slice-example",
+  "roles": {
+    "coordinator": {
+      "provider": "openai",
+      "model": "paid-coordinator-model",
+      "session_ref": "runtime/agent_jobs/p102_native_vertical_slice/coordinator.jsonl"
+    },
+    "supervisor": {
+      "agent_name": "ollama_supervisor",
+      "provider": "agent_workbench_ollama",
+      "model": "qwen3-coder:latest",
+      "session_ref": "runtime/agent_jobs/p102_native_vertical_slice/supervisor.jsonl"
+    },
+    "worker": {
+      "agent_name": "ollama_worker",
+      "provider": "agent_workbench_ollama",
+      "model": "qwen3-coder:latest",
+      "session_ref": "runtime/agent_jobs/p102_native_vertical_slice/worker.jsonl"
+    }
+  },
+  "delegation_edges": [
+    {
+      "from": "coordinator",
+      "to": "ollama_supervisor",
+      "observed": true,
+      "evidence_ref": "runtime/agent_jobs/p102_native_vertical_slice/coordinator.jsonl"
+    },
+    {
+      "from": "ollama_supervisor",
+      "to": "ollama_worker",
+      "observed": true,
+      "evidence_ref": "runtime/agent_jobs/p102_native_vertical_slice/supervisor.jsonl"
+    }
+  ],
+  "markers": {
+    "worker": "P102_WORKER_MARKER",
+    "supervisor": "P102_SUPERVISOR_VERIFIED_MARKER"
+  },
+  "verdicts": {
+    "quality_validated_candidate": true,
+    "protocol_accepted_candidate": true,
+    "economics_usable": false
+  }
+}
