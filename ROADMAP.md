@@ -5194,7 +5194,7 @@ Tasks:
 - [ ] P102.3 Bounded native delegation proof (#608) — persistent no-modal Worker quality candidate validated; two-edge protocol remains unproven
   - Run one trivial two-edge proof with one evidence-based repair at most.
   - Keep app-server completion stalls and the missing Supervisor-direct Worker edge explicit.
-- [ ] P102.4 Native proof decision packet (#609) — in progress
+- [x] P102.4 Native proof decision packet (#609) — decision recorded: do not authorize substantive TSA23 work
   - Inspect proof evidence, record distinct verdicts, and decide whether a
     substantive native-hierarchy job is authorized.
   - Do not authorize substantive TSA23 work until a Supervisor-owned dispatch
