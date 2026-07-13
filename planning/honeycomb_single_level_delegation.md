@@ -3,14 +3,18 @@
 The current tactical default is a one-level Coordinator hub:
 
 ```text
-                    Supervisor
-                 /      |      \
-              Worker  Worker  Worker
-                    \   |   /
-                   Coordinator
-                    /   |   \
-              Supervisor ... Supervisor
+                         [Supervisor]
+
+                [Worker]             [Worker]
+
+          [Supervisor]   [Coordinator]   [Advisor]
+
+                [Worker]             [Worker]
 ```
+
+The six outer seats are all first-level Coordinator subagents. Their labels
+are assigned per task; the diagram shows one useful mix, not fixed reporting
+lines between outer agents.
 
 Operationally, the Coordinator is the authority and may keep up to six first-
 level subagent threads open. Each Supervisor owns one bounded assignment and
