@@ -10,6 +10,9 @@ installation, substantive TSA23 expansion, or release work.
    with `scripts/validate_p105_matched_benchmark.py`.
 2. Validate the P106 gate manifest and confirm the P104 pricing catalog resolves
    the exact paid Coordinator model and effective date.
+   Launch native Codex only through `scripts/run_p106_native_codex.ps1`; this
+   bootstraps the operator provider and registers the user-level role names
+   `agent_workbench_ollama_supervisor` and `agent_workbench_ollama_worker`.
 3. Capture a Coordinator token-span start checkpoint before the delegated lane.
 4. Run one delegated attempt. Permit one repair only when the inspected result
    identifies a concrete deterministic defect. Stop if delegated bounded cost
