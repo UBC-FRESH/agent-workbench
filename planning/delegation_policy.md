@@ -209,7 +209,7 @@ https://github.com/microsoft/vscode/issues/310138
 - For **local/self-hosted agents** (coordinator, supervisor, workers), `model:`
   frontmatter is documentation of intent only. Actual model selection is
   picker-dependent or must be enforced by out-of-band tooling
-  (`scripts/ollama_worker_call.py`).
+  (the `agent-workbench copilot-sdk` bridge — see SDK Tool Boundary section).
 - **Do not accept** a worker's claim about which model produced its output based
   solely on the agent file frontmatter. Persisted session evidence (event logs,
   tool invocations, `ollama list` snapshots) must show the expected model before

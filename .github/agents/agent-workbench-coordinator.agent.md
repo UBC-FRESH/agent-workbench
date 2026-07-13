@@ -33,7 +33,7 @@ not a reason to raise your own reasoning effort.
 
 The Supervisor and Worker lanes below you are self-hosted Ollama models whose
 identity is NOT pinned by frontmatter; it is picker-dependent or enforced by the
-out-of-band HTTP runner (`scripts/ollama_worker_call.py`). If a Supervisor's or
+out-of-band SDK bridge (`agent-workbench copilot-sdk`). If a Supervisor's or
 Worker's model identity matters for a claim, verify it from persisted evidence
 rather than trusting frontmatter or prose.
 
@@ -167,23 +167,31 @@ few. Non-negotiable rules:
 - **Waiting is free.** Blocking on a subagent (`agent`) or a CLI command costs
   nothing. Prefer delegating and waiting over doing work yourself.
 
-## Supervisor Delegation: Model ID Note
+## Supervisor Delegation: One Command
 
-The Supervisor and Worker profiles declare Ollama models using the
-`ollama-models/<name>:<tag>` prefix that matches VS Code's model registry
-(configured via `ollama.endpoint` in VS Code settings). When VS Code can resolve
-the model ID, it pins the subagent session to the correct Ollama model.
+**To delegate a job to the Supervisor, run one command:**
 
-If a subagent session appears to use the wrong model (verify by hovering the
-model indicator in the Copilot Chat UI), check that:
-1. The `ollama.endpoint` setting in VS Code points to the correct server.
-2. The model (`qwen3.6:35b-a3b-bf16`, `qwen3-coder:latest`, etc.) is available
-   in the server's `ollama list` inventory.
-3. The `model:` frontmatter in the profile matches the `ollama-models/<name>:<tag>`
-   format exactly.
+```
+scripts\sdk_delegate.cmd start --manifest <manifest-path>
+```
 
-Use the native `agent` tool for both `agent-workbench-local-supervisor` (Ollama)
-and `agent-workbench-advisor` (paid VS Code model).
+To monitor a running session:
+```
+scripts\sdk_delegate.cmd monitor --manifest <manifest-path>
+```
+
+The script loads provider credentials from `~/.agent-workbench-env.txt`, uses
+the project `.venv` Python (not a system Python), and routes to the Ollama
+supervisor session. No venv activation, env sourcing, or path knowledge needed.
+
+**FORBIDDEN — never do these instead:**
+- Do NOT run `scripts/copilot_sdk_ollama_probe.py` — that is the P6 evaluation
+  probe, not the delegation path.
+- Do NOT try to write your own Python/HTTP bridge.
+- Do NOT call `agent-workbench copilot-sdk start` directly without going through
+  `scripts\sdk_delegate.cmd` — the shim ensures the correct Python environment.
+
+Use the native `agent` tool only for `agent-workbench-advisor`.
 
 ## Delegating To Supervisors
 
