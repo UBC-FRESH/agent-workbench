@@ -3024,3 +3024,16 @@ issues, pull requests, and closeout comments.
   boundary only. It is not a `protocol_accepted_candidate`: an observed
   Supervisor-direct Worker dispatch edge is still required before substantive
   native-hierarchy work is authorized.
+
+## 2026-07-13 - P102 no-modal serial Supervisor/Worker proof
+
+- Added a serial OpenAI-compatible Responses proof that runs remote Supervisor
+  dispatch, Worker marker work, and remote Supervisor verification without a
+  nested Codex sandbox.
+- The bounded run returned HTTP 200 for all three turns and persisted the
+  expected dispatch, Worker, and verification markers. The warmed Worker turn
+  completed in under one second.
+- The Coordinator deliberately relays the ticket between serial turns to avoid
+  the observed concurrent response-stream failure. The result strengthens the
+  quality signal but does not establish a Supervisor-direct dispatch edge or
+  economics claim.

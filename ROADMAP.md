@@ -5191,7 +5191,7 @@ Tasks:
   - Add generic project role profiles; keep provider configuration machine-local.
 - [x] P102.2 Native configuration and evidence contracts (#607)
   - Implement fail-closed role/configuration and proof-artifact validation.
-- [ ] P102.3 Bounded native delegation proof (#608) — persistent no-modal Worker quality candidate validated; two-edge protocol remains unproven
+- [ ] P102.3 Bounded native delegation proof (#608) — no-modal serial Supervisor -> Worker -> Supervisor quality proof validated; direct dispatch protocol remains unproven
   - Run one trivial two-edge proof with one evidence-based repair at most.
   - Keep app-server completion stalls and the missing Supervisor-direct Worker edge explicit.
 - [x] P102.4 Native proof decision packet (#609) — decision recorded: do not authorize substantive TSA23 work

@@ -21,6 +21,12 @@ compact start/completion JSON records. In the bounded marker run, two sequential
 tickets returned HTTP 200 and their exact markers. The second request completed
 quickly after the model was warm.
 
+A follow-up serial proof used the same transport for a remote Supervisor
+dispatch marker, a Worker marker, and a remote Supervisor verification marker.
+All three requests returned HTTP 200 and the markers matched. The Coordinator
+relayed the ticket between the serial turns, so this is not evidence of a direct
+Supervisor-owned Worker invocation.
+
 ## Verdicts
 
 | Verdict | Status | Evidence |
