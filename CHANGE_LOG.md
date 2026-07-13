@@ -3288,3 +3288,23 @@ issues, pull requests, and closeout comments.
   `spawnAgent` event or child thread; it emitted one empty `wait` call instead.
 - The result is a fail-closed negative capability finding: current native
   runtime evidence does not establish named-role or Ollama Worker fan-out.
+
+## 2026-07-13 - Accepted fresh-session native Honeycomb fan-out
+
+- Started a fresh VS Code Codex session after validating the user-local named
+  role and provider configuration.
+- Directly launched one `gpt_luna_supervisor`, one `gpt_sol_advisor`, and two
+  `ollama_worker` children through the native subagent interface.
+- Native rollout evidence recorded nonempty child thread IDs, matching requested
+  and effective roles, expected provider/model/reasoning metadata, exact marker
+  responses, and terminal `task_complete` events for all four children.
+- Both Ollama Workers resolved to `agent_workbench_ollama` with
+  `qwen3.6:35b-a3b-bf16`; no model override was supplied.
+- Added the full public-safe reproduction and acceptance contract to
+  `planning/honeycomb_single_level_delegation.md` and corrected the exploration
+  sandbox note to preserve the negative launcher probe and positive interactive
+  result as distinct observations.
+- Raw session and provider material remains ignored; sanitized local evidence
+  is stored under `runtime/agent_jobs/honeycomb-native-fresh-session/`.
+- The result proves direct single-level named-role provenance, not recursive
+  Supervisor spawning, benchmark quality, or usable Coordinator economics.

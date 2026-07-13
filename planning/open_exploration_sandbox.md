@@ -24,8 +24,21 @@ separate maintainer instruction.
 ## Native Honeycomb result
 
 The machine-local configuration now registers canonical Terra, Luna, Sol, and
-Ollama roles with environment-backed provider headers. The direct native
-fan-out proof was nonetheless negative: a Terra Coordinator completed after an
-empty native `wait` call and emitted no `spawnAgent` event, child thread ID, or
-provider evidence. The configuration is valid; the current runtime did not
-honour the requested named-role fan-out.
+Ollama roles with private provider headers excluded from child shells. The
+shell-launched Terra proof remained negative: it completed after an empty
+native `wait` call and emitted no child thread. A subsequent fresh VS Code Codex
+session then directly invoked the native subagent interface and successfully
+launched one configured Luna Supervisor, one Sol Advisor, and two configured
+Ollama Workers.
+
+The accepted run captured nonempty child thread IDs, matching requested and
+effective roles, expected provider/model/reasoning metadata, exact no-tool
+markers, and terminal `task_complete` events. Both Ollama children resolved to
+`agent_workbench_ollama` with `qwen3.6:35b-a3b-bf16`. The complete public-safe
+reproduction contract is in `planning/honeycomb_single_level_delegation.md`;
+the sanitized local evidence is under
+`runtime/agent_jobs/honeycomb-native-fresh-session/`.
+
+This is accepted evidence for direct single-level role provenance only. It does
+not establish recursive Supervisor-to-Worker spawning or change the historical
+P106 gate and economics contract.
