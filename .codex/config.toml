@@ -2,6 +2,7 @@
 # see planning/phase102_native_codex_orchestration.md.
 
 [agents]
-# Root Coordinator (depth 0) -> Supervisor (depth 1) -> Worker (depth 2).
-max_depth = 2
+# Root Coordinator (depth 0) -> Supervisor (depth 1) -> Worker (depth 2), with
+# one additional nesting level available for recursive delegation probes.
+max_depth = 3
 max_threads = 3
