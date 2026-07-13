@@ -113,7 +113,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P102 Native Codex + remote Ollama orchestration | #605 | `feature/p102-native-codex-ollama-orchestration` | Complete (qualified) |
 | P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
-| P105 Matched public-corpus benchmark contract | #621 | `feature/p105-matched-public-corpus-contract` | Active |
+| P105 Matched public-corpus benchmark contract | #621 / PR #626 | `feature/p105-matched-public-corpus-contract` | Complete |
 | P106 Matched direct-vs-delegated execution | TBD | `feature/p106-matched-roi-benchmark` | Planned — live-run gated |
 | P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
@@ -5311,7 +5311,7 @@ Parent issue: #621
 
 Branch: `feature/p105-matched-public-corpus-contract`
 
-Status: active.
+Status: complete.
 
 Goal: materialize a deterministic, dry-run-only matched benchmark contract over
 `tsa23_2012_23tsdp12::pages_001_008` before spending paid or remote-worker

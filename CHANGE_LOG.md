@@ -3160,3 +3160,12 @@ issues, pull requests, and closeout comments.
   `scripts/validate_p105_matched_benchmark.py` with two focused tests.
 - Declared symmetric direct/delegated lanes and exact Coordinator, Supervisor,
   and Worker model identities without authorizing live inference.
+
+## 2026-07-13 - Closed P105 matched benchmark contract
+
+- Merged PR #626 and closed parent issue #621 plus child issues #622-#625.
+- P105 is complete as a deterministic dry-run contract only; P106 remains the
+  separately gated live direct-vs-delegated execution phase.
+- The native Advisor transport attempt produced no advisory packet and was
+  recorded as a transport stall; deterministic contract validation remained the
+  acceptance evidence.
