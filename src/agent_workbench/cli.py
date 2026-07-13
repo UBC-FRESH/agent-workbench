@@ -159,6 +159,11 @@ from .tokens import (
     synthesize_token_markdown,
     validate_token_record,
 )
+from .economics import (
+    IndexedCostReport,
+    compute_indexed_cost,
+    render_economics_markdown,
+)
 from .retrieval import PromotedIndex, query_by_page_range, trace_full_document
 from .workflow import (
     load_workflow_step,
@@ -1587,6 +1592,57 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pack_parser.add_argument("--force", action="store_true")
     pack_parser.set_defaults(func=run_pilot_pack_scaffold)
+
+    economics_parser = subparsers.add_parser(
+        "economics",
+        help="Render indexed-cost economics dashboard.",
+    )
+    economics_subparsers = economics_parser.add_subparsers(
+        dest="economics_command", required=True
+    )
+
+    economics_render_parser = economics_subparsers.add_parser(
+        "render",
+        help="Render an indexed-cost dashboard from accounting/token records and index metadata.",
+    )
+    economics_render_parser.add_argument(
+        "--accounting",
+        type=Path,
+        action="append",
+        default=[],
+        help="Pilot accounting JSON path (may repeat).",
+    )
+    economics_render_parser.add_argument(
+        "--tokens",
+        type=Path,
+        action="append",
+        default=[],
+        help="Token/cost record JSON path (may repeat).",
+    )
+    economics_render_parser.add_argument(
+        "--promoted-count",
+        type=int,
+        required=True,
+        help="Number of promoted records in the index.",
+    )
+    economics_render_parser.add_argument(
+        "--corpus-id",
+        required=True,
+        help="Short corpus identifier for the report.",
+    )
+    economics_render_parser.add_argument(
+        "--output",
+        type=Path,
+        required=True,
+        help="Output Markdown path.",
+    )
+    economics_render_parser.add_argument(
+        "--json-output",
+        type=Path,
+        default=None,
+        help="Optional JSON report path.",
+    )
+    economics_render_parser.set_defaults(func=run_economics_render)
 
     parser.set_defaults(func=run_overview)
     return parser
@@ -3123,6 +3179,71 @@ def script_path(repo_root: Path, script_name: str) -> Path:
 def run_command(command: list[str], repo_root: Path) -> int:
     completed = subprocess.run(command, cwd=repo_root, check=False)
     return int(completed.returncode)
+
+
+def run_economics_render(args: argparse.Namespace) -> int:
+    import dataclasses
+
+    accounting_records = []
+    for p in args.accounting:
+        try:
+            accounting_records.append(load_accounting_record(p))
+        except Exception as exc:
+            print(f"ERROR loading accounting record {p}: {exc}", file=sys.stderr)
+            return 1
+
+    token_records = []
+    for p in args.tokens:
+        try:
+            token_records.append(load_token_record(p))
+        except Exception as exc:
+            print(f"ERROR loading token record {p}: {exc}", file=sys.stderr)
+            return 1
+
+    try:
+        record = compute_indexed_cost(
+            accounting_records,
+            token_records,
+            args.promoted_count,
+            corpus_id=args.corpus_id,
+        )
+    except Exception as exc:
+        print(f"ERROR computing indexed cost: {exc}", file=sys.stderr)
+        return 1
+
+    total_tokens = record.price_assumptions.get(
+        "total_supervisor_input_tokens", 0
+    ) + record.price_assumptions.get("total_supervisor_output_tokens", 0)
+    report = IndexedCostReport(
+        corpora=[record],
+        aggregate={
+            "promoted_record_count": record.promoted_record_count,
+            "total_tokens": total_tokens,
+            "total_cost_usd": record.price_assumptions.get("total_cost_usd", 0.0),
+        },
+    )
+
+    md = render_economics_markdown(report)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(md, encoding="utf-8")
+    print(f"Wrote economics dashboard to {args.output}")
+
+    if args.json_output is not None:
+        import json as _json
+
+        def _serialize(obj: object) -> object:
+            if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
+                return dataclasses.asdict(obj)
+            raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+
+        args.json_output.parent.mkdir(parents=True, exist_ok=True)
+        args.json_output.write_text(
+            _json.dumps(dataclasses.asdict(report), indent=2, default=str),
+            encoding="utf-8",
+        )
+        print(f"Wrote JSON report to {args.json_output}")
+
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
