@@ -76,6 +76,7 @@ from .copilot_sdk_bridge import (
     run_live_sdk_turn,
     validate_sdk_session_manifest,
 )
+from .copilot_sdk_tools import AGENT_WORKBENCH_TOOL_NAMES
 from .decision import (
     DecisionInputError,
     decide_task,
@@ -364,6 +365,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--profile", choices=sorted(STANDARD_AGENT_PROFILES), required=True
     )
     copilot_sdk_new_manifest_parser.add_argument("--run-id", required=True)
+    copilot_sdk_new_manifest_parser.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=300,
+        help="Hard idle timeout for the generated SDK run (default: 300).",
+    )
     copilot_sdk_new_manifest_parser.set_defaults(func=run_copilot_sdk_new_manifest)
 
     copilot_sdk_validate_parser = copilot_sdk_subparsers.add_parser(
@@ -1841,6 +1848,18 @@ def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
     profile_path = STANDARD_AGENT_PROFILES[args.profile].as_posix()
     profile = load_agent_profile_document(Path.cwd() / profile_path)
     model = str(profile.frontmatter.get("model", "")).removeprefix("ollama-models/")
+    profile_names = [args.profile]
+    raw_subagents = profile.frontmatter.get("agents", [])
+    if isinstance(raw_subagents, list):
+        profile_names.extend(
+            name
+            for name in raw_subagents
+            if isinstance(name, str) and name in STANDARD_AGENT_PROFILES
+        )
+    profile_paths = [
+        STANDARD_AGENT_PROFILES[name].as_posix()
+        for name in dict.fromkeys(profile_names)
+    ]
     base_url = os.environ.get("AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL", "").strip()
     if not model or not base_url:
         print(
@@ -1873,11 +1892,12 @@ def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
             "available_tools": "builtin-isolated",
             "working_directory": "",
             "agent_profiles": {
-                "source_paths": [profile_path],
+                "source_paths": profile_paths,
                 "selected": args.profile,
                 "default_agent": {"excluded_tools": []},
                 "custom_agents_local_only": True,
                 "include_sub_agent_streaming_events": True,
+                "custom_tools": list(AGENT_WORKBENCH_TOOL_NAMES),
             },
         },
         "paths": {
@@ -1890,7 +1910,7 @@ def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
             "nudge_log": f"{args.run_id}.nudges.jsonl",
         },
         "control": {
-            "stall_seconds": 300,
+            "stall_seconds": args.timeout_seconds,
             "nonprogress_event_limit": 5,
             "max_nudges": 2,
             "max_retries": 1,

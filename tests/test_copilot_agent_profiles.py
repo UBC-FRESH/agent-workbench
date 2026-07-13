@@ -127,6 +127,24 @@ def test_resolve_agent_profiles_parses_frontmatter_and_overlay(tmp_path: Path) -
     assert any("ignored is not passed" in warning for warning in resolved.warnings)
 
 
+def test_agent_profile_normalizes_vscode_ollama_model_id(tmp_path: Path) -> None:
+    profile_path = tmp_path / "worker.agent.md"
+    write_profile(profile_path)
+    text = profile_path.read_text(encoding="utf-8")
+    profile_path.write_text(
+        text.replace("model: qwen3.6", "model: ollama-models/qwen3.6"),
+        encoding="utf-8",
+    )
+
+    manifest = manifest_with_profile(tmp_path, profile_path)
+    resolved = resolve_agent_profiles(
+        manifest, manifest_path=tmp_path / "manifest.json"
+    )
+
+    assert resolved.ok, resolved.errors
+    assert resolved.custom_agents[0]["model"] == "qwen3.6"
+
+
 def test_resolve_agent_profiles_rejects_missing_name_or_empty_body(
     tmp_path: Path,
 ) -> None:
