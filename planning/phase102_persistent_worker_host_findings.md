@@ -32,12 +32,11 @@ Supervisor-owned Worker invocation.
 | Verdict | Status | Evidence |
 | --- | --- | --- |
 | `quality_validated_candidate` | true for the no-tool Worker-host boundary | two exact ignored-runtime marker outputs and HTTP 200 responses |
-| `protocol_accepted_candidate` | false | the Coordinator submitted Worker tickets; a Supervisor-direct Worker dispatch edge was not observed |
+| `protocol_accepted_candidate` | qualified true for a Supervisor-authored ticket handoff | Supervisor shell evidence shows the ignored ticket creation; the persistent Worker host consumed that exact ticket and a fresh Supervisor verified its result |
 | `economics_usable` | false | no paid Coordinator span was measured for a persistent-host dispatch run |
 
 ## Next Gate
 
-Keep substantive TSA23 work out of scope. The next bounded experiment must show
-one configured Supervisor creating or submitting a ticket to the persistent
-Worker host, then independently verifying the result, with no nested CLI
-sandbox and no per-task Windows authorization dialog.
+Keep substantive TSA23 work out of scope. The next bounded experiment must add
+paid Coordinator-span economics and repeat the accepted handoff on a small
+non-trivial ticket before any substantive delegation authorization.

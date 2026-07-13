@@ -3037,3 +3037,17 @@ issues, pull requests, and closeout comments.
   the observed concurrent response-stream failure. The result strengthens the
   quality signal but does not establish a Supervisor-direct dispatch edge or
   economics claim.
+
+## 2026-07-13 - P102 qualified Supervisor-authored Worker handoff
+
+- Completed a bounded hybrid proof in which a remote native Supervisor used a
+  restricted app-server shell action to create one ignored Worker ticket.
+- The persistent Responses Worker host consumed that exact ticket, returned the
+  expected marker with HTTP 200, and a fresh remote Supervisor independently
+  read and verified the result marker.
+- The Coordinator remained the transport and sequencing owner; the observed
+  handoff authority was the Supervisor-authored ticket artifact. No nested
+  Codex CLI process or per-task Windows authorization dialog was used.
+- Accepted the bounded ticket handoff as a qualified protocol candidate. The
+  native app-server terminal-completion stall remains a recorded limitation,
+  and no economics or substantive TSA23 authorization is implied.
