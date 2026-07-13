@@ -39,8 +39,8 @@ def validate_profiles(config_root: Path) -> list[str]:
     errors: list[str] = []
     config = read_toml(config_root / "config.toml", errors)
     agents = config.get("agents")
-    if not isinstance(agents, dict) or agents.get("max_depth") != 3:
-        errors.append("config.toml must set agents.max_depth to 3")
+    if not isinstance(agents, dict) or agents.get("max_depth") != 1:
+        errors.append("config.toml must set agents.max_depth to 1 for the single-level hub")
 
     for name, filename in EXPECTED_AGENTS.items():
         profile = read_toml(config_root / "agents" / filename, errors)

@@ -2,7 +2,10 @@
 # see planning/phase102_native_codex_orchestration.md.
 
 [agents]
-# Root Coordinator (depth 0) -> Supervisor (depth 1) -> Worker (depth 2), with
-# one additional nesting level available for recursive delegation probes.
-max_depth = 3
-max_threads = 3
+# Honeycomb hub: one Coordinator with up to six first-level subagents.
+# Recursive delegation is disabled by default; the Coordinator can fan out
+# non-colliding work and relay Worker recommendations between rounds.
+max_depth = 1
+max_threads = 6
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"
