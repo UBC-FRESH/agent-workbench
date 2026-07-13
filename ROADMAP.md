@@ -5141,7 +5141,7 @@ Parent issue: #603
 
 Branch: `feature/p100-public-alpha-readiness-review`
 
-Status: active
+Status: complete (qualified) — merged via PR #610; parent issue #605 closed.
 
 Goal: prepare a public alpha only after one end-to-end real-project workflow
 shows net value.
