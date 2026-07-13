@@ -113,7 +113,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P102 Native Codex + remote Ollama orchestration | #605 | `feature/p102-native-codex-ollama-orchestration` | Complete (qualified) |
 | P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
-| P105 Matched public-corpus benchmark contract | #621 / PR #626 | `feature/p105-matched-public-corpus-contract` | Complete |
+| P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
 | P106 Matched direct-vs-delegated execution | TBD | `feature/p106-matched-roi-benchmark` | Planned — live-run gated |
 | P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
@@ -5278,7 +5278,8 @@ Parent issue: #614
 
 Branch: `feature/p104-model-pricing-provenance`
 
-Status: complete.
+Status: complete — corrective validation gates merged via PR #628; P106 remains
+unactivated.
 
 Goal: replace conflicting hard-coded model prices with a dated, validated
 catalog and make economics claims carry explicit model and pricing provenance.
@@ -5333,6 +5334,12 @@ Tasks:
   - [x] Persist exact-model evidence without changing provider configuration.
 - [x] P105.4 Dry-run validation (#625)
   - [x] Validate fixture hashes, manifests, stop rules, and output contracts.
+- [x] P105.5 Advisor corrective validation gates (#627)
+  - [x] Validate every pinned source/P89 artifact hash and source semantics.
+  - [x] Validate stop rules, output contract, role identities, and model-argument
+        contract exactly.
+  - [x] Add tampering and missing-artifact negative tests.
+  - [x] Reopen/close the corrective issue after the repair PR was merged.
 
 P105 permits no live inference.
 
