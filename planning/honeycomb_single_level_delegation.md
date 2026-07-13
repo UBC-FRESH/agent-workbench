@@ -4,12 +4,18 @@ The current tactical default is a one-level Coordinator hub:
 
 ```text
                          [Supervisor]
+                              |
 
-                [Worker]             [Worker]
+                [Worker] \    |    / [Worker]
+                          \   |   /
+                           \  |  /
 
                       [Coordinator]
 
-                [Worker]             [Worker]
+                           /  |  \
+                          /   |   \
+                [Worker] /    |    \ [Worker]
+                              |
 
                           [Advisor]
 ```
