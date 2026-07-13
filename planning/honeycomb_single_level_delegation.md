@@ -41,6 +41,30 @@ Default role configuration:
 - Advisor: selective review and strategic planning, not a routine execution
   node.
 
+## Within-session persistence
+
+Keep the named Supervisor and Advisor threads persistent for the duration of a
+Coordinator session by default. Their accumulated context is useful: the
+Supervisor can retain the task graph, prior Worker results, recurring defects,
+and acceptance history; the Advisor can retain strategic intent, decisions,
+and unresolved tradeoffs. The Coordinator should reuse those threads with
+follow-up messages rather than spawn a fresh replacement for every turn.
+
+Workers are different: use short-lived, ticket-bounded Worker threads unless a
+particular batch benefits from a documented persistent Worker host. Closing a
+completed Worker frees one of the six first-level seats and prevents irrelevant
+task context from contaminating the next assignment.
+
+Restart a persistent Supervisor or Advisor only when inspected evidence shows
+context rot or a broken session, for example repeated confusion about the
+current task boundary, stale assumptions that survive correction, irrelevant
+tool activity, degraded adherence to the result contract, or an unrecoverable
+transport/session error. Before replacement, write a compact ignored handoff
+that states the current objective, accepted evidence, open decisions, active
+Workers, and exact next action. The Coordinator then closes the stale thread,
+spawns one replacement in the same role, and supplies that handoff; it does
+not silently treat the replacement as if it retained the old context.
+
 The existing `responses_nested_tree`, `codex_native_handoff`, and `copilot_sdk`
 transport names remain unchanged. This is a role/topology policy layered over
 those transports, not a claim that every transport provides recursive nesting.
