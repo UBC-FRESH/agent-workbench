@@ -3202,3 +3202,14 @@ issues, pull requests, and closeout comments.
 - Live inference remains closed pending Coordinator inspection of current
   pricing/model evidence and paid token-span checkpoints. Raw prompts, source
   text, transcripts, provider details, and outputs remain ignored.
+
+## 2026-07-13 - Added P106 lane audit and comparison synthesis
+
+- Added `scripts/audit_p106_lane.py` for deterministic P89 schema, composition,
+  exact source-anchor, and useful-yield checks on ignored lane outputs.
+- Added `scripts/synthesize_p106_comparison.py` to combine both sanitized lane
+  audits with catalog-backed token records under the P106 cost caps.
+- Added focused tests for lane auditing, comparison verdict separation, gate
+  tampering, and P105 contract validation.
+- The live comparison remains unexecuted; no quality, protocol, or economics
+  verdict is promoted without inspected runtime evidence.

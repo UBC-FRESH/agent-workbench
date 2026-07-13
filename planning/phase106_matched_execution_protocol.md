@@ -24,6 +24,8 @@ installation, substantive TSA23 expansion, or release work.
 7. Stop the complete phase at `$0.25` paid Coordinator cost, missing exact-model
    evidence, missing catalog pricing, stale-contaminated artifacts, or the
    second unsuccessful/protocol-noisy attempt in a lane.
+8. Build the sanitized packet with `scripts/synthesize_p106_comparison.py` only
+   after both lane summaries and catalog-backed token records validate.
 
 ## Verdict separation
 
