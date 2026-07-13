@@ -7,9 +7,11 @@ The current tactical default is a one-level Coordinator hub:
 
                 [Worker]             [Worker]
 
-          [Supervisor]   [Coordinator]   [Advisor]
+                      [Coordinator]
 
                 [Worker]             [Worker]
+
+                          [Advisor]
 ```
 
 The six outer seats are all first-level Coordinator subagents. Their labels
