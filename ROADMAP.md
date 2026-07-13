@@ -113,7 +113,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P102 Native Codex + remote Ollama orchestration | #605 | `feature/p102-native-codex-ollama-orchestration` | Complete (qualified) |
 | P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
-| P105 Matched public-corpus benchmark contract | TBD | `feature/p105-matched-public-corpus-contract` | Planned |
+| P105 Matched public-corpus benchmark contract | #621 | `feature/p105-matched-public-corpus-contract` | Active |
 | P106 Matched direct-vs-delegated execution | TBD | `feature/p106-matched-roi-benchmark` | Planned — live-run gated |
 | P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
@@ -5307,11 +5307,11 @@ P104 performs no live model call, provider change, TSA23 extraction, or release.
 
 ## Phase 105: Matched Public-Corpus Benchmark Contract
 
-Parent issue: TBD
+Parent issue: #621
 
 Branch: `feature/p105-matched-public-corpus-contract`
 
-Status: planned.
+Status: active.
 
 Goal: materialize a deterministic, dry-run-only matched benchmark contract over
 `tsa23_2012_23tsdp12::pages_001_008` before spending paid or remote-worker
@@ -5319,20 +5319,20 @@ tokens.
 
 Tasks:
 
-- [ ] P105.1 Immutable source/task fixture
-  - [ ] Pin the existing source chunk hash and P89 record schema.
-  - [ ] Require 8-12 records with at least three structure and three
+- [x] P105.1 Immutable source/task fixture (#622)
+  - [x] Pin the existing source chunk hash and P89 record schema.
+  - [x] Require 8-12 records with at least three structure and three
         content-metadata records.
-- [ ] P105.2 Lane-symmetry contract
-  - [ ] Give direct and delegated lanes the same source bundle, schema, repair
+- [x] P105.2 Lane-symmetry contract (#623)
+  - [x] Give direct and delegated lanes the same source bundle, schema, repair
         allowance, audit rules, and scoring.
-  - [ ] Declare GPT-5.6 Luna direct/Coordinator, `qwen3-coder:latest`
+  - [x] Declare GPT-5.6 Luna direct/Coordinator, `qwen3-coder:latest`
         Supervisor, and `qwen3.6:35b-a3b-bf16` Worker identities.
-- [ ] P105.3 Hybrid-runner model separation
-  - [ ] Add separate Supervisor and Worker model arguments.
-  - [ ] Persist exact-model evidence without changing provider configuration.
-- [ ] P105.4 Dry-run validation
-  - [ ] Validate fixture hashes, manifests, stop rules, and output contracts.
+- [x] P105.3 Hybrid-runner model separation (#624)
+  - [x] Add separate Supervisor and Worker model arguments.
+  - [x] Persist exact-model evidence without changing provider configuration.
+- [x] P105.4 Dry-run validation (#625)
+  - [x] Validate fixture hashes, manifests, stop rules, and output contracts.
 
 P105 permits no live inference.
 

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "contract_id": "p105_matched_public_corpus_benchmark_v1",
+  "phase": "P105",
+  "status": "dry_run_only",
+  "live_inference_allowed": false,
+  "source": {
+    "corpus_id": "bc_tsr_tsa23_public_1995_present",
+    "document_id": "tsa23_2012_23tsdp12",
+    "chunk_id": "tsa23_2012_23tsdp12::pages_001_008",
+    "source_manifest": "benchmarks/document_library/tsa23_tsr/chunk_manifests/tsa23_2012_23tsdp12.json",
+    "source_manifest_sha256": "A0A2E1D80B306152C2EB246ED069D77DC450A96CAE8F66B4D5D68DC521FD25D7",
+    "source_sha256": "b334d15b71824c91460ad59bc0cc1ed5a7bed7efea4dd4d22eba0279e26cfedf",
+    "page_start": 1,
+    "page_end": 8
+  },
+  "p89_contract": {
+    "materialization_manifest": "benchmarks/document_library/p89_recipe_v2_materialization_manifest.json",
+    "materialization_manifest_sha256": "DDB8E4B3F4AE500125BE1C263DF3E0C53725F005460E916B7D02F41C0DA37FA0",
+    "record_validation_contract": "benchmarks/document_library/p89_jsonl_validation_contract.json",
+    "record_validation_contract_sha256": "8D9182D93820E911E7969ADEC58A4FDA1840364217998F1EE0F1A5AF801882BD",
+    "required_fields": ["record_id", "corpus_id", "document_id", "source_sha256", "chunk_id", "page_anchor", "document_component", "section_path", "object_type", "title", "summary", "source_quote", "confidence", "worker_model", "review_status"],
+    "required_review_status": "raw_worker_candidate"
+  },
+  "records": {
+    "minimum": 8,
+    "maximum": 12,
+    "selected_ticket_ids": [
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p001-s01_structure",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p002-s01_structure",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p002-s02_structure",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p003-s01_structure",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p003-s02_structure",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p001-s01_content_metadata",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p002-s01_content_metadata",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p002-s02_content_metadata",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p003-s01_content_metadata",
+      "p89_tsa23-2012-23tsdp12-pages-001-008-p003-s02_content_metadata"
+    ],
+    "required_pass_counts": {"structure": 3, "content_metadata": 3}
+  },
+  "lanes": {
+    "shared_source_bundle": true,
+    "shared_record_schema": true,
+    "shared_repair_allowance": true,
+    "shared_audit_rules": true,
+    "shared_scoring": true,
+    "direct": {"role": "Coordinator", "model": "GPT-5.6 Luna"},
+    "delegated": {
+      "coordinator": {"role": "Coordinator", "model": "GPT-5.6 Luna"},
+      "supervisor": {"role": "Supervisor", "model": "qwen3-coder:latest"},
+      "worker": {"role": "Worker", "model": "qwen3.6:35b-a3b-bf16"}
+    }
+  },
+  "stop_rules": [
+    "stop before any live model call",
+    "stop on source or P89 contract hash mismatch",
+    "stop on record count outside 8-12 or missing required pass composition",
+    "stop on lane contract asymmetry",
+    "stop on unknown output fields or missing required fields",
+    "stop before a second document, second attempt, or direct-vs-delegated execution"
+  ],
+  "output_contract": {
+    "candidate_record_schema": "p89_jsonl_validation_contract.json",
+    "repair_allowance": "only deterministic P89 repairs; no semantic repair",
+    "audit_statuses": ["accepted", "repairable", "rejected", "needs_review"],
+    "quality_scoring": "identical source-anchor, schema, audit, and scoring rules for both lanes"
+  }
+}
