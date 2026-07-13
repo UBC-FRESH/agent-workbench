@@ -1,6 +1,8 @@
-# Honeycomb single-level delegation
+# Honeycomb delegation
 
-The current tactical default is a one-level Coordinator hub:
+The Coordinator may use the runtime topology that best serves the active
+objective. This diagram is a useful pattern, not a cap or required reporting
+line:
 
 ```text
                          [Supervisor]
@@ -20,16 +22,15 @@ The current tactical default is a one-level Coordinator hub:
                           [Advisor]
 ```
 
-The six outer seats are all first-level Coordinator subagents. Their labels
-are assigned per task; the diagram shows one useful mix, not fixed reporting
-lines between outer agents.
+The outer seats are Coordinator subagents. Their labels, count, and depth are
+assigned per objective; the diagram shows one useful mix, not a fixed topology.
 
-Operationally, the Coordinator is the authority and may keep up to six first-
-level subagent threads open. Each Supervisor owns one bounded assignment and
-may recommend one or more non-overlapping Worker tasks to the Coordinator. The
-Coordinator then decides which Workers to spawn, relays their results, and
-requests review or repair. This deliberately approximates deeper delegation
-without requiring recursive tool access inside a Supervisor.
+Operationally, the Coordinator is the authority. It chooses task decomposition,
+concurrency, delegation shape, review cadence, and repairs from the runtime
+capabilities that are actually observed. A Supervisor may recommend Worker
+work; the Coordinator decides whether and how to execute it. The evidence must
+describe the topology that actually occurred rather than treating this diagram
+as proof.
 
 Default role configuration:
 
@@ -52,8 +53,8 @@ follow-up messages rather than spawn a fresh replacement for every turn.
 
 Workers are different: use short-lived, ticket-bounded Worker threads unless a
 particular batch benefits from a documented persistent Worker host. Closing a
-completed Worker frees one of the six first-level seats and prevents irrelevant
-task context from contaminating the next assignment.
+completed Worker prevents irrelevant task context from contaminating later
+work.
 
 Restart a persistent Supervisor or Advisor only when inspected evidence shows
 context rot or a broken session, for example repeated confusion about the

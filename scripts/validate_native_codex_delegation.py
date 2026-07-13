@@ -47,10 +47,6 @@ def validate_profiles(config_root: Path) -> list[str]:
         errors.append("config.toml must set the Coordinator model to gpt-5.6-terra")
     if config.get("model_reasoning_effort") != "medium":
         errors.append("config.toml must set Coordinator reasoning effort to medium")
-    agents = config.get("agents")
-    if not isinstance(agents, dict) or agents.get("max_depth") != 1:
-        errors.append("config.toml must set agents.max_depth to 1 for the single-level hub")
-
     for name, filename in EXPECTED_AGENTS.items():
         profile = read_toml(config_root / "agents" / filename, errors)
         for required in ("name", "description", "developer_instructions"):

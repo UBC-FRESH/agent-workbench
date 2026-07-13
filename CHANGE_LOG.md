@@ -3270,3 +3270,12 @@ issues, pull requests, and closeout comments.
   therefore the direct lane was correctly not started and no quality, protocol,
   or economics success claim is made. Raw evidence remains ignored under
   `runtime/agent_jobs/p106-native-delegated-r1/` and `p106-native-delegated-r2/`.
+
+## 2026-07-13 - Opened unphased Coordinator exploration sandbox
+
+- Preserved P106 on `feature/p106-matched-roi-benchmark` and opened
+  `sandbox/open-coordinator-lab` from its current commit.
+- Removed repository-default numerical limits on exploration attempts, repairs,
+  Coordinator budget, token spans, honeycomb depth, and thread count.
+- The sandbox remains evidence-driven and keeps authority, privacy, and
+  provider-change boundaries; it is not a P106 continuation or a phase claim.

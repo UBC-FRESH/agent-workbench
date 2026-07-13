@@ -85,22 +85,16 @@ Agent Workbench exists to reduce paid supervisor-token spend, not to create
 unbounded experiments that consume paid supervisor tokens while local worker
 agents thrash.
 
-Before launching any live benchmark, Copilot bridge run, model-comparison run,
-or delegated workflow experiment that may require sustained paid-supervisor
-coordination, the supervisor must define:
+Before launching a live benchmark, bridge run, model-comparison run, or
+delegated workflow experiment that may require sustained paid-supervisor
+coordination, the coordinator should make the current experiment question and
+the evidence boundary explicit. When economics are claimed, capture an
+inspectable Coordinator token span and its pricing provenance.
 
-- the exact experiment question;
-- the maximum paid-supervisor budget or token-span limit;
-- the stop condition that ends the run even if a cleaner result might be one
-  more retry away;
-- the evidence artifact that will be inspected before any retry; and
-- the point at which the supervisor must ask the maintainer whether the lane is
-  still worth pursuing.
-
-Default rule: one failed or protocol-noisy live run may be followed by one
-bounded repair or retry only when the failure teaches a concrete fix. After two
-unsuccessful attempts in the same lane, stop, summarize the evidence, and ask
-before continuing.
+The coordinator sets iteration cadence, repair scope, and any budget guardrail
+for the active objective with the maintainer's direction. There is no repository
+default attempt, repair, token, or cash cap. Preserve the reasoning and
+evidence when changing course.
 
 Do not treat repeated live runs as harmless because local worker tokens are
 free. The paid supervisor still burns input, cached input, and output tokens
@@ -125,7 +119,7 @@ Never collapse those into a single vague success/failure claim.
 Supervisor agents are responsible for:
 
 - decomposing work into bounded worker tickets;
-- delegating one roadmap child task at a time by default;
+- decomposing work at the granularity appropriate to the active objective;
 - stating exact allowed commands, files, and success criteria;
 - selecting worker models only from the configured Ollama host's live
   `ollama list` inventory unless a ticket explicitly includes model
@@ -149,15 +143,15 @@ commands, stop conditions, and evidence requirements.
 
 Default delegation unit:
 
-- Delegate one child task, not one whole roadmap phase, unless the whole-phase
-  behavior is itself the experiment being measured.
+- Delegate the smallest useful unit, while allowing the Coordinator to choose
+  broader or parallel work when that is the stated objective.
 - The coordinator owns phase setup, task sequencing, acceptance decisions,
   commits, branch pushes, PR creation, PR merge, parent issue closure, and final
   completion claims.
 - The delegated local supervisor or worker owns only the child task named in
   the ticket and must stop at that boundary.
-- A follow-on repair run must cite exact defects from the previous result or
-  coordinator decision packet rather than reopening the whole task.
+- Follow-on work should cite prior evidence when it exists, but the Coordinator
+  may intentionally reopen or reframe work when the maintainer directs it.
 
 ## Delegation Trust Levels
 
@@ -274,9 +268,24 @@ on sanitized Copilot archive manifests and behavior summaries when comparing
 delegated-run behavior. Behavior metrics are diagnostic until enough archived
 runs exist to support policy tuning; do not tune defaults from a single run.
 
+## Open Exploration Sandboxes
+
+A branch explicitly named or documented as an exploration sandbox may operate
+without a roadmap phase, GitHub parent issue, child issues, numerical attempt
+cap, or predeclared budget. The maintainer directs the Coordinator through
+objectives rather than a phase checklist. The Coordinator retains judgment over
+decomposition, retries, concurrency, and evidence gathering.
+
+Sandbox work must still preserve unrelated changes, keep credentials and raw
+runtime material ignored, distinguish observed facts from agent prose, and
+retain Coordinator authority for commits, pushes, GitHub mutation, provider
+changes, releases, and final phase-completion claims. A sandbox is converted
+into a roadmap phase only when the maintainer asks to productize or close it.
+
 ## Planning Workflow
 
-This repo follows the UBC-FRESH phase/task/subtask workflow:
+Outside an explicit exploration sandbox, this repo follows the UBC-FRESH
+phase/task/subtask workflow:
 
 - `ROADMAP.md` is the current plan and issue tracker map.
 - One roadmap phase maps to one GitHub parent issue and one feature branch.

@@ -172,14 +172,14 @@ The first tuning loop is rules-based:
 - hold groups steady when evidence is sparse or mixed;
 - lower trust when records are mostly poor, net savings are negative, or
   rejected claims exceed accepted claims;
-- use one retry for sparse or mixed evidence;
-- allow two retries only for positive groups with repeat evidence; and
-- bail out after two poor outcomes for the same task/model/protocol group
-  unless the supervisor rewrites the ticket or changes the model.
+- choose retry, repair, and bailout cadence from the inspected evidence,
+  task stakes, available budget, and maintainer direction; and
+- record why the Coordinator continued, changed approach, or stopped so a
+  later review can distinguish productive exploration from repetition.
 
-Machine-learning policy optimization is out of scope until the sanitized record
-set is large, varied, and independently verifiable. The current threshold is at
-least 100 records, 6 task types, and 3 model or project groups.
+Machine-learning policy optimization remains a later decision. The Coordinator
+and maintainer decide when the sanitized record set is sufficiently varied and
+independently verifiable to justify it.
 
 ## Remote Ollama Host (Workspace-Specific Note)
 
