@@ -3225,3 +3225,18 @@ issues, pull requests, and closeout comments.
   `qwen3-coder:latest`.
 - No P106 model/configuration change was made; reconciling that binding is a
   separately authorized prerequisite.
+
+## 2026-07-13 - Ran bounded native P106 delegated attempts
+
+- Corrected the native `ollama_worker` binding to the P105-required
+  `qwen3.6:35b-a3b-bf16`; the P106 gate and focused tests then passed.
+- Native attempt `p106-native-delegated-r1` created a Luna Coordinator and
+  Supervisor, but the Supervisor's first Worker spawn was rejected because it
+  supplied a model override; no Worker or output was produced.
+- The one evidence-based repair, `p106-native-delegated-r2`, explicitly removed
+  the model override. The Supervisor still terminated after emitting a shell-call
+  transcript without creating a Worker child.
+- Both attempts produced zero candidate records and no valid token-span pair;
+  therefore the direct lane was correctly not started and no quality, protocol,
+  or economics success claim is made. Raw evidence remains ignored under
+  `runtime/agent_jobs/p106-native-delegated-r1/` and `p106-native-delegated-r2/`.
