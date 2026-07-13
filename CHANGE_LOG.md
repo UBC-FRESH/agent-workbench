@@ -2981,3 +2981,73 @@ issues, pull requests, and closeout comments.
   no-redef); `tests/test_workbench_graph_templates.py` (SyntaxError). All
   pre-commit gates pass.
 - PR merged and issue #599 closed.
+
+## 2026-07-12 - Closed P100 and activated P102 native Codex orchestration
+
+- Merged P100 through PR #604 and closed parent issue #603; the public-alpha
+  readiness review remains a documented snapshot rather than the active lane.
+- Activated P102 on `feature/p102-native-codex-ollama-orchestration` with
+  parent issue #605 and child tasks #606 through #609.
+- P102 treats native Codex as the Coordinator host and keeps the configured
+  remote Ollama provider as an operator-local Supervisor/Worker dependency.
+- The first gate is a bounded two-edge delegation proof. A substantive TSA23
+  job remains out of scope until that proof has an explicit quality, protocol,
+  and economics decision.
+
+## 2026-07-12 - P102 native profile and proof-contract baseline
+
+- Added project-scoped native Codex nesting configuration and generic
+  `ollama_supervisor` / `ollama_worker` role profiles. Provider definitions,
+  endpoint values, and Access headers remain machine-local.
+- Added a local-only launcher plus deterministic validation for the two role
+  files and a sanitized two-edge proof manifest.
+- The first proof lane stopped before inference after two concrete launcher
+  failures. The ignored result records the exact configuration error; no
+  delegation, marker, or live-model claim was accepted.
+
+## 2026-07-13 - P102 persistent no-modal Worker-host result
+
+- Verified the installed native Codex app-server exposes a one-time Windows
+  sandbox readiness/setup boundary; the local sandbox is now ready rather than
+  requiring a sandbox authorization dialog per Worker task.
+- Native app-server marker turns can reach the configured remote Ollama model
+  under read-only permissions, but one observed turn emitted its marker and
+  then failed to emit a terminal completion event. This remains an alpha
+  app-server completion limitation, not a model-latency conclusion.
+- Added a persistent, no-tool OpenAI-compatible Responses Worker host that
+  keeps provider configuration local, accepts only ignored runtime ticket and
+  result paths, and reports compact request start/completion records.
+- Two sequential marker tickets completed through that host with HTTP 200 and
+  exact result markers; the first took about three seconds and the warmed
+  second completed in under one second. No nested Codex sandbox was launched.
+- This is accepted as a `quality_validated_candidate` for the Worker-host
+  boundary only. It is not a `protocol_accepted_candidate`: an observed
+  Supervisor-direct Worker dispatch edge is still required before substantive
+  native-hierarchy work is authorized.
+
+## 2026-07-13 - P102 no-modal serial Supervisor/Worker proof
+
+- Added a serial OpenAI-compatible Responses proof that runs remote Supervisor
+  dispatch, Worker marker work, and remote Supervisor verification without a
+  nested Codex sandbox.
+- The bounded run returned HTTP 200 for all three turns and persisted the
+  expected dispatch, Worker, and verification markers. The warmed Worker turn
+  completed in under one second.
+- The Coordinator deliberately relays the ticket between serial turns to avoid
+  the observed concurrent response-stream failure. The result strengthens the
+  quality signal but does not establish a Supervisor-direct dispatch edge or
+  economics claim.
+
+## 2026-07-13 - P102 qualified Supervisor-authored Worker handoff
+
+- Completed a bounded hybrid proof in which a remote native Supervisor used a
+  restricted app-server shell action to create one ignored Worker ticket.
+- The persistent Responses Worker host consumed that exact ticket, returned the
+  expected marker with HTTP 200, and a fresh remote Supervisor independently
+  read and verified the result marker.
+- The Coordinator remained the transport and sequencing owner; the observed
+  handoff authority was the Supervisor-authored ticket artifact. No nested
+  Codex CLI process or per-task Windows authorization dialog was used.
+- Accepted the bounded ticket handoff as a qualified protocol candidate. The
+  native app-server terminal-completion stall remains a recorded limitation,
+  and no economics or substantive TSA23 authorization is implied.

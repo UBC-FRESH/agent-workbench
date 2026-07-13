@@ -108,8 +108,9 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P97 Reusable workflow graph packaging | #592 | `feature/p97-reusable-workflow-graphs` | Complete — merged via PR #596 at `b2b929f`; parent issue #592 closed |
 | P98 Reporting-worker template packaging | #599 | `feature/p98-reporting-worker-templates` | Complete |
 | P99 Economics dashboard and release criteria | #601 | `feature/p99-economics-dashboard-release-criteria` | Complete — merged via PR #602; parent issue #601 closed |
-| P100 Public alpha readiness review | #603 | `feature/p100-public-alpha-readiness-review` | Active |
+| P100 Public alpha readiness review | #603 | `feature/p100-public-alpha-readiness-review` | Complete — merged via PR #604 |
 | P101 Sphinx technical documentation and GitHub Pages | #598 | `feature/p101-sphinx-docs-github-pages` | Complete: Live at https://ubc-fresh.github.io/agent-workbench/, CI passing (BUILD+DEPLOY), Advisor alpha-readiness verified |
+| P102 Native Codex + remote Ollama orchestration | #605 | `feature/p102-native-codex-ollama-orchestration` | Active |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5110,7 +5111,7 @@ Parent issue: #601
 
 Branch: `feature/p99-economics-dashboard-release-criteria`
 
-Status: active
+Status: complete — merged via PR #602; parent issue #601 closed.
 
 Goal: make task economics, governance overhead, and release-readiness criteria
 visible enough for public-alpha decisions.
@@ -5153,3 +5154,49 @@ Tasks:
 - [x] P100.2 Produce `public_alpha_readiness_review.md` note (#603)
   - Declares workbench current state: what is ready, what is experimental, what is not production-ready
   - `planning/public_alpha_readiness_review.md` — confidence MEDIUM-HIGH; open questions for reviewers documented
+
+## Phase 102: Native Codex + Remote Ollama Orchestration
+
+Parent issue: #605
+
+Branch: `feature/p102-native-codex-ollama-orchestration`
+
+Status: active
+
+Goal: make native Codex the primary Coordinator host while using an
+operator-configured OpenAI-compatible Ollama provider for default Supervisor
+and Worker roles.
+
+Scope:
+
+- Define generic native-Codex role profiles and a local-only provider bootstrap
+  boundary without tracking endpoint or credential values.
+- Add deterministic configuration and evidence-contract validation.
+- Prove one bounded Coordinator -> Supervisor -> Worker vertical slice with
+  persisted evidence of both delegation edges.
+- Record separate quality, protocol, and economics verdicts before deciding on
+  a substantive native-hierarchy TSA23 job.
+
+Out of scope:
+
+- Broad TSA23 extraction before the vertical slice is accepted.
+- Deleting or replacing the Copilot SDK interoperability path.
+- Publishing provider endpoints, credentials, raw sessions, or local model
+  inventory.
+
+Tasks:
+
+- [x] P102.1 Native architecture and public-safe profiles (#606)
+  - Define Coordinator, Supervisor, and Worker role boundaries.
+  - Add generic project role profiles; keep provider configuration machine-local.
+- [x] P102.2 Native configuration and evidence contracts (#607)
+  - Implement fail-closed role/configuration and proof-artifact validation.
+- [x] P102.3 Bounded native delegation proof (#608) — qualified no-modal Supervisor-authored ticket -> Worker -> Supervisor verification proof accepted
+  - Run one trivial two-edge proof with one evidence-based repair at most.
+  - Keep app-server completion stalls explicit; the Coordinator remains the
+    transport/sequence owner for the Supervisor-authored ticket handoff.
+- [x] P102.4 Native proof decision packet (#609) — decision recorded: do not authorize substantive TSA23 work
+  - Inspect proof evidence, record distinct verdicts, and decide whether a
+    substantive native-hierarchy job is authorized.
+  - Do not authorize substantive TSA23 work until a Supervisor-owned dispatch
+    path reaches the persistent Worker host with observed evidence.

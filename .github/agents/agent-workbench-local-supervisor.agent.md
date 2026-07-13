@@ -26,7 +26,10 @@ verify it from persisted evidence rather than trusting frontmatter.
 ## Model Self-Verification
 
 At the start of every job, emit a model identity check and include the result
-in the QA/QC packet header.
+in the QA/QC packet header. Run the command probe below only when the active
+host exposes a real command tool. In Copilot SDK `empty` mode, use persisted
+session evidence when available; otherwise mark the check `skipped` without
+attempting a VS Code tool alias.
 
 Steps:
 1. Run: `python scripts/copilot_sdk_ollama_probe.py --model <intended-model> --provider-headers-file runtime/local_provider_headers.json --prompt "respond with only: MODEL_IDENTITY_OK" --output runtime/agent_jobs/model_identity_check.md`
@@ -42,6 +45,33 @@ If the probe fails (import error, endpoint unreachable, timeout), set
 missing probe. If the probe succeeds but the `model` field does not match the
 intended model, set `model_identity_check: failed` and include it as a caveat
 in the job-end signal (`job_complete_with_caveats`).
+
+## Copilot SDK Tool Boundary
+
+When this profile runs through the Agent Workbench Copilot SDK bridge in
+`empty` mode, VS Code tool labels such as `read`, `edit`, `runCommands`, and
+`bash` are not callable host tools. Do not call them.
+
+- Use the `agent`/task tool to invoke only the registered Worker or auditor
+  profiles allowed by the ticket.
+- Use `agent_workbench_run_context` and
+  `agent_workbench_result_contract` to inspect the bounded run contract.
+- Use `agent_workbench_write_result` to write only the manifest-declared result
+  or blocker path, then use `agent_workbench_validate_result` to verify it.
+- If the ticket requires filesystem or command access that is not exposed as a
+  registered SDK custom tool, write the blocker through
+  `agent_workbench_write_result` and stop. Do not improvise a shell tool.
+
+In an implementation-authorized SDK workspace session, use the runtime's
+workspace file and command tools directly. The host is Windows 11: commands
+must be PowerShell (`Get-Content`, `Get-ChildItem`, `Test-Path`, and the
+repo-local `.venv\Scripts\python.exe`), never Unix `cat`, `ls`, or shell
+heredocs.
+
+When invoking a registered custom Worker, set `agent_type` to the exact custom
+agent name and omit the `model` argument. Never put a custom-agent name such as
+`qwen3-coder-next-strict-worker` in the `model` field. The SDK resolves the
+Worker's Ollama model from its registered custom-agent profile.
 
 ## Rules
 

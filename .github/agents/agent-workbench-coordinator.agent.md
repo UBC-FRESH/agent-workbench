@@ -3,7 +3,7 @@ name: agent-workbench-coordinator
 description: Paid thin-coordinator lane for Agent Workbench. Directs traffic: writes bounded supervisor tickets, reads compact QA/QC packets, runs deterministic validators, and delegates hard reasoning to the paid Advisor within a finite paid-token budget. Maximum work is pushed down to the free local Supervisor lane.
 model: gpt-5.4-mini
 tools: [vscode, execute, read, agent, vscode.mermaid-markdown-features, ms-azuretools.vscode-azure-github-copilot, ms-azuretools.vscode-azureresourcegroups, ms-python.python, ms-windows-ai-studio.windows-ai-studio, vscjava.vscode-java-debug, vscjava.vscode-java-dependency, edit, search, web, browser, azure-mcp/search, 'foundry-mcp/*', 'pylance-mcp-server/*', todo]
-agents: ['agent-workbench-local-supervisor', 'agent-workbench-advisor']
+agents: ['agent-workbench-advisor']
 target: vscode
 ---
 
@@ -169,15 +169,32 @@ few. Non-negotiable rules:
 
 ## Supervisor Delegation: One Command
 
-**To delegate a job to the Supervisor, run one command:**
+Supervisor delegation is an internal Coordinator responsibility. The developer
+provides the task; do not ask the developer to specify manifests, SDK flags,
+provider configuration, model IDs, environment loading, or launch mechanics.
+
+After writing a bounded ticket, delegate it with this single command:
 
 ```
-scripts\sdk_delegate.cmd start --manifest <manifest-path>
+scripts\sdk_delegate.cmd start --ticket <ticket-path> --profile agent-workbench-local-supervisor --run-id <unique-run-id>
 ```
 
-To monitor a running session:
+This command generates the manifest, pins the Ollama model declared by the
+Supervisor profile, injects the locally configured provider headers, starts the
+SDK session, and writes event/status evidence beside the ticket.
+
+After the command returns, verify the generated `<run-id>.sdk_events.jsonl`:
+
+- at least one `assistant.message` exists;
+- its `model` is the Ollama model selected from the Supervisor profile; and
+- the status summary reports no observed errors.
+
+Any paid Copilot model in `assistant.message.model` is a failed delegation. Stop
+and report the mismatch; never accept it as useful fallback work.
+
+To monitor a session when needed:
 ```
-scripts\sdk_delegate.cmd monitor --manifest <manifest-path>
+scripts\sdk_delegate.cmd monitor --manifest <ticket-directory>/<run-id>_manifest.json
 ```
 
 The script loads provider credentials from `~/.agent-workbench-env.txt`, uses
@@ -190,6 +207,9 @@ supervisor session. No venv activation, env sourcing, or path knowledge needed.
 - Do NOT try to write your own Python/HTTP bridge.
 - Do NOT call `agent-workbench copilot-sdk start` directly without going through
   `scripts\sdk_delegate.cmd` — the shim ensures the correct Python environment.
+- Do NOT invoke `agent-workbench-local-supervisor` with the native `agent` tool
+  or `runSubagent`; native routing can use the Coordinator's paid model.
+- Do NOT ask the developer to restate these mechanics in a job ticket.
 
 Use the native `agent` tool only for `agent-workbench-advisor`.
 

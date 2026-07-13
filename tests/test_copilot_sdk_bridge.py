@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import asyncio
 import json
+from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
+from agent_workbench.cli import run_copilot_sdk_new_manifest
+from agent_workbench.copilot_agent_profiles import resolve_agent_profiles
 from agent_workbench.copilot_sdk_bridge import (
     LiveCopilotSdkAdapter,
     SdkTurnConfig,
@@ -131,6 +134,154 @@ def test_validate_sdk_session_manifest_accepts_complete_manifest(
     result = validate_sdk_session_manifest(manifest, manifest_path=manifest_path)
 
     assert result.ok, result.errors
+
+
+def test_new_manifest_cli_generates_validator_accepted_manifest(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    monkeypatch.chdir(Path(__file__).parents[1])
+    monkeypatch.setenv(
+        "AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL", "https://ollama.example.test/v1"
+    )
+    ticket = tmp_path / "bootstrap_ticket.md"
+    ticket.write_text("Implement the bounded bootstrap task.\n", encoding="utf-8")
+
+    exit_code = run_copilot_sdk_new_manifest(
+        Namespace(
+            ticket=ticket,
+            profile="agent-workbench-local-supervisor",
+            run_id="p100-bootstrap",
+            timeout_seconds=45,
+            tool_mode="isolated",
+        )
+    )
+
+    manifest_path = tmp_path / "p100-bootstrap_manifest.json"
+    manifest = load_sdk_session_manifest(manifest_path)
+    validation = validate_sdk_session_manifest(manifest, manifest_path=manifest_path)
+    assert exit_code == 0
+    assert validation.ok, validation.errors
+    assert manifest["sdk"]["model"] == "qwen3.6:35b-a3b-bf16"
+    assert manifest["sdk"]["provider_config"] == {
+        "type": "openai",
+        "base_url": "https://ollama.example.test/v1",
+        "wire_api": "completions",
+    }
+    assert manifest["sdk"]["available_tools"] == "builtin-isolated"
+    assert manifest["sdk"]["mode"] == "empty"
+    assert manifest["sdk"]["excluded_builtin_agents"] == [
+        "general-purpose",
+        "explore",
+        "task",
+    ]
+    assert manifest["control"]["stall_seconds"] == 45
+    assert (
+        manifest["sdk"]["agent_profiles"]["selected"]
+        == "agent-workbench-local-supervisor"
+    )
+    assert manifest["sdk"]["agent_profiles"]["source_paths"] == [
+        ".github/agents/agent-workbench-local-supervisor.agent.md",
+        ".github/agents/qwen3-coder-strict-worker.agent.md",
+        ".github/agents/qwen3-coder-next-strict-worker.agent.md",
+        ".github/agents/agent-workbench-result-auditor.agent.md",
+    ]
+    assert manifest["sdk"]["agent_profiles"]["custom_tools"] == [
+        "agent_workbench_run_context",
+        "agent_workbench_result_contract",
+        "agent_workbench_review_subject",
+        "agent_workbench_write_result",
+        "agent_workbench_validate_result",
+    ]
+    resolved = resolve_agent_profiles(manifest, manifest_path=manifest_path)
+    assert resolved.ok, resolved.errors
+    assert [agent["name"] for agent in resolved.custom_agents] == [
+        "agent-workbench-local-supervisor",
+        "qwen3-coder-strict-worker",
+        "qwen3-coder-next-strict-worker",
+        "agent-workbench-result-auditor",
+    ]
+    assert [agent["model"] for agent in resolved.custom_agents] == [
+        "qwen3.6:35b-a3b-bf16",
+        "qwen3-coder:latest",
+        "qwen3-coder-next:latest",
+        "qwen3.6:35b-a3b-bf16",
+    ]
+    adapter = LiveCopilotSdkAdapter()
+    adapter.permission_handler = type(
+        "PermissionHandler",
+        (),
+        {"approve_all": object()},
+    )
+    kwargs = adapter._session_kwargs(manifest)
+    assert len(kwargs["tools"]) == 5
+    assert "custom:agent_workbench_write_result" in kwargs["available_tools"]
+    assert kwargs["excluded_builtin_agents"] == [
+        "general-purpose",
+        "explore",
+        "task",
+    ]
+
+
+def test_new_manifest_cli_workspace_mode_enables_host_tools(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    repo_root = Path(__file__).parents[1]
+    monkeypatch.chdir(repo_root)
+    monkeypatch.setenv(
+        "AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL", "https://ollama.example.test/v1"
+    )
+    ticket = tmp_path / "workspace_ticket.md"
+    ticket.write_text("Run the implementation-authorized task.\n", encoding="utf-8")
+
+    exit_code = run_copilot_sdk_new_manifest(
+        Namespace(
+            ticket=ticket,
+            profile="agent-workbench-local-supervisor",
+            run_id="workspace-tools",
+            timeout_seconds=90,
+            tool_mode="workspace",
+        )
+    )
+
+    manifest = load_sdk_session_manifest(tmp_path / "workspace-tools_manifest.json")
+    assert exit_code == 0
+    assert manifest["sdk"]["mode"] == "copilot-cli"
+    assert manifest["sdk"]["available_tools"] == "default"
+    assert manifest["sdk"]["working_directory"] == str(repo_root.resolve())
+    adapter = LiveCopilotSdkAdapter()
+    adapter.permission_handler = type(
+        "PermissionHandler",
+        (),
+        {"approve_all": object()},
+    )
+    kwargs = adapter._session_kwargs(manifest)
+    assert "available_tools" not in kwargs
+    assert kwargs["working_directory"] == str(repo_root.resolve())
+
+
+def test_live_adapter_injects_provider_headers_from_local_file(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    headers_path = tmp_path / "headers.json"
+    headers_path.write_text(json.dumps({"X-Test-Header": "local-secret"}))
+    monkeypatch.setenv("AGENT_WORKBENCH_PROVIDER_HEADERS_FILE", str(headers_path))
+    adapter = LiveCopilotSdkAdapter()
+    adapter.permission_handler = type(
+        "PermissionHandler", (), {"approve_all": lambda *args: None}
+    )()
+
+    kwargs = adapter._session_kwargs(
+        {
+            "sdk": {
+                "provider_config": {
+                    "type": "openai",
+                    "base_url": "https://example.test/v1",
+                }
+            }
+        }
+    )
+
+    assert kwargs["provider"]["headers"] == {"X-Test-Header": "local-secret"}
 
 
 def test_validate_sdk_session_manifest_rejects_missing_ticket(tmp_path: Path) -> None:

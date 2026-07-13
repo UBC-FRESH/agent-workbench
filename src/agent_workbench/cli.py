@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -43,6 +44,8 @@ from .budget import (
 from .comparison import render_eval_comparison
 from .copilot_archive import CopilotArchiveConfig, archive_copilot_session
 from .copilot_agent_profiles import (
+    STANDARD_AGENT_PROFILES,
+    load_agent_profile_document,
     render_agent_profiles_markdown,
     render_profile_catalog_markdown,
     resolve_agent_profiles,
@@ -73,6 +76,7 @@ from .copilot_sdk_bridge import (
     run_live_sdk_turn,
     validate_sdk_session_manifest,
 )
+from .copilot_sdk_tools import AGENT_WORKBENCH_TOOL_NAMES
 from .decision import (
     DecisionInputError,
     decide_task,
@@ -351,6 +355,32 @@ def build_parser() -> argparse.ArgumentParser:
         dest="copilot_sdk_command",
         required=True,
     )
+
+    copilot_sdk_new_manifest_parser = copilot_sdk_subparsers.add_parser(
+        "new-manifest",
+        help="Generate a valid Copilot SDK session manifest for a ticket and profile.",
+    )
+    copilot_sdk_new_manifest_parser.add_argument("--ticket", type=Path, required=True)
+    copilot_sdk_new_manifest_parser.add_argument(
+        "--profile", choices=sorted(STANDARD_AGENT_PROFILES), required=True
+    )
+    copilot_sdk_new_manifest_parser.add_argument("--run-id", required=True)
+    copilot_sdk_new_manifest_parser.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=300,
+        help="Hard idle timeout for the generated SDK run (default: 300).",
+    )
+    copilot_sdk_new_manifest_parser.add_argument(
+        "--tool-mode",
+        choices=("isolated", "workspace"),
+        default="isolated",
+        help=(
+            "Use bounded custom tools only, or the Copilot CLI workspace toolset "
+            "for an implementation-authorized ticket (default: isolated)."
+        ),
+    )
+    copilot_sdk_new_manifest_parser.set_defaults(func=run_copilot_sdk_new_manifest)
 
     copilot_sdk_validate_parser = copilot_sdk_subparsers.add_parser(
         "validate",
@@ -1819,6 +1849,104 @@ def run_copilot_sdk_validate(args: argparse.Namespace) -> int:
     for error in result.errors:
         print(f"error: {error}", file=sys.stderr)
     return 1
+
+
+def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
+    ticket = args.ticket.resolve()
+    output = ticket.parent / f"{args.run_id}_manifest.json"
+    profile_path = STANDARD_AGENT_PROFILES[args.profile].as_posix()
+    profile = load_agent_profile_document(Path.cwd() / profile_path)
+    model = str(profile.frontmatter.get("model", "")).removeprefix("ollama-models/")
+    profile_names = [args.profile]
+    raw_subagents = profile.frontmatter.get("agents", [])
+    if isinstance(raw_subagents, list):
+        profile_names.extend(
+            name
+            for name in raw_subagents
+            if isinstance(name, str) and name in STANDARD_AGENT_PROFILES
+        )
+    profile_paths = [
+        STANDARD_AGENT_PROFILES[name].as_posix()
+        for name in dict.fromkeys(profile_names)
+    ]
+    base_url = os.environ.get("AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL", "").strip()
+    if not model or not base_url:
+        print(
+            "error: selected profile model and Ollama base URL are required",
+            file=sys.stderr,
+        )
+        return 1
+    workspace_tools = args.tool_mode == "workspace"
+    manifest = {
+        "schema_version": 1,
+        "run_id": args.run_id,
+        "phase": "",
+        "governing_issue": 0,
+        "child_issue": 0,
+        "target_project": Path.cwd().name,
+        "target_task": ticket.stem,
+        "workspace_root": str(Path.cwd().resolve()),
+        "sdk": {
+            "provider": "github-copilot-sdk",
+            "session_id": "",
+            "resumable": True,
+            "model": model,
+            "provider_config": {
+                "type": "openai",
+                "base_url": base_url,
+                "wire_api": "completions",
+            },
+            "permission_mode": "operator-configured",
+            "mode": "copilot-cli" if workspace_tools else "empty",
+            "base_directory": f"runtime/copilot_sdk_home/{args.run_id}",
+            "available_tools": "default" if workspace_tools else "builtin-isolated",
+            "working_directory": str(Path.cwd().resolve()) if workspace_tools else "",
+            "excluded_builtin_agents": ["general-purpose", "explore", "task"],
+            "agent_profiles": {
+                "source_paths": profile_paths,
+                "selected": args.profile,
+                "default_agent": {"excluded_tools": []},
+                "custom_agents_local_only": True,
+                "include_sub_agent_streaming_events": True,
+                "custom_tools": list(AGENT_WORKBENCH_TOOL_NAMES),
+            },
+        },
+        "paths": {
+            "ticket": ticket.name,
+            "result": f"{args.run_id}_result.md",
+            "blocker": f"{args.run_id}_blocker.md",
+            "heartbeat": f"{args.run_id}.heartbeat.jsonl",
+            "event_log": f"{args.run_id}.sdk_events.jsonl",
+            "status_summary": f"{args.run_id}.sdk_status.json",
+            "nudge_log": f"{args.run_id}.nudges.jsonl",
+        },
+        "control": {
+            "stall_seconds": args.timeout_seconds,
+            "nonprogress_event_limit": 5,
+            "max_nudges": 2,
+            "max_retries": 1,
+            "stop_condition": "result or blocker file",
+        },
+        "state": {
+            "latest_status": "created",
+            "latest_event_at": "",
+            "latest_nudge_at": "",
+            "accepted_candidate": False,
+        },
+        "privacy": {
+            "raw_events_local_only": True,
+            "publish_sanitized_summary_only": True,
+        },
+    }
+    output.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    result = validate_sdk_session_manifest(manifest, manifest_path=output)
+    if not result.ok:
+        output.unlink(missing_ok=True)
+        for error in result.errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    print(output)
+    return 0
 
 
 def run_copilot_sdk_start(args: argparse.Namespace) -> int:

@@ -396,6 +396,9 @@ def agent_config_from_document(document: AgentProfileDocument) -> dict[str, Any]
             continue
         if field_name in source:
             config[field_name] = source[field_name]
+    model = config.get("model")
+    if isinstance(model, str):
+        config["model"] = model.removeprefix("ollama-models/")
     config["prompt"] = document.prompt
     return config
 

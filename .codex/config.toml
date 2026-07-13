@@ -1,0 +1,7 @@
+# Project-scoped Codex settings. Provider definitions remain machine-local;
+# see planning/phase102_native_codex_orchestration.md.
+
+[agents]
+# Root Coordinator (depth 0) -> Supervisor (depth 1) -> Worker (depth 2).
+max_depth = 2
+max_threads = 3

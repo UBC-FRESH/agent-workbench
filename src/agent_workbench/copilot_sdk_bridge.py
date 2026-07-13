@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from html import escape
@@ -239,6 +240,10 @@ def validate_sdk_session_manifest(
 
     public_scan = dict(manifest)
     public_scan.pop("workspace_root", None)
+    public_sdk = public_scan.get("sdk")
+    if isinstance(public_sdk, dict):
+        public_scan["sdk"] = dict(public_sdk)
+        public_scan["sdk"].pop("working_directory", None)
     for finding in find_private_values(public_scan):
         errors.append(f"private-looking value detected: {finding}")
 
@@ -1551,13 +1556,29 @@ class LiveCopilotSdkAdapter:
             kwargs["model"] = model
         provider_config = sdk.get("provider_config")
         if isinstance(provider_config, dict):
-            kwargs["provider"] = provider_config
+            provider = dict(provider_config)
+            headers_file = os.environ.get("AGENT_WORKBENCH_PROVIDER_HEADERS_FILE", "")
+            if provider.get("type") == "openai" and headers_file:
+                headers = json.loads(Path(headers_file).read_text(encoding="utf-8-sig"))
+                if not isinstance(headers, dict):
+                    raise ValueError("provider headers file must contain a JSON object")
+                provider["headers"] = {
+                    str(key): str(value) for key, value in headers.items()
+                }
+            kwargs["provider"] = provider
         working_directory = str(sdk.get("working_directory", "")).strip()
         if working_directory:
             working_directory_path = Path(working_directory)
             if not working_directory_path.is_absolute():
                 working_directory_path = working_directory_path.resolve()
             kwargs["working_directory"] = str(working_directory_path)
+        excluded_builtin_agents = sdk.get("excluded_builtin_agents")
+        if isinstance(excluded_builtin_agents, list):
+            kwargs["excluded_builtin_agents"] = [
+                str(name).strip()
+                for name in excluded_builtin_agents
+                if str(name).strip()
+            ]
         available_tools = sdk.get("available_tools", "default")
         if isinstance(available_tools, list):
             kwargs["available_tools"] = available_tools
