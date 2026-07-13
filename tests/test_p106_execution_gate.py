@@ -18,8 +18,9 @@ def write_gate(tmp_path: Path, mutate) -> Path:
     return path
 
 
-def test_p106_gate_validates() -> None:
-    assert validate(GATE, ROOT) == []
+def test_p106_gate_reports_current_native_binding_mismatch() -> None:
+    errors = validate(GATE, ROOT)
+    assert any("native ollama_worker model mismatch" in error for error in errors)
 
 
 @pytest.mark.parametrize(

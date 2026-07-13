@@ -3213,3 +3213,15 @@ issues, pull requests, and closeout comments.
   tampering, and P105 contract validation.
 - The live comparison remains unexecuted; no quality, protocol, or economics
   verdict is promoted without inspected runtime evidence.
+
+## 2026-07-13 - P106 native binding preflight corrected
+
+- Independent native-Codex review confirmed that P102-P110 exclude Copilot
+  transport entirely; the intended execution is native Codex Coordinator ->
+  `ollama_supervisor` -> `ollama_worker`.
+- Hardened the P106 gate to inspect native role bindings before live inference.
+- The gate now fails closed on the current Worker binding: P105 requires
+  `qwen3.6:35b-a3b-bf16`, while the native binding currently resolves to
+  `qwen3-coder:latest`.
+- No P106 model/configuration change was made; reconciling that binding is a
+  separately authorized prerequisite.

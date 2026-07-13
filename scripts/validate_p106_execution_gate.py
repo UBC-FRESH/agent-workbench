@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 try:
@@ -36,6 +37,18 @@ def validate(gate_path: Path, root: Path) -> list[str]:
     quality = gate.get("delegated_quality_gate", {})
     if quality.get("minimum_useful_yield") != 0.9 or quality.get("critical_source_anchor_defects_max") != 0:
         errors.append("delegated quality gate must require 90% useful yield and zero critical anchor defects")
+    if gate.get("native_bindings_required") is True:
+        expected = gate.get("lanes", {}).get("delegated", {})
+        for role, expected_model in (("ollama_supervisor", expected.get("supervisor_model")), ("ollama_worker", expected.get("worker_model"))):
+            binding = root / ".codex" / "agents" / f"{role}.toml"
+            if not binding.is_file():
+                errors.append(f"native binding missing: {binding.relative_to(root)}")
+                continue
+            match = re.search(r'^model\s*=\s*"([^"]+)"', binding.read_text(encoding="utf-8"), re.MULTILINE)
+            if not match:
+                errors.append(f"native binding has no model: {binding.relative_to(root)}")
+            elif match.group(1) != expected_model:
+                errors.append(f"native {role} model mismatch: expected {expected_model}, found {match.group(1)}")
     p105_path = root / gate.get("p105_contract", "")
     if not p105_path.is_file():
         errors.append("referenced P105 contract is missing")

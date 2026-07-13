@@ -8,6 +8,7 @@
   "p105_contract": "benchmarks/document_library/p105_matched_benchmark_contract.json",
   "budgets_usd": {"total_paid_coordinator_cap": 0.25, "delegated_lane_stop_threshold": 0.125},
   "pricing": {"catalog_required": true, "exact_model_required": true, "effective_date_required": true},
+  "native_bindings_required": true,
   "lanes": {
     "direct": {"coordinator_model": "GPT-5.6 Luna"},
     "delegated": {
