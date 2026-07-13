@@ -3243,6 +3243,19 @@ issues, pull requests, and closeout comments.
   and Coordinator span/economics evidence plus the sanitized comparison packet
   remain open.
 
+## 2026-07-13 - Tested recursive native subagent depth
+
+- Raised project `.codex/config.toml` to `agents.max_depth = 3` and updated the
+  native configuration validator accordingly.
+- A bounded Supervisor probe was launched through the native subagent surface,
+  but the Supervisor emitted function-call markup as text instead of invoking a
+  real nested Worker. No child-session event, Worker artifact, or P106 result
+  was produced.
+- Therefore `max_depth = 3` is a necessary configuration change, not yet proof
+  that the current nested Supervisor runtime can execute P106. The next probe
+  must capture an actual child-session event and Worker output before this lane
+  becomes the preferred delegation surface.
+
 ## 2026-07-13 - Ran bounded native P106 delegated attempts
 
 - Corrected the native `ollama_worker` binding to the P105-required

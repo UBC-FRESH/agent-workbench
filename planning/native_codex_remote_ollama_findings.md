@@ -203,7 +203,9 @@ agent loop can mediate tool execution for the remote model.
 - A paid Codex Coordinator can spawn a custom agent whose configuration switches
   from the Coordinator's OpenAI provider to the Ollama provider.
 - A custom Ollama Supervisor can spawn a second custom Ollama Worker.
-- `max_depth = 3` and the intended custom-agent profiles behave correctly in
+- `max_depth = 3` permits a recursive-delegation probe, but the setting alone
+  does not prove that a spawned Supervisor can invoke the nested spawn tool;
+  child-session evidence is still required.
   this installed alpha Codex build.
 - Both delegation edges are visible in durable session evidence.
 - A Supervisor can monitor, nudge, validate, and stop a Worker economically.
