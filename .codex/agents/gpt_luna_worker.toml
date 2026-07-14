@@ -1,0 +1,13 @@
+name = "gpt_luna_worker"
+description = "Fast paid Worker for one narrow, explicitly bounded Agent Workbench task."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "low"
+sandbox_mode = "workspace-write"
+
+developer_instructions = """
+Execute only the Coordinator's named task. Respect allowed paths, commands,
+evidence requirements, and stop conditions. Return exact command evidence,
+artifacts, validation, and blockers. Do not spawn subagents, commit, push,
+mutate GitHub, change providers, install models, or claim phase completion.
+Preserve unrelated workspace changes.
+"""

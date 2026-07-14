@@ -200,12 +200,6 @@ agent loop can mediate tool execution for the remote model.
 
 ## What Is Not Yet Proven
 
-- A paid Codex Coordinator can spawn a custom agent whose configuration switches
-  from the Coordinator's OpenAI provider to the Ollama provider.
-- A custom Ollama Supervisor can spawn a second custom Ollama Worker.
-- `max_depth = 2` and the intended custom-agent profiles behave correctly in
-  this installed alpha Codex build.
-- Both delegation edges are visible in durable session evidence.
 - A Supervisor can monitor, nudge, validate, and stop a Worker economically.
 - The TSA23 extraction workflow succeeds through the native nested hierarchy.
 - Native Codex delegation is cheaper or more reliable than the earlier paths;
@@ -499,7 +493,7 @@ comparative evidence and may remain valuable for users who prefer that host.
 However, new core workflow investment should not assume Copilot is the only
 route to a remote Ollama provider.
 
-## Next Bounded Experiment
+## Historical Next Bounded Experiment
 
 The next experiment should answer exactly one question:
 
@@ -566,3 +560,26 @@ work, but stop treating it as a prerequisite for low-cost delegated agents.
 
 The immediate gate is the minimal native Coordinator -> Supervisor -> Worker
 proof. The substantive TSA23 delegation job comes afterward.
+
+## P111 Accepted Recursive UI Result
+
+Phase 111 closed the historical delegation-edge question in a fresh VS Code
+Codex session. Generic `gpt-5.6` at `high` reasoning exposed the role-aware
+multi-agent v1 surface. The Coordinator spawned `gpt_luna_supervisor`, which
+spawned `ollama_worker`; both calls used `fork_context: false` and no model
+override.
+
+Persisted session evidence identifies the depth-2 child as
+`agent_workbench_ollama`, model `qwen3.6:35b-a3b-bf16`, reasoning `low`, with
+the Luna Supervisor as its parent. The maintainer navigated into both child
+threads and interacted directly with the same Worker across five turn contexts
+while independently observing corresponding remote GPU activity.
+
+The public-safe evidence contract is in
+`planning/phase111_native_recursive_ui_delegation.md`; the operator procedure is
+in `playbooks/native_recursive_codex_ui.md`; raw rollouts and the regenerated
+sanitized verdict remain ignored under
+`runtime/agent_jobs/honeycomb-native-depth2-ui-proof/`.
+
+This proves recursive native role provenance and usable IDE interaction. It
+does not prove P106 benchmark acceptance or usable economics.

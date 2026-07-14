@@ -114,11 +114,12 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
-| P106 Matched direct-vs-delegated execution | TBD | `feature/p106-matched-roi-benchmark` | Planned — live-run gated |
+| P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Active — parallel P111 does not alter its gates |
 | P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
+| P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Closeout — child issues complete; merge pending |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5345,11 +5346,11 @@ P105 permits no live inference.
 
 ## Phase 106: Matched Direct-Vs-Delegated Execution
 
-Parent issue: TBD
+Parent issue: #629
 
 Branch: `feature/p106-matched-roi-benchmark`
 
-Status: planned — requires explicit live-run activation after P105 closeout.
+Status: active — live-run evidence remains separately gated.
 
 Goal: measure quality and paid cost for the P105 task through delegated and
 direct GPT-5.6 Luna lanes.
@@ -5450,3 +5451,47 @@ Tasks:
       `v0.1.0a1`; otherwise publish a no-go packet.
 
 P110 does not publish to PyPI.
+
+## Phase 111: Native Recursive Codex UI Delegation
+
+Parent issue: #634
+
+Branch: `feature/p111-native-recursive-ui-delegation`
+
+Status: closeout — child issues #635-#638 complete; PR #639 open.
+
+Goal: productize the accepted usable-adjacent proof that a native Codex UI
+Coordinator can spawn a configured Luna Supervisor, which can spawn and expose
+an interactive configured remote-Ollama Worker at depth 2.
+
+Parallel-lane boundary: the maintainer explicitly authorized P111 alongside
+the still-active P106 benchmark. P111 does not alter or satisfy P106/P107
+quality, ordering, token-span, or economics gates.
+
+Tasks:
+
+- [x] P111.1 Role-aware v1 configuration contract (#635)
+  - [x] Pin generic `gpt-5.6`, `high`, depth `2`, and six threads.
+  - [x] Validate machine-local named roles and environment-backed headers.
+  - [x] Reject UI-root configuration drift fail-closed.
+- [x] P111.2 Recursive role-provenance evidence (#636)
+  - [x] Freeze raw rollout copies and hashes in ignored runtime storage.
+  - [x] Validate role, provider, model, reasoning, depth, and parentage.
+  - [x] Reject v2 generic children, model overrides, and inherited-history spawns.
+- [x] P111.3 Interactive UI operator workflow (#637)
+  - [x] Document Coordinator -> Supervisor -> Worker UI navigation.
+  - [x] Preserve multi-turn Worker and remote-GPU corroboration evidence.
+  - [x] Document failure signatures, recovery, cleanup, and privacy boundaries.
+- [x] P111.4 Validation, documentation, and closeout (#638)
+  - [x] Synchronize roadmap, changelog, planning, issues, and PR state.
+  - [x] Run focused tests, config validation, diff checks, and privacy scans.
+  - [x] Open the phase PR without merging or closing the parent before approval.
+
+Acceptance criteria:
+
+- The phase branch starts from current `origin/main` and excludes P106-only
+  history.
+- Deterministic evidence accepts the exact recursive role-bound chain and
+  interactive Worker persistence.
+- Raw provider/session material remains ignored and tracked docs stay public-safe.
+- Quality, protocol/usability, and economics conclusions remain separate.
