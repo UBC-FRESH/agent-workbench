@@ -4,7 +4,7 @@ Parent issue: #634
 
 Branch: `feature/p111-native-recursive-ui-delegation`
 
-Status: closeout — child issues #635-#638 complete; PR #639 open
+Status: complete — PR #639 merged; parent issue #634 and child issues #635-#638 closed
 
 ## Purpose
 

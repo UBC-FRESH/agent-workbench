@@ -119,7 +119,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
-| P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Closeout — child issues complete; merge pending |
+| P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5458,7 +5458,7 @@ Parent issue: #634
 
 Branch: `feature/p111-native-recursive-ui-delegation`
 
-Status: closeout — child issues #635-#638 complete; PR #639 open.
+Status: complete — PR #639 merged; parent issue #634 and child issues #635-#638 closed.
 
 Goal: productize the accepted usable-adjacent proof that a native Codex UI
 Coordinator can spawn a configured Luna Supervisor, which can spawn and expose
