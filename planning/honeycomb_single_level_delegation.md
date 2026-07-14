@@ -47,13 +47,16 @@ When a task specifically requires a visible depth-2 chain in the Codex UI,
 use the P111-proven topology instead of the single-level approximation:
 
 ```text
-Coordinator: generic gpt-5.6, high reasoning
+Coordinator: gpt-5.6-terra, medium reasoning
   -> Supervisor: gpt_luna_supervisor, gpt-5.6-luna, medium reasoning
        -> Worker: ollama_worker, qwen3.6:35b-a3b-bf16, low reasoning
 ```
 
 Both edges use the configured `agent_type`, `fork_context: false`, and no model
-override. `ollama_supervisor` is not on the recursive Supervisor allowlist:
+override. This Terra/Medium profile requires the machine-local, version-pinned
+model catalog whose Terra metadata selects multi-agent v1; revalidate it after
+each Codex upgrade. The historical P111 proof used generic `gpt-5.6` at `high`.
+`ollama_supervisor` is not on the recursive Supervisor allowlist:
 two fresh non-counting rehearsals reached the configured Qwen Supervisor at
 depth 1 but produced malformed unsupported native calls and no Worker at depth
 2. That profile remains available for serial/local analysis or proposal work

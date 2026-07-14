@@ -71,18 +71,22 @@ paid-Coordinator token span with catalog-backed pricing.
 
 ## Critical runtime distinction
 
-The accepted Codex build exposed two materially different multi-agent surfaces:
+The original accepted P111 proof used generic `gpt-5.6` at `high` reasoning and
+exposed the role-aware v1 surface. It remains the historical proof recorded in
+the accepted topology table above.
 
-- generic `gpt-5.6` at `high` reasoning exposed role-aware v1, whose spawn
-  contract contains `agent_type` and `fork_context`;
-- GPT-5.6 Terra and Sol sessions exposed v2, whose `task_name` contract created
-  generic OpenAI descendants with `agent_role: null`, even when task labels
-  matched configured role names.
+The later Terra/Medium compatibility proof used a machine-local, version-pinned
+model catalog loaded at Codex startup. Its Terra entry sets
+`multi_agent_version` to `v1`, so `gpt-5.6-terra` at `medium` reasoning exposes
+the same role-aware spawn contract with `agent_type` and `fork_context`.
 
-The project configuration therefore pins generic `gpt-5.6`, `high`, depth `2`,
-and six threads for this reproduction. This is an observed compatibility
-contract for Codex CLI `0.144.0-alpha.4`, not a claim that future versions will
-retain the v1/v2 distinction.
+The project configuration now pins Terra/Medium, depth `2`, and six threads.
+The catalog remains machine-local and is not tracked. It is generated for the
+installed Codex version; after any Codex upgrade, regenerate or revalidate the
+catalog before starting a proof. The configuration validator fails closed when
+the effective catalog is missing, unreadable, lacks Terra, or restores Terra to
+v2. This is a later compatibility improvement, not a rewrite of the original
+generic/High P111 evidence.
 
 Full-history forks are incompatible with changing configured roles. The
 runtime rejects a spawn that combines a different `agent_type` with inherited

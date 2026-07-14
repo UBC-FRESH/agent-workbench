@@ -589,6 +589,22 @@ sanitized verdict remain ignored under
 This proves recursive native role provenance and usable IDE interaction. It
 does not prove P106 benchmark acceptance or usable economics.
 
+## Terra Medium v1 Compatibility Improvement
+
+A later fresh IDE proof established the same Coordinator -> Luna Supervisor ->
+Ollama Worker topology with `gpt-5.6-terra` at `medium` reasoning. The proof
+used a machine-local, version-pinned model catalog loaded at Codex startup,
+whose Terra metadata selects multi-agent v1. It preserved configured roles,
+both `fork_context: false` edges without model overrides, correct parentage,
+and terminal completion at all three levels.
+
+The catalog, provider configuration, and raw sessions remain ignored. Tracked
+configuration only selects Terra/Medium; the validator requires an effective
+global catalog, resolves it locally, and fails closed unless Terra is present
+with `multi_agent_version: v1`. Regenerate or revalidate the catalog after a
+Codex upgrade. This improves the accepted operating profile without changing
+the historical generic/High P111 proof or authorizing P107 economics work.
+
 ## Post-P111 Recursive Supervisor Boundary
 
 Two fresh, non-counting rehearsals subsequently replaced the accepted Luna

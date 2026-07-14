@@ -5420,7 +5420,10 @@ unaccepted. Two later fresh, non-counting rehearsals reached the configured
 Qwen/Ollama Supervisor at depth 1 but failed the native second-edge spawn and
 created no Worker. P111's GPT-5.6 Luna Supervisor -> Ollama Worker topology is
 the only accepted recursive profile and the only profile eligible for the
-single bounded P107 economics measurement.
+single bounded P107 economics measurement. A later accepted Terra/Medium v1
+compatibility proof improves the Coordinator configuration through a
+machine-local version-pinned catalog; it does not activate, run, or satisfy
+P107 economics work.
 
 ## Phase 108: Fresh TSA23 Slice Preparation
 
@@ -5499,7 +5502,8 @@ quality, ordering, token-span, or economics gates.
 Tasks:
 
 - [x] P111.1 Role-aware v1 configuration contract (#635)
-  - [x] Pin generic `gpt-5.6`, `high`, depth `2`, and six threads.
+  - [x] Preserve the historical generic `gpt-5.6`/`high` proof and productize
+        Terra/Medium through a machine-local version-pinned v1 catalog.
   - [x] Validate machine-local named roles and environment-backed headers.
   - [x] Reject UI-root configuration drift fail-closed.
 - [x] P111.2 Recursive role-provenance evidence (#636)
