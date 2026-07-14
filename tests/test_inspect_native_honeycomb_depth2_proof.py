@@ -39,7 +39,7 @@ def session(thread_id: str, parent: str | None, role: str | None, provider: str,
 def test_accepts_role_bound_recursive_ui_chain(tmp_path: Path) -> None:
     module = load_module()
     root, supervisor, worker = tmp_path / "root.jsonl", tmp_path / "supervisor.jsonl", tmp_path / "worker.jsonl"
-    write_jsonl(root, session("root", None, None, "openai", "gpt-5.6", "high", None, "gpt_luna_supervisor"))
+    write_jsonl(root, session("root", None, None, "openai", "gpt-5.6-terra", "medium", None, "gpt_luna_supervisor"))
     write_jsonl(supervisor, session("supervisor", "root", "gpt_luna_supervisor", "openai", "gpt-5.6-luna", "medium", 1, "ollama_worker"))
     write_jsonl(worker, session("worker", "supervisor", "ollama_worker", "agent_workbench_ollama", "qwen3.6:35b-a3b-bf16", "low", 2, turns=3))
     result = module.verdict(root, supervisor, worker)
@@ -50,7 +50,7 @@ def test_accepts_role_bound_recursive_ui_chain(tmp_path: Path) -> None:
 def test_rejects_generic_v2_worker_and_wrong_parent(tmp_path: Path) -> None:
     module = load_module()
     root, supervisor, worker = tmp_path / "root.jsonl", tmp_path / "supervisor.jsonl", tmp_path / "worker.jsonl"
-    write_jsonl(root, session("root", None, None, "openai", "gpt-5.6", "high", None, "gpt_luna_supervisor"))
+    write_jsonl(root, session("root", None, None, "openai", "gpt-5.6-terra", "medium", None, "gpt_luna_supervisor"))
     write_jsonl(supervisor, session("supervisor", "root", "gpt_luna_supervisor", "openai", "gpt-5.6-luna", "medium", 1, "ollama_worker"))
     events = session("worker", "wrong-parent", None, "openai", "gpt-5.6", "high", 2, turns=2)
     for event in events:
@@ -66,7 +66,7 @@ def test_rejects_generic_v2_worker_and_wrong_parent(tmp_path: Path) -> None:
 def test_rejects_full_history_or_model_override(tmp_path: Path) -> None:
     module = load_module()
     root, supervisor, worker = tmp_path / "root.jsonl", tmp_path / "supervisor.jsonl", tmp_path / "worker.jsonl"
-    root_events = session("root", None, None, "openai", "gpt-5.6", "high", None, "gpt_luna_supervisor")
+    root_events = session("root", None, None, "openai", "gpt-5.6-terra", "medium", None, "gpt_luna_supervisor")
     root_events[1]["payload"]["arguments"] = json.dumps({"agent_type": "gpt_luna_supervisor", "fork_context": True, "model": "gpt-5.6-luna"})  # type: ignore[index]
     write_jsonl(root, root_events)
     write_jsonl(supervisor, session("supervisor", "root", "gpt_luna_supervisor", "openai", "gpt-5.6-luna", "medium", 1, "ollama_worker"))

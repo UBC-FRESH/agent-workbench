@@ -11,7 +11,7 @@ from typing import Any
 
 
 EXPECTED = {
-    "root": {"agent_role": None, "provider": "openai", "model": "gpt-5.6", "effort": "high", "depth": None},
+    "root": {"agent_role": None, "provider": "openai", "model": "gpt-5.6-terra", "effort": "medium", "depth": None},
     "supervisor": {"agent_role": "gpt_luna_supervisor", "provider": "openai", "model": "gpt-5.6-luna", "effort": "medium", "depth": 1},
     "worker": {"agent_role": "ollama_worker", "provider": "agent_workbench_ollama", "model": "qwen3.6:35b-a3b-bf16", "effort": "low", "depth": 2},
 }

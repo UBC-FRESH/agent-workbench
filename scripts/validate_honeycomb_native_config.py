@@ -24,6 +24,30 @@ def read_toml(path: Path, errors: list[str]) -> dict[str, object]:
         return {}
 
 
+def read_catalog(path: Path, errors: list[str]) -> object:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"cannot read model catalog {path}: {exc}")
+        return {}
+
+
+def find_model_entry(value: object, slug: str) -> dict[str, object] | None:
+    if isinstance(value, dict):
+        if value.get("slug") == slug:
+            return value
+        for child in value.values():
+            result = find_model_entry(child, slug)
+            if result is not None:
+                return result
+    elif isinstance(value, list):
+        for child in value:
+            result = find_model_entry(child, slug)
+            if result is not None:
+                return result
+    return None
+
+
 def validate(codex_home: Path, project_config: Path | None = None) -> list[str]:
     errors: list[str] = []
     config = read_toml(codex_home / "config.toml", errors)
@@ -45,8 +69,21 @@ def validate(codex_home: Path, project_config: Path | None = None) -> list[str]:
         errors.append("effective agents.max_depth must be 2")
     root_model = project.get("model", config.get("model"))
     root_effort = project.get("model_reasoning_effort", config.get("model_reasoning_effort"))
-    if root_model != "gpt-5.6" or root_effort != "high":
-        errors.append("effective UI Coordinator must be gpt-5.6 with high reasoning for role-aware v1 spawning")
+    if root_model != "gpt-5.6-terra" or root_effort != "medium":
+        errors.append("effective UI Coordinator must be gpt-5.6-terra with medium reasoning for role-aware v1 spawning")
+    catalog_value = config.get("model_catalog_json")
+    if not isinstance(catalog_value, str) or not catalog_value.strip():
+        errors.append("effective global config must define model_catalog_json for the Terra v1 catalog")
+    else:
+        catalog_path = Path(catalog_value).expanduser()
+        if not catalog_path.is_absolute():
+            catalog_path = codex_home / catalog_path
+        catalog = read_catalog(catalog_path, errors)
+        terra = find_model_entry(catalog, "gpt-5.6-terra")
+        if terra is None:
+            errors.append("model catalog must contain gpt-5.6-terra metadata")
+        elif terra.get("multi_agent_version") != "v1":
+            errors.append("gpt-5.6-terra catalog metadata must set multi_agent_version to v1")
     features = config.get("features", {})
     if not isinstance(features, dict) or features.get("multi_agent") is not True:
         errors.append("features.multi_agent must be true")

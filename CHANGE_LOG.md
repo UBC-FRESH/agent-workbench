@@ -3336,3 +3336,17 @@ issues, pull requests, and closeout comments.
 - Left P106's qualified verdict unchanged and sharpened planned P107 to permit
   one bounded Luna Supervisor -> Ollama Worker economics measurement with clean
   paid-Coordinator token checkpoints.
+
+## 2026-07-13 - Productized Terra Medium v1 Coordinator compatibility
+
+- Updated the accepted operating configuration to `gpt-5.6-terra` at `medium`
+  reasoning after a fresh IDE proof reached the configured Luna Supervisor and
+  remote-Ollama Worker at depth 2 with correct parentage, no model overrides,
+  `fork_context: false`, and terminal completion.
+- The compatibility profile depends on a machine-local, version-pinned catalog
+  loaded at Codex startup with Terra metadata set to multi-agent v1. The
+  deterministic validator now rejects a missing, unreadable, or v2 Terra
+  catalog and must be rerun after Codex upgrades.
+- Preserved P111's generic/High proof as historical evidence and P106's
+  qualified verdict. This repair does not activate or execute P107 economics
+  work.

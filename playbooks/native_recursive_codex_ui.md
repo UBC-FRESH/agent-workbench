@@ -6,14 +6,17 @@ Ollama Worker chain inside the Codex IDE UI.
 ## Prerequisites
 
 1. Use a fresh Codex chat in the `agent-workbench` workspace.
-2. Keep project `.codex/config.toml` at generic `gpt-5.6`, `high` reasoning,
+2. Keep project `.codex/config.toml` at `gpt-5.6-terra`, `medium` reasoning,
    `agents.max_depth = 2`, and `agents.max_threads = 6`.
-3. Keep the tracked project roles under `.codex/agents/`; Codex loads those
+3. Configure a machine-local, version-pinned model catalog before starting
+   Codex. Its Terra entry must select multi-agent v1; regenerate or revalidate
+   it after a Codex upgrade. Do not track the catalog.
+4. Keep the tracked project roles under `.codex/agents/`; Codex loads those
    role files for the trusted workspace. Keep provider definitions and
    credentials machine-local.
-4. Configure the Ollama provider with environment-backed headers and the
+5. Configure the Ollama provider with environment-backed headers and the
    Responses wire API. Do not put private values in tracked files.
-5. Run the Honeycomb configuration validator before the proof.
+6. Run the Honeycomb configuration validator before the proof.
 
 ```powershell
 .venv\Scripts\python.exe scripts\validate_honeycomb_native_config.py `
@@ -57,7 +60,7 @@ after a concrete runtime or model change provides a bounded repair hypothesis.
 ## Fail-closed acceptance
 
 Do not accept labels, prose, or GPU activity alone. Require persisted evidence
-for generic `gpt-5.6`/`high` multi-agent v1 at the root,
+for `gpt-5.6-terra`/`medium` multi-agent v1 at the root,
 `gpt_luna_supervisor`/`gpt-5.6-luna`/`medium` at depth 1, and
 `ollama_worker`/`agent_workbench_ollama`/`qwen3.6:35b-a3b-bf16`/`low` at
 depth 2. The Worker parent must equal the Supervisor thread ID, both spawns must
@@ -70,9 +73,11 @@ Regenerate the sanitized verdict from the ignored archive with
 ## Known failure signatures
 
 `agent_role: null` with `provider: openai` means a generic child was created.
-In the accepted build, Terra and Sol roots exposed a v2 `task_name` surface that
-could not select configured roles. Start a fresh generic `gpt-5.6`/`high`
-session instead.
+This commonly means the machine-local Terra catalog was not startup-loaded or
+its Terra entry no longer selects v1. Stop, repair or regenerate the catalog,
+run the validator, and start a fresh Terra/Medium session. The original P111
+proof used generic `gpt-5.6`/`high`; it is historical evidence, not the current
+operating configuration.
 
 `unsupported call: multi_agent_v1` from the Supervisor means the model emitted
 the tool namespace rather than a valid native `spawn_agent` call. Treat the
