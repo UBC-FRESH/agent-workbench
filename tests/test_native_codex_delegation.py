@@ -38,3 +38,23 @@ def test_manifest_requires_both_observed_edges_and_distinct_verdicts() -> None:
 
     assert "missing delegation edge ollama_supervisor->ollama_worker" in errors
     assert "verdicts.economics_usable must be a boolean" in errors
+
+
+def test_profiles_rejects_honeycomb_model_drift(tmp_path: Path) -> None:
+    validator = load_module()
+    root = Path(__file__).resolve().parents[1]
+    config_root = tmp_path / ".codex"
+    (config_root / "agents").mkdir(parents=True)
+    for source in (root / ".codex").rglob("*.toml"):
+        target = config_root / source.relative_to(root / ".codex")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+    profile = config_root / "agents" / "gpt_luna_supervisor.toml"
+    profile.write_text(
+        profile.read_text(encoding="utf-8").replace('model = "gpt-5.6-luna"', 'model = "gpt-5.6-sol"'),
+        encoding="utf-8",
+    )
+
+    errors = validator.validate_profiles(config_root)
+
+    assert "gpt_luna_supervisor.toml must set model gpt-5.6-luna" in errors

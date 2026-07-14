@@ -3189,6 +3189,88 @@ issues, pull requests, and closeout comments.
 - Negative tampering and missing-artifact tests pass; P106 remains separately
   gated and unactivated.
 
+## 2026-07-13 - Activated P106 matched direct-vs-delegated execution
+
+- Activated parent issue #629 with child issues #630-#633 on
+  `feature/p106-matched-roi-benchmark` after P105 corrective closeout.
+- Added the public execution protocol and deterministic gate manifest at
+  `planning/phase106_matched_execution_protocol.md` and
+  `benchmarks/document_library/p106_matched_execution_gate.json`.
+- Added `scripts/validate_p106_execution_gate.py`, which validates the P106
+  budget, attempt, pricing, exact-model, delegated-quality, and P105 contract
+  prerequisites fail-closed.
+- Live inference remains closed pending Coordinator inspection of current
+  pricing/model evidence and paid token-span checkpoints. Raw prompts, source
+  text, transcripts, provider details, and outputs remain ignored.
+
+## 2026-07-13 - Added P106 lane audit and comparison synthesis
+
+- Added `scripts/audit_p106_lane.py` for deterministic P89 schema, composition,
+  exact source-anchor, and useful-yield checks on ignored lane outputs.
+- Added `scripts/synthesize_p106_comparison.py` to combine both sanitized lane
+  audits with catalog-backed token records under the P106 cost caps.
+- Added focused tests for lane auditing, comparison verdict separation, gate
+  tampering, and P105 contract validation.
+- The live comparison remains unexecuted; no quality, protocol, or economics
+  verdict is promoted without inspected runtime evidence.
+
+## 2026-07-13 - P106 native binding preflight corrected
+
+- Independent native-Codex review confirmed that P102-P110 exclude Copilot
+  transport entirely; the intended execution is native Codex Coordinator ->
+  `ollama_supervisor` -> `ollama_worker`.
+- Hardened the P106 gate to inspect native role bindings before live inference.
+- The gate now fails closed on the current Worker binding: P105 requires
+  `qwen3.6:35b-a3b-bf16`, while the native binding currently resolves to
+  `qwen3-coder:latest`.
+- No P106 model/configuration change was made; reconciling that binding is a
+  separately authorized prerequisite.
+
+## 2026-07-13 - Recovered P106 quality candidates with strict schema evidence
+
+- Added the strict Responses API JSON Schema runner in
+  `scripts/run_p106_luna_structured.py` after two prompt-only Luna outputs
+  failed P89 required-field/enum validation.
+- The strict direct Luna probe produced 11 valid records, 100% useful yield,
+  and zero critical source-anchor defects.
+- The delegated Worker first produced 8 records at 87.5% useful yield with one
+  bad source quote; one evidence-based repair produced 8 valid records at
+  100% useful yield with zero critical anchor defects.
+- A native `qwen3-coder:latest` Supervisor independently inspected the repaired
+  Worker output and returned `P106_DELEGATED_SUPERVISOR_VERIFIED`.
+- These are quality candidates, not a completed P106 comparison: the direct
+  probe occurred before the prescribed delegated-first ordering was recovered,
+  and Coordinator span/economics evidence plus the sanitized comparison packet
+  remain open.
+
+## 2026-07-13 - Tested recursive native subagent depth
+
+- Raised project `.codex/config.toml` to `agents.max_depth = 3` and updated the
+  native configuration validator accordingly.
+- A bounded Supervisor probe was launched through the native subagent surface,
+  but the Supervisor emitted function-call markup as text instead of invoking a
+  real nested Worker. No child-session event, Worker artifact, or P106 result
+  was produced.
+- Therefore `max_depth = 3` is a necessary configuration change, not yet proof
+  that the current nested Supervisor runtime can execute P106. The next probe
+  must capture an actual child-session event and Worker output before this lane
+  becomes the preferred delegation surface.
+
+## 2026-07-13 - Ran bounded native P106 delegated attempts
+
+- Corrected the native `ollama_worker` binding to the P105-required
+  `qwen3.6:35b-a3b-bf16`; the P106 gate and focused tests then passed.
+- Native attempt `p106-native-delegated-r1` created a Luna Coordinator and
+  Supervisor, but the Supervisor's first Worker spawn was rejected because it
+  supplied a model override; no Worker or output was produced.
+- The one evidence-based repair, `p106-native-delegated-r2`, explicitly removed
+  the model override. The Supervisor still terminated after emitting a shell-call
+  transcript without creating a Worker child.
+- Both attempts produced zero candidate records and no valid token-span pair;
+  therefore the direct lane was correctly not started and no quality, protocol,
+  or economics success claim is made. Raw evidence remains ignored under
+  `runtime/agent_jobs/p106-native-delegated-r1/` and `p106-native-delegated-r2/`.
+
 ## 2026-07-13 - Activated P111 native recursive Codex UI delegation
 
 - The maintainer explicitly authorized P111 as a parallel infrastructure lane
@@ -3218,3 +3300,22 @@ issues, pull requests, and closeout comments.
 - Reconciled the roadmap and phase evidence record to the final merged and
   closed state. P106 remains active and its quality and economics gates remain
   unchanged.
+
+## 2026-07-13 - Closed P106 as a qualified diagnostic
+
+- Generated the deterministic sanitized comparison packet at
+  `benchmarks/document_library/p106_matched_execution_comparison.json`.
+- Preserved the independent verdicts: quality validated, protocol not accepted,
+  and economics not usable. Direct and repaired delegated outputs both reached
+  100% useful yield with zero critical source-anchor defects.
+- Recorded the direct GPT-5.6 Luna bounded upper cost estimate of `$0.020963`;
+  delegated and total paid costs remain unknown because the required
+  Coordinator token-span boundary was not captured.
+- Exercised the P111 Agent Hub once against the P106 task as an explicitly
+  non-counting shadow rehearsal. The nested topology appeared, but the Worker
+  persisted as a generic OpenAI child with no configured role, emitted only
+  five records, and failed the composition gate. The run stopped without repair
+  or retry and remains ignored under `runtime/agent_jobs/`.
+- Closed P106 qualified rather than spending a third out-of-contract delegated
+  attempt. P107 may now make a fail-closed no-go or targeted-remediation
+  decision; P108-P110 remain gated.

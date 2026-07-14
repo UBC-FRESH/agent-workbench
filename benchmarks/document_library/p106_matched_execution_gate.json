@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "phase": "P106",
+  "status": "live_run_gate",
+  "live_inference_allowed": false,
+  "parent_issue": 629,
+  "child_issues": {"P106.1": 630, "P106.2": 631, "P106.3": 632, "P106.4": 633},
+  "p105_contract": "benchmarks/document_library/p105_matched_benchmark_contract.json",
+  "budgets_usd": {"total_paid_coordinator_cap": 0.25, "delegated_lane_stop_threshold": 0.125},
+  "pricing": {"catalog_required": true, "exact_model_required": true, "effective_date_required": true},
+  "native_bindings_required": true,
+  "lanes": {
+    "direct": {"coordinator_model": "GPT-5.6 Luna"},
+    "delegated": {
+      "coordinator_model": "GPT-5.6 Luna",
+      "supervisor_model": "qwen3-coder:latest",
+      "worker_model": "qwen3.6:35b-a3b-bf16"
+    }
+  },
+  "attempts": {"initial": 1, "evidence_based_repairs_max": 1},
+  "delegated_quality_gate": {"minimum_useful_yield": 0.9, "critical_source_anchor_defects_max": 0},
+  "required_evidence": ["coordinator_span_start", "coordinator_span_end", "token_classes", "pricing_provenance", "exact_model_evidence", "structured_output_schema_evidence"],
+  "structured_output": {
+    "required": true,
+    "enforce_required_fields": true,
+    "enforce_allowed_object_types": true,
+    "repair_missing_fields": false
+  },
+  "activation_decision": "pending_coordinator_evidence_review"
+}

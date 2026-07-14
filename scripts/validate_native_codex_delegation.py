@@ -20,6 +20,11 @@ EXPECTED_AGENTS = {
     "ollama_supervisor": "ollama_supervisor.toml",
     "ollama_worker": "ollama_worker.toml",
 }
+EXPECTED_HONEYCOMB_AGENTS = {
+    "gpt_luna_supervisor": ("gpt_luna_supervisor.toml", "gpt-5.6-luna", "medium"),
+    "gpt_luna_worker": ("gpt_luna_worker.toml", "gpt-5.6-luna", "low"),
+    "gpt_sol_advisor": ("gpt_sol_advisor.toml", "gpt-5.6-sol", "high"),
+}
 EXPECTED_EDGES = {
     ("coordinator", "ollama_supervisor"),
     ("ollama_supervisor", "ollama_worker"),
@@ -38,9 +43,13 @@ def validate_profiles(config_root: Path) -> list[str]:
     """Return configuration errors for the tracked native role surfaces."""
     errors: list[str] = []
     config = read_toml(config_root / "config.toml", errors)
+    if config.get("model") != "gpt-5.6":
+        errors.append("config.toml must set the Coordinator model to gpt-5.6")
+    if config.get("model_reasoning_effort") != "high":
+        errors.append("config.toml must set Coordinator reasoning effort to high")
     agents = config.get("agents")
     if not isinstance(agents, dict) or agents.get("max_depth") != 2:
-        errors.append("config.toml must set agents.max_depth to 2")
+        errors.append("config.toml must set agents.max_depth to 2 for recursive delegation")
 
     for name, filename in EXPECTED_AGENTS.items():
         profile = read_toml(config_root / "agents" / filename, errors)
@@ -57,6 +66,17 @@ def validate_profiles(config_root: Path) -> list[str]:
             errors.append(
                 f"{filename} must use the agent_workbench_ollama_readonly permission profile"
             )
+    for name, (filename, model, effort) in EXPECTED_HONEYCOMB_AGENTS.items():
+        profile = read_toml(config_root / "agents" / filename, errors)
+        for required in ("name", "description", "developer_instructions"):
+            if not isinstance(profile.get(required), str) or not profile[required].strip():
+                errors.append(f"{filename} must define non-empty {required}")
+        if profile.get("name") != name:
+            errors.append(f"{filename} must name agent {name}")
+        if profile.get("model") != model:
+            errors.append(f"{filename} must set model {model}")
+        if profile.get("model_reasoning_effort") != effort:
+            errors.append(f"{filename} must set reasoning effort {effort}")
     return errors
 
 
