@@ -3270,3 +3270,32 @@ issues, pull requests, and closeout comments.
   therefore the direct lane was correctly not started and no quality, protocol,
   or economics success claim is made. Raw evidence remains ignored under
   `runtime/agent_jobs/p106-native-delegated-r1/` and `p106-native-delegated-r2/`.
+## 2026-07-13 - Activated P111 native recursive Codex UI delegation
+
+- The maintainer explicitly authorized P111 as a parallel infrastructure lane
+  alongside the still-active P106 benchmark; P111 does not alter P106/P107
+  quality or economics gates.
+- Created parent issue #634 and child issues #635-#638 on clean branch
+  `feature/p111-native-recursive-ui-delegation` from current `origin/main`.
+- Productized the accepted Coordinator -> `gpt_luna_supervisor` ->
+  `ollama_worker` native UI proof with exact depth, parentage, provider, model,
+  reasoning, and terminal-event validation.
+- Pinned generic `gpt-5.6` at `high` reasoning because the tested build exposed
+  the configured-role `agent_type` surface through multi-agent v1; both accepted
+  edges require `fork_context: false` and no model override.
+- Added a fail-closed depth-2 inspector, configuration drift validator, focused
+  negative tests, public-safe phase evidence record, and IDE operator playbook.
+- Raw rollouts and provider details remain ignored. The accepted proof supports
+  recursive protocol and interactive UI usability, while economics remains
+  explicitly unproven.
+- Opened PR #639, synchronized and closed child issues #635-#638, and left
+  parent issue #634 open for the required post-merge closure gate.
+
+## 2026-07-13 - Closed P111 native recursive Codex UI delegation
+
+- Merged PR #639 as merge commit `ba1cfafe0122965e85bd688135655c5b1c6952fe`.
+- GitHub automatically closed parent issue #634 after the merge; child issues
+  #635-#638 were already closed with synchronized completion metadata.
+- Reconciled the roadmap and phase evidence record to the final merged and
+  closed state. P106 remains active and its quality and economics gates remain
+  unchanged.

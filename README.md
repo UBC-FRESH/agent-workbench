@@ -100,6 +100,8 @@ See:
   deployment.
 - `playbooks/document_indexing_recipe.md` for the public technical PDF
   document-indexing recipe.
+- `playbooks/native_recursive_codex_ui.md` for the accepted native Codex UI
+  Coordinator -> Supervisor -> remote-Ollama Worker workflow.
 - `model_profiles/` for evidence-scoped worker model capability notes.
 - `templates/workbench_templates/` for FreshForge-style graph envelopes around
   agent-assisted project work.
