@@ -114,7 +114,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P103 Paid Coordinator economics trial | #611 | `feature/p103-paid-coordinator-economics-trial` | Complete (qualified) |
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
-| P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Active — live-run evidence gated; P111 does not alter its gates |
+| P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Complete (qualified) — quality validated; protocol and economics not accepted |
 | P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
@@ -5350,49 +5350,43 @@ Parent issue: #629
 
 Branch: `feature/p106-matched-roi-benchmark`
 
-Status: active — implementation and gate preparation; live inference remains
-closed until the Coordinator approves the inspected gate evidence; completed
-P111 does not alter the matched benchmark contract.
+Status: complete (qualified) — quality validated; protocol and economics not
+accepted. P111 and its non-counting Agent Hub shadow do not alter the matched
+benchmark contract.
 
 Goal: measure quality and paid cost for the P105 task through delegated and
 direct GPT-5.6 Luna lanes.
 
 Tasks:
 
-- [ ] P106.1 Budget and checkpoint gate (#630)
+- [x] P106.1 Budget and checkpoint gate (#630)
   - [x] Set a `$0.25` total paid cap and `$0.125` delegated-lane stop threshold.
   - [x] Require catalog-backed pricing and exact-model evidence.
-- [ ] P106.2 Delegated lane (#631)
+- [x] P106.2 Delegated lane (#631)
   - [x] Run one attempt and at most one evidence-based repair.
   - [x] Audit every emitted record; require at least 90% useful yield and no
         critical source-anchor defect before the direct lane.
-  - [ ] Re-run in prescribed delegated-first order with Coordinator span and
-        complete Supervisor-authored ticket evidence.
-- [ ] P106.3 Direct lane (#632)
+  - [x] Stop after the native attempt and one repair failed protocol and token
+        boundaries; do not spend a third attempt.
+- [x] P106.3 Direct lane (#632)
   - [x] Run the identical source/schema task directly with GPT-5.6 Luna.
   - [x] Apply the same audit and quality rules; strict structured output passed.
-  - [ ] Re-run only as the post-delegated lane after protocol ordering is fixed.
-- [ ] P106.4 Sanitized comparison packet (#633)
-  - [ ] Record quality, protocol, latency, token classes, and bounded costs.
-  - [ ] Keep raw source text, prompts, transcripts, and outputs ignored.
+  - [x] Record the ordering defect instead of rerunning after the attempt cap.
+- [x] P106.4 Sanitized comparison packet (#633)
+  - [x] Record quality, protocol, latency, token classes, and bounded known cost.
+  - [x] Keep raw source text, prompts, transcripts, and outputs ignored.
 
 Observed quality evidence (ignored runtime, 2026-07-13): the strict direct
 Luna lane produced 11 valid records with 100% useful yield and zero critical
 anchor defects. The delegated Worker produced 8 valid records after one
 evidence-based quote repair; the Supervisor independently verified the
 repaired output, which also reached 100% useful yield and zero anchor defects.
-These are quality candidates only: the direct call occurred before the
-delegated-first protocol was recovered, and paid Coordinator span/economics
-evidence is still missing.
-
-Planned next steps:
-
-1. Run the delegated-first native path with a Supervisor-authored ticket and
-   complete Coordinator start/end checkpoints.
-2. Run the strict structured Luna direct lane only after delegated quality and
-   protocol acceptance.
-3. Build the sanitized comparison packet with catalog-backed pricing, token
-   classes, latency, and separate quality/protocol/economics verdicts.
+The sanitized packet preserves `quality_validated_candidate: true` while
+recording `protocol_accepted_candidate: false` and `economics_usable: false`.
+The known direct bounded cost is `$0.020963`; the delegated and total paid costs
+remain unknown because the required Coordinator span boundary was not captured.
+P106 stops rather than authorizing a third delegated attempt. See
+`planning/phase106_matched_execution_result.md`.
 
 ## Phase 107: Economics Decision And Delegation Policy
 

@@ -45,3 +45,11 @@ installation, substantive TSA23 expansion, or release work.
 Raw prompts, source text, provider details, transcripts, and model outputs stay
 under ignored `runtime/` or `tmp/` paths. Only sanitized aggregate evidence may
 be promoted into tracked planning or benchmark files.
+
+## Closeout
+
+The attempt budget ended with quality validated but protocol and economics not
+accepted. The deterministic qualified packet is
+`benchmarks/document_library/p106_matched_execution_comparison.json`; the
+closeout interpretation is `planning/phase106_matched_execution_result.md`.
+No third delegated attempt is authorized by P106.

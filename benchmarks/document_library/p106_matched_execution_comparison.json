@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "phase": "P106",
+  "status": "needs-supervisor-review",
+  "verdicts": {
+    "quality_validated_candidate": true,
+    "protocol_accepted_candidate": false,
+    "economics_usable": false
+  },
+  "lanes": {
+    "delegated": {
+      "model": "GPT-5.6 Luna",
+      "record_count": 8,
+      "useful_record_count": 8,
+      "useful_yield": 1.0,
+      "critical_source_anchor_defect_count": 0,
+      "composition_ok": true,
+      "quality_gate": "pass",
+      "protocol_verdict": "fail",
+      "latency_seconds": null,
+      "token_classes": {
+        "supervisor_input_tokens": 0,
+        "supervisor_cached_input_tokens": 0,
+        "supervisor_output_tokens": 0,
+        "supervisor_reasoning_output_tokens": 0,
+        "worker_input_tokens": 0,
+        "worker_output_tokens": 0
+      },
+      "economics_evidence_usable": false,
+      "paid_coordinator_cost_usd": null,
+      "pricing_provenance": {
+        "model_id": null,
+        "effective_date": null,
+        "price_source": null
+      }
+    },
+    "direct": {
+      "model": "GPT-5.6 Luna",
+      "record_count": 11,
+      "useful_record_count": 11,
+      "useful_yield": 1.0,
+      "critical_source_anchor_defect_count": 0,
+      "composition_ok": true,
+      "quality_gate": "pass",
+      "protocol_verdict": "fail",
+      "latency_seconds": 11.202019,
+      "token_classes": {
+        "supervisor_input_tokens": 3791,
+        "supervisor_cached_input_tokens": 0,
+        "supervisor_output_tokens": 2604,
+        "supervisor_reasoning_output_tokens": 100,
+        "worker_input_tokens": 0,
+        "worker_output_tokens": 0
+      },
+      "economics_evidence_usable": true,
+      "paid_coordinator_cost_usd": 0.020963,
+      "pricing_provenance": {
+        "model_id": "gpt-5.6-luna",
+        "effective_date": "2026-07-13",
+        "price_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna"
+      }
+    }
+  },
+  "total_paid_coordinator_cost_usd": null,
+  "known_paid_coordinator_cost_usd": 0.020963,
+  "verdict_errors": {
+    "quality": [],
+    "protocol": [
+      "delegated: exact Coordinator model evidence is missing",
+      "delegated: protocol verdict did not pass",
+      "direct: protocol verdict did not pass"
+    ],
+    "economics": [
+      "delegated: catalog-backed GPT-5.6 Luna pricing is required",
+      "delegated: Coordinator token-span boundary is not usable"
+    ]
+  },
+  "errors": [
+    "delegated: exact Coordinator model evidence is missing",
+    "delegated: protocol verdict did not pass",
+    "direct: protocol verdict did not pass",
+    "delegated: catalog-backed GPT-5.6 Luna pricing is required",
+    "delegated: Coordinator token-span boundary is not usable"
+  ],
+  "raw_inputs_excluded": true
+}

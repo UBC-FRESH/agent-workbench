@@ -43,13 +43,13 @@ def validate_profiles(config_root: Path) -> list[str]:
     """Return configuration errors for the tracked native role surfaces."""
     errors: list[str] = []
     config = read_toml(config_root / "config.toml", errors)
-    if config.get("model") != "gpt-5.6-terra":
-        errors.append("config.toml must set the Coordinator model to gpt-5.6-terra")
-    if config.get("model_reasoning_effort") != "medium":
-        errors.append("config.toml must set Coordinator reasoning effort to medium")
+    if config.get("model") != "gpt-5.6":
+        errors.append("config.toml must set the Coordinator model to gpt-5.6")
+    if config.get("model_reasoning_effort") != "high":
+        errors.append("config.toml must set Coordinator reasoning effort to high")
     agents = config.get("agents")
-    if not isinstance(agents, dict) or agents.get("max_depth") != 1:
-        errors.append("config.toml must set agents.max_depth to 1 for the single-level hub")
+    if not isinstance(agents, dict) or agents.get("max_depth") != 2:
+        errors.append("config.toml must set agents.max_depth to 2 for recursive delegation")
 
     for name, filename in EXPECTED_AGENTS.items():
         profile = read_toml(config_root / "agents" / filename, errors)

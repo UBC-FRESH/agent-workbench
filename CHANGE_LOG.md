@@ -3270,6 +3270,7 @@ issues, pull requests, and closeout comments.
   therefore the direct lane was correctly not started and no quality, protocol,
   or economics success claim is made. Raw evidence remains ignored under
   `runtime/agent_jobs/p106-native-delegated-r1/` and `p106-native-delegated-r2/`.
+
 ## 2026-07-13 - Activated P111 native recursive Codex UI delegation
 
 - The maintainer explicitly authorized P111 as a parallel infrastructure lane
@@ -3299,3 +3300,22 @@ issues, pull requests, and closeout comments.
 - Reconciled the roadmap and phase evidence record to the final merged and
   closed state. P106 remains active and its quality and economics gates remain
   unchanged.
+
+## 2026-07-13 - Closed P106 as a qualified diagnostic
+
+- Generated the deterministic sanitized comparison packet at
+  `benchmarks/document_library/p106_matched_execution_comparison.json`.
+- Preserved the independent verdicts: quality validated, protocol not accepted,
+  and economics not usable. Direct and repaired delegated outputs both reached
+  100% useful yield with zero critical source-anchor defects.
+- Recorded the direct GPT-5.6 Luna bounded upper cost estimate of `$0.020963`;
+  delegated and total paid costs remain unknown because the required
+  Coordinator token-span boundary was not captured.
+- Exercised the P111 Agent Hub once against the P106 task as an explicitly
+  non-counting shadow rehearsal. The nested topology appeared, but the Worker
+  persisted as a generic OpenAI child with no configured role, emitted only
+  five records, and failed the composition gate. The run stopped without repair
+  or retry and remains ignored under `runtime/agent_jobs/`.
+- Closed P106 qualified rather than spending a third out-of-contract delegated
+  attempt. P107 may now make a fail-closed no-go or targeted-remediation
+  decision; P108-P110 remain gated.
