@@ -5400,16 +5400,27 @@ Goal: convert P106 evidence into a fail-closed authorization decision.
 
 Tasks:
 
-- [ ] P107.1 Evaluate quality non-inferiority
+- [ ] P107.1 Evaluate protocol and quality non-inferiority
+  - [ ] Encode `gpt_luna_supervisor` as the accepted recursive Supervisor and
+        reject `ollama_supervisor` for child-spawning work pending new evidence.
   - [ ] Require delegated useful yield at least 90% and within five percentage
         points of direct.
   - [ ] Reject any critical provenance or protocol defect.
 - [ ] P107.2 Evaluate economics
+  - [ ] Run at most one bounded Luna Supervisor -> Ollama Worker measurement
+        with clean paid-Coordinator start/end token checkpoints.
   - [ ] Require conservative delegated paid cost at least 20% below direct.
   - [ ] Reject missing spans, unverified model identity, or legacy pricing.
 - [ ] P107.3 Encode and document policy
   - [ ] Authorize P108 only when every gate passes.
   - [ ] Otherwise stop the alpha arc and open one targeted repair phase.
+
+Entry evidence: P106 closed with quality validated but protocol and economics
+unaccepted. Two later fresh, non-counting rehearsals reached the configured
+Qwen/Ollama Supervisor at depth 1 but failed the native second-edge spawn and
+created no Worker. P111's GPT-5.6 Luna Supervisor -> Ollama Worker topology is
+the only accepted recursive profile and the only profile eligible for the
+single bounded P107 economics measurement.
 
 ## Phase 108: Fresh TSA23 Slice Preparation
 

@@ -45,6 +45,35 @@ Raw shadow evidence remains ignored under
 `runtime/agent_jobs/p106-agent-hub-shadow-r1/`. It does not change the P106
 comparison verdicts or consume a new benchmark attempt.
 
+## Post-closeout recursive Supervisor evidence
+
+Two further fresh-session, non-counting rehearsals tested
+`ollama_supervisor` at depth 1. In both runs the root used the accepted generic
+`gpt-5.6`/`high` multi-agent v1 surface and created the configured
+`agent_workbench_ollama` `qwen3-coder:latest` Supervisor with
+`fork_context: false` and no model override. The first edge therefore worked as
+configured.
+
+The second edge failed in both rehearsals. The R2 Supervisor emitted an
+unsupported `multi_agent_v1` call with a malformed nested spawn payload and
+then attempted unrelated serial/local commands. The R3 Supervisor emitted
+`multi_agent_v1` with an empty payload, received `unsupported call:
+multi_agent_v1`, and then issued five prohibited shell calls. Neither run
+created an `ollama_worker` child or benchmark artifact.
+
+The initial R2 sanitized verdict reported zero native spawn calls because its
+inspector did not classify the malformed function name as a spawn attempt. Raw
+persisted trace evidence is authoritative for that distinction; R3's verdict
+records the malformed call explicitly. The paired failures establish an
+operational role-selection boundary, not a root-cause allocation between model
+tool selection and provider/tool-schema normalization.
+
+These rehearsals remain ignored under `runtime/agent_jobs/`, do not reopen
+P106, do not consume benchmark attempts, and do not change its qualified
+verdicts. They remove `ollama_supervisor` from the accepted recursive
+Supervisor path pending new contrary evidence. The accepted recursive profile
+remains GPT-5.6 Luna Supervisor -> Ollama Worker.
+
 ## Reproduction
 
 ```powershell

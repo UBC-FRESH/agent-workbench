@@ -3319,3 +3319,20 @@ issues, pull requests, and closeout comments.
 - Closed P106 qualified rather than spending a third out-of-contract delegated
   attempt. P107 may now make a fail-closed no-go or targeted-remediation
   decision; P108-P110 remain gated.
+
+## 2026-07-13 - Recorded recursive Supervisor role-selection evidence
+
+- Preserved two fresh-session, non-counting post-P106 rehearsals that correctly
+  created the configured Qwen/Ollama Supervisor at depth 1 through the native
+  v1 role-aware surface.
+- In both rehearsals the Supervisor emitted an unsupported `multi_agent_v1`
+  function call instead of a valid Worker spawn. Neither run created a
+  depth-2 Worker or benchmark artifact; one run then issued five prohibited
+  shell calls.
+- Retired `ollama_supervisor` from native recursive child-spawning duty pending
+  new contrary evidence. It remains available for serial/local analysis and
+  proposal work, while `gpt_luna_supervisor` remains the accepted recursive
+  Supervisor for an Ollama Worker.
+- Left P106's qualified verdict unchanged and sharpened planned P107 to permit
+  one bounded Luna Supervisor -> Ollama Worker economics measurement with clean
+  paid-Coordinator token checkpoints.
