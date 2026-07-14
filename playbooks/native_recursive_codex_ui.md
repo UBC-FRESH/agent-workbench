@@ -32,6 +32,18 @@ Do not perform the Worker task in the Coordinator or Supervisor.
 
 The important contract is the native `agent_type`, not the thread display name.
 
+## Supervisor selection
+
+Use `gpt_luna_supervisor` for the recursive Supervisor seat. Use
+`ollama_worker` for the bounded remote execution seat.
+
+Do not substitute `ollama_supervisor` in a production or benchmark proof. Two
+fresh non-counting rehearsals created that configured Qwen session correctly
+at depth 1, but it emitted unsupported `multi_agent_v1` calls and created no
+depth-2 Worker. The profile remains suitable for serial/local analysis that
+does not require native child spawning. Reopen the recursive Qwen lane only
+after a concrete runtime or model change provides a bounded repair hypothesis.
+
 ## Inspect and steer
 
 1. Expand the Codex subagent activity UI.
@@ -61,6 +73,11 @@ Regenerate the sanitized verdict from the ignored archive with
 In the accepted build, Terra and Sol roots exposed a v2 `task_name` surface that
 could not select configured roles. Start a fresh generic `gpt-5.6`/`high`
 session instead.
+
+`unsupported call: multi_agent_v1` from the Supervisor means the model emitted
+the tool namespace rather than a valid native `spawn_agent` call. Treat the
+second edge as absent. Do not fall back to shell scripts or provider inspection
+inside the same proof; stop and inspect the persisted trace.
 
 An error stating that full-history forked agents inherit the parent agent type,
 model, and reasoning means a role-bound spawn used inherited history. Set

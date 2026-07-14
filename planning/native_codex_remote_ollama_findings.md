@@ -225,7 +225,10 @@ The successful probe emitted warnings that should be separated from blockers:
 These warnings should be cleaned up where practical, but none invalidates the
 two accepted probe results.
 
-## Proposed Agent Roles and Escalation Relationships
+## Historical Proposed Agent Roles and Escalation Relationships
+
+The following was the pre-P111 hypothesis. The accepted recursive result and
+post-P111 rehearsals below supersede the free recursive Supervisor assignment.
 
 The target is not the largest possible agent hierarchy. It is a small hierarchy
 that spends expensive reasoning only where it changes the outcome:
@@ -478,7 +481,9 @@ packet, not a vague apology and another invitation to retry.
 Treat native Codex as the primary orchestration host:
 
 - paid OpenAI model: thin Coordinator;
-- configured Ollama model: default Supervisor;
+- GPT-5.6 Luna: default native recursive Supervisor;
+- configured Ollama Supervisor: serial/local analysis and proposal work only
+  unless a future bounded proof restores child-spawning eligibility;
 - configured Ollama models: bounded Workers;
 - paid Advisor: selective but mandatory at explicit decision gates;
 - tiered paid GPT rescue Workers: economy first, stronger models only after
@@ -583,3 +588,24 @@ sanitized verdict remain ignored under
 
 This proves recursive native role provenance and usable IDE interaction. It
 does not prove P106 benchmark acceptance or usable economics.
+
+## Post-P111 Recursive Supervisor Boundary
+
+Two fresh, non-counting rehearsals subsequently replaced the accepted Luna
+Supervisor with `ollama_supervisor`. In each rehearsal the generic
+`gpt-5.6`/`high` root correctly created the configured
+`agent_workbench_ollama` `qwen3-coder:latest` session at depth 1. This confirms
+that the first role-bound edge and remote provider remained functional.
+
+The Ollama Supervisor did not create a Worker in either rehearsal. It emitted
+the unsupported function name `multi_agent_v1` rather than a valid native
+`spawn_agent` invocation; one call contained a malformed nested payload and
+the other contained an empty payload. No depth-2 child session existed.
+
+The practical policy is therefore asymmetric: retain Qwen/Ollama for bounded
+Worker execution and serial/local analysis, but use `gpt_luna_supervisor` for
+the native recursive Supervisor seat. Stop retrying the failed Qwen recursive
+lane unless a concrete runtime or model change supplies a new testable fix.
+The evidence does not yet distinguish model tool-selection behavior from
+provider/tool-schema normalization, so it should not be presented as a general
+claim that Ollama-backed models cannot supervise agents.

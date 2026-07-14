@@ -88,6 +88,25 @@ Full-history forks are incompatible with changing configured roles. The
 runtime rejects a spawn that combines a different `agent_type` with inherited
 full history. Both accepted edges use `fork_context: false`.
 
+## Recursive Supervisor selection policy
+
+The accepted recursive seat is `gpt_luna_supervisor`. Two later fresh,
+non-counting rehearsals proved that `ollama_supervisor` could be created with
+the correct provider and model at depth 1, but its `qwen3-coder:latest` model
+failed to invoke the native Worker spawn contract at depth 2. Both rehearsals
+used the role-aware v1 root surface; each produced an unsupported
+`multi_agent_v1` call and no Worker child.
+
+Accordingly, use GPT-5.6 Luna for native recursive supervision and use the
+configured Ollama model for bounded Worker execution. The Qwen Supervisor
+profile may still be used for serial/local analysis or proposal work that does
+not require it to spawn a child. Do not use it for recursive production tests
+until a new bounded proof produces a correctly parented configured Worker.
+
+This is an operational allowlist decision. The evidence does not isolate
+whether the malformed calls originate in model behavior, adapter/tool-schema
+normalization, or their interaction.
+
 ## Privacy and authority boundary
 
 - Provider credentials, header values, endpoint details, and raw transcripts

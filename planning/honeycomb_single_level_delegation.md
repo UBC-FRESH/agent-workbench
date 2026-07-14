@@ -41,6 +41,24 @@ Default role configuration:
 - Advisor: selective review and strategic planning, not a routine execution
   node.
 
+## Native recursive profile
+
+When a task specifically requires a visible depth-2 chain in the Codex UI,
+use the P111-proven topology instead of the single-level approximation:
+
+```text
+Coordinator: generic gpt-5.6, high reasoning
+  -> Supervisor: gpt_luna_supervisor, gpt-5.6-luna, medium reasoning
+       -> Worker: ollama_worker, qwen3.6:35b-a3b-bf16, low reasoning
+```
+
+Both edges use the configured `agent_type`, `fork_context: false`, and no model
+override. `ollama_supervisor` is not on the recursive Supervisor allowlist:
+two fresh non-counting rehearsals reached the configured Qwen Supervisor at
+depth 1 but produced malformed unsupported native calls and no Worker at depth
+2. That profile remains available for serial/local analysis or proposal work
+that does not require child spawning.
+
 ## Within-session persistence
 
 Keep the named Supervisor and Advisor threads persistent for the duration of a
