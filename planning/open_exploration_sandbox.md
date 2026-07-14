@@ -46,9 +46,13 @@ Supervisor was already at depth `1`, so the missing native spawn tool and absent
 Worker descendant were expected consequences of configuration, not evidence
 that recursive spawning is unsupported.
 
-The project now explicitly sets `agents.max_depth = 2`. Recursive capability
-remains unresolved until a fresh Codex session reloads that configuration and
-captures a real depth-`2` Worker child or a new fail-closed result. Direct
-Coordinator spokes remain the proven fallback, not a final rejection of nested
-delegation. This does not change the historical P106 gate and economics
-contract.
+The corrected fresh-session run used generic `gpt-5.6` at `high` reasoning,
+multi-agent v1, `agents.max_depth = 2`, and `fork_context: false` on both
+role-bound edges. It created a real Luna Supervisor at depth `1` and a real
+`agent_workbench_ollama` Worker at depth `2`. The maintainer navigated into both
+child threads in the Codex UI and continued interacting directly with the
+nested Worker while observing the corresponding remote GPU activity. The
+accepted evidence and deterministic verdict are under
+`runtime/agent_jobs/honeycomb-native-depth2-ui-proof/`. This establishes a
+usable-adjacent recursive UI proof but does not change the historical P106 gate
+or supply usable economics evidence.

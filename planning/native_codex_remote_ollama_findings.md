@@ -200,8 +200,6 @@ agent loop can mediate tool execution for the remote model.
 
 ## What Is Not Yet Proven
 
-- A custom Ollama Supervisor can spawn a second custom Ollama Worker.
-- Both delegation edges are visible in durable session evidence.
 - A Supervisor can monitor, nudge, validate, and stop a Worker economically.
 - The TSA23 extraction workflow succeeds through the native nested hierarchy.
 - Native Codex delegation is cheaper or more reliable than the earlier paths;
@@ -209,12 +207,21 @@ agent loop can mediate tool execution for the remote model.
 - VS Code-hosted Codex inherits the provider-header environment variables in a
   convenient and safe way. The successful probes used a controlled CLI process.
 
-Direct Coordinator fan-out to configured OpenAI and Ollama child roles is now
+Direct Coordinator fan-out to configured OpenAI and Ollama child roles is
 proven in a fresh VS Code Codex session. The first recursive probe was invalid
 because Codex applied the unset `agents.max_depth` default of `1`, leaving the
-depth-`1` Supervisor unable to create a depth-`2` Worker. Project configuration
-now explicitly sets `max_depth = 2` with six available threads; a fresh-session
-recursive probe must capture the second delegation edge before it is accepted.
+depth-`1` Supervisor unable to create a depth-`2` Worker.
+
+A later fresh VS Code Codex session proved both recursive delegation edges.
+Generic `gpt-5.6` at `high` reasoning exposed the role-aware multi-agent v1
+surface. The Coordinator spawned `gpt_luna_supervisor`, which spawned
+`ollama_worker`; both calls used `fork_context: false` and no model override.
+The depth-`2` child resolved to `agent_workbench_ollama` with
+`qwen3.6:35b-a3b-bf16` at `low` reasoning. The maintainer then opened and
+interacted with that nested Worker directly in the Codex UI across five turns
+while independently observing sustained GPU activity on the remote host. The
+deterministic verdict and raw ignored evidence are under
+`runtime/agent_jobs/honeycomb-native-depth2-ui-proof/`.
 
 ## Warnings and Non-Blocking Observations
 

@@ -30,6 +30,7 @@ def validate(codex_home: Path, project_config: Path | None = None) -> list[str]:
     agents = config.get("agents")
     if not isinstance(agents, dict):
         return errors + ["config.toml must define [agents]"]
+    project: dict[str, object] = {}
     project_agents: dict[str, object] = {}
     if project_config is not None:
         project = read_toml(project_config, errors)
@@ -42,6 +43,10 @@ def validate(codex_home: Path, project_config: Path | None = None) -> list[str]:
         errors.append("agents.max_threads must be 6")
     if max_depth != 2:
         errors.append("effective agents.max_depth must be 2")
+    root_model = project.get("model", config.get("model"))
+    root_effort = project.get("model_reasoning_effort", config.get("model_reasoning_effort"))
+    if root_model != "gpt-5.6" or root_effort != "high":
+        errors.append("effective UI Coordinator must be gpt-5.6 with high reasoning for role-aware v1 spawning")
     features = config.get("features", {})
     if not isinstance(features, dict) or features.get("multi_agent") is not True:
         errors.append("features.multi_agent must be true")

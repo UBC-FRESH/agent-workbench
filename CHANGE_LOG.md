@@ -3356,3 +3356,25 @@ issues, pull requests, and closeout comments.
   a fallback only.
 - Set project `agents.max_depth = 2` and `agents.max_threads = 6`. A fresh Codex
   session is required before running the valid depth-`2` nested-edge proof.
+
+## 2026-07-13 - Accepted usable recursive native Honeycomb UI proof
+
+- Pinned the exploration workspace to generic `gpt-5.6` at `high` reasoning,
+  which exposed the role-aware multi-agent v1 spawn surface in a fresh VS Code
+  Codex session.
+- Proved Coordinator -> `gpt_luna_supervisor` -> `ollama_worker` parentage with
+  configured roles at depths `1` and `2`; both spawns used
+  `fork_context: false` and no model override.
+- The nested Worker resolved to `agent_workbench_ollama` with
+  `qwen3.6:35b-a3b-bf16` at `low` reasoning and preserved that identity across
+  five interactive UI turns.
+- The maintainer navigated from the Coordinator into the Supervisor and then
+  into the Worker, chatted directly with the Worker, and independently observed
+  sustained GPU activity on the configured remote Ollama host.
+- Archived the three raw rollouts under ignored
+  `runtime/agent_jobs/honeycomb-native-depth2-ui-proof/raw_sessions/` and added
+  `scripts/inspect_native_honeycomb_depth2_proof.py` plus focused tests to
+  regenerate a public-safe fail-closed verdict.
+- The result is a usable-adjacent recursive native UI proof. Benchmark quality,
+  productive mutation authority, production reliability, and Coordinator
+  economics remain unproven and separate.

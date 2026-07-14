@@ -34,7 +34,9 @@ as proof.
 
 Default role configuration:
 
-- Coordinator: `gpt-5.6-terra`, `medium` reasoning effort.
+- Coordinator: generic `gpt-5.6`, `high` reasoning effort when recursive
+  configured-role spawning is required. This combination exposed the
+  role-aware multi-agent v1 surface in the accepted UI proof.
 - Supervisor: `gpt-5.6-luna`, `medium` reasoning effort.
 - Worker: task-selected; use `qwen3.6:35b-a3b-bf16` or another configured
   Ollama model for zero paid-token-cost grind work, or GPT-5.6 Luna when paid
@@ -157,13 +159,11 @@ Reproduction checklist:
    `runtime/agent_jobs/honeycomb-native-fresh-session/`.
 
 This acceptance proves direct single-level named-role selection and remote
-Ollama execution from a fresh native Codex session. It does not prove recursive
-Supervisor-to-Worker spawning, tracked-file mutation authority, benchmark
-quality, or usable Coordinator economics.
+Ollama execution from a fresh native Codex session.
 
-## Invalid nested-edge probe and required rerun
+## Recursive native UI acceptance
 
-The immediate follow-on probe attempted to test the missing edge. The Coordinator
+An immediate follow-on probe attempted to test the missing edge. The Coordinator
 spawned `gpt_luna_supervisor` thread
 `019f5d1f-4add-7b00-be43-b8cb3213c562` and instructed it to spawn exactly one
 configured `ollama_worker` without a model override.
@@ -177,10 +177,7 @@ observations are expected under the depth limit and do not establish whether
 recursive spawning works when depth `2` is allowed.
 
 The previous `unsupported` verdict and the decision to adopt Coordinator-owned
-direct spokes as the only supported topology were invalid conclusions. Direct
-Coordinator spokes remain proven and usable, but recursive
-Supervisor-to-Worker capability is unresolved until a correctly configured
-fresh-session test runs.
+direct spokes as the only supported topology were invalid conclusions.
 
 The valid nested topology under test is:
 
@@ -192,9 +189,52 @@ The valid nested topology under test is:
                     [Ollama Worker]
 ```
 
-The project configuration now explicitly sets `agents.max_depth = 2` and
-`agents.max_threads = 6`. A fresh Codex session must reload that configuration
-before the test is rerun. Acceptance requires a real depth-`2` Worker child,
-correct parentage to the Luna Supervisor, expected Ollama provider/model
-metadata, the exact Worker marker, and a Supervisor verification marker. The
-current session and the invalid depth-`1` result cannot supply that evidence.
+On 2026-07-13, the correctly configured fresh VS Code Codex session proved this
+recursive topology and made it usable from the IDE. The accepted session chain
+was:
+
+| Depth | Thread | Role | Provider | Model | Reasoning |
+| --- | --- | --- | --- | --- | --- |
+| 0 | `019f5e29-9020-74a3-afed-b248718dac3d` | Coordinator | `openai` | `gpt-5.6` | `high` |
+| 1 | `019f5e29-bd4d-75b0-aa5c-5dc0936c5dfd` | `gpt_luna_supervisor` | `openai` | `gpt-5.6-luna` | `medium` |
+| 2 | `019f5e29-f28e-7223-aac0-35e81ceffa0e` | `ollama_worker` | `agent_workbench_ollama` | `qwen3.6:35b-a3b-bf16` | `low` |
+
+Both edges used the role-aware multi-agent v1 `spawn_agent` contract with the
+exact configured `agent_type`, `fork_context: false`, and no model override.
+The Worker rollout names the Luna Supervisor as its parent, and both child
+rollouts contain terminal `task_complete` events.
+
+The UI proof went beyond a one-line marker. The maintainer opened the
+Supervisor thread from the Coordinator UI, opened the nested Worker thread
+from the Supervisor UI, and continued chatting directly with that same Worker.
+The Worker retained its Ollama provider/model across five turn contexts,
+completed three turns, executed ten shell tool calls during an extended
+exercise, survived an intentional turn interruption, and completed cleanup.
+The maintainer independently observed the corresponding sustained GPU activity
+on the configured remote Ollama host.
+
+Two constraints are part of the accepted reproduction contract:
+
+1. The root IDE session must resolve to generic `gpt-5.6` at `high` reasoning,
+   which exposed multi-agent v1 in the tested Codex build. GPT-5.6 Terra and Sol
+   sessions exposed v2, whose `task_name` call shape created generic OpenAI
+   children with `agent_role: null` even when their labels matched configured
+   role names.
+2. Role-bound spawns must set `fork_context: false`. A full-history fork
+   inherits the parent agent type, model, and reasoning effort and is rejected
+   when combined with a different `agent_type`.
+
+Project `.codex/config.toml` therefore pins generic `gpt-5.6`, `high` reasoning,
+`agents.max_depth = 2`, and `agents.max_threads = 6` for this exploration lane.
+The machine-local role/provider configuration remains outside the repository.
+
+The raw Coordinator, Supervisor, and Worker rollouts are copied into ignored
+storage under `runtime/agent_jobs/honeycomb-native-depth2-ui-proof/raw_sessions/`.
+The public-safe deterministic verdict is
+`runtime/agent_jobs/honeycomb-native-depth2-ui-proof/sanitized_verdict.json` and
+is regenerated with `scripts/inspect_native_honeycomb_depth2_proof.py`.
+
+This establishes a usable-adjacent proof of native recursive role-bound
+delegation in the actual Codex UI. It does not establish benchmark quality,
+tracked-file mutation policy, production reliability, or usable Coordinator
+economics; those remain separate tests.

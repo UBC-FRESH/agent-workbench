@@ -25,6 +25,8 @@ def test_accepts_complete_machine_local_honeycomb_config(tmp_path: Path) -> None
     module = load_module()
     home = tmp_path / ".codex"
     write(home / "config.toml", """
+model = "gpt-5.6"
+model_reasoning_effort = "high"
 [agents]
 max_threads = 6
 max_depth = 2
@@ -71,6 +73,14 @@ env_http_headers = { "X-Test" = "TEST_ENV" }
         provider = '\nmodel_provider = "agent_workbench_ollama"' if name == "ollama_worker" else ""
         write(home / "agents" / filename, f'name = "{name}"\nmodel = "{model}"\nmodel_reasoning_effort = "{effort}"{provider}\n')
     write(home / "agent-workbench-coordinator.config.toml", 'model = "gpt-5.6-terra"\nmodel_reasoning_effort = "medium"\n')
-    write(project_config, "[agents]\nmax_threads = 6\nmax_depth = 2\n")
+    write(project_config, 'model = "gpt-5.6"\nmodel_reasoning_effort = "high"\n[agents]\nmax_threads = 6\nmax_depth = 2\n')
 
     assert module.validate(home, project_config) == []
+
+
+def test_rejects_v2_ui_coordinator_defaults(tmp_path: Path) -> None:
+    module = load_module()
+    home = tmp_path / ".codex"
+    write(home / "config.toml", '[agents]\nmax_threads = 6\nmax_depth = 2\n[features]\nmulti_agent = true\n')
+    errors = module.validate(home)
+    assert any("role-aware v1" in error for error in errors)
