@@ -4,7 +4,7 @@ Parent issue: #634
 
 Branch: `feature/p111-native-recursive-ui-delegation`
 
-Status: active parallel lane
+Status: closeout — child issues #635-#638 complete; PR #639 open
 
 ## Purpose
 

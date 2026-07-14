@@ -119,7 +119,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
-| P111 Native recursive Codex UI delegation | #634 | `feature/p111-native-recursive-ui-delegation` | Active parallel lane |
+| P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Closeout — child issues complete; merge pending |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5458,7 +5458,7 @@ Parent issue: #634
 
 Branch: `feature/p111-native-recursive-ui-delegation`
 
-Status: active parallel lane.
+Status: closeout — child issues #635-#638 complete; PR #639 open.
 
 Goal: productize the accepted usable-adjacent proof that a native Codex UI
 Coordinator can spawn a configured Luna Supervisor, which can spawn and expose
@@ -5482,10 +5482,10 @@ Tasks:
   - [x] Document Coordinator -> Supervisor -> Worker UI navigation.
   - [x] Preserve multi-turn Worker and remote-GPU corroboration evidence.
   - [x] Document failure signatures, recovery, cleanup, and privacy boundaries.
-- [ ] P111.4 Validation, documentation, and closeout (#638)
+- [x] P111.4 Validation, documentation, and closeout (#638)
   - [x] Synchronize roadmap, changelog, planning, issues, and PR state.
   - [x] Run focused tests, config validation, diff checks, and privacy scans.
-  - [ ] Open the phase PR without merging or closing the parent before approval.
+  - [x] Open the phase PR without merging or closing the parent before approval.
 
 Acceptance criteria:
 

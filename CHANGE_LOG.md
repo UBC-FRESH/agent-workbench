@@ -3207,3 +3207,5 @@ issues, pull requests, and closeout comments.
 - Raw rollouts and provider details remain ignored. The accepted proof supports
   recursive protocol and interactive UI usability, while economics remains
   explicitly unproven.
+- Opened PR #639, synchronized and closed child issues #635-#638, and left
+  parent issue #634 open for the required post-merge closure gate.
