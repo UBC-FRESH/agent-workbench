@@ -5395,13 +5395,15 @@ Parent issue: #644
 
 Branch: `feature/p107-delegation-economics-policy`
 
-Status: parked pending a separate P107-resume decision.
+Status: active for P107.1 re-entry review only; P107.2 remains unauthorized
+and P108 remains inactive.
 
 Goal: convert P106 evidence into a fail-closed authorization decision.
 
 Parking decision: P113 closed the bounded adapter, containment, and Worker
-first-call reliability gate. P107 still needs its own re-entry authorization
-before it can answer the productive delegated-worker or economics question.
+first-call reliability gate. P107.1 now owns the bounded re-entry review and
+still needs a fresh effective-configuration proof before it can answer the
+productive delegated-worker question. P107.2 remains unauthorized.
 This is not a P107 pass, closure, or authorization for P108.
 
 Tasks:
