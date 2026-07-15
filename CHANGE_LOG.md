@@ -3350,3 +3350,118 @@ issues, pull requests, and closeout comments.
 - Preserved P111's generic/High proof as historical evidence and P106's
   qualified verdict. This repair does not activate or execute P107 economics
   work.
+
+## 2026-07-14 - Activated P113 Codex-Ollama function-tool adapter sandbox
+
+- Parked P107 rather than treating its economics or productive-worker question
+  as answerable before reliable bounded Ollama Worker edits exist.
+- Created parent issue #648 and child tasks #649-#651 on
+  `feature/p113-codex-ollama-function-tool-adapter`.
+- P113 owns a narrow `apply_patch(patch: string)` compatibility adapter,
+  containment checks, and fresh native-worker reliability evidence.
+- The phase excludes general protocol translation, MCP, P107 economics, P108,
+  release work, and any claim that the first capability proof is production
+  ready.
+
+## 2026-07-14 - P113.1 adapter contract and deterministic fixture gate
+
+- Defined the narrow, fail-closed `apply_patch(patch: string)` adapter boundary,
+  including one-call handling, allowed-root containment, malformed-output
+  rejection, and function/custom history round-tripping.
+- Added public-safe deterministic fixtures and an offline validator for the
+  valid translation, call-limit, containment, malformed-provider, and history
+  cases; P113.2 owns any executable adapter and adapter-facing tests.
+- Kept P107 economics, P108, general Responses/MCP translation, live provider
+  runs, and GitHub mutation out of scope.
+
+## 2026-07-14 - P113.2 constrained adapter implementation
+
+- Implemented the one-tool `apply_patch(patch: string)` request, stream, and
+  follow-up-history translator with a loopback-only HTTP host.
+- The adapter validates one complete provider call, patch envelope, declared
+  paths, and call/output identity before emitting any Codex custom-tool input;
+  malformed, excess, unsupported, and outside-root behavior fails closed.
+- Added focused adapter tests. Live provider routing and native-worker evidence
+  remain P113.3, pending explicit authority to temporarily route the configured
+  provider through the loopback adapter.
+
+## 2026-07-15 - P113.3 native function-tool evidence and qualified decision
+
+- A fresh native Qwen Worker completed one exact bounded `apply_patch` call
+  through the loopback adapter, changed the two allowed ignored targets, and
+  completed the custom-tool follow-up normally.
+- Repaired native history replay so a valid replayed call ID can restore the
+  adapter-issued item ID when Codex omits it from its continuation; unknown IDs
+  remain fail-closed.
+- The deterministic adapter suite and fixture validator pass. Fresh subsequent
+  Workers also returned prose without calling their sole permitted tool, so the
+  adapter is accepted as a quality/protocol candidate but Worker reliability is
+  not accepted.
+- P107 remains parked, economics remain untested, and P108 remains inactive.
+- A clean control on the restored normal provider emitted textual pseudo-tool
+  markup and made no native mutation, confirming that the constrained adapter
+  is required for this Ollama path.
+
+## 2026-07-15 - Planned P114 Ollama Worker first-call reliability decision
+
+- Recorded the next decision phase without creating an issue, starting a live
+  run, or changing the provider route.
+- P114 separates the accepted adapter capability/protocol result from the
+  unresolved fresh-Worker first-call question and presents four authorization
+  options: a fixed reliability battery, one prompt/ticket repair plus battery,
+  a separately authorized model/provider intervention study, or hold.
+- Any future battery must predeclare its task shape, trial count, numerical
+  threshold, paid-supervisor budget, and stop condition. It cannot resume P107
+  or activate P108 by itself.
+- Added an authorization record and recommended five-fresh-trial `5/5`
+  first-call profile; the maintainer must still select the option, budget, route
+  authority, and stop behavior before any live execution.
+
+## 2026-07-15 - Completed P114 first-call reliability battery inconclusive
+
+- The maintainer authorized the existing run-local adapter route for a
+  five-trial P114 battery with a `5/5` threshold and a 60,000-token
+  paid-supervisor cap.
+- The first fresh trial completed the required one-call two-file native patch
+  and terminal marker. The normal user configuration hash matched its pre-run
+  value after the temporary route stopped.
+- Start/end Coordinator checkpoints measured a 319,770-token span, exceeding
+  the cap before trial 2. Preserved the ignored result and checkpoint ledger as
+  an `inconclusive` outcome rather than treating the single success as Worker
+  reliability evidence.
+- P107 remains parked and P108 remains inactive.
+
+## 2026-07-15 - Resumed P114 five-trial reliability battery
+
+- The maintainer superseded the initial 60,000-token stop after trial 1 so the
+  predeclared five-trial first-call battery can complete.
+- The P114 decision remains limited to fresh Worker first-call reliability;
+  P107 remains parked and P108 remains inactive until its final evidence is
+  reviewed.
+
+## 2026-07-15 - Completed P114 Ollama Worker first-call reliability battery
+
+- Five independently fresh `qwen3-coder:latest` Workers each made exactly one
+  native `apply_patch` call, changed both allowed ignored targets, and returned
+  the required terminal marker through the existing run-local adapter.
+- The deterministic fixture validator and focused adapter tests passed after
+  the battery; no counted adapter verdict was rejected. A PowerShell wrapper
+  stopped one non-counting launch before a Worker session began.
+- The run-local adapter processes stopped and normal user/project configuration
+  hashes matched their pre-run values. The completion checkpoint span was
+  1,214,211 tokens, under the superseding 1,500,000-token procedural ceiling.
+- P114 is a `reliability_accepted_candidate`. It permits a separate P107-resume
+  decision but does not resume P107 or activate P108.
+
+## 2026-07-15 - Reconciled P113 closeout to the governed issue hierarchy
+
+- Reclassified the standalone P114 planning record as supplementary P113.3
+  reliability evidence because it had no authorized parent issue, child task,
+  or phase branch. The ignored runtime evidence is retained under the P113
+  worktree; no separate P114 phase is claimed.
+- P113.3 now records the final five-fresh-Worker result: each counted session
+  made one native patch call, changed both allowed ignored targets, and reached
+  the terminal marker without an adapter rejection.
+- P113 remains the only phase being closed through parent issue #648 and child
+  issues #649 through #651. P107 remains parked pending its separate resume
+  decision; P108 remains inactive.

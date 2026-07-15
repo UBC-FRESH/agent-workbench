@@ -115,11 +115,12 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
 | P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Complete (qualified) — quality validated; protocol and economics not accepted |
-| P107 Economics decision and delegation policy | TBD | `feature/p107-delegation-economics-policy` | Planned |
-| P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned — P107 gated |
+| P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Parked - P113 closed; requires a separate P107-resume decision |
+| P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned - P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
+| P113 Codex-Ollama function-tool adapter sandbox | #648 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - adapter quality, protocol, and bounded Worker reliability accepted; P107 remains parked pending a separate resume decision |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5390,13 +5391,18 @@ P106 stops rather than authorizing a third delegated attempt. See
 
 ## Phase 107: Economics Decision And Delegation Policy
 
-Parent issue: TBD
+Parent issue: #644
 
 Branch: `feature/p107-delegation-economics-policy`
 
-Status: planned.
+Status: parked pending a separate P107-resume decision.
 
 Goal: convert P106 evidence into a fail-closed authorization decision.
+
+Parking decision: P113 closed the bounded adapter, containment, and Worker
+first-call reliability gate. P107 still needs its own re-entry authorization
+before it can answer the productive delegated-worker or economics question.
+This is not a P107 pass, closure, or authorization for P108.
 
 Tasks:
 
@@ -5431,7 +5437,8 @@ Parent issue: TBD
 
 Branch: `feature/p108-fresh-tsa23-slice-prep`
 
-Status: planned — activate only after a passing P107 decision.
+Status: planned - activate only after a passing P107 decision and an accepted
+P113 Worker-editability decision.
 
 Goal: prepare pages 1-8 of `tsa23_2006_23ts06ra` as a fresh, bounded,
 public-corpus slice without live inference.
@@ -5527,3 +5534,56 @@ Acceptance criteria:
   interactive Worker persistence.
 - Raw provider/session material remains ignored and tracked docs stay public-safe.
 - Quality, protocol/usability, and economics conclusions remain separate.
+
+## Phase 113: Codex-Ollama Function-Tool Adapter Sandbox
+
+Parent issue: #648
+
+Branch: `feature/p113-codex-ollama-function-tool-adapter`
+
+Status: complete - adapter quality, protocol, and bounded Worker reliability
+accepted; P107 remains parked pending a separate resume decision.
+
+Goal: design and implement a narrow local adapter that enables a configured
+Ollama-backed native Codex Worker to use the native `apply_patch` handler via a
+standard Responses function call, then determine whether it is reliable enough
+to unblock P107.
+
+Boundary: P113 is a local adapter sandbox. It does not generalize Code Mode,
+MCP, or arbitrary Responses tools; it does not run P107 economics work or
+authorize P108.
+
+Tasks:
+
+- [x] P113.1 Adapter contract and threat model (#649)
+  - [x] Specify the one-tool request and stream-translation contract.
+  - [x] Define allowed roots, one-call limits, failure behavior, and evidence
+        boundaries.
+  - [x] Define quality, protocol, and economics acceptance separately.
+- [x] P113.2 Narrow adapter implementation and deterministic checks (#650)
+  - [x] Implement only `apply_patch(patch: string)` translation.
+  - [x] Fail closed on malformed calls, outside-root paths, and excess calls.
+  - [x] Add focused deterministic translation and containment tests.
+- [x] P113.3 Native-worker reliability evidence and decision (#651)
+  - [x] Run fresh bounded native Worker trials on ignored targets.
+  - [x] Require one valid call containing two required edits and normal follow-up
+        completion.
+  - [x] Record the resume/P107 decision without activating P108.
+
+Acceptance criteria:
+
+- A configured Ollama Worker completes a constrained native patch task without
+  shell-writing fallback.
+- The adapter rejects malformed, out-of-scope, and excess patch behavior before
+  mutation.
+- Raw runtime evidence proves model/provider, standard function call,
+  translated custom call, native patch result, final diff, and terminal status.
+- The final decision distinguishes quality, protocol, and economics outcomes.
+
+P113.3 decision: five distinct fresh `qwen3-coder:latest` sessions each made
+one native `apply_patch` call, changed both ignored targets, and returned the
+terminal marker. Deterministic containment, call-limit, malformed-output, and
+history fixtures pass; no counted adapter verdict was rejected. This accepts
+`quality_validated_candidate`, `protocol_accepted_candidate`, and bounded
+Worker reliability as P113 evidence. `economics_usable` remains out of scope;
+P107 stays parked pending a separate resume decision and P108 is not activated.
