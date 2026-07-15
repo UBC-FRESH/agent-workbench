@@ -1,5 +1,7 @@
 # Phase 113: Codex-Ollama Function-Tool Adapter Sandbox
 
+Status: complete — PR #652 merged; parent issue #648 pending closeout.
+
 ## Decision
 
 P107 is parked until a configured Ollama Worker has a reliable, bounded native
@@ -90,3 +92,9 @@ P108 remains unauthorized.
 A post-cleanup normal-provider control produced only textual pseudo-tool markup
 and no native mutation. The constrained adapter is therefore a required
 compatibility layer for this Ollama Worker path, not an optional convenience.
+
+## Closeout
+
+PR #652 merged the P113 implementation. The parent issue remains open only for
+the final closeout action after this tracked reconciliation lands. P107 remains
+parked pending its separate resume decision; P108 remains inactive.

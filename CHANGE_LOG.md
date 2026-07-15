@@ -3453,6 +3453,13 @@ issues, pull requests, and closeout comments.
 - P114 is a `reliability_accepted_candidate`. It permits a separate P107-resume
   decision but does not resume P107 or activate P108.
 
+## 2026-07-15 - Merged P113 implementation PR
+
+- Merged PR #652 as `0886f9b8cd2ad40c97cc1134867381f8a3adb96b` after the
+  required build passed.
+- This reconciliation records the merged PR before parent issue #648 closes.
+  P107 remains parked and P108 remains inactive.
+
 ## 2026-07-15 - Reconciled P113 closeout to the governed issue hierarchy
 
 - Reclassified the standalone P114 planning record as supplementary P113.3
