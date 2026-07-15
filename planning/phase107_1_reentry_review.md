@@ -28,6 +28,11 @@ session with the accepted `gpt_luna_supervisor -> ollama_worker` chain and the
 existing eight-record structured microtask. Preserve the ticket, result,
 persisted sessions, deterministic audit, and a public-safe review packet.
 
+The P107.1 Worker variant uses the configured `qwen3.6:35b-a3b-bf16` model at
+high reasoning. This is an intentional quality-oriented setting for source
+reading, strict JSONL, quote fidelity, and native tool use; it is not a model or
+provider change.
+
 The proof passes P107.1 only if it records configured model/reasoning/provider,
 depth, parentage, `fork_context: false`, no model override, terminal completion,
 at least 90% useful yield within five percentage points of direct, and zero

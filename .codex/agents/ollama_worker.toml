@@ -2,7 +2,7 @@ name = "ollama_worker"
 description = "Use for one narrow, explicitly bounded implementation or inspection task delegated by the Ollama Supervisor."
 model = "qwen3.6:35b-a3b-bf16"
 model_provider = "agent_workbench_ollama"
-model_reasoning_effort = "low"
+model_reasoning_effort = "high"
 default_permissions = "agent_workbench_ollama_readonly"
 
 developer_instructions = """
