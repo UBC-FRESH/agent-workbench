@@ -120,7 +120,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
-| P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PR #652 merged; parent issue #648 pending closeout; P107 remains parked pending a separate resume decision |
+| P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 / PR #653 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PRs #652 and #653 merged; parent issue #648 closed; P107 remains parked pending a separate resume decision |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5541,9 +5541,10 @@ Parent issue: #648
 
 Branch: `feature/p113-codex-ollama-function-tool-adapter`
 
-Status: complete - PR #652 merged; parent issue #648 pending closeout. Adapter
-quality, protocol, and bounded Worker reliability are accepted; P107 remains
-parked pending a separate resume decision.
+Status: complete - PR #652 merged implementation and PR #653 merged closeout
+reconciliation; parent issue #648 closed. Adapter quality, protocol, and
+bounded Worker reliability are accepted; P107 remains parked pending a separate
+resume decision.
 
 Goal: design and implement a narrow local adapter that enables a configured
 Ollama-backed native Codex Worker to use the native `apply_patch` handler via a
