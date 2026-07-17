@@ -121,7 +121,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
 | P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 / PR #653 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PRs #652 and #653 merged; parent issue #648 closed; P107 remains parked pending a separate resume decision |
-| P114 Codex-Ollama C4 capability parity and viability | TBD | `feature/p114-c4-ollama-capability-parity` | Planned - P107 remains parked |
+| P114 Codex-Ollama C4 capability parity and viability | #661 | `feature/p114-c4-ollama-capability-parity` | Active - P107 remains parked |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5592,11 +5592,11 @@ P107 stays parked pending a separate resume decision and P108 is not activated.
 
 ## Phase 114: Codex-Ollama C4 Capability Parity And Viability
 
-Parent issue: TBD (create after the P107 consolidation PR)
+Parent issue: #661
 
 Branch: `feature/p114-c4-ollama-capability-parity`
 
-Status: planned. This is a new phase; it is not the earlier supplementary
+Status: active. This is a new phase; it is not the earlier supplementary
 P114 reliability label that was reconciled into P113.3.
 
 Goal: establish, before further P107 comparison runs, whether the configured
