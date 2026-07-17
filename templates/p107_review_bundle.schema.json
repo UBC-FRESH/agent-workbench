@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["bundle_sha256", "run_id", "review_number", "packet_kind", "packet_bytes", "estimated_input_tokens", "acceptance_output", "scope_report", "changed_files", "contamination_status"],
+  "properties": {
+    "bundle_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "run_id": {"type": "string"},
+    "review_number": {"type": "integer", "minimum": 1, "maximum": 8},
+    "packet_kind": {"enum": ["initial", "repair_delta"]},
+    "packet_bytes": {"type": "integer", "minimum": 1},
+    "estimated_input_tokens": {"type": "integer", "minimum": 1},
+    "acceptance_output": {"type": "string"},
+    "scope_report": {"type": "string"},
+    "changed_files": {"type": "array", "items": {"type": "string"}},
+    "contamination_status": {"enum": ["clean", "contaminated"]},
+    "previous_defect_packet": {"type": ["object", "null"]}
+  },
+  "allOf": [
+    {"if": {"properties": {"packet_kind": {"const": "initial"}}}, "then": {"properties": {"estimated_input_tokens": {"maximum": 16000}}}},
+    {"if": {"properties": {"packet_kind": {"const": "repair_delta"}}}, "then": {"properties": {"estimated_input_tokens": {"maximum": 4000}}}}
+  ]
+}

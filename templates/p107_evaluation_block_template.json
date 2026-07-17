@@ -1,0 +1,18 @@
+{
+  "schema_version": "p107_evaluation_block_v1",
+  "block_id": "REPLACE_WITH_BLOCK_ID",
+  "starting_commit": "REPLACE_WITH_40_CHARACTER_COMMIT",
+  "workload_id": "REPLACE_WITH_WORKLOAD_ID",
+  "ticket_sha256": "REPLACE_WITH_SHA256",
+  "fixture_sha256": "REPLACE_WITH_SHA256",
+  "rubric_sha256": "REPLACE_WITH_SHA256",
+  "runtime_version": "REPLACE_WITH_RUNTIME_VERSION",
+  "environment_epoch": "REPLACE_WITH_ENVIRONMENT_EPOCH",
+  "pricing_catalog_path": "REPLACE_WITH_IMMUTABLE_PRICING_CATALOG_COPY",
+  "pricing_catalog_sha256": "REPLACE_WITH_SHA256",
+  "model_catalog_path": "REPLACE_WITH_IMMUTABLE_MODEL_CATALOG_COPY",
+  "model_catalog_sha256": "REPLACE_WITH_SHA256",
+  "effective_config_path": "REPLACE_WITH_EFFECTIVE_CONFIG_SNAPSHOT",
+  "effective_config_sha256": "REPLACE_WITH_SHA256",
+  "ambient_memories_enabled": false
+}

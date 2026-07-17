@@ -115,12 +115,13 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
 | P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Complete (qualified) — quality validated; protocol and economics not accepted |
-| P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Parked - P113 closed; requires a separate P107-resume decision |
+| P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Parked - P114 capability-parity prerequisite |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned - P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
 | P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 / PR #653 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PRs #652 and #653 merged; parent issue #648 closed; P107 remains parked pending a separate resume decision |
+| P114 Codex-Ollama C4 capability parity and viability | TBD | `feature/p114-c4-ollama-capability-parity` | Planned - P107 remains parked |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5395,25 +5396,25 @@ Parent issue: #644
 
 Branch: `feature/p107-delegation-economics-policy`
 
-Status: active for P107.1 re-entry review only; P107.2 remains unauthorized
-and P108 remains inactive.
+Status: parked. P107 comparisons, economics claims, and P108 remain inactive
+until P114 proves or disproves the declared C4 capability-parity contract.
 
 Goal: convert P106 evidence into a fail-closed authorization decision.
 
-Parking decision: P113 closed the bounded adapter, containment, and Worker
-first-call reliability gate. P107.1 now owns the bounded re-entry review and
-still needs a fresh effective-configuration proof before it can answer the
-productive delegated-worker question. P107.2 remains unauthorized.
-This is not a P107 pass, closure, or authorization for P108.
+Parking decision: P113 closed the bounded one-tool adapter, containment, and
+first-call reliability sandbox. The later C4 observations did not deploy that
+route and therefore cannot support a model-quality or economics comparison.
+P114 now owns the broader, preregistered C4 capability-parity and viability
+decision. This is not a P107 pass, closure, or authorization for P108.
 
 Tasks:
 
-- [ ] P107.1 Evaluate protocol and quality non-inferiority
-  - [ ] Encode `gpt_luna_supervisor` as the accepted recursive Supervisor and
+- [x] P107.1 Record protocol and quality re-entry evidence
+  - [x] Encode `gpt_luna_supervisor` as the accepted recursive Supervisor and
         reject `ollama_supervisor` for child-spawning work pending new evidence.
-  - [ ] Require delegated useful yield at least 90% and within five percentage
-        points of direct.
-  - [ ] Reject any critical provenance or protocol defect.
+  - [x] Preserve historical quality evidence without using it as a fresh C4
+        baseline.
+  - [x] Record the effective-configuration and tool-route gaps as blockers.
 - [ ] P107.2 Evaluate economics
   - [ ] Run at most one bounded Luna Supervisor -> Ollama Worker measurement
         with clean paid-Coordinator start/end token checkpoints.
@@ -5424,14 +5425,11 @@ Tasks:
   - [ ] Otherwise stop the alpha arc and open one targeted repair phase.
 
 Entry evidence: P106 closed with quality validated but protocol and economics
-unaccepted. Two later fresh, non-counting rehearsals reached the configured
-Qwen/Ollama Supervisor at depth 1 but failed the native second-edge spawn and
-created no Worker. P111's GPT-5.6 Luna Supervisor -> Ollama Worker topology is
-the only accepted recursive profile and the only profile eligible for the
-single bounded P107 economics measurement. A later accepted Terra/Medium v1
-compatibility proof improves the Coordinator configuration through a
-machine-local version-pinned catalog; it does not activate, run, or satisfy
-P107 economics work.
+unaccepted. P113 proved a constrained one-tool adapter sandbox but did not
+prove the C4 Worker can exercise the complete tool/session contract used by the
+paid C2 comparator. See `planning/phase107_c4_capability_parity_pause.md`.
+P114 must resolve that validity prerequisite before any P107 economics
+measurement.
 
 ## Phase 108: Fresh TSA23 Slice Preparation
 
@@ -5591,3 +5589,57 @@ history fixtures pass; no counted adapter verdict was rejected. This accepts
 `quality_validated_candidate`, `protocol_accepted_candidate`, and bounded
 Worker reliability as P113 evidence. `economics_usable` remains out of scope;
 P107 stays parked pending a separate resume decision and P108 is not activated.
+
+## Phase 114: Codex-Ollama C4 Capability Parity And Viability
+
+Parent issue: TBD (create after the P107 consolidation PR)
+
+Branch: `feature/p114-c4-ollama-capability-parity`
+
+Status: planned. This is a new phase; it is not the earlier supplementary
+P114 reliability label that was reconciled into P113.3.
+
+Goal: establish, before further P107 comparison runs, whether the configured
+Codex/Ollama route can satisfy the preregistered capability contract required
+by the C4 workload and its C2 comparator. A capability failure is an invalid
+treatment observation, not a model-quality loss.
+
+Parallel-lane boundary: the maintainer authorized P114 while P107 remains
+parked. P114 does not resume P107, authorize P108, or make an economics claim.
+
+Tasks:
+
+- [ ] P114.1 Capability-parity preregistration
+  - [ ] Freeze the workload, C2/C4 tool contract, topology, role profiles,
+        model catalogs, invalid-observation rules, costs, and stop rules before
+        live Ollama outcomes are observed.
+  - [ ] Define the minimum required interface rather than claiming parity with
+        every possible Codex feature.
+- [ ] P114.2 Offline bridge conformance
+  - [ ] Validate the declared read, patch, shell, history, repair, containment,
+        and unsupported-tool behaviors from clean processes.
+  - [ ] Fail closed when a required capability lacks deterministic evidence.
+- [ ] P114.3 Codex host/runtime deployment proof
+  - [ ] Prove run-scoped configuration, fresh-session role binding, worktree
+        binding, provider/catalog identity, adapter teardown, and restored
+        normal configuration with a scripted provider.
+- [ ] P114.4 Fresh live capability battery
+  - [ ] Run the preregistered composite task in three independent fresh Qwen
+        sessions with no within-trial retry.
+  - [ ] Require native patching, declared shell/test behavior, preserved
+        continuation history, artifact flow, and root containment in all runs.
+- [ ] P114.5 C4 qualification and viability decision
+  - [ ] Run two fresh non-comparative C4 qualification observations only after
+        the capability battery passes.
+  - [ ] Return a P107-resume packet or a bounded negative viability decision;
+        do not silently repair or exclude invalid observations.
+
+Acceptance criteria:
+
+- The capability contract is frozen and reviewed before new live C4 evidence.
+- Every counted observation persists the effective role/model/provider/tool
+  route, worktree identity, session parentage, and complete validation output.
+- P114 distinguishes bridge/host failure, model-control failure, task-quality
+  failure, and accounting failure.
+- A failed capability gate invalidates the observation and cannot become a
+  Qwen quality or economics result.
