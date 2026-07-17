@@ -3492,3 +3492,15 @@ issues, pull requests, and closeout comments.
 - Planned P114 as a preregistered capability-parity and viability phase. It
   will gate any P107 resumption and preserve invalid observations rather than
   silently excluding them.
+
+## 2026-07-17 - Activated P114 C4 capability-parity prerequisite
+
+- Activated governed parent issue #661 on
+  `feature/p114-c4-ollama-capability-parity` after the P107 consolidation
+  merged.
+- Added the preregistered C4 capability contract and deterministic validator
+  before any new live Ollama outcome. The contract distinguishes bridge/host
+  failures from model-control, task-quality, and accounting outcomes.
+- This activation starts offline conformance planning only. P107 remains
+  parked, P108 remains inactive, and no provider configuration or live
+  inference was changed.
