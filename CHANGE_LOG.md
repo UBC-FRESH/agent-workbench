@@ -3504,3 +3504,18 @@ issues, pull requests, and closeout comments.
 - This activation starts offline conformance planning only. P107 remains
   parked, P108 remains inactive, and no provider configuration or live
   inference was changed.
+
+## 2026-07-17 - Completed P114.2 offline multi-tool bridge conformance
+
+- Added a separate P114 loopback bridge with only the C4-required native tool
+  surface: `exec` and `apply_patch`. The adapter binds shell requests to the
+  declared worktree, preserves call/output identity for continuation, and
+  rejects unsupported tools, path escapes, malformed calls, and unknown
+  history.
+- A clean-process integration test uses a local scripted provider to prove a
+  sequential read/shell plus native patch exchange and a subsequent repair
+  continuation. The adapter itself never executes provider-supplied commands
+  or mutates files.
+- P114.3 remains required: this offline result does not yet prove a fresh
+  Codex host session, native tool execution, run-scoped deployment, or teardown.
+  P107 remains parked and no live provider call was made.
