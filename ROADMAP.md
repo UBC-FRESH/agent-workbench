@@ -5616,9 +5616,9 @@ Tasks:
   - [ ] Define the minimum required interface rather than claiming parity with
         every possible Codex feature.
 - [ ] P114.2 Offline bridge conformance
-  - [ ] Validate the declared read, patch, shell, history, repair, containment,
+  - [x] Validate the declared read, patch, shell, history, repair, containment,
         and unsupported-tool behaviors from clean processes.
-  - [ ] Fail closed when a required capability lacks deterministic evidence.
+  - [x] Fail closed when a required capability lacks deterministic evidence.
 - [ ] P114.3 Codex host/runtime deployment proof
   - [ ] Prove run-scoped configuration, fresh-session role binding, worktree
         binding, provider/catalog identity, adapter teardown, and restored
