@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["evaluation_block_id", "run_id", "configuration_id", "deterministic_acceptance", "advisor_verdict", "contaminated", "accounting_complete", "baseline_run_id", "paid_run_cost", "roi_status"],
+  "properties": {
+    "evaluation_block_id": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "configuration_id": {"enum": ["C0", "C1", "C2", "C3", "C4"]},
+    "deterministic_acceptance": {"type": "boolean"},
+    "advisor_verdict": {"enum": ["accepted", "defect_packet", "verified_blocker", "pending"]},
+    "contaminated": {"type": "boolean"},
+    "accounting_complete": {"type": "boolean"},
+    "baseline_run_id": {"type": ["string", "null"]},
+    "paid_run_cost": {"type": "number", "minimum": 0},
+    "roi_status": {"enum": ["eligible_baseline", "comparable", "not_comparable"]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["review_number", "verdict", "deterministic_acceptance", "score", "critical_defects", "defect_packet"],
+  "properties": {
+    "review_number": {"type": "integer", "minimum": 1, "maximum": 8},
+    "verdict": {"enum": ["accepted", "defect_packet", "verified_blocker"]},
+    "deterministic_acceptance": {"type": "boolean"},
+    "score": {"type": "integer", "minimum": 0, "maximum": 10},
+    "critical_defects": {"type": "array", "items": {"type": "string"}},
+    "defect_packet": {"type": ["object", "null"]}
+  },
+  "allOf": [
+    {"if": {"properties": {"verdict": {"const": "accepted"}}}, "then": {"properties": {"deterministic_acceptance": {"const": true}, "score": {"minimum": 8}, "critical_defects": {"maxItems": 0}}}}
+  ]
+}

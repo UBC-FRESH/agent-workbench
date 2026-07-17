@@ -1,0 +1,78 @@
+{
+  "schema_version": "p107_2_ab_run_packet_v1",
+  "run_id": "REPLACE_WITH_UNIQUE_RUN_ID",
+  "baseline_commit": "REPLACE_WITH_40_CHARACTER_COMMIT",
+  "lanes": {
+    "retail": {
+      "worktree": "REPLACE_WITH_ABSOLUTE_RETAIL_WORKTREE",
+      "fresh_implementation_session_required": true
+    },
+    "workbench": {
+      "worktree": "REPLACE_WITH_ABSOLUTE_WORKBENCH_WORKTREE",
+      "fresh_implementation_session_required": true,
+      "coordinator_role": "gpt-5.6-luna",
+      "supervisor_role": "gpt_luna_supervisor",
+      "worker_role": "ollama_qwen_coder_worker",
+      "fork_context": false,
+      "overrides": {}
+    }
+  },
+  "ticket": {
+    "path": "REPLACE_WITH_ABSOLUTE_FROZEN_TICKET_PATH",
+    "sha256": "REPLACE_WITH_TICKET_SHA256"
+  },
+  "acceptance_fixture": {
+    "path": "REPLACE_WITH_ABSOLUTE_FIXTURE_DIRECTORY",
+    "sha256": "REPLACE_WITH_FIXTURE_SHA256",
+    "command": "REPLACE_WITH_EXACT_ACCEPTANCE_COMMAND"
+  },
+  "usability_rubric": {
+    "path": "REPLACE_WITH_ABSOLUTE_RUBRIC_PATH",
+    "sha256": "REPLACE_WITH_RUBRIC_SHA256"
+  },
+  "implementation_scope": {
+    "allowed_paths": [
+      "REPLACE_WITH_ALLOWED_REPOSITORY_PATH"
+    ]
+  },
+  "review_policy": {
+    "reviewer_role": "gpt_sol_advisor",
+    "reviewer_model": "gpt-5.6-terra",
+    "reviewer_reasoning_effort": "medium",
+    "reviewer_lane_neutral": true,
+    "fresh_session_per_run": true,
+    "reuse_advisor_with_send_input": true,
+    "max_completed_reviews_per_lane": 3,
+    "max_repair_cycles_per_lane": 2,
+    "review_cap_kind": "soft_measured_stop_condition",
+    "initial_packet_max_estimated_tokens": 16000,
+    "repair_delta_max_estimated_tokens": 4000,
+    "defect_packet_required_fields": [
+      "review_number",
+      "remaining_reviews",
+      "failed_command",
+      "failed_output",
+      "affected_behavior_or_path",
+      "required_acceptance_condition",
+      "allowed_paths_and_commands",
+      "contamination_status"
+    ]
+  },
+  "liveness": {
+    "interval_seconds": 60,
+    "missed_interval_action": "inspect_then_one_bounded_nudge_or_verified_blocker"
+  },
+  "contamination_policy": {
+    "restart_affected_lane_required": true,
+    "coordinator_implementation_edit_invalidates_lane": true,
+    "shared_mutable_checkout_invalidates_lane": true,
+    "fixture_mutation_invalidates_lane": true,
+    "cross_lane_context_leak_invalidates_lane": true
+  },
+  "accounting": {
+    "role_token_checkpoints_required": true,
+    "maintainer_intervention_log_required": true,
+    "advisor_intervention_log_required": true,
+    "coordinator_supervisor_intervention_log_required": true
+  }
+}

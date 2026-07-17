@@ -1,0 +1,14 @@
+{
+  "schema_version": "p107_workload_contract_v1",
+  "workload_id": "REPLACE_WITH_USEFUL_BOUNDED_FEATURE",
+  "baseline_commit": "REPLACE_WITH_40_CHARACTER_COMMIT",
+  "ticket_path": "REPLACE_WITH_FROZEN_TICKET_PATH",
+  "ticket_sha256": "REPLACE_WITH_SHA256",
+  "acceptance_fixture_path": "REPLACE_WITH_IMMUTABLE_FIXTURE_PATH",
+  "acceptance_fixture_sha256": "REPLACE_WITH_SHA256",
+  "acceptance_command": "REPLACE_WITH_EXACT_COMMAND",
+  "rubric_path": "templates/p107_advisor_verdict.schema.json",
+  "allowed_paths": ["REPLACE_WITH_IMPLEMENTATION_PATH"],
+  "usefulness_statement": "REPLACE_WITH_GENERIC_UBC_FRESH_VALUE",
+  "remote_github_mutation_allowed": false
+}

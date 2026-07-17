@@ -1,0 +1,18 @@
+{
+  "schema_version": "p107_configuration_registry_v1",
+  "configurations": [
+    {"id": "C0", "parent": null, "topology": "coordinator_only", "coordinator_implementation_allowed": true, "supervisor_may_spawn": false, "worker": null},
+    {"id": "C1", "parent": "C0", "topology": "flat_worker", "coordinator_implementation_allowed": false, "supervisor_may_spawn": false, "worker": "gpt_luna_worker"},
+    {"id": "C2", "parent": "C1", "topology": "flat_supervisor_worker", "coordinator_implementation_allowed": false, "supervisor_may_spawn": false, "worker": "gpt_luna_worker"},
+    {"id": "C3", "parent": "C2", "topology": "nested_supervisor_worker", "coordinator_implementation_allowed": false, "supervisor_may_spawn": true, "worker": "gpt_luna_worker"},
+    {"id": "C4", "parent": "C2", "topology": "flat_supervisor_ollama_worker", "coordinator_implementation_allowed": false, "supervisor_may_spawn": false, "worker": "ollama_qwen_coder_worker"}
+  ],
+  "advisor_policy": {
+    "fresh_session_per_run": true,
+    "reuse_with_send_input": true,
+    "max_completed_reviews": 3,
+    "hard_wait": true,
+    "initial_packet_max_estimated_tokens": 16000,
+    "repair_delta_max_estimated_tokens": 4000
+  }
+}

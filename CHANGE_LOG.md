@@ -3472,3 +3472,23 @@ issues, pull requests, and closeout comments.
 - P113 remains the only phase being closed through parent issue #648 and child
   issues #649 through #651. P107 remains parked pending its separate resume
   decision; P108 remains inactive.
+
+## 2026-07-15 - Began P107.1 bounded re-entry review
+
+- Re-entered P107.1 only after P113 cleared the constrained native-edit and
+  bounded Worker first-call reliability gate.
+- Mapped the historical 100% useful-yield structured candidate, P111 recursive
+  chain evidence, and P113 adapter evidence to the P107.1 acceptance criteria.
+- Effective Honeycomb role bindings currently fail validation, so no fresh
+  P107.1 proof, P107.2 economics work, or P108 activation was launched.
+
+## 2026-07-17 - Parked P107 pending C4 capability parity
+
+- Distinguished P113's accepted narrow native-patch sandbox from the broader
+  C4 tool/session contract required for a valid quality or economics comparison.
+- Recorded the failed C4 observations as negative integration evidence rather
+  than Ollama model-quality or cost results because the run-local adapter route
+  was not deployed.
+- Planned P114 as a preregistered capability-parity and viability phase. It
+  will gate any P107 resumption and preserve invalid observations rather than
+  silently excluding them.
