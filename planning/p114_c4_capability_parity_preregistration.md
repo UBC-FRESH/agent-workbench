@@ -75,15 +75,11 @@ sessions through a composite read-to-patch-to-test-to-repair-to-artifact task.
 All three must pass; a shell-write substitute is not native-patch success.
 P114.5 then permits two non-comparative C4 qualification observations.
 
-Each engineering stage has one initial attempt and one evidence-based repair.
-The live battery may restart once, as a whole, after a documented repair. A
-repeated required-capability failure ends the route as a negative viability
-decision rather than triggering more C4 comparisons.
-
-Paid integration work before the live battery is bounded at two
-accepted-C2-equivalent role spans. Exceeding that requires maintainer review.
-Integration cost, operational treatment cost, and model-task cost are recorded
-separately.
+Every bridge or host failure must retain its direct evidence and be repaired at
+the component that caused it. Continue capability work until the route is
+characterized; do not convert an integration failure into a model-quality or
+economics result. Integration cost, operational treatment cost, and model-task
+cost are recorded separately.
 
 ## Conditions for a publishable P107 comparison
 

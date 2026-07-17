@@ -71,9 +71,8 @@ def validate(data: object) -> list[str]:
             errors.append("P114.1-P114.3 must not use live inference")
         if by_id.get("P114.4", {}).get("live_inference") is not True or by_id.get("P114.5", {}).get("live_inference") is not True:
             errors.append("P114.4-P114.5 must declare live inference")
-    stop_rules = data.get("stop_rules")
-    if not isinstance(stop_rules, dict) or set(stop_rules) != {"engineering_stage_attempts", "live_battery_restart", "repeated_failure", "paid_integration_budget"}:
-        errors.append("stop rules must define attempts, restart, repeated failure, and paid integration budget")
+    if not isinstance(data.get("failure_handling"), str) or not data["failure_handling"]:
+        errors.append("failure handling must be explicit")
     prerequisites = data.get("comparison_prerequisites")
     if not isinstance(prerequisites, dict) or not isinstance(prerequisites.get("p107_may_resume_only_after"), list) or len(prerequisites["p107_may_resume_only_after"]) < 4:
         errors.append("P107 comparison prerequisites must be explicit")

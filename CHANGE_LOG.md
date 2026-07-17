@@ -3531,3 +3531,11 @@ issues, pull requests, and closeout comments.
   but no third host attempt was launched.
 - Per P114's preregistered initial-plus-repair stop rule, P114 is stopped pending
   a maintainer restart decision. P107 remains parked and P108 remains inactive.
+
+## 2026-07-17 - Corrected P114 fabricated attempt constraints
+
+- Removed the P114 numeric attempt, restart, and paid-integration caps that were
+  added without maintainer direction. The prior stopped state was incorrect.
+- P114 remains active: host-proof work continues by recording concrete failures,
+  fixing the responsible component, and preserving the distinction between
+  integration evidence and model or economics evidence.
