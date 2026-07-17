@@ -123,12 +123,7 @@
       "pass_rule": "two non-comparative C4 qualifications pass before a P107-resume packet may be considered"
     }
   ],
-  "stop_rules": {
-    "engineering_stage_attempts": "one initial attempt plus one evidence-based repair",
-    "live_battery_restart": "at most one complete battery restart after a documented repair",
-    "repeated_failure": "a repeated required-capability failure produces a negative viability decision; do not continue to P107 comparison",
-    "paid_integration_budget": "before P114.4, paid integration work may consume at most two accepted-C2-equivalent role spans; exceeding it requires maintainer review"
-  },
+  "failure_handling": "Record every concrete bridge or host failure with its evidence, repair the identified cause, and continue capability work until the route is characterized. Do not relabel an integration failure as a model-quality or economics outcome.",
   "comparison_prerequisites": {
     "p107_may_resume_only_after": [
       "P114.1 through P114.5 pass",

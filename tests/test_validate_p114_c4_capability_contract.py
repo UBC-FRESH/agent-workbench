@@ -37,3 +37,10 @@ def test_contract_rejects_missing_native_patch_capability() -> None:
         item for item in data["required_capabilities"] if item["id"] != "native_patch_surface"
     ]
     assert "required capabilities must match the declared minimum interface" in validator.validate(data)
+
+
+def test_contract_requires_failure_handling_without_an_attempt_cap() -> None:
+    validator = load_validator()
+    data = json.loads(CONTRACT.read_text(encoding="utf-8"))
+    data.pop("failure_handling")
+    assert "failure handling must be explicit" in validator.validate(data)
