@@ -3519,3 +3519,15 @@ issues, pull requests, and closeout comments.
 - P114.3 remains required: this offline result does not yet prove a fresh
   Codex host session, native tool execution, run-scoped deployment, or teardown.
   P107 remains parked and no live provider call was made.
+
+## 2026-07-17 - Stopped P114.3 scripted host proof after two invalid harness attempts
+
+- The initial non-live host proof invoked the known broken Windows sandbox and
+  failed before native tool execution. Its evidence remains in an ignored run
+  root and is classified as a harness defect, not a Worker result.
+- The single evidence-based repair bypassed that sandbox but exposed a separate
+  Windows `Start-Process` prompt-quoting defect before the scripted provider or
+  bridge was reached. The runner is statically corrected and regression-tested,
+  but no third host attempt was launched.
+- Per P114's preregistered initial-plus-repair stop rule, P114 is stopped pending
+  a maintainer restart decision. P107 remains parked and P108 remains inactive.

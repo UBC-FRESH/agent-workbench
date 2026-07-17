@@ -33,6 +33,7 @@ class Handler(BaseHTTPRequestHandler):
     upstream: str
     allowed_root: str
     verdict_log: Path | None
+    event_log: Path | None
     validated_calls: dict[str, dict[str, Any]] = {}
 
     def log_message(self, _format: str, *_args: object) -> None:
@@ -46,6 +47,18 @@ class Handler(BaseHTTPRequestHandler):
         if code:
             record["code"] = code
         with self.verdict_log.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, sort_keys=True) + "\n")
+
+    def event_shape(self, event: object) -> None:
+        if self.event_log is None or not isinstance(event, dict):
+            return
+        item = event.get("item")
+        record: dict[str, object] = {"timestamp_utc": datetime.now(timezone.utc).isoformat(), "type": event.get("type")}
+        if isinstance(item, dict):
+            record["item_type"] = item.get("type")
+            record["item_name"] = item.get("name")
+        self.event_log.parent.mkdir(parents=True, exist_ok=True)
+        with self.event_log.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record, sort_keys=True) + "\n")
 
     def do_POST(self) -> None:
@@ -107,6 +120,7 @@ class Handler(BaseHTTPRequestHandler):
             self.verdict("rejected", "malformed_provider_call")
             write_sse(self, {"type": "response.error", "error": {"code": "malformed_provider_call", "message": "malformed_provider_call"}})
             return
+        self.event_shape(event)
         for translated in translator.consume(event):
             if translated.get("type") == "response.output_item.done":
                 item = translated.get("item")
@@ -127,10 +141,12 @@ def main() -> None:
     parser.add_argument("--upstream", required=True, help="OpenAI-compatible base URL; HTTP is allowed only for a local scripted provider.")
     parser.add_argument("--allowed-root", required=True)
     parser.add_argument("--verdict-log", type=Path)
+    parser.add_argument("--event-log", type=Path)
     args = parser.parse_args()
     Handler.upstream = args.upstream.rstrip("/")
     Handler.allowed_root = args.allowed_root.replace("\\", "/")
     Handler.verdict_log = args.verdict_log
+    Handler.event_log = args.event_log
     ThreadingHTTPServer(("127.0.0.1", args.port), Handler).serve_forever()
 
 
