@@ -20,7 +20,7 @@ future phases produce stronger verification and rollback evidence.
 
 | Ticket Family | Maximum Level | Notes |
 | --- | ---: | --- |
-| marker-only SDK probe | L0 | Useful for basic loop/stop behavior. |
+| marker-only SDK probe | L0 | Useful for basic completion behavior. |
 | structured documentation output | L1 | Requires section and forbidden-phrase checks. |
 | patch proposal | L1 | Proposal only; no worker mutation. |
 | supervisor-applied patch | L2 | Supervisor script applies only to ignored sandbox targets. |
@@ -52,8 +52,8 @@ Escalate to supervisor review when:
 - a worker uses a tool outside the ticket boundary;
 - a required section, marker, command, or output file is missing;
 - a worker claims an action happened but evidence is missing;
-- a worker loops, repeats completion prose, or keeps responding after a stop
-  condition;
+- a worker loops, repeats completion prose, or keeps responding outside the
+  declared task boundary;
 - a worker attempts tracked-file or GitHub mutation; or
 - the ticket requires interpreting ambiguous repository workflow state.
 
@@ -70,7 +70,7 @@ implementation ticket authorized by the coordinator or developer may raise a
 worker to **L4 (tracked-file mutation)**, subject to all of the following:
 
 - the ticket names the exact allowed files or path globs, allowed commands, and
-  stop conditions;
+  task boundary;
 - edits stay within those allowed paths; edits outside them are a boundary
   violation and must be reverted;
 - the supervisor reviews the worker's diff and runs the ticket's validation
@@ -85,26 +85,24 @@ SDK Tool Boundary section).
 ## Managed Loop Policy V0
 
 The managed-loop policy is recorded in
-`templates/delegation_loop_policy_v0.json` and
-`templates/managed_iteration_stop_rules.json`.
+`templates/delegation_loop_policy_v0.json` and the recorded iteration evidence.
 
 Default rule: extraction, reporting, self-audit, and repair experiments start in
 a no-tool L0/L1 lane unless the supervisor explicitly configures a restricted
 tool lane. If an SDK or chat session emits a tool call during a no-tool run, the
-run is confounded and should be stopped or reclassified rather than treated as a
-clean no-tool comparison.
+run is confounded and must be reclassified rather than treated as a clean
+no-tool comparison.
 
-Required bailout rules:
+Required evidence discipline:
 
-- stop self-audit or repair when primary document/candidate identifiers are not
-  preserved;
-- stop self-audit when a calibration sample contains known repairable records
-  and the local auditor misses them;
-- stop or rewrite after repeated malformed JSON/JSONL;
+- treat missing primary document/candidate identifiers as invalid evidence;
+- treat a missed known calibration record as evidence that the audit route needs
+  repair;
+- use repeated malformed JSON/JSONL to diagnose the format or ticket route;
 - report missing evidence instead of estimating when token ledgers, source
   anchors, model identity, or worker output records are absent; and
-- require a paid supervisor checkpoint before scaling a local-worker result
-  beyond the calibrated task shape.
+- record why a broader local-worker result is justified by the accumulated
+  evidence.
 
 Promising current task lanes:
 
@@ -172,10 +170,10 @@ The first tuning loop is rules-based:
 - hold groups steady when evidence is sparse or mixed;
 - lower trust when records are mostly poor, net savings are negative, or
   rejected claims exceed accepted claims;
-- use one retry for sparse or mixed evidence;
-- allow two retries only for positive groups with repeat evidence; and
-- bail out after two poor outcomes for the same task/model/protocol group
-  unless the supervisor rewrites the ticket or changes the model.
+- choose another run only when it has a stated question and a different
+  evidence-based rationale; and
+- reassess task/model/protocol fit when outcomes repeat without changing the
+  diagnosis or producing a useful decision signal.
 
 Machine-learning policy optimization is out of scope until the sanitized record
 set is large, varied, and independently verifiable. The current threshold is at
@@ -215,8 +213,8 @@ https://github.com/microsoft/vscode/issues/310138
   tool invocations, `ollama list` snapshots) must show the expected model before
   a result counts for model comparison or audit.
 - **Do not treat** Copilot SDK provider/model configuration as proof of successful
-  model execution either — captured event/output evidence must show the run
-  reached its expected stop condition before it counts.
+  model execution either — captured event/output evidence must show the expected
+  terminal result before it counts.
 - **Do not assume** any local agent ran on the "intended" model from frontmatter.
   If model identity matters for a benchmark claim, verify it from persisted
   evidence, not inference.

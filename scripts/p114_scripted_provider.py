@@ -59,12 +59,9 @@ class Handler(BaseHTTPRequestHandler):
         path = f"{self.worktree}/p114_host_proof.txt"
         patch = f"*** Begin Patch\n*** Update File: {path}\n@@\n-before\n+after\n*** End Patch"
         return [
-            {"type": "response.output_item.added", "output_index": 0, "item": {"type": "function_call", "id": "exec_1", "call_id": "call_exec_1", "name": "exec"}},
-            {"type": "response.function_call_arguments.done", "item_id": "exec_1", "arguments": json.dumps({"command": "Get-Content p114_host_proof.txt", "workdir": self.worktree})},
-            {"type": "response.output_item.done", "output_index": 0, "item": {"type": "function_call", "id": "exec_1"}},
-            {"type": "response.output_item.added", "output_index": 1, "item": {"type": "function_call", "id": "patch_1", "call_id": "call_patch_1", "name": "apply_patch"}},
+            {"type": "response.output_item.added", "output_index": 0, "item": {"type": "function_call", "id": "patch_1", "call_id": "call_patch_1", "name": "apply_patch"}},
             {"type": "response.function_call_arguments.done", "item_id": "patch_1", "arguments": json.dumps({"patch": patch})},
-            {"type": "response.output_item.done", "output_index": 1, "item": {"type": "function_call", "id": "patch_1"}},
+            {"type": "response.output_item.done", "output_index": 0, "item": {"type": "function_call", "id": "patch_1"}},
         ]
 
     @staticmethod

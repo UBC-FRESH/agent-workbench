@@ -1,6 +1,7 @@
 # P114 C4 Capability-Parity Preregistration
 
-Status: P114.1 active. This record is frozen before a new live Ollama outcome.
+Status: P114.1 complete. This record was frozen before the direct-MWE live
+Ollama outcomes.
 It does not authorize live inference, provider changes, P107 resumption, P108,
 or a claim of general Codex feature parity.
 
@@ -68,12 +69,27 @@ outcome classification.
 
 ## Staged gate and stopping rule
 
-P114.2 proves each capability offline from clean processes. P114.3 proves
-run-scoped host deployment and teardown through a scripted provider, without
-live inference. Only then may P114.4 run three independent fresh candidate
-sessions through a composite read-to-patch-to-test-to-repair-to-artifact task.
-All three must pass; a shell-write substitute is not native-patch success.
-P114.5 then permits two non-comparative C4 qualification observations.
+P114.2 preserves the clean-process offline adapter checks. The original P114.3
+scripted-provider deployment route is retained only as negative integration
+evidence: it reached the bridge but did not register executable host tools. It
+is not a live runtime gate and cannot establish P114.3 acceptance.
+
+Runtime construction now begins with the verified P113-style direct MWE and
+changes one variable at a time. R4 is the current last-known-good baseline:
+one native patch changes the P114 proof target and returns the P114 marker.
+R5 proves one standalone read, R6 combines that read with the existing patch,
+and R7 adds one declared validation. Each must pass independently before a
+repair continuation, artifact envelope, or composite battery is attempted. A
+failed increment restores the last passing MWE configuration; it does not
+trigger an automatic retry or broader redesign. The P114.3 pass rule will be
+revised and re-frozen to this direct-MWE evidence before any live run is
+counted toward P114.3.
+
+Only after the complete direct MWE capability sequence passes may P114 run
+three independent fresh candidate sessions through the composite
+read-to-patch-to-test-to-repair-to-artifact task. All three must pass; a
+shell-write substitute is not native-patch success. P114.5 then permits two
+non-comparative C4 qualification observations.
 
 Every bridge or host failure must retain its direct evidence and be repaired at
 the component that caused it. Continue capability work until the route is

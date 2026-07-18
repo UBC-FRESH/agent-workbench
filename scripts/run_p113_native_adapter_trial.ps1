@@ -3,7 +3,9 @@
 param(
     [string]$RunId = 'p113_adapter_r1',
     [int]$Port = 18777,
-    [switch]$BypassWindowsSandbox
+    [string]$TerminalMarker = 'P113_DONE',
+    [switch]$P114ProofTarget,
+    [switch]$UseWindowsSandbox
 )
 
 $ErrorActionPreference = 'Stop'
@@ -15,8 +17,12 @@ if (Test-Path -LiteralPath $runDir) { throw "Run directory already exists: $runD
 New-Item -ItemType Directory -Path $runDir | Out-Null
 $targetRoot = Join-Path $runDir 'target'
 New-Item -ItemType Directory -Path $targetRoot | Out-Null
-[IO.File]::WriteAllText((Join-Path $targetRoot 'alpha.txt'), "alpha`n", [Text.UTF8Encoding]::new($false))
-[IO.File]::WriteAllText((Join-Path $targetRoot 'beta.txt'), "beta`n", [Text.UTF8Encoding]::new($false))
+if ($P114ProofTarget) {
+    [IO.File]::WriteAllText((Join-Path $targetRoot 'p114_host_proof.txt'), "before`n", [Text.UTF8Encoding]::new($false))
+} else {
+    [IO.File]::WriteAllText((Join-Path $targetRoot 'alpha.txt'), "alpha`n", [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $targetRoot 'beta.txt'), "beta`n", [Text.UTF8Encoding]::new($false))
+}
 
 $settings = @{}
 Get-Content -LiteralPath (Join-Path $HOME '.agent-workbench-env.txt') | ForEach-Object { if ($_ -match '^([^=]+)=(.+)$') { $settings[$matches[1]] = $matches[2] } }
@@ -46,8 +52,17 @@ $config = [regex]::Replace($config, '(?m)^model_catalog_json = .+$', ('model_cat
 [IO.File]::WriteAllText($configPath, $config, [Text.UTF8Encoding]::new($false))
 
 $relativeTarget = "runtime/agent_jobs/$RunId/target"
-$ticket = @"
-Your only action must be apply_patch. Apply this exact patch as one call:
+$patch = if ($P114ProofTarget) {
+@"
+*** Begin Patch
+*** Update File: $relativeTarget/p114_host_proof.txt
+@@
+-before
++after
+*** End Patch
+"@
+} else {
+@"
 *** Begin Patch
 *** Update File: $relativeTarget/alpha.txt
 @@
@@ -58,8 +73,13 @@ Your only action must be apply_patch. Apply this exact patch as one call:
 -beta
 +beta done
 *** End Patch
+"@
+}
+$ticket = @"
+Your only action must be apply_patch. Apply this exact patch as one call:
+$patch
 
-Do not call another tool, retry, inspect files, or change another path. After receiving the tool result, return P113_DONE only.
+Do not call another tool, retry, inspect files, or change another path. After receiving the tool result, return $TerminalMarker only.
 "@
 $ticketPath = Join-Path $runDir 'ticket.md'
 [IO.File]::WriteAllText($ticketPath, $ticket, [Text.UTF8Encoding]::new($false))
@@ -71,8 +91,12 @@ $adapterProcess = Start-Process -FilePath $python -ArgumentList @($adapter, '--p
 try {
     Start-Sleep -Milliseconds 500
     $env:CODEX_HOME = $codexHome
-    $codexArgs = @('exec', '-C', $repoRoot, '-s', 'workspace-write', '-c', 'approval_policy="never"', '-c', 'model_provider="agent_workbench_ollama"', '-c', 'apply_patch_tool_type="freeform"', '-m', 'qwen3-coder:latest', '--json', '-o', (Join-Path $runDir 'final.txt'))
-    if ($BypassWindowsSandbox) { $codexArgs += '--dangerously-bypass-approvals-and-sandbox' }
+    $codexArgs = @('exec', '-C', $repoRoot, '-c', 'approval_policy="never"', '-c', 'model_provider="agent_workbench_ollama"', '-c', 'apply_patch_tool_type="freeform"', '-m', 'qwen3-coder:latest', '--json', '-o', (Join-Path $runDir 'final.txt'))
+    if ($UseWindowsSandbox) {
+        $codexArgs += @('-s', 'workspace-write')
+    } else {
+        $codexArgs += '--dangerously-bypass-approvals-and-sandbox'
+    }
     $codexArgs += $ticket
     & codex @codexArgs | Tee-Object -LiteralPath (Join-Path $runDir 'codex_events.jsonl')
     $exitCode = $LASTEXITCODE

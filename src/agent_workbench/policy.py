@@ -69,29 +69,26 @@ def tune_policy(paths: list[Path]) -> str:
         "- Hold steady when evidence is mixed or sparse.",
         "- Lower trust when records are mostly poor, net savings are negative, or",
         "  rejected claims exceed accepted claims.",
-        "- Bail out after two poor outcomes for the same task/model/protocol",
-        "  group unless the supervisor rewrites the ticket or changes model.",
+        "- Reassess the task/model/protocol fit when outcomes repeat without",
+        "  changing the diagnosis or producing a useful decision signal.",
         "- Keep ML policy optimization disabled until the evidence volume and",
         "  diversity thresholds below are met.",
         "",
         "## Group Recommendations",
         "",
-        "| Task Type | Model | Protocol | Records | Recommendation | Retry Limit | "
-        "Bailout | Net USD | Rationale |",
-        "| --- | --- | --- | ---: | --- | ---: | --- | ---: | --- |",
+        "| Task Type | Model | Protocol | Records | Recommendation | Net USD | Rationale |",
+        "| --- | --- | --- | ---: | --- | ---: | --- |",
     ]
     for group in groups:
-        recommendation, retry_limit, bailout, rationale = recommend_group(group)
+        recommendation, rationale = recommend_group(group)
         lines.append(
             "| {task_type} | `{model}` | `{protocol}` | {records} | `{recommendation}` | "
-            "{retry_limit} | {bailout} | {net} | {rationale} |".format(
+            "{net} | {rationale} |".format(
                 task_type=group.task_type,
                 model=group.model,
                 protocol=group.protocol,
                 records=group.records,
                 recommendation=recommendation,
-                retry_limit=retry_limit,
-                bailout=bailout,
                 net=f"{group.total_net_savings_usd:.6f}",
                 rationale=rationale.replace("|", "\\|"),
             )
@@ -184,12 +181,10 @@ def build_group(
     )
 
 
-def recommend_group(group: PolicyGroup) -> tuple[str, int, str, str]:
+def recommend_group(group: PolicyGroup) -> tuple[str, str]:
     if group.records < 2:
         return (
             "hold",
-            1,
-            "collect at least one more record",
             "Evidence is too sparse for stable policy movement.",
         )
     if (
@@ -199,8 +194,6 @@ def recommend_group(group: PolicyGroup) -> tuple[str, int, str, str]:
     ):
         return (
             "maintain-or-promote",
-            2,
-            "bail after two poor repeats",
             "Positive net savings and claim balance support cautious delegation.",
         )
     if group.poor >= group.promising and (
@@ -208,14 +201,10 @@ def recommend_group(group: PolicyGroup) -> tuple[str, int, str, str]:
     ):
         return (
             "lower-trust",
-            0,
-            "do directly or change model/protocol",
             "Poor outcomes or negative economics dominate the pilot evidence.",
         )
     return (
         "hold",
-        1,
-        "split smaller if next record is poor",
         "Evidence is mixed; keep the current policy until more records exist.",
     )
 

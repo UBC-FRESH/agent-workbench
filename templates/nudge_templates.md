@@ -30,8 +30,8 @@ the context cannot be verified, write the blocker file.
 Reconcile the child-task checklist against files, commands, and checks. Then
 write the result file with concrete evidence for each completed item.
 
-## Stop Rule
+## Repeated Nudge Review
 
-After two failed or stale nudges in the same delegated lane, stop the lane and
-require coordinator review of the ticket, heartbeat, result, blocker, archive,
-and token/cash ledger.
+When nudges repeat without changing the observed state, inspect the ticket,
+heartbeat, result, blocker, archive, and token/cash ledger. Use that evidence
+to choose the next engineering action; do not send another unchanged nudge.

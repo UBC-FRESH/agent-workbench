@@ -78,9 +78,10 @@ runs an expensive high-capability model. Every Advisor invocation costs real
 money. Treat paid Advisor time as a scarce "intelligence boost" budget, not a
 default reflex.
 
-Before each session or phase, read the paid budget the developer set for this
-run. If none is stated, assume a conservative default of **at most one Advisor
-invocation per roadmap phase** and ask the developer before exceeding it.
+Before each session or phase, identify the engineering question that justifies
+an Advisor invocation and record its cost and resulting decision signal. Do not
+use a numeric default cap as an automatic veto; reassess when repeated Advisor
+calls do not change the diagnosis or next engineering action.
 
 Rules:
 
@@ -92,8 +93,8 @@ Rules:
 - Prefer one well-scoped Advisor question with all evidence attached over
   several vague ones.
 - Record every Advisor invocation and its outcome (see ROI loop below).
-- If the budget is exhausted, stop delegating to the Advisor and escalate the
-  open question to the developer instead.
+- When the recorded cost is no longer justified by new evidence, surface that
+  fact with the open question and recommendation.
 
 ## When To Invoke The Advisor
 
@@ -239,7 +240,7 @@ bounded execution to `agent-workbench-local-supervisor` with a bounded ticket
 that names:
 current state, governing issue, exact task boundary, files/issues in scope,
 allowed and forbidden commands, result/blocker/evidence paths, success criteria,
-failure stop conditions, and required compact final packet format. Delegate one
+failure reporting requirements, and required compact final packet format. Delegate one
 child task at a time by default.
 
 The Supervisor — not you — holds the heavy context and drives the free Worker

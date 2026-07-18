@@ -414,7 +414,7 @@ def summarize_sdk_events(
     control = manifest.get("control", {})
     stall_seconds = int(control.get("stall_seconds", 0))
     max_nudges = int(control.get("max_nudges", 0))
-    stop_rule_triggered = max_nudges > 0 and nudge_count >= max_nudges
+    repeated_nudge_signal = max_nudges > 0 and nudge_count >= max_nudges
     observed_errors = event_errors(events)
     latest_status = classify_sdk_status(
         manifest,
@@ -422,7 +422,7 @@ def summarize_sdk_events(
         validation=validation,
         observed_errors=observed_errors,
         age_seconds=age_seconds,
-        stop_rule_triggered=stop_rule_triggered,
+        repeated_nudge_signal=repeated_nudge_signal,
     )
     return {
         "generated_utc": utc_now(),
@@ -441,16 +441,16 @@ def summarize_sdk_events(
         "max_nudges": max_nudges,
         "custom_agent_event_count": count_custom_agent_events(events),
         "subagent_event_count": count_subagent_events(events),
-        "stop_rule_triggered": stop_rule_triggered,
+        "repeated_nudge_signal": repeated_nudge_signal,
         "latest_status": latest_status,
         "observed_errors": observed_errors,
         "validation_ok": validation.ok,
         "validation_errors": validation.errors,
         "validation_warnings": validation.warnings,
         "recommended_coordinator_action": recommend_sdk_action(
-            latest_status, stop_rule_triggered
+            latest_status, repeated_nudge_signal
         ),
-        "recommended_nudge": suggest_sdk_nudge(latest_status, stop_rule_triggered),
+        "recommended_nudge": suggest_sdk_nudge(latest_status, repeated_nudge_signal),
     }
 
 
@@ -485,11 +485,11 @@ def classify_sdk_status(
     validation: SdkBridgeValidation,
     observed_errors: list[str],
     age_seconds: int | None,
-    stop_rule_triggered: bool,
+    repeated_nudge_signal: bool,
 ) -> str:
     if not validation.ok or observed_errors:
         return "blocked"
-    if stop_rule_triggered:
+    if repeated_nudge_signal:
         return "quiet_stall"
     control = manifest.get("control", {})
     stall_seconds = int(control.get("stall_seconds", 0))
@@ -514,9 +514,9 @@ def repeated_nonprogress(events: list[dict[str, Any]], limit: int) -> bool:
     return len(set(types)) == 1 and len(set(signatures)) == 1
 
 
-def recommend_sdk_action(latest_status: str, stop_rule_triggered: bool) -> str:
-    if stop_rule_triggered:
-        return "stop-and-review"
+def recommend_sdk_action(latest_status: str, repeated_nudge_signal: bool) -> str:
+    if repeated_nudge_signal:
+        return "review-evidence-and-choose-next-action"
     if latest_status == "completion_candidate":
         return "verify-result-or-blocker"
     if latest_status == "blocked":
@@ -528,12 +528,12 @@ def recommend_sdk_action(latest_status: str, stop_rule_triggered: bool) -> str:
     return "continue-monitoring"
 
 
-def suggest_sdk_nudge(latest_status: str, stop_rule_triggered: bool) -> str:
-    if stop_rule_triggered:
+def suggest_sdk_nudge(latest_status: str, repeated_nudge_signal: bool) -> str:
+    if repeated_nudge_signal:
         return (
-            "Stop this SDK session lane and write the blocker file. The repeated-nudge "
-            "stop rule has triggered; do not continue until the coordinator reviews "
-            "the event log, nudge log, status summary, result, and blocker."
+            "Repeated nudges have not changed the observed state. Review the event log, "
+            "nudge log, status summary, result, and blocker, then choose the next "
+            "engineering action from that evidence."
         )
     if latest_status == "quiet_stall":
         return (
@@ -566,7 +566,7 @@ def render_sdk_monitor_markdown(summary: dict[str, Any]) -> str:
         f"- last_event_type: `{summary.get('last_event_type', '')}`",
         f"- age_seconds: `{summary.get('age_seconds', '')}`",
         f"- nudge_count: {summary.get('nudge_count', 0)}",
-        f"- stop_rule_triggered: `{summary.get('stop_rule_triggered', False)}`",
+        f"- repeated_nudge_signal: `{summary.get('repeated_nudge_signal', False)}`",
         "",
         "## Recommended Nudge",
         "",

@@ -81,8 +81,7 @@ The supervisor controls several variables that affect the outcome:
 - authority level;
 - allowed tools and files;
 - claim-review strictness;
-- retry limits;
-- bailout threshold; and
+- evidence-based continuation rationale; and
 - whether the task should be split, merged, deferred, delegated, or done
   directly.
 
@@ -122,8 +121,8 @@ installed model, including:
 - ticket shapes that improve reliability;
 - output formats it follows well;
 - authority levels that appear safe;
-- failure modes that require early stop conditions; and
-- model-specific retry or repeat-run guidance.
+- failure modes that require a changed diagnosis or repair; and
+- model-specific repeat-run guidance.
 
 The goal is not to rank models globally. The goal is to choose a good
 task-model-protocol combination for the work actually in front of the
@@ -144,7 +143,7 @@ Each real-project pilot should record:
 - delegated paid-supervisor input/output tokens;
 - worker input/output tokens;
 - current input/output token prices used for the estimate;
-- setup, verification, retry, and cleanup token budgets;
+- setup, verification, repair, and cleanup token accounting;
 - worker runtime and output classification;
 - accepted, rejected, and needs-evidence claims;
 - whether the worker changed the supervisor's decision;
@@ -176,15 +175,15 @@ to normalize.
 
 Operational implications:
 
-- define a paid-supervisor budget before any live experiment starts;
+- define the engineering question and the evidence expected from a live
+  experiment;
 - checkpoint every supervisor-owned span when economics are part of the claim;
-- stop after two unsuccessful attempts in the same lane unless the maintainer
-  explicitly approves another run;
+- inspect each result before choosing a repair, repeat, or a different approach;
 - report the learning signal as soon as it is visible, even if the cleanest
   possible acceptance result has not been achieved; and
 - separate `quality_validated_candidate`, `protocol_accepted_candidate`, and
-  `economics_usable` so a useful but noisy result does not trigger endless
-  retries.
+  `economics_usable` so a useful but noisy result is not mistaken for either a
+  completed route or pointless repetition.
 
 The goal is not to prove that local supervision can be perfect. The goal is to
 find task/workflow regions where local supervision is good enough that paid

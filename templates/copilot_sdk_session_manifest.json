@@ -49,8 +49,8 @@
   "control": {
     "stall_seconds": 300,
     "nonprogress_event_limit": 5,
-    "max_nudges": 2,
-    "max_retries": 1,
+    "max_nudges": 0,
+    "max_retries": 0,
     "stop_condition": "worker writes result or blocker file, or bridge records blocked state"
   },
   "state": {

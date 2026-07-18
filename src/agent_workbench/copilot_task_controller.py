@@ -342,8 +342,8 @@ def recommend_decision(
         return "repair"
     if not archive:
         return "repair"
-    if heartbeat_summary.get("stop_rule_triggered"):
-        return "escalate"
+    if heartbeat_summary.get("repeated_nudge_signal"):
+        return "review"
     return "accept"
 
 

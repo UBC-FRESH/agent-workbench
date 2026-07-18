@@ -91,5 +91,5 @@ def test_nudge_stop_rule_after_repeated_nudges() -> None:
     )
     rendered = render_nudge(summary)
 
-    assert summary["stop_rule_triggered"] is True
-    assert "repeated-nudge stop rule" in rendered
+    assert summary["repeated_nudge_signal"] is True
+    assert "Repeated nudges have not changed" in rendered

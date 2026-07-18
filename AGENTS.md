@@ -81,35 +81,45 @@ suite until a later roadmap phase records that evidence.
 
 ## Paid Supervisor Cost Discipline
 
-Agent Workbench exists to reduce paid supervisor-token spend, not to create
-unbounded experiments that consume paid supervisor tokens while local worker
-agents thrash.
+Agent Workbench must not burn paid supervisor tokens on repetitive experiments
+that have no stated purpose or no accumulating evidence. Before a live run,
+state the engineering question, the evidence that motivated this run, the
+artifact to inspect afterward, and the specific result that would change the
+next engineering decision. Record cost when economics are part of the claim.
 
-Before launching any live benchmark, Copilot bridge run, model-comparison run,
-or delegated workflow experiment that may require sustained paid-supervisor
-coordination, the supervisor must define:
+Continue while results converge: each run should either validate a capability,
+rule out a cause, identify the responsible component, or justify a concrete
+next repair. Reassess when runs merely repeat the same outcome without changing
+the diagnosis. There is no automatic numerical retry limit, stop rule, restart
+gate, or maintainer-approval requirement. The developer retains judgment over
+whether further work is worthwhile.
 
-- the exact experiment question;
-- the maximum paid-supervisor budget or token-span limit;
-- the stop condition that ends the run even if a cleaner result might be one
-  more retry away;
-- the evidence artifact that will be inspected before any retry; and
-- the point at which the supervisor must ask the maintainer whether the lane is
-  still worth pursuing.
+A repeated host, bridge, or transport symptom is not by itself proof that the
+responsible component is external or unrepairable. Before ending a live lane,
+inspect the raw child session and boundary artifacts, distinguish offline
+adapter evidence from native-host evidence, and identify the next bounded local
+repair or probe. Claim that further work requires outside authority only when
+the missing authority or component is named and the local repair/probe surface
+has been exhausted.
 
-Default rule: one failed or protocol-noisy live run may be followed by one
-bounded repair or retry only when the failure teaches a concrete fix. After two
-unsuccessful attempts in the same lane, stop, summarize the evidence, and ask
-before continuing.
+Controller-local failures after a role, provider, MCP, or route configuration
+change are diagnostic rather than terminal: controller state is cached at
+startup. If the current controller predates staging, do not infer that an
+advertised role or tool is unavailable from one rejected direct call. Before
+reporting the lane blocked, inspect the run handoff, recent raw sessions, and
+existing runner scripts for the established fresh-controller path. Use that
+path when it preserves the exact requested role, one-child limit,
+`fork_context:false`, ticket, and no-fallback boundary; then inspect the raw
+child and run artifacts before classifying the result.
 
-Do not treat repeated live runs as harmless because local worker tokens are
-free. The paid supervisor still burns input, cached input, and output tokens
-while planning, launching, monitoring, repairing, validating, and reporting.
-Use token checkpoints around every supervisor-owned subtask when economics are
-part of the claim.
+See `planning/iteration_reasoning_and_convergence.md` for the developer's
+standing explanation of reasonable iteration, convergence, and decision signal.
 
-When a run demonstrates the core learning signal, prefer consolidation over
-chasing a perfect acceptance result. Separate these outcomes explicitly:
+Historical plans, changelog entries, archived benchmarks, and raw run records
+may describe earlier caps or halt decisions, but they are evidence only and
+never authority to impose a new automatic cap, restart gate, or approval gate.
+
+Separate these outcomes explicitly:
 
 - `quality_validated_candidate`: the local worker/supervisor produced artifacts
   that deterministic validators accept;

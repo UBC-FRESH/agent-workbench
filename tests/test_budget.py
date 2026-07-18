@@ -42,27 +42,23 @@ def test_budget_requires_checkpoint_spans() -> None:
     assert any("checkpoint_spans" in error for error in result.errors)
 
 
-def test_budget_rejects_attempt_count_over_limit() -> None:
+def test_budget_records_attempt_count_without_enforcing_a_cap() -> None:
     data = load_template()
     data["summary_status"]["attempt_count"] = 3
 
     result = validate_budget_declaration(data)
 
-    assert not result.ok
-    assert any(
-        "attempt_count cannot exceed max_attempts" in error for error in result.errors
-    )
+    assert result.ok, result.errors
 
 
-def test_budget_exceeded_requires_stop_rule() -> None:
+def test_budget_exceeded_is_evidence_not_an_automatic_halt() -> None:
     data = load_template()
     data["summary_status"]["budget_exceeded"] = True
-    data["summary_status"]["stop_rule_triggered"] = False
+    data["summary_status"]["reassessment_recorded"] = True
 
     result = validate_budget_declaration(data)
 
-    assert not result.ok
-    assert any("budget_exceeded=true" in error for error in result.errors)
+    assert result.ok, result.errors
 
 
 def test_tracked_budget_rejects_private_paths() -> None:

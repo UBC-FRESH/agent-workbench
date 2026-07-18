@@ -83,7 +83,22 @@ def test_loopback_process_preserves_multitool_history_without_live_provider(tmp_
     thread.start()
     adapter_port = free_port()
     process = subprocess.Popen(
-        [sys.executable, str(ADAPTER), "--port", str(adapter_port), "--upstream", f"http://127.0.0.1:{upstream_port}/v1", "--allowed-root", WORKTREE, "--verdict-log", str(tmp_path / "verdicts.jsonl")],
+        [
+            sys.executable,
+            str(ADAPTER),
+            "--port",
+            str(adapter_port),
+            "--upstream",
+            f"http://127.0.0.1:{upstream_port}/v1",
+            "--allowed-root",
+            WORKTREE,
+            "--verdict-log",
+            str(tmp_path / "verdicts.jsonl"),
+            "--declared-command",
+            "Get-Content allowed.txt",
+            "--declared-workdir",
+            WORKTREE,
+        ],
         cwd=ROOT,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,

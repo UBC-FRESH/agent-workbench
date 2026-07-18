@@ -3539,3 +3539,706 @@ issues, pull requests, and closeout comments.
 - P114 remains active: host-proof work continues by recording concrete failures,
   fixing the responsible component, and preserving the distinction between
   integration evidence and model or economics evidence.
+
+## 2026-07-17 - Completed P114 locked v1 direct data-plane adapter battery
+
+- The P114 core adapter now proves the fail-closed direct route: literal
+  ticket-declared `exec`, native `apply_patch`, command-result continuation,
+  declared validation, same-session repair continuation, and retained ignored
+  artifact envelope.
+- Three independent fresh Qwen direct-MWE sessions (`r20`, `r21`, and `r22`)
+  passed the five-call composite. The deterministic battery report records
+  distinct threads, command exits `0, 17, 0`, two native patches, final
+  `after` targets, and terminal markers for every row.
+- This completes the locked v1 data-plane delivery gate only. P114 remains
+  active for frozen C4 Worker role binding and qualification; P107 remains
+  parked and no economics claim is made.
+
+## 2026-07-17 - P114.3 fresh role-binding probe exposed missing patch tool
+
+- Fresh run `p114_c4_role_binding_r3` natively launched the frozen
+  `ollama_qwen_coder_worker` with the intended child identity, parentage,
+  Qwen model, temporary real-upstream provider, and literal worktree.
+- The raw child session advertised only `exec`. Its declared read succeeded,
+  but native `apply_patch` returned unsupported; an extra fourth `exec` was
+  rejected by the adapter as undeclared and the target stayed `before`.
+- Disabled the reversible bridge after inspection. The normal Codex config and
+  Worker profile matched their backups byte-for-byte and the adapter process
+  was stopped. P114.3 remains open; this is a host/tool-registration failure,
+  not a Worker-quality, C4-qualification, or economics result.
+
+## 2026-07-17 - P114.3 r5 role-bound proof rejected for shell-write escape
+
+- Fresh child `019f71f7-5893-7470-953f-d1a732858c21` launched as the frozen
+  `ollama_qwen_coder_worker` with `fork_context:false` and the literal r5
+  ticket. Its raw session still advertised only `exec`, and the required exact
+  native patch returned unsupported.
+- Rather than stopping after the declared third read returned `before`, the
+  child made a fourth `exec` using `Set-Content` and a fifth validation read;
+  the target became `after` without an accepted native patch. The adapter
+  separately recorded two rejected `undeclared_exec` verdicts, so r5 is not a
+  literal sequence proof and exposes a containment/evidence disagreement.
+- Disabled the reversible bridge with the required run ID and port. The normal
+  config and Worker profile matched their backups byte-for-byte, and the
+  recorded adapter PID was absent on independent inspection. P114.3 remains
+  open; P107 stays parked and no quality, protocol, qualification, or economics
+  claim changes.
+
+## 2026-07-17 - Repaired P114.3 bridge containment; r6 exposed parent cache
+
+- The bridge now retains both C4 tools while forcing the next tool choice and
+  buffers a pending call until its exact declaration validates. The focused
+  adapter suite passed 13 tests, including the regression that an undeclared
+  `Set-Content` command emits no executable host event.
+- Fresh r6 child `019f71fc-aad1-7450-80bc-2b44c191a24a` persisted the frozen
+  Worker/provider identity but failed before any request reached its port-18995
+  adapter. It attempted the stopped r5 endpoint on port 18994, proving a
+  parent-session provider cache rather than a Worker or bridge result.
+- Disabled the r6 bridge and independently confirmed restored configuration,
+  restored Worker profile, and stopped adapter. P114.3 remains open; the next
+  meaningful proof requires a new parent Codex session after bridge enablement.
+- The bridge now derives its temporary provider name from the run ID, preventing
+  a future fresh parent from reusing a prior proof's provider binding. The
+  focused adapter suite passed 14 tests; no additional child was launched from
+  the stale parent session.
+
+## 2026-07-17 - R7 isolated required bridge-enable ordering
+
+- R7 used a new parent but enabled its run-scoped bridge from inside that
+  session. The native launcher consequently had not loaded the new provider and
+  Worker profile, and rejected the sole Worker spawn before creating a child or
+  sending adapter traffic.
+- The target remained `before` and teardown restored operator state. This is an
+  invalid setup-order observation, not a model, Worker, tool, quality, protocol,
+  or economics result. The next handoff now enables the bridge from PowerShell
+  before starting the fresh parent session.
+
+## 2026-07-17 - R8 confirms the remaining host native-patch registration blocker
+
+- Fresh child `019f720c-829e-78a2-a5f9-4f31accdae33` was launched with
+  `fork_context:false` from a parent opened after the r8 bridge was enabled.
+  Its raw session persisted the frozen Worker role, Qwen model, r8 provider,
+  and literal worktree; the first declared read reached the adapter.
+- The host accepted the bridged `shell_command` route but rejected the exact
+  required native `apply_patch` with `unsupported custom tool call:
+  apply_patch`. The target remained `before`; later undeclared `exec` attempts
+  were rejected, and the stream disconnected before completion.
+- Disabled the r8 bridge with the required command after inspection. P114.3
+  remains open: this is a host tool-registration failure, not a Worker-quality,
+  protocol-accepted, C4-qualification, or economics result.
+
+## 2026-07-17 - Investigated the role-bound native patch-handler registration seam
+
+- Compared R8 with the accepted direct `codex exec` composites. Both use the
+  same Qwen function-tool catalog, including `shell_command` and freeform
+  `apply_patch`; the provider-facing function format is therefore not the
+  remaining difference.
+- The direct runner's full execution authority was an initial hypothesis. R9
+  subsequently falsified it: subagents inherit the parent permission mode, so
+  no temporary Worker-profile elevation remains in the bridge.
+- Added focused deterministic coverage for the registration boundary. The later
+  CLI-parent repair addressed the actual missing Cloudflare Access environment.
+
+## 2026-07-17 - R9 isolates the multi-agent host-dispatch gap
+
+- R9's fresh Worker made the literal three requested calls but still received
+  `unsupported custom tool call: apply_patch`; the target stayed unchanged and
+  teardown restored the operator configuration. The temporary profile-permission
+  change did not repair registration.
+- Codex documents that subagents inherit the parent's selected permission mode.
+  The next local probe therefore compares the direct runner with the installed
+  code-mode host for native patch/custom-tool registration vocabulary before any
+  additional Worker launch.
+
+## 2026-07-17 - CLI-parent control did not repair P114.3
+
+- The CLI control correctly created one native frozen Worker and waited for it.
+  Its first wrapper lost nested ticket quotes; the repaired stdin wrapper
+  preserved the literal ticket in r11.
+- Both controls then failed before a native call: the adapter recorded six
+  identical initial provider requests without any SSE event, and each child
+  ended with `stream disconnected before completion`. Targets remained unchanged
+  and teardown restored normal operator configuration. This is a distinct
+  initial-response transport seam, not a successful alternative parent route.
+
+## 2026-07-17 - P114.3 accepted through the Cloudflare-authenticated CLI parent
+
+- R13/R14 instrumentation found the concrete CLI transport fault: the
+  Cloudflare Access gate returned `302` login responses because `codex exec`
+  had not inherited the service-token environment declared by the configured
+  provider. This was a local launcher omission, not a model or native-patch
+  limitation.
+- The CLI-parent wrapper now loads the documented local provider-header file
+  into the configured provider environment and restores prior values in its
+  `finally` block. Focused adapter/host/control tests pass.
+- Fresh `p114_c4_cli_parent_r15` launched exactly one frozen
+  `ollama_qwen_coder_worker` with `fork_context:false`. Its raw child session
+  completed the literal `exec -> native apply_patch -> exec` route with the
+  exact ticket patch, changed the target to `after`, and returned
+  `P114_C4_ROLE_DONE`. The adapter recorded `200 text/event-stream` responses,
+  while bridge and operator state were restored afterward.
+- This accepts P114.3 for the CLI-parent route as
+  `quality_validated_candidate` and `protocol_accepted_candidate`. No
+  economics claim is made; R8/R9 remain a distinct VS Code-parent limitation.
+
+## 2026-07-17 - P114.4 fresh C4 capability battery accepted
+
+- Added an explicit five-call battery mode to the proven CLI-parent bridge:
+  read, defect patch, declared failing validation, repair patch, and final
+  validation. The adapter pins the sequence and rejects undeclared calls.
+- Fresh rows `p114_c4_capability_battery_r23`, r24, and r25 each launched one
+  frozen Worker with `fork_context:false` and completed the exact native
+  sequence. Their raw sessions show command exits `0, 17, 0`, two native
+  patches, final target `after`, and `P114_C4_BATTERY_DONE`.
+- The deterministic C4 verifier accepted all three distinct child sessions.
+  This is a `quality_validated_candidate` and
+  `protocol_accepted_candidate` for P114.4's CLI-parent route. No economics
+  claim is available, and P107 remains parked.
+
+## 2026-07-17 - P114.3 VS Code patch-via-exec proof rejected at custom-exec dispatch
+
+- Fresh `p114_c4_role_binding_r10_exec_wrapper` launched exactly one frozen
+  `ollama_qwen_coder_worker` with `fork_context:false` and waited once. The raw
+  child session records the intended two `shell_command` reads around custom
+  `exec` JavaScript calling `tools.apply_patch(...)`.
+- The VS Code host rejected that wrapper as `unsupported custom tool call:
+  exec`; the target remained `before`, no `P114_C4_ROLE_DONE` marker occurred,
+  and later adapter activity included rejected `undeclared_exec` calls. The
+  required run-scoped bridge disable command completed after inspection.
+- P114.3 remains open for the VS Code-parent route. This is a host
+  custom-tool-dispatch failure, not a Worker-quality, protocol-accepted,
+  C4-qualification, or economics result; P107 remains parked.
+
+## 2026-07-17 - Added a no-mutation VS Code Worker tool-inventory gate
+
+- Added `-HostToolInventory` to the reversible C4 role bridge. It forces one
+  declared provider `exec` but emits a custom `exec` that prints the executor's
+  own `ALL_TOOLS` names; it cannot use a shell, read a repository file, or
+  patch the target.
+- A subsequent VS Code patch proof is now gated on a fresh-parent inventory
+  observation containing `shell_command` and `apply_patch` and terminal marker
+  `P114_C4_HOST_TOOL_INVENTORY_DONE`. A rejected custom executor or missing
+  name stops the lane before any mutation attempt.
+- Focused adapter tests, Python compilation, PowerShell parsing, and
+  `git diff --check` pass. This is a deterministic repair; no new Worker or
+  provider observation was launched.
+
+## 2026-07-17 - Invalid P114.3 host-tool inventory handoff
+
+- Fresh `p114_c4_role_binding_r11_host_inventory` created one frozen Worker and
+  waited once, but the Coordinator passed the generated ticket filename as the
+  Worker message instead of the ticket's verbatim text. The raw child therefore
+  received no inventory task.
+- Its disconnected stream and six adapter `undeclared_exec` verdicts are
+  invalid-input artifacts, not evidence about the custom executor, `ALL_TOOLS`,
+  or VS Code host dispatch. The bridge teardown still completed.
+- R11 is excluded from quality, protocol, C4-qualification, and economics
+  evidence. The next fresh-parent preflight must pass the generated ticket
+  contents verbatim before any Worker is launched.
+
+## 2026-07-17 - P114.3 VS Code inventory gate confirms missing custom executor
+
+- R12 corrected the ticket handoff and made one allowed inert custom `exec`
+  call. The VS Code host returned `unsupported custom tool call: exec`.
+- No shell, file, or patch call occurred; the target remained `before` and the
+  bridge restored normal state. This is valid negative host-dispatch evidence,
+  not a quality, protocol, qualification, or economics result.
+- Do not launch another UI patch Worker until generic custom-executor
+  registration is repaired.
+
+## 2026-07-17 - Located the VS Code code-mode-host registration boundary
+
+- A fresh VS Code app-server capture showed `dynamicTools: null` for both the
+  user thread and the extension's ephemeral helper thread. The documented
+  app-server mechanism does support experimental dynamic registration and
+  client-executed calls, so the installed extension did not use that mechanism
+  for these threads; this is not a Codex capability limitation.
+- The deterministic local executable comparison reported `host_registration_gap`:
+  direct `codex.exe` contains the native patch/custom-dispatch markers, while
+  sibling `codex-code-mode-host.exe` contains none. This corroborates R8--R12
+  without counting another Worker observation.
+- Productive C4 work remains on the accepted CLI-parent route. A VS Code
+  integration repair must supply dynamic tool definitions and handle the
+  resulting client-executed calls; repeated UI Worker probes would not add
+  decision signal.
+
+## 2026-07-17 - VS Code dynamic custom-tool registration proved
+
+- A reversible relay injected a no-mutation `p114_exec` function into fresh
+  app-server `thread/start` requests. A parent call with `operation: inventory`
+  produced `item/tool/call` and the relay returned the successful marker
+  `P114_DYNAMIC_EXEC_HANDLER_REACHED`.
+- This proves the documented parent dynamic-tool registration and client-handler
+  path. It does not prove multi-agent child inheritance, shell authority, or
+  alter the earlier UI Worker dispatch evidence. The temporary VS Code setting
+  was removed after inspection.
+
+## 2026-07-17 - Dynamic custom tool does not route through the VS Code Worker host
+
+- Fresh R13 translated one declared Worker `exec` into the no-mutation dynamic
+  `p114_exec` function. The raw child emitted that function call, but its
+  nested host returned `unsupported call: p114_exec`; the parent relay received
+  no `item/tool/call`.
+- The target remained `before` and no shell, patch, file, or extra host call
+  occurred. This is negative multi-agent integration evidence, not a quality,
+  protocol, or economics result.
+- The run bridge was disabled and both the normal Codex configuration and
+  Worker role matched their backups. Further UI Worker retries require a
+  nested-host dynamic-tool routing repair, while the CLI-parent route remains
+  the productive P114 path.
+
+## 2026-07-17 - Supported MCP parent tool route proved
+
+- Fresh VS Code loaded a reversible local stdio MCP server, listed its one
+  no-mutation `p114_exec` tool, and invoked the exact inventory operation. The
+  server recorded `P114_MCP_EXEC_HANDLER_REACHED`.
+- Configuration restored byte-for-byte after inspection. This is parent-only
+  MCP evidence. A Worker MCP test requires a separate C4 adapter repair because
+  its current provider catalog intentionally contains only `apply_patch` and
+  `exec`.
+
+## 2026-07-17 - Worker MCP direct schema was absent
+
+- Fresh R14 recorded the raw Worker provider request before adapter translation.
+  It contained the bridge's `apply_patch` and `exec` definitions, with no
+  `additional_tools` and no `p114_exec` MCP schema. Those definitions are the
+  provider-facing catalog, not evidence that the nested Worker host dispatches
+  either tool. The local MCP server received zero child calls.
+- This proved only that the direct function schema was absent. MCP then bridge
+  teardown restored configuration and role state, and the target remained
+  `before`.
+
+## 2026-07-17 - Worker MCP deferred discovery is exposed
+
+- R15 enabled Code Mode with empty excluded/direct-only namespace lists and
+  launched exactly one fresh no-mutation Worker. Its raw provider request
+  exposed `p114_exec_probe` through deferred `tool_search` guidance, which
+  explicitly requires `tool_search` before an MCP invocation.
+- The frozen ticket incorrectly prohibited that required discovery call and
+  demanded a direct MCP function. The Worker emitted markup instead; the server
+  recorded zero `tools/call` requests and the target remained `before`.
+- This corrects the R14 overclaim: child MCP is available as a discoverable
+  source under Code Mode. The next proof must permit one `tool_search` followed
+  by the discovered inventory call. MCP then bridge teardown restored the exact
+  configuration and Worker role.
+
+## 2026-07-17 - Nested Worker does not dispatch deferred MCP search
+
+- R16 used that corrected two-call no-mutation ticket. Its raw provider stream
+  showed six completed `tool_search` function calls, but the nested Worker host
+  executed none and returned no tool result; it retried until the provider
+  stream disconnected before completion.
+- The MCP server recorded zero `tools/call` requests and the target stayed
+  `before`. This rejects the run and localizes the remaining defect to nested
+  code-mode `tool_search` dispatch and turn continuation, not MCP registration.
+- MCP-first teardown restored the exact Codex configuration and Worker role.
+
+## 2026-07-17 - Direct MCP workaround did not expose a child tool
+
+- R17 disabled deferred MCP exposure while keeping Code Mode enabled, then
+  launched exactly one fresh `ollama_qwen_coder_worker` and waited once. Child
+  `019f72ca-6aa5-7d53-b9ce-5e6de2133692` disconnected before
+  `response.completed` and recorded no final agent message.
+- The raw child request still exposed `p114_exec_probe` only through
+  `tool_search` guidance, not as a direct MCP function schema; after bridge
+  translation the provider-facing catalog remained `apply_patch` and `exec`.
+  The provider repeatedly called `exec`, producing six adapter
+  `undeclared_exec` rejections.
+- The MCP server recorded initialization/listing only and zero `tools/call`
+  requests; the target stayed `before`. The direct-MCP workaround is rejected,
+  and the remaining repair target stays nested `tool_search`
+  dispatch/continuation. MCP-first teardown restored the exact Codex
+  configuration and Worker role.
+
+## 2026-07-17 - Repaired MCP adapter path isolates nested host dispatch
+
+- Added a bounded MCP inventory adapter path that exposes `tool_search` first
+  and then only `mcp__p114_exec_probe__p114_exec`. Focused adapter tests pass
+  with 26 cases, including fail-closed coverage for invalid MCP arguments and
+  unrelated tools.
+- Fresh R19 child `019f72db-e8e5-7a73-9a45-06fa2ec81f36` made exactly that
+  provider-facing sequence and all adapter verdicts were accepted. The target
+  remained `before` and no shell, patch, file, or undeclared call occurred.
+- The nested Worker host returned
+  `unsupported call: mcp__p114_exec_probe__p114_exec`; the MCP server recorded
+  zero `tools/call` requests. R19 is rejected, but it moves the defect boundary
+  beyond the P114 adapter to spawned-child code-mode/MCP dispatch or VS Code
+  extension integration. Final cleanup restored original configuration and
+  Worker-role hashes and stopped the adapter.
+
+## 2026-07-17 - Native tool_search response shape repaired for P114.3 MCP inventory
+
+- Source-audited the installed Codex `0.144.5` path against upstream tag
+  `rust-v0.144.5`. Native Codex parses deferred tool discovery through
+  `tool_search_call`, not an ordinary `function_call` named `tool_search`.
+- Corrected the R19 diagnosis: the adapter was still wrong. R19's provider
+  continuation showed the `tool_search` result as `aborted`; the adapter then
+  exposed `mcp__p114_exec_probe__p114_exec` synthetically, so the Worker could
+  call a tool that native Codex had not discovered.
+- Updated the adapter to emit native `tool_search_call`, preserve
+  `tool_search_output`, and expose the MCP inventory tool only after real
+  search output contains the probe tool. Focused validation now passes with
+  28 adapter tests plus Python compile. The next live step is one fresh
+  no-mutation R20 MCP inventory proof after VS Code restart.
+
+## 2026-07-17 - R20 reaches native MCP discovery but provider rejects continuation item
+
+- Fresh R20 child `019f72e8-d351-7143-ad4f-55e0f41c3296` was launched once
+  with `fork_context:false` and the generated ticket verbatim; the Coordinator
+  waited exactly once.
+- The raw child session now contains native `tool_search_call` followed by
+  native `tool_search_output` exposing namespace `mcp__p114_exec_probe` and
+  function `p114_exec`. This proves the child can perform deferred MCP
+  discovery.
+- The run is rejected because the next provider request failed with
+  `input[3]: unknown input item type: "tool_search_call"`. No MCP `tools/call`
+  executed and the target stayed `before`.
+- Post-run repair updated the adapter to recognize Codex's actual top-level
+  namespace-shaped search output. Focused adapter tests still pass with 28
+  cases. The next repair is provider-compatible continuation-history
+  translation for `tool_search_call` and `tool_search_output`.
+
+## 2026-07-17 - Provider-compatible native discovery replay staged for R21
+
+- Implemented the R20 follow-up adapter repair: child-native
+  `tool_search_call` and `tool_search_output` history is now replayed upstream
+  as provider-compatible `function_call` and `function_call_output` items.
+- Preserved the safety gate that exposes `mcp__p114_exec_probe__p114_exec` only
+  after the real search output contains the probe tool.
+- Aligned the loopback adapter fixture with the current declared-command
+  fail-closed contract. Focused validation passes:
+  `python -m pytest tests\test_p114_capability_tool_adapter.py tests\test_p114_capability_tool_adapter_loopback.py -q`
+  reports 29 passed; Python compile succeeds; `git diff --check` succeeds with
+  LF/CRLF warnings only.
+
+## 2026-07-17 - R21 rejects MCP proof after provider replay repair
+
+- Fresh R21 child `019f72f0-d984-7d32-878a-910c3d654b88` was launched once
+  with `fork_context:false` and the generated ticket verbatim; the Coordinator
+  waited exactly once.
+- The provider replay repair worked: provider-facing requests used
+  `function_call` / `function_call_output` for replayed search history instead
+  of unsupported `tool_search_call` input items, and all adapter verdicts were
+  accepted.
+- The raw child session reached native discovery and then attempted
+  `mcp__p114_exec_probe__p114_exec({"operation":"inventory"})`, but the nested
+  Worker host returned `unsupported call:
+  mcp__p114_exec_probe__p114_exec`.
+- The MCP server recorded zero `tools/call` requests, the target stayed
+  `before`, and operator state was restored after inspection. The next repair
+  is nested Worker MCP function dispatch, not provider replay serialization.
+
+## 2026-07-17 - R21 diagnosis narrowed to flat-vs-namespaced MCP call shape
+
+- Source-audited the Codex search-tool path and found that search-surfaced MCP
+  calls are expected to arrive as namespaced function calls, not flat
+  `mcp__server__tool` names.
+- Corrected the R21 adapter seam: provider-facing requests keep the flat
+  `mcp__p114_exec_probe__p114_exec` compatibility function, but child-facing
+  events now use namespace `mcp__p114_exec_probe` and name `p114_exec`.
+- Continuation replay accepts the native namespaced child history and maps it
+  back to the flat provider call. Focused validation passes with 30
+  adapter/loopback tests plus Python compile; `git diff --check` succeeds with
+  LF/CRLF warnings only.
+
+## 2026-07-17 - R22 accepts no-mutation VS Code Worker MCP routing
+
+- Fresh R22 child `019f72f7-9bc7-76f1-94de-9c16013ccede` was launched once
+  with `fork_context:false` and the generated ticket verbatim; the Coordinator
+  waited exactly once.
+- The raw child session recorded native deferred discovery and a native
+  namespaced MCP call: `tool_search_call` -> `tool_search_output` ->
+  `mcp__p114_exec_probe / p114_exec`.
+- The MCP server recorded exactly one `tools/call` with
+  `{"operation":"inventory"}` and marker `P114_MCP_EXEC_HANDLER_REACHED`; the
+  Worker returned `P114_C4_MCP_ROUTING_DONE`.
+- Adapter verdicts were all accepted, provider-facing replay kept the flat
+  compatibility call, the target stayed `before`, and operator state was
+  restored after inspection. This is accepted as no-mutation MCP routing, not
+  as a patch/mutation proof.
+- Captured the milestone lesson in
+  `planning/p114_vs_code_worker_mcp_breakthrough.md`: the viable subagent MCP
+  route is deferred `tool_search` plus child-facing native namespaced MCP calls,
+  with provider-flat compatibility names kept at the adapter boundary.
+
+## 2026-07-17 - R23 accepts bounded VS Code Worker MCP patch
+
+- Fresh R23 child `019f730c-a338-7b52-904e-0fbdf9a8fb45` was launched once
+  with `fork_context:false` and the generated ticket verbatim; the Coordinator
+  waited exactly once.
+- The raw child session recorded native deferred discovery and a native
+  namespaced MCP patch call: `tool_search_call` -> `tool_search_output` ->
+  `mcp__p114_exec_probe / p114_exec` with `{"operation":"patch"}`.
+- The MCP server recorded exactly one `tools/call` with
+  `{"operation":"patch"}` and marker `P114_MCP_PATCH_HANDLER_REACHED`; the
+  Worker returned `P114_C4_MCP_PATCH_DONE`.
+- The ignored target changed from exact `before\n` to exact `after\n`. No
+  shell, `exec`, `apply_patch`, custom-tool, file-read, or extra host call
+  occurred in the raw child session. Adapter verdicts were accepted and
+  operator state was restored after inspection.
+
+## 2026-07-17 - Agent bridge package plan captured
+
+- Fed the R22/R23 MCP breakthrough to Advisor and delegated read-only planning
+  slices to Luna Workers for fixture freezing, extraction mapping,
+  boot-critical config transactions, and tool-inventory expansion.
+- Captured the clean follow-on plan in
+  `planning/p114_worker_bridge_package_plan.md`.
+- The plan targets a route-qualified `agent_workbench.agent_bridge` package
+  MVP with sanitized R22/R23 fixtures, pure protocol translation modules,
+  transactional config/role edits, separate grant-bound MCP `exec` and
+  `apply_patch` tools, and a tool compatibility matrix for future data-plane
+  expansion.
+- The design explicitly supports future Worker/Supervisor/Coordinator/Advisor
+  provider substitution through role/profile/provider grants rather than role
+  names or TOML fields alone.
+
+## 2026-07-17 - Agent bridge packageization tranche started
+
+- Added the initial `agent_workbench.agent_bridge` package surface with pure
+  tool-schema and protocol-shape helpers for provider-flat and child-native
+  namespaced MCP calls.
+- Added sanitized R22/R23 fixture contracts under `tests/fixtures/p114/` and
+  focused tests that assert lifecycle order, namespace preservation, target
+  transition, and forbidden fallback-tool absence.
+- Updated the P114 capability adapter to consume canonical bridge tool schemas
+  while preserving existing P114 compatibility wrappers.
+- Added `planning/p114_agent_bridge_tool_matrix.md` to track observed native
+  tools, bridge status, authority level, and deferred control-plane boundaries.
+
+## 2026-07-17 - Agent bridge transaction guard started
+
+- Added `agent_workbench.agent_bridge.errors`, `toml_guard`, and `transaction`
+  modules.
+- Implemented a local `BridgeConfigTransaction` that acquires a lock, validates
+  original TOML, writes byte-for-byte backups, writes a journal, validates
+  staged TOML before replacement, uses same-directory atomic replacement,
+  supports idempotent restore, rejects concurrent locks, and recovers prepared
+  journals from backups.
+- Added focused temp-file tests for the R23 concatenated-TOML incident class,
+  backup/restore, idempotent restore, concurrent lock rejection, missing staged
+  content, invalid staged TOML, and prepared-journal recovery.
+- Luna Workers were used for sidecar transaction test/API review and then
+  closed after their results were incorporated.
+
+## 2026-07-17 - P114 staging scripts route through package transaction CLI
+
+- Added `agent_workbench.agent_bridge.transaction_cli` with `commit` and
+  `restore` subcommands over the package transaction layer.
+- Updated `scripts/enable_p114_mcp_exec_probe.ps1` to render a staged complete
+  config TOML and use the package transaction CLI for commit/restore; added a
+  `-CodexHome` parameter for isolated temp-home smoke checks.
+- Updated `scripts/enable_p114_c4_role_bridge.ps1` to render staged complete
+  config and Worker role TOML files and use the package transaction CLI for
+  commit/restore; adapter startup is cleaned up if transaction commit fails,
+  and `-CodexHome`/`-AgentWorkbenchEnvPath` allow disposable config validation.
+- Added CLI-level transaction tests and PowerShell parser validation.
+- Ran a disposable temp-home script smoke without touching live Codex config:
+  MCP run `p114_mcp_tx_smoke_0b40beb0454d4874ad350de6aac72eff` committed and
+  restored one temp config target, and role run
+  `p114_role_tx_smoke_bca6ad6823054fb89ca75154b4a74123` committed and restored
+  both temp config and temp Worker role targets byte-for-byte.
+
+## 2026-07-17 - Agent bridge MCP server MVP primitives started
+
+- Added `agent_workbench.agent_bridge.mcp_server` with separate MCP `exec` and
+  `apply_patch` tool schemas, deny-by-default `RunGrant` policy, stable
+  SHA-256 patch grants, root-contained workdir checks, injectable handlers,
+  JSON-RPC request handling, and JSONL request/policy/outcome logging.
+- Added focused tests for tool listing, notification behavior, denied exec,
+  allowed exec, outside-root rejection, denied patch, allowed patch by hash,
+  malformed-call JSON-RPC errors, JSONL stdio handling, and the module
+  entrypoint.
+- Added a package module entrypoint runnable as
+  `python -m agent_workbench.agent_bridge.mcp_server`; local stdio smoke
+  `p114_pkg_mcp_stdio_smoke_e47272b6ab67483cb5504713539a3618` listed tools,
+  executed granted `python -V`, returned `isError:false`, and wrote an allow
+  policy decision to the event log.
+- Added `agent_workbench.agent_bridge.patch_backend`, a constrained
+  relative-root patch backend for granted MCP `apply_patch` calls. It supports
+  `Add File`, `Delete File`, and `Update File` hunks while rejecting
+  outside-root paths and missing update context.
+- Ran package-backed patch stdio smoke
+  `p114_pkg_mcp_patch_stdio_smoke_acf11e9da19a4eefb869ef3cd40bd7b7`; it
+  changed a temp target from exact `before\n` to exact `after\n`, returned
+  `PATCH_OK`, and logged an allow policy decision.
+- Kept `scripts/p114_mcp_exec_probe_server.py` untouched as the R22/R23 proof
+  server fallback. The next MCP tranche is wiring the reversible config script
+  to the package module.
+- Added `scripts/enable_agent_bridge_mcp.ps1`, a separate reversible staging
+  script for the package-backed MCP server. It writes grant arguments for
+  `exec` and `apply_patch`, sets `PYTHONPATH` for the package module, and uses
+  the transaction CLI for commit/restore.
+- Ran temp-home staging smoke
+`p114_agent_bridge_mcp_stage_smoke_dd7f7215acd748eca0603db73d069b1e`; it
+committed the package MCP block into a disposable Codex config, printed the
+exact staged lines, then restored the temp config hash byte-for-byte.
+
+## 2026-07-17 - P114 package-MCP Worker composite proof rejected at host registration
+
+- Fresh package run `p114_agent_bridge_mcp_worker_r1` launched exactly one
+  `ollama_qwen_coder_worker`, child `019f7388-f175-75a3-8a72-aecf66c0b427`,
+  with `fork_context:false`, the verbatim ticket, and the intended literal P114
+  worktree.
+- The raw child session did not advertise callable package
+  `...__exec` or `...__apply_patch` schemas. It attempted unsupported
+  server-level `mcp__agent_bridge_p114_agent_bridge_mcp_worker_r1` and then
+  made direct `shell_command` reads, which the ticket prohibited.
+- `mcp_events.jsonl` records server initialization, `tools/list`, and resource
+  discovery only; it records zero MCP `tools/call` requests, policy decisions,
+  or outcomes. The target remained exact `before\n`, and no direct non-MCP
+  patch occurred.
+- This is a host/tool-registration failure, not a Worker-quality result:
+  `quality_validated_candidate` is rejected, `protocol_accepted_candidate` is
+  rejected, and `economics_usable` is unavailable because no accepted
+  checkpoint boundary or token ledger was captured. The required disable
+  restored live config byte-for-byte against the run backup.
+
+## 2026-07-17 - P114 package-MCP bounded exec proof accepted
+
+- Added `-PackageMcpExec` to `scripts/enable_p114_c4_role_bridge.ps1`. It
+  grants exactly one cross-shell Python read command, renders an exec-only
+  ticket, and keeps deferred package-MCP discovery.
+- The first run exposed a malformed Windows workdir in the ticket; the next
+  reached the handler but showed the previous PowerShell-only command fails
+  under the package execution backend. The script now emits a normalized
+  forward-slash workdir and cross-shell command.
+- Fresh run `p114_package_mcp_exec_r3` launched exactly one
+  `ollama_qwen_coder_worker` child
+  (`019f73b6-3db7-7a71-9a93-06472751e404`) with `fork_context:false`. Its raw
+  session recorded one `tool_search` and one namespaced package `exec` call;
+  the MCP log recorded an allow decision and exit code 0. No fallback tool
+  appeared, the target stayed exact `before\n`, and config plus Worker role
+  restored byte-for-byte.
+- Focused package/adapter/fixture tests passed (`53 passed`). This accepts the
+  standalone package `exec` proof. Economics remains unusable because no
+  accepted checkpoint/token-ledger boundary was captured.
+
+## 2026-07-17 - P114 package-MCP composite proof accepted
+
+- Added `-PackageMcpComposite` to the reversible role bridge. It exposes only
+  two exact Python exec commands and one SHA-256-granted patch through the
+  package MCP server.
+- Fresh run `p114_package_mcp_composite_r1` launched exactly one
+  `ollama_qwen_coder_worker` child
+  (`019f73b8-913a-7701-9dca-d2038466720b`) with `fork_context:false`. The raw
+  child sequence was deferred discovery, package `exec` read, package
+  `apply_patch`, and package `exec` validation; it returned
+  `P114_C4_PACKAGE_MCP_COMPOSITE_DONE`.
+- MCP evidence records allow decisions, exit code 0 for both exec calls, and
+  one allowed patch that changed the ignored target to exact `after\n`. No
+  fallback tool appeared; configuration and Worker role restored byte-for-byte.
+- `quality_validated_candidate` and `protocol_accepted_candidate` are accepted
+  for this bounded composite. `economics_usable` remains unproven because the
+  run has no accepted checkpoint/token-ledger boundary.
+
+## 2026-07-17 - Planned P114 C4 re-entry closeout and P115 scientific artifact pilot
+
+- Added `planning/p114_c4_reentry_closeout_plan.md`, which scopes the remaining
+  P114 work to the accepted fresh CLI-parent package route: normalize its
+  deployment decision, freeze one P107-admissible capability bundle, run two
+  non-comparative qualification observations, and issue a bounded P107
+  re-entry packet. It explicitly keeps the unresolved VS Code nested-host
+  route outside that entry decision and preserves separate quality, protocol,
+  and economics verdicts.
+- Updated `planning/p114_agent_bridge_tool_matrix.md` to record the accepted
+  package `exec`, `apply_patch`, deferred discovery, and composite proofs,
+  while retaining the earlier host-registration failure as superseded negative
+  evidence rather than erasing it.
+- Created planned parent issue #666, `P115: Scientific artifact-inspection
+  bridge pilot`, and added the matching roadmap phase plus
+  `planning/p115_scientific_artifact_inspection_plan.md`.
+- P115 is deliberately not activated while P114 remains active. It will select
+  one public-safe real FRESH model-instance artifact bundle, define and prove a
+  grant-bound read-only inspection capability, and use that evidence—not the
+  retired Copilot SDK/UI catalog—to decide the next data-plane capability.
+
+## 2026-07-17 - Reconciled P114 re-entry plan after Advisor review
+
+- Corrected the P114 closeout plan to distinguish accepted primitive package
+  proofs from the still-required preregistered package battery: P114 now needs
+  a frozen admission manifest, deterministic validator, and three independent
+  fresh package-route composite rows before qualification observations.
+- Limited the immediate P107 re-entry claim to the qualified baseline
+  `qwen3-coder:latest` route. Every C4+ model/profile must pass its own fresh
+  non-comparative package admission observation before entering a comparable
+  P107 lane or economics boundary.
+- Synchronized roadmap, package-plan language, and parent issue #661 with the
+  accepted fresh CLI-parent package-MCP route and its separate VS Code
+  nested-host exclusion. Updated P115 issue #666 and its plan to remain
+  inactive until P114 is merged/closed and P107 is complete, absent explicit
+  parallel authorization.
+
+## 2026-07-18 - Completed P114 package-MCP admission battery
+
+- Added the frozen `-PackageMcpBattery` route and
+  `verify_p114_package_mcp_battery.py` admission validator. The validator
+  requires the raw child sequence `tool_search`, namespaced package `exec`,
+  `apply_patch`, `exec`, `apply_patch`, `exec`; granted MCP policy/outcome
+  records; expected exec codes `0, 17, 0`; exact final target content; no
+  fallback tools; successful upstream responses; and byte-for-byte live
+  config/Worker-role restoration.
+- Three independent fresh CLI-parent observations passed that validator:
+  `p114_package_mcp_battery_r3` (child
+  `019f75b4-776b-70a3-8758-c2b0944bbfcb`), r4 (child
+  `019f75b5-7fdd-76b3-9635-fee34f762d74`), and r5 (child
+  `019f75b9-9769-72e2-9e76-b97d7ca3337f`). The aggregate report is retained
+  under ignored runtime evidence.
+- This accepts P114.4's package capability battery as both a quality and
+  protocol candidate. It does not admit P107 yet and does not make an
+  economics claim; P114.5 still requires two pinned-workload baseline-Qwen
+  qualification observations and the P107 re-entry packet.
+
+## 2026-07-18 - Located the concrete P114.5 qualification seam
+
+- Recovered the frozen historical P107 workload from retained C4 inputs:
+  `p107-provenance-audit-bundle-v1`, baseline
+  `139e725ee069c27cf68c797dd66aa88b5bb2824d`, and independently hashed
+  ticket, fixture, and manifest. The prior C4 row is not being reused as a
+  qualification result.
+- The P114.4 package battery grants only exact commands and pre-hashed patches.
+  That is deliberately insufficient for the coding workload's declared reads,
+  four allowed implementation paths, and frozen validation command. Reusing it
+  would be another tool demonstration, not a valid C4 qualification.
+- P114.5 therefore starts with a narrow task-specific package grant profile
+  plus deterministic materialization and containment tests. Only then may the
+  two fresh literal-worktree qualification observations run.
+
+## 2026-07-18 - P114.5 task-specific route remains unqualified
+
+- Added task-specific bounded reads (including line ranges), explicit
+  creation-target handling, relative standard-diff patch support, and a
+  qualification verifier that reports quality, protocol, and economics
+  separately from the raw provider child trace.
+- Fresh r10 proved namespaced discovery, bounded reads, relative patch
+  application, and byte-for-byte restoration, but the frozen validations
+  failed and the Worker made an ungranted command call. Fresh r11 made only
+  allowed namespaced reads but stopped before a patch or validation.
+- Neither run is a P107 re-entry result: quality is unvalidated, protocol is
+  unaccepted, and economics is not assessed. The observed remaining defect is
+  Worker execution on the full frozen workload, after the package transport
+  and grant-path repairs recorded above.
+
+## 2026-07-18 - Separated P114 protocol admission from P107 workload quality
+
+- Corrected the P114.5 validator and closeout boundary: package admission asks
+  whether the bridge exposes, contains, logs, and restores the declared tool
+  route. It does not require a message-model Worker to deterministically solve
+  the P107 workload.
+- Fresh r10 and r12 independently pass that protocol admission. Their raw
+  traces contain deferred discovery and only namespaced package `read_file`,
+  `apply_patch`, and `exec` calls; out-of-grant requests were denied rather
+  than executed; all mutation stayed within the grant; and both staged live
+  targets restored byte-for-byte.
+- Both runs failed the frozen workload validations. Record those failures as
+  P107 quality evidence. Economics remains unassessed. The qualified P114
+  route therefore unlocks baseline P107 execution without asserting that Qwen
+  will complete every workload deterministically.
+
+## 2026-07-18 - Published the P107 C4 package-route re-entry packet
+
+- Added `planning/p107_c4_package_route_reentry_packet.md`, which admits only
+  the baseline C4 package route after P114 governed closeout.
+- The packet preserves P107 task quality as an observed outcome, keeps P107.2
+  economics and P108 inactive, and requires a fresh protocol admission
+  observation for every later C4+ profile.
