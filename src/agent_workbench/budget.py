@@ -16,10 +16,7 @@ REQUIRED_FIELDS = (
     "phase",
     "experiment_question",
     "max_paid_cost_usd",
-    "max_attempts",
     "checkpoint_spans",
-    "stop_condition",
-    "maintainer_checkpoint",
     "summary_status",
     "public_safety",
 )
@@ -27,8 +24,7 @@ SUMMARY_STATUS_FIELDS = (
     "budget_declared",
     "budget_exceeded",
     "attempt_count",
-    "stop_rule_triggered",
-    "maintainer_checkpoint_required",
+    "reassessment_recorded",
 )
 SPAN_OWNERS = {"coordinator", "local_supervisor", "paid_supervisor", "worker"}
 
@@ -56,16 +52,8 @@ def validate_budget_declaration(data: dict[str, Any]) -> BudgetValidation:
             errors.append(f"{field} must be a nonempty string")
     if not nonnegative_number(data.get("max_paid_cost_usd")):
         errors.append("max_paid_cost_usd must be a nonnegative number")
-    if not positive_integer(data.get("max_attempts")):
-        errors.append("max_attempts must be a positive integer")
     errors.extend(validate_checkpoint_spans(data.get("checkpoint_spans")))
-    errors.extend(
-        validate_stop_condition(data.get("stop_condition"), data.get("max_attempts"))
-    )
-    errors.extend(validate_maintainer_checkpoint(data.get("maintainer_checkpoint")))
-    errors.extend(
-        validate_summary_status(data.get("summary_status"), data.get("max_attempts"))
-    )
+    errors.extend(validate_summary_status(data.get("summary_status")))
     errors.extend(validate_public_safety(data.get("public_safety"), data))
     return BudgetValidation(ok=not errors, errors=errors)
 
@@ -96,39 +84,7 @@ def validate_checkpoint_spans(value: Any) -> list[str]:
     return errors
 
 
-def validate_stop_condition(value: Any, max_attempts: Any) -> list[str]:
-    if not isinstance(value, dict):
-        return ["stop_condition must be an object"]
-    errors: list[str] = []
-    if not nonempty_string(value.get("description")):
-        errors.append("stop_condition.description must be a nonempty string")
-    stop_after = value.get("stop_after_attempts")
-    if not positive_integer(stop_after):
-        errors.append("stop_condition.stop_after_attempts must be a positive integer")
-    elif positive_integer(max_attempts) and stop_after > max_attempts:
-        errors.append("stop_condition.stop_after_attempts cannot exceed max_attempts")
-    for field in ("stop_on_budget_exceeded", "stop_on_repeated_failure"):
-        if field in value and not isinstance(value.get(field), bool):
-            errors.append(f"stop_condition.{field} must be boolean")
-    return errors
-
-
-def validate_maintainer_checkpoint(value: Any) -> list[str]:
-    if not isinstance(value, dict):
-        return ["maintainer_checkpoint must be an object"]
-    errors: list[str] = []
-    if not isinstance(value.get("required"), bool):
-        errors.append("maintainer_checkpoint.required must be boolean")
-    if not nonempty_string(value.get("trigger")):
-        errors.append("maintainer_checkpoint.trigger must be a nonempty string")
-    if not nonempty_string(value.get("decision_surface")):
-        errors.append(
-            "maintainer_checkpoint.decision_surface must be a nonempty string"
-        )
-    return errors
-
-
-def validate_summary_status(value: Any, max_attempts: Any) -> list[str]:
+def validate_summary_status(value: Any) -> list[str]:
     if not isinstance(value, dict):
         return ["summary_status must be an object"]
     errors: list[str] = []
@@ -138,23 +94,15 @@ def validate_summary_status(value: Any, max_attempts: Any) -> list[str]:
     for field in (
         "budget_declared",
         "budget_exceeded",
-        "stop_rule_triggered",
-        "maintainer_checkpoint_required",
+        "reassessment_recorded",
     ):
         if field in value and not isinstance(value.get(field), bool):
             errors.append(f"summary_status.{field} must be boolean")
     attempt_count = value.get("attempt_count")
     if not nonnegative_integer(attempt_count):
         errors.append("summary_status.attempt_count must be a nonnegative integer")
-    elif positive_integer(max_attempts) and attempt_count > max_attempts:
-        errors.append("summary_status.attempt_count cannot exceed max_attempts")
     if value.get("budget_declared") is not True:
         errors.append("summary_status.budget_declared must be true")
-    if (
-        value.get("budget_exceeded") is True
-        and value.get("stop_rule_triggered") is not True
-    ):
-        errors.append("budget_exceeded=true requires stop_rule_triggered=true")
     return errors
 
 
@@ -195,15 +143,10 @@ def render_budget_validation(data: dict[str, Any], result: BudgetValidation) -> 
         f"- project: `{data.get('project', '')}`",
         f"- phase: `{data.get('phase', '')}`",
         f"- max_paid_cost_usd: `{data.get('max_paid_cost_usd', '')}`",
-        f"- max_attempts: `{data.get('max_attempts', '')}`",
         f"- budget_declared: `{summary.get('budget_declared', '')}`",
         f"- budget_exceeded: `{summary.get('budget_exceeded', '')}`",
         f"- attempt_count: `{summary.get('attempt_count', '')}`",
-        f"- stop_rule_triggered: `{summary.get('stop_rule_triggered', '')}`",
-        (
-            "- maintainer_checkpoint_required: "
-            f"`{summary.get('maintainer_checkpoint_required', '')}`"
-        ),
+        f"- reassessment_recorded: `{summary.get('reassessment_recorded', '')}`",
     ]
     if result.errors:
         lines.extend(["", "## Errors"])

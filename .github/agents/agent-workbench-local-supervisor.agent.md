@@ -96,7 +96,8 @@ Worker's Ollama model from its registered custom-agent profile.
 - For `profile-evidence-review` SDK tasks, call `agent_workbench_review_subject`
   when it is available and use that declared subject payload instead of
   searching for alternate filesystem paths.
-- Stop when the ticket's stop condition is reached.
+- Respect the ticket's task boundary and report invalid evidence or unavailable
+  capabilities without inventing an automatic retry cap.
 
 ## Job-End Signals
 
@@ -107,9 +108,10 @@ paths, diffs) — never prose alone:
 - `job_complete_with_caveats`: useful output exists, but caveats remain;
 - `needs_coordinator_review`: you cannot decide safely;
 - `needs_developer_decision`: the issue is a product/research judgment;
-- `job_failed`: workflow failed after allowed retries;
-- `job_aborted`: continuing would violate the ticket, cost guardrail, or
-  authority boundary; or
+- `job_failed`: workflow did not produce the requested result and reports the
+  exact evidence;
+- `job_aborted`: continuing would violate the ticket's authority or workspace
+  boundary; or
 - `job_partially_complete`: some nodes completed and later nodes were skipped or
   blocked.
 

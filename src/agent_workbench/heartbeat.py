@@ -143,7 +143,7 @@ def summarize_heartbeat_records(
         "nudge_count": nudge_count,
         "stall_count": stall_count,
         "recommended_nudge_type": recommended_nudge_type,
-        "stop_rule_triggered": nudge_count >= 2,
+        "repeated_nudge_signal": nudge_count >= 2,
         "recommended_coordinator_action": recommend_action(last_status, stalled),
     }
 
@@ -194,11 +194,11 @@ def count_nudges(records: list[dict[str, Any]]) -> int:
 
 
 def suggest_nudge(summary: dict[str, Any]) -> str:
-    if summary.get("stop_rule_triggered"):
+    if summary.get("repeated_nudge_signal"):
         return (
-            "Stop this delegated lane and write the blocker file. The repeated-nudge "
-            "stop rule has triggered; do not continue work until the coordinator "
-            "reviews the heartbeat, result, blocker, archive, and token/cash ledger."
+            "Repeated nudges have not changed the observed state. Review the heartbeat, "
+            "result, blocker, archive, and token/cash ledger; use that evidence to choose "
+            "the next engineering action rather than sending another unchanged nudge."
         )
     action = str(summary.get("recommended_coordinator_action", "wait"))
     checklist = str(summary.get("last_checklist_item", "the current checklist item"))

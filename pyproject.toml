@@ -48,6 +48,9 @@ agent-workbench = "agent_workbench.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [[tool.mypy.overrides]]
 module = ["freshforge.validation"]
 ignore_missing_imports = true

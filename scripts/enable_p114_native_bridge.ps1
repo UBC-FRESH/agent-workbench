@@ -6,13 +6,18 @@ param(
     [string]$RunId = 'p114_native_bridge_probe',
     [int]$AdapterPort = 18920,
     [int]$ProviderPort = 18921,
-    [string]$Baseline = '139e725ee069c27cf68c797dd66aa88b5bb2824d'
+    [string]$Baseline = '139e725ee069c27cf68c797dd66aa88b5bb2824d',
+    [string]$ControllerRoot = (Get-Location).Path
 )
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $configPath = Join-Path $HOME '.codex\config.toml'
-$agentPath = Join-Path $HOME '.codex\agents\ollama_qwen_coder_worker.toml'
+$agentPaths = @(
+    (Join-Path $HOME '.codex\agents\ollama_qwen_coder_worker.toml'),
+    (Join-Path $ControllerRoot '.codex\agents\ollama_qwen_coder_worker.toml')
+) | Select-Object -Unique
+$controllerAgentPath = Join-Path $ControllerRoot '.codex\agents\ollama_qwen_coder_worker.toml'
 $catalogNormal = 'agent-workbench-terra-v1-models-0.144.2.json'
 $catalogTools = 'agent-workbench-terra-v1-models-0.144.2-qwen3-coder-function-tools.json'
 $markerStart = '# BEGIN P114 NATIVE BRIDGE'
@@ -24,9 +29,15 @@ if ($Mode -eq 'Disable') {
     $config = [regex]::Replace($config, '(?s)' + [regex]::Escape($markerStart) + '.*?' + [regex]::Escape($markerEnd) + '\r?\n?', '')
     $config = $config.Replace($catalogTools, $catalogNormal)
     [IO.File]::WriteAllText($configPath, $config, [Text.UTF8Encoding]::new($false))
-    $agent = Get-Content -LiteralPath $agentPath -Raw
-    $agent = $agent.Replace('model_provider = "' + $providerName + '"', 'model_provider = "agent_workbench_ollama"')
-    [IO.File]::WriteAllText($agentPath, $agent, [Text.UTF8Encoding]::new($false))
+    foreach ($agentPath in $agentPaths) {
+        if (-not (Test-Path -LiteralPath $agentPath)) { continue }
+        $agent = Get-Content -LiteralPath $agentPath -Raw
+        $agent = $agent.Replace('model_provider = "' + $providerName + '"', 'model_provider = "agent_workbench_ollama"')
+        if ($agentPath -eq $controllerAgentPath) {
+            $agent = $agent.Replace('default_permissions = ":workspace"', 'default_permissions = "agent_workbench_ollama_readonly"')
+        }
+        [IO.File]::WriteAllText($agentPath, $agent, [Text.UTF8Encoding]::new($false))
+    }
     $runDir = Join-Path $repoRoot "runtime\agent_jobs\$RunId"
     foreach ($pidFile in @('adapter.pid', 'provider.pid')) {
         $path = Join-Path $runDir $pidFile
@@ -34,6 +45,12 @@ if ($Mode -eq 'Disable') {
     }
     Write-Output 'P114 native bridge disabled.'
     exit 0
+}
+
+foreach ($agentPath in $agentPaths) {
+    if (-not (Test-Path -LiteralPath $agentPath)) {
+        throw "Worker profile is missing: $agentPath"
+    }
 }
 
 $runDir = Join-Path $repoRoot "runtime\agent_jobs\$RunId"
@@ -64,8 +81,13 @@ $config = $config.Replace($catalogNormal, $catalogTools)
 $config = [regex]::Replace($config, '(?s)' + [regex]::Escape($markerStart) + '.*?' + [regex]::Escape($markerEnd), $block)
 if ($config -notmatch [regex]::Escape($markerStart)) { $config = $config.TrimEnd() + "`r`n`r`n$block`r`n" }
 [IO.File]::WriteAllText($configPath, $config, [Text.UTF8Encoding]::new($false))
-$agent = Get-Content -LiteralPath $agentPath -Raw
-$agent = $agent.Replace('model_provider = "agent_workbench_ollama"', 'model_provider = "' + $providerName + '"')
-$agent = [regex]::Replace($agent, '(?m)^model_reasoning_effort = ".*"$', 'model_reasoning_effort = "high"')
-[IO.File]::WriteAllText($agentPath, $agent, [Text.UTF8Encoding]::new($false))
+foreach ($agentPath in $agentPaths) {
+    $agent = Get-Content -LiteralPath $agentPath -Raw
+    $agent = $agent.Replace('model_provider = "agent_workbench_ollama"', 'model_provider = "' + $providerName + '"')
+    $agent = [regex]::Replace($agent, '(?m)^model_reasoning_effort = ".*"$', 'model_reasoning_effort = "high"')
+    if ($agentPath -eq $controllerAgentPath) {
+        $agent = $agent.Replace('default_permissions = "agent_workbench_ollama_readonly"', 'default_permissions = ":workspace"')
+    }
+    [IO.File]::WriteAllText($agentPath, $agent, [Text.UTF8Encoding]::new($false))
+}
 Write-Output "P114 native bridge enabled. Spawn one fresh ollama_qwen_coder_worker now; literal worktree: $worktree"

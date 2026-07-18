@@ -4,7 +4,6 @@
   "phase": "P59",
   "experiment_question": "Can this bounded benchmark produce useful economics evidence within the declared paid-supervisor budget?",
   "max_paid_cost_usd": 5.0,
-  "max_attempts": 2,
   "checkpoint_spans": [
     {
       "span_id": "setup",
@@ -25,23 +24,11 @@
       "required": true
     }
   ],
-  "stop_condition": {
-    "description": "Stop when the budget is exceeded, the attempt limit is reached, or two attempts fail with the same protocol defect.",
-    "stop_after_attempts": 2,
-    "stop_on_budget_exceeded": true,
-    "stop_on_repeated_failure": true
-  },
-  "maintainer_checkpoint": {
-    "required": true,
-    "trigger": "before any third paid-supervisor attempt or any scope expansion",
-    "decision_surface": "tracked sanitized summary with line-item paid-supervisor cost and failure/status evidence"
-  },
   "summary_status": {
     "budget_declared": true,
     "budget_exceeded": false,
     "attempt_count": 0,
-    "stop_rule_triggered": false,
-    "maintainer_checkpoint_required": true
+    "reassessment_recorded": false
   },
   "public_safety": {
     "tracked_artifact": true,

@@ -40,10 +40,16 @@ completed call/output history plus a repair message back through the bridge.
 No external provider endpoint, credentials, user configuration, Codex session,
 or model inference is involved.
 
-## Remaining gate
+## Runtime build gate
 
-P114.3 must prove this same route in a fresh Codex host session using a
-scripted provider: run-scoped configuration, selected Worker role, model and
-provider identity, literal worktree binding, native host execution, result
-artifact flow, adapter teardown, and restoration of normal configuration.
-Only after that proof may P114.4 be considered.
+The synthetic-provider host route did not prove native execution: its emitted
+custom calls were rejected by Codex before mutation. That route remains useful
+only as offline adapter conformance evidence.
+
+P114 now builds from the verified P113-style direct MWE instead. The direct MWE
+uses a run-local `CODEX_HOME`, the function-tools catalog, the P113 one-patch
+adapter, `codex exec`, workspace write authority, and the Windows-sandbox
+bypass. It has already passed with P114-namespaced run artifacts. Follow
+`planning/p114_p113_mwe_increment_log.md` for the one-variable runtime build
+sequence. Do not reintroduce the synthetic-provider host route as a deployment
+gate.

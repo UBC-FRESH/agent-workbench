@@ -2034,7 +2034,7 @@ def run_copilot_sdk_monitor(args: argparse.Namespace) -> int:
             action=summary.get("recommended_coordinator_action", ""),
         )
     )
-    return 2 if summary.get("stop_rule_triggered") else 0
+    return 0
 
 
 def run_copilot_sdk_nudge_plan(args: argparse.Namespace) -> int:
@@ -2048,7 +2048,7 @@ def run_copilot_sdk_nudge_plan(args: argparse.Namespace) -> int:
         str(summary.get("recommended_nudge", "")) + "\n", encoding="utf-8"
     )
     print(f"wrote {args.output}")
-    return 2 if summary.get("stop_rule_triggered") else 0
+    return 0
 
 
 def run_copilot_sdk_transcript(args: argparse.Namespace) -> int:

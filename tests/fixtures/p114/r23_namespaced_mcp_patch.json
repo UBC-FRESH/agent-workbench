@@ -1,0 +1,86 @@
+{
+  "fixture": "r23_namespaced_mcp_patch",
+  "source_run": "p114_c4_role_binding_r23_mcp_patch",
+  "source_kind": "sanitized_live_evidence",
+  "operation": "patch",
+  "provider_compatibility_tool": "mcp__p114_exec_probe__p114_exec",
+  "native_namespace": "mcp__p114_exec_probe",
+  "native_tool": "p114_exec",
+  "search_query": "p114_exec_probe p114_exec patch",
+  "handler_marker": "P114_MCP_PATCH_HANDLER_REACHED",
+  "terminal_marker": "P114_C4_MCP_PATCH_DONE",
+  "target_before": "before\n",
+  "target_after": "after\n",
+  "forbidden_child_tool_names": [
+    "shell_command",
+    "exec",
+    "apply_patch"
+  ],
+  "forbidden_child_item_types": [
+    "custom_tool_call"
+  ],
+  "lifecycle": [
+    {
+      "type": "tool_search_call",
+      "id": "search_1",
+      "call_id": "call_search_1",
+      "execution": "client",
+      "arguments": {
+        "query": "p114_exec_probe p114_exec patch"
+      }
+    },
+    {
+      "type": "tool_search_output",
+      "call_id": "call_search_1",
+      "execution": "client",
+      "tools": [
+        {
+          "type": "namespace",
+          "name": "mcp__p114_exec_probe",
+          "tools": [
+            {
+              "type": "function",
+              "name": "p114_exec",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "patch"
+                    ]
+                  }
+                },
+                "required": [
+                  "operation"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function_call",
+      "id": "mcp_1",
+      "call_id": "call_mcp_1",
+      "namespace": "mcp__p114_exec_probe",
+      "name": "p114_exec",
+      "arguments": {
+        "operation": "patch"
+      }
+    },
+    {
+      "type": "function_call_output",
+      "call_id": "call_mcp_1",
+      "output_contains": "P114_MCP_PATCH_HANDLER_REACHED"
+    }
+  ],
+  "evidence_refs": [
+    "planning/p114_c4_role_binding_probe.md",
+    "planning/p114_p113_mwe_increment_log.md",
+    "planning/p114_vs_code_worker_mcp_breakthrough.md"
+  ]
+}
+

@@ -157,7 +157,7 @@
           "node_kind": "script_convergence_check",
           "execution_boundary": "Script may route the loop but cannot make semantic acceptance claims.",
           "owner": "script_or_deterministic_policy",
-          "stop_rules": "templates/managed_iteration_stop_rules.json",
+          "iteration_evidence": "record the observed defect, the changed variable, and the next evidence-based action",
           "token_accounting": "none unless supervisor interprets the decision"
         }
       },

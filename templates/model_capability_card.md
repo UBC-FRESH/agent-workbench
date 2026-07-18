@@ -41,11 +41,11 @@ patch-proposal trials, supervisor decision packets, or comparison summaries.
 
 -
 
-## Loop And Stop-Condition Risk
+## Loop And Convergence Risk
 
 - Loop risk:
-- Stop-compliance notes:
-- Recommended retry limit:
+- Convergence notes:
+- Evidence needed before another run:
 
 ## Ticket-Shape Sensitivity
 

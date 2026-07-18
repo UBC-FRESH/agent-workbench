@@ -1,0 +1,14 @@
+{
+  "fixture": "mcp_tool_search_contract",
+  "provider_flat_compatibility": "mcp__p114_exec_probe__p114_exec",
+  "child_native_namespace": "mcp__p114_exec_probe",
+  "child_native_tool": "p114_exec",
+  "required_lifecycle": [
+    "tool_search_call",
+    "tool_search_output",
+    "function_call",
+    "function_call_output"
+  ],
+  "rule": "Provider-facing flat MCP compatibility names must be translated to child-facing native namespaced MCP calls before entering the nested VS Code Worker."
+}
+

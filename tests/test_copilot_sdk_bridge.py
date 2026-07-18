@@ -385,8 +385,8 @@ def test_monitor_sdk_session_triggers_repeated_nudge_stop_rule(tmp_path: Path) -
 
     summary = monitor_sdk_session(manifest_path)
 
-    assert summary["stop_rule_triggered"]
-    assert summary["recommended_coordinator_action"] == "stop-and-review"
+    assert summary["repeated_nudge_signal"]
+    assert summary["recommended_coordinator_action"] == "review-evidence-and-choose-next-action"
 
 
 def test_render_sdk_transcript_omits_system_by_default(tmp_path: Path) -> None:
