@@ -5397,9 +5397,9 @@ Parent issue: #644
 
 Branch: `feature/p107-delegation-economics-policy`
 
-Status: pending P114 governed closeout. P114 has admitted the baseline C4
-package route for P107 execution; comparisons activate after P114 merges and
-#661 closes. P107 economics claims and P108 remain inactive.
+Status: baseline C4 execution authorized. P114 has merged and parent issue
+#661 has closed, so P107 may run the admitted baseline C4 package route. P107
+economics claims and P108 remain inactive.
 
 Goal: convert P106 evidence into a fail-closed authorization decision.
 
@@ -5597,13 +5597,13 @@ P107 stays parked pending a separate resume decision and P108 is not activated.
 
 Parent issue: #661
 
-Branch: `feature/p114-host-proof-repair` (active P114 repair worktree)
+Branch: `feature/p114-host-proof-repair` (merged through PR #667)
 
-Status: closeout. The locked v1 direct data-plane adapter, role-bound C4
-package route, fresh capability battery, and baseline C4 protocol qualification
-are complete; governed branch and parent-issue closeout remain. This is a new
-phase; it is not the earlier supplementary P114 reliability label that was
-reconciled into P113.3.
+Status: complete. PR #667 merged and parent issue #661 closed on 2026-07-18.
+The locked v1 direct data-plane adapter, role-bound C4 package route, fresh
+capability battery, and baseline C4 protocol qualification are complete. This
+is a new phase; it is not the earlier supplementary P114 reliability label that
+was reconciled into P113.3.
 
 Goal: establish, before further P107 comparison runs, whether the configured
 Codex/Ollama route can satisfy the preregistered capability contract required

@@ -4242,3 +4242,11 @@ exact staged lines, then restored the temp config hash byte-for-byte.
 - The packet preserves P107 task quality as an observed outcome, keeps P107.2
   economics and P108 inactive, and requires a fresh protocol admission
   observation for every later C4+ profile.
+
+## 2026-07-18 - Closed P114 package-MCP route admission
+
+- Merged PR #667 as `04f721fdde4d154cbda4a22af64ed2a07037a261` and closed
+  parent issue #661.
+- The P107 baseline C4 suite may now use the admitted CLI-parent package-MCP
+  route. This does not establish P107 task quality or economics, and does not
+  authorize P108.
