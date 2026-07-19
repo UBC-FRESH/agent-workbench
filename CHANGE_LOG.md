@@ -4341,3 +4341,17 @@ exact staged lines, then restored the temp config hash byte-for-byte.
   are unassessed and no P107 economics claim is made. P116's binding reference
   surfaces remain native Codex Supervisor/Worker session identities and the
   declared run artifacts.
+
+## 2026-07-18 - Planned P117 run-scoped supervision daemon
+
+- Activated parent issue #686 on branch
+  `feature/p117-run-scoped-supervision-daemon`; child issue #687 is the
+  planning/design task, with planned tasks P117.2-P117.6.
+- The design responds to P116's r11 stale-post-cursor finding: a supervision
+  cursor must not cross a run's lease, journal, or closure boundary. P117
+  therefore plans run-scoped lease/closure/journal state, deterministic
+  flushing, a native session adapter, one bounded native daemon proof, offline
+  sanitized policy replay, and an evidence audit.
+- Quality, protocol, and economics remain separate. P117 economics is
+  unassessed, and this planning entry makes no P107 economics claim. No code,
+  configuration, runtime, or GitHub changes are part of this planning surface.

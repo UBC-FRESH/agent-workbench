@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
+import pytest
 
 from agent_workbench.supervision import (
     SCHEMA_VERSION,
@@ -10,6 +12,8 @@ from agent_workbench.supervision import (
     validate_manifest,
     validate_schema_version,
     validate_supervisor_packet,
+    SupervisionJournal,
+    create_run_lease,
 )
 
 
@@ -159,3 +163,21 @@ def test_packet_and_action_require_structured_decisions() -> None:
     assert any("classification" in error for error in packet_result.errors)
     assert not action_result.ok
     assert any("packet_sha256" in error for error in action_result.errors)
+
+
+def test_run_lease_rejects_closed_expired_and_wrong_run_capture() -> None:
+    now = datetime(2026, 7, 19, tzinfo=timezone.utc)
+    lease = create_run_lease(run_id="run-1", worker_id="worker-1", supervisor_id="supervisor-1", root=Path.cwd(), expires_at=now + timedelta(minutes=1))
+    assert lease.capture_eligible(run_id="run-1", now=now)
+    assert not lease.capture_eligible(run_id="other", now=now)
+    assert not lease.capture_eligible(run_id="run-1", now=now + timedelta(minutes=1))
+    assert not lease.close().capture_eligible(run_id="run-1", now=now)
+
+
+def test_journal_is_deterministic_and_uncertain_delivery_pauses(tmp_path: Path) -> None:
+    journal = SupervisionJournal(tmp_path / "supervision" / "journal.jsonl", root=tmp_path, run_id="run-1")
+    assert journal.transition("capturing")["from_state"] == "armed"
+    assert journal.transition("capturing", delivery_uncertain=True)["state"] == "paused_reconciliation"
+    assert journal.state() == "paused_reconciliation"
+    with pytest.raises(ValueError, match="invalid journal transition"):
+        journal.transition("armed")
