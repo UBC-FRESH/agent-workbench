@@ -44,7 +44,10 @@
     "reuse_advisor_with_send_input": true,
     "max_completed_reviews_per_lane": 3,
     "max_repair_cycles_per_lane": 2,
-    "review_cap_kind": "soft_measured_stop_condition",
+    "review_cap_kind": "exact_three_review_cap",
+    "hard_wait": true,
+    "hard_wait_allowed_action": "wait_for_schema_valid_verdict",
+    "hard_wait_forbidden_actions": ["nudge", "timeout", "silence_inference", "repair", "implementation_spawn", "accept", "reject", "lane_end"],
     "initial_packet_max_estimated_tokens": 16000,
     "repair_delta_max_estimated_tokens": 4000,
     "defect_packet_required_fields": [
@@ -60,7 +63,8 @@
   },
   "liveness": {
     "interval_seconds": 60,
-    "missed_interval_action": "inspect_then_one_bounded_nudge_or_verified_blocker"
+    "missed_interval_action": "inspect_metadata_only_until_schema_valid_verdict",
+    "forbidden_wait_actions": ["nudge", "timeout", "silence_inference", "repair", "implementation_spawn", "accept", "reject", "lane_end"]
   },
   "contamination_policy": {
     "restart_affected_lane_required": true,
@@ -70,6 +74,9 @@
     "cross_lane_context_leak_invalidates_lane": true
   },
   "accounting": {
+    "record_path": "REPLACE_WITH_DEDICATED_P107_ACCOUNTING_RECORD_PATH",
+    "record_schema": "p107_accounting_record_v1",
+    "required_fields": ["source_session_identity", "pricing_catalog", "run_accounting", "roles", "tokens", "token_usd", "checkpoints", "provider", "model", "provenance"],
     "role_token_checkpoints_required": true,
     "maintainer_intervention_log_required": true,
     "advisor_intervention_log_required": true,

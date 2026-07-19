@@ -87,17 +87,20 @@ def validate_run_packet(path: str | Path) -> list[str]:
         "reviewer_lane_neutral": True,
         "fresh_session_per_run": True,
         "reuse_advisor_with_send_input": True,
-        "review_cap_kind": "soft_measured_stop_condition",
+        "review_cap_kind": "exact_three_review_cap",
+        "hard_wait": True,
+        "hard_wait_allowed_action": "wait_for_schema_valid_verdict",
+        "hard_wait_forbidden_actions": ["nudge", "timeout", "silence_inference", "repair", "implementation_spawn", "accept", "reject", "lane_end"],
     }
     for key, expected in expected_review.items():
         if review.get(key) != expected:
             errors.append(f"review_policy.{key} must be {expected!r}")
     review_cap = review.get("max_completed_reviews_per_lane")
     repair_cap = review.get("max_repair_cycles_per_lane")
-    if not isinstance(review_cap, int) or not 1 <= review_cap <= 8:
-        errors.append("review_policy.max_completed_reviews_per_lane must be an integer from 1 through 8")
-    if not isinstance(repair_cap, int) or repair_cap != max((review_cap or 0) - 1, 0):
-        errors.append("review_policy.max_repair_cycles_per_lane must equal max_completed_reviews_per_lane minus one")
+    if review_cap != 3:
+        errors.append("review_policy.max_completed_reviews_per_lane must be exactly 3")
+    if repair_cap != 2:
+        errors.append("review_policy.max_repair_cycles_per_lane must be exactly 2")
     if not isinstance(review.get("defect_packet_required_fields"), list):
         errors.append("review_policy.defect_packet_required_fields must be a list")
     if review.get("initial_packet_max_estimated_tokens") != 16000:
@@ -108,8 +111,12 @@ def validate_run_packet(path: str | Path) -> list[str]:
     liveness = _object(packet.get("liveness"), "liveness", errors)
     if not isinstance(liveness.get("interval_seconds"), int) or liveness["interval_seconds"] <= 0:
         errors.append("liveness.interval_seconds must be a positive integer")
-    if liveness.get("missed_interval_action") != "inspect_then_one_bounded_nudge_or_verified_blocker":
-        errors.append("liveness.missed_interval_action is invalid")
+    if liveness.get("missed_interval_action") != "inspect_metadata_only_until_schema_valid_verdict":
+        errors.append("liveness.missed_interval_action must be metadata-only hard wait")
+    forbidden = set(liveness.get("forbidden_wait_actions", []))
+    required_forbidden = {"nudge", "timeout", "silence_inference", "repair", "implementation_spawn", "accept", "reject", "lane_end"}
+    if forbidden != required_forbidden:
+        errors.append("liveness.forbidden_wait_actions must contain exactly the forbidden hard-wait actions")
 
     contamination = _object(packet.get("contamination_policy"), "contamination_policy", errors)
     for key in (
@@ -121,6 +128,17 @@ def validate_run_packet(path: str | Path) -> list[str]:
     ):
         if contamination.get(key) is not True:
             errors.append(f"contamination_policy.{key} must be true")
+
+    accounting = _object(packet.get("accounting"), "accounting", errors)
+    _nonempty(accounting.get("record_path"), "accounting.record_path", errors)
+    if accounting.get("record_schema") != "p107_accounting_record_v1":
+        errors.append("accounting.record_schema must be p107_accounting_record_v1")
+    required_accounting_fields = {
+        "source_session_identity", "pricing_catalog", "run_accounting", "roles",
+        "tokens", "token_usd", "checkpoints", "provider", "model", "provenance",
+    }
+    if set(accounting.get("required_fields", [])) != required_accounting_fields:
+        errors.append("accounting.required_fields must include all token and provenance fields")
     return errors
 
 
