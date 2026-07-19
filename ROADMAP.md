@@ -6086,12 +6086,19 @@ Tasks:
 
 - [ ] P116.1 Freeze the run manifest, sanitized event, cursor, Supervisor
       packet, and Coordinator action-log contracts.
-- [ ] P116.2 Probe the actual Codex command-hook payload/ordering and implement
+- [x] P116.2 Probe the actual Codex command-hook payload/ordering and implement
       sanitized hook-to-event capture with containment and redaction tests.
   - [x] Validate the exact Windows command handler with a lifecycle payload.
-  - [x] Record the fresh native CLI observation as a provider stream-disconnect
-        before the first tool call, not as a hook failure. P116.6 retains the
-        live hook-firing requirement.
+  - [x] Observe native hook dispatch from a trusted `codex_vscode` session at
+        the exact P116 worktree: `Get-Location` caused run
+        `p116_hook_vscode_r8` to write sanitized `PreToolUse` evidence with
+        `tool_name: Bash`, `root_match: true`, and an `event_written` receipt.
+        The hook path is `Bash` (the inner shell command), not the outer custom
+        `exec` envelope.
+  - [x] Keep the verdicts separate: focused P116 tests pass and native hook
+        dispatch evidence is observed; economics are unassessed and no P107
+        economics claim is made. This does not prove end-to-end supervision,
+        automatic wake-up, Worker messaging, or native P116.3/P116.4 behavior.
 - [ ] P116.3 Implement the coordinator-owned event reducer/controller with
       deterministic cursor, idempotency, and restart-recovery tests.
 - [ ] P116.4 Specify and implement the Supervisor delta-review contract:
