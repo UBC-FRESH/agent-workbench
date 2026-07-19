@@ -1,0 +1,9 @@
+{
+  "replay_at": "2026-07-18T12:00:10+00:00",
+  "policy": {"max_events": 3, "max_pending_age_seconds": 30},
+  "events": [
+    {"sequence": 1, "timestamp": "2026-07-18T12:00:00+00:00", "kind": "tool_completed", "packet_id": "p1"},
+    {"sequence": 2, "timestamp": "2026-07-18T12:00:01+00:00", "kind": "tool_failed", "packet_id": "p1", "packet_valid": false},
+    {"sequence": 3, "timestamp": "2026-07-18T12:00:02+00:00", "kind": "terminal", "packet_id": "p2"}
+  ]
+}
