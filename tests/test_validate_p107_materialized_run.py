@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -13,6 +14,15 @@ from validate_p107_materialized_run import validate_materialized_run
 
 
 def make_run(tmp_path: Path, configuration: str = "C1") -> Path:
+    repo = tmp_path / "worktree"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "user.name", "Fixture"], cwd=repo, check=True)
+    (repo / "tracked.txt").write_text("fixture\n", encoding="utf-8")
+    subprocess.run(["git", "add", "tracked.txt"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-qm", "fixture"], cwd=repo, check=True)
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, check=True, capture_output=True, text=True).stdout.strip()
     frozen = tmp_path / "frozen.txt"
     frozen.write_text("public fixture\n", encoding="utf-8")
     digest = hashlib.sha256(frozen.read_bytes()).hexdigest()
@@ -24,9 +34,23 @@ def make_run(tmp_path: Path, configuration: str = "C1") -> Path:
     verdict_data = {"review_number": 1, "verdict": "accepted", "deterministic_acceptance": True, "correctness": 4, "score": 10, "critical_defects": [], "defect_packet": None, "run_id": "run-1", "bundle_sha256": bundle_data["bundle_sha256"], "advisor_session_id": "advisor-1", "advisor_lineage_id": "line-1"}
     verdict.write_text(json.dumps(verdict_data), encoding="utf-8")
     active = {"C0": ["coordinator", "advisor"], "C1": ["coordinator", "worker", "advisor"], "C2": ["coordinator", "supervisor", "worker", "advisor"], "C3": ["coordinator", "supervisor", "advisor", "worker"], "C4": ["coordinator", "supervisor", "worker", "advisor"]}[configuration]
-    sessions = [{"session_id": f"{role}-1", "role": role, "provider": "fixture", "model_class": "fixture"} for role in active]
+    edges = {"C0": [("coordinator", "advisor")], "C1": [("coordinator", "worker"), ("coordinator", "advisor")], "C2": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")], "C3": [("coordinator", "supervisor"), ("coordinator", "advisor"), ("supervisor", "worker")], "C4": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")]}[configuration]
+    sessions = []
+    for role in active:
+        parent = None if role == "coordinator" else next(p for p, c in edges if c == role)
+        raw = tmp_path / f"{role}.jsonl"; raw.write_text(json.dumps({"session_id": f"{role}-1", "role": role}) + "\n", encoding="utf-8")
+        sessions.append({"session_id": f"{role}-1", "role": role, "provider": "fixture", "model_class": "fixture", "parent_session_id": None if parent is None else f"{parent}-1", "raw_session_path": raw.name, "sha256": hashlib.sha256(raw.read_bytes()).hexdigest(), "terminal_event": "completed"})
+    spawn_artifacts = []
+    spawn_edges = []
+    for parent, child in edges:
+        artifact = tmp_path / f"spawn_{parent}_{child}.json"; artifact.write_text(json.dumps({"parent": parent, "child": child}), encoding="utf-8")
+        spawn_artifacts.append(artifact)
+        spawn_edges.append({"parent_session_id": f"{parent}-1", "child_session_id": f"{child}-1", "parent_role": parent, "child_role": child, "fork_context": False, "source_artifact_path": artifact.name, "source_artifact_sha256": hashlib.sha256(artifact.read_bytes()).hexdigest()})
+    manifest = {"schema_version": "p107_run_evidence_manifest_v1", "run_id": "run-1", "configuration_id": configuration, "repository_path": str(repo), "starting_commit": commit, "terminal_event": "completed", "raw_sessions": sessions, "spawn_edges": spawn_edges}
+    manifest_path = tmp_path / "evidence-manifest.json"; manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     document = {
         "schema_version": "p107_materialized_run_v1", "run_id": "run-1", "configuration_id": configuration,
+        "evidence_manifest_path": manifest_path.name, "evidence_manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(), "repository_path": str(repo), "starting_commit": commit, "terminal_event": "completed",
         "frozen_files": [{"path": "frozen.txt", "sha256": digest}],
         "topology": {"coordinator_children": (["supervisor", "advisor"] if configuration == "C3" else active[1:]), "supervisor_spawned": False, "nested_worker_spawned": configuration == "C3"},
         "sessions": sessions, "prior_session_ids": [],
