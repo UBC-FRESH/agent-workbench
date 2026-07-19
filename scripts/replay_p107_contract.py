@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Any, Mapping
 from p107_contract_codes import REASON_CODES, REVIEW_CAP
+from validate_p107_advisor_review import validate_review
 
 
 def _bool(state: Mapping[str, Any], key: str, default: bool = False) -> bool:
@@ -12,11 +13,20 @@ def _bool(state: Mapping[str, Any], key: str, default: bool = False) -> bool:
 
 
 def _advisor_terminal(state: Mapping[str, Any]) -> str | None:
-    summary = state.get("advisor_validator_result")
-    evidence = state.get("advisor_evidence_summary")
-    if not isinstance(summary, Mapping) or summary.get("valid") is not True:
+    bundle = state.get("advisor_bundle_path")
+    verdict = state.get("advisor_verdict_path")
+    if not isinstance(bundle, str) or not isinstance(verdict, str):
         return None
-    if not isinstance(evidence, Mapping) or not evidence.get("events_observed"):
+    history = state.get("advisor_history_path")
+    if history is not None and not isinstance(history, str):
+        return None
+    try:
+        if validate_review(bundle, verdict, history_path=history):
+            return None
+        verdict_data = json.loads(Path(verdict).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(verdict_data, Mapping):
         return None
     events = state.get("advisor_events")
     if events is None:
@@ -56,8 +66,7 @@ def _advisor_terminal(state: Mapping[str, Any]) -> str | None:
             verdict = target == "ACCEPTED"
         state_name = target
     terminal = {"ACCEPTED": "accepted", "VERIFIED_BLOCKER": "verified_blocker"}.get(state_name)
-    asserted = state.get("advisor_terminal")
-    if asserted is not None and asserted != terminal:
+    if terminal != verdict_data.get("verdict"):
         return None
     return terminal
 

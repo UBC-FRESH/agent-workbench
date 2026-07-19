@@ -3,6 +3,9 @@ from __future__ import annotations
 import json, math, sys
 from pathlib import Path
 from typing import Any
+from validate_p107_advisor_review import validate_review
+from validate_p107_accounting_record import validate_accounting_record
+from validate_p107_evaluation_block import validate
 
 _CONFIGURATIONS = {"C0", "C1", "C2", "C3", "C4"}
 _BOOLEAN_FLAGS = ("evaluation_block_valid", "deterministic_acceptance", "advisor_binding_valid",
@@ -11,6 +14,24 @@ _BOOLEAN_FLAGS = ("evaluation_block_valid", "deterministic_acceptance", "advisor
 
 def _cost_valid(value: Any) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value > 0
+
+def _artifact_valid(row: dict[str, Any], field: str, validator: Any) -> bool:
+    path = row.get(field)
+    if not isinstance(path, str) or not path.strip():
+        return False
+    try:
+        return not validator(path)
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        return False
+
+def _advisor_artifacts_valid(row: dict[str, Any]) -> bool:
+    bundle, verdict = row.get("advisor_bundle_path"), row.get("advisor_verdict_path")
+    if not isinstance(bundle, str) or not isinstance(verdict, str):
+        return False
+    try:
+        return not validate_review(bundle, verdict, history_path=row.get("advisor_history_path"))
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        return False
 
 def _reasons(row: dict[str, Any], *, baseline: bool = False, duplicate_ids: bool = False) -> list[str]:
     reasons = []
@@ -24,17 +45,25 @@ def _reasons(row: dict[str, Any], *, baseline: bool = False, duplicate_ids: bool
     if not isinstance(row.get("evaluation_block_id"), str) or not row["evaluation_block_id"].strip(): reasons.append("missing_evaluation_block")
     elif row.get("evaluation_block_valid") is not True and "invalid_evaluation_block" not in reasons: reasons.append("invalid_evaluation_block")
     if row.get("deterministic_acceptance") is not True: reasons.append("deterministic_acceptance_failed")
-    if row.get("advisor_verdict") != "accepted": reasons.append("advisor_not_accepted")
-    if row.get("advisor_binding_valid") is not True: reasons.append("advisor_binding_invalid")
+    if row.get("advisor_verdict") != "accepted" or not _advisor_artifacts_valid(row): reasons.append("advisor_hard_wait_failure")
     if row.get("contaminated") is not False: reasons.append("contaminated")
-    if row.get("accounting_complete") is not True: reasons.append("accounting_ineligible")
-    if row.get("accounting_provenance_valid") is not True: reasons.append("accounting_provenance_invalid")
-    if row.get("configuration_topology_valid") is not True: reasons.append("configuration_topology_mismatch")
-    if row.get("model_identity_valid") is not True: reasons.append("model_identity_mismatch")
+    if row.get("accounting_complete") is not True or not _artifact_valid(row, "accounting_record_path", validate_accounting_record): reasons.append("accounting_ineligible")
+    if row.get("accounting_provenance_valid") is not True: reasons.append("accounting_ineligible")
+    if row.get("configuration_topology_valid") is not True or not _artifact_valid(row, "topology_receipt_path", lambda p: _receipt_errors(p, row, "topology")): reasons.append("topology_session_reuse")
+    if row.get("model_identity_valid") is not True: reasons.append("frozen_input_hash_drift")
     if not _cost_valid(row.get("paid_run_cost")): reasons.append("accounting_ineligible")
     if baseline and row.get("baseline_run_id") is not None: reasons.append("baseline_id_invalid")
     if not baseline and (not isinstance(row.get("baseline_run_id"), str) or not row["baseline_run_id"].strip()): reasons.append("missing_baseline_id")
     return list(dict.fromkeys(reasons))
+
+def _receipt_errors(path: str, row: dict[str, Any], kind: str) -> list[str]:
+    try:
+        receipt = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [str(exc)]
+    if not isinstance(receipt, dict) or receipt.get("valid") is not True or receipt.get("run_id") != row.get("run_id") or receipt.get("kind") != kind:
+        return ["receipt is not a validated run-bound artifact"]
+    return []
 
 def compare(path: str | Path) -> dict[str, Any]:
     data = json.loads(Path(path).read_text(encoding="utf-8")); rows = data.get("observations", [])
