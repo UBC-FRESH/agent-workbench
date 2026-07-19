@@ -4279,3 +4279,17 @@ exact staged lines, then restored the temp config hash byte-for-byte.
 - Focused deterministic tests accept a normal productive-repair event and
   reject the control-plane failure modes that P116 is meant to surface. No hook,
   controller, provider, or Worker authority was added in this task.
+
+## 2026-07-19 - Completed P116.2 sanitized hook capture
+
+- Added an inert project-local Codex `PreToolUse`/`PostToolUse` command hook and
+  a Windows-compatible capture entry point. It runs only when an explicit P116
+  run ID, assigned root, and ignored supervision directory are provided.
+- The handler records lifecycle type, safe tool name, root-match result, and a
+  generated event identity; it never retains hook `tool_input`, `tool_response`,
+  absolute `cwd`, provider headers, or environment values. An out-of-root
+  session becomes `workspace_mismatch`.
+- Unit and subprocess tests validate the exact configured PowerShell command.
+  A fresh Qwen CLI attempt loaded the P116 root/hooks but disconnected from the
+  remote Responses stream before the first model tool call. This is retained as
+  transport evidence, not a hook failure; P116.6 still requires live firing.
