@@ -13,7 +13,7 @@ from datetime import datetime
 from typing import Any
 
 from .p117_flush_policy import FlushDecision, choose_flush
-from .p117_session_adapter import NativeSessionAdapter, SessionBinding
+from .p117_session_adapter import NativeSessionAdapter, SendReceipt, SessionBinding
 from .supervision import RunLease, SupervisionJournal
 
 
@@ -41,9 +41,18 @@ class BoundedSupervisionDaemon:
         self.journal = journal
         self.adapter = adapter
         self.binding = binding
-        self._events: list[dict[str, Any]] = []
-        self._acknowledged_sequence = 0
-        self._flushed = False
+        records = journal.records()
+        for record in records:
+            if record.get("run_id") != lease.run_id:
+                raise ValueError("journal record does not match lease run")
+        lineage = next((r for r in records if r.get("kind") == "lease"), None)
+        if lineage is not None and lineage.get("lineage") != binding.__dict__:
+            raise ValueError("journal lease lineage does not match session binding")
+        if lineage is None:
+            journal.append("lease", lease={"run_id": lease.run_id, "worker_id": lease.worker_id, "supervisor_id": lease.supervisor_id, "root": str(lease.root), "expires_at": lease.expires_at.isoformat()}, lineage=binding.__dict__)
+        self._events = [r["event"] for r in records if r.get("kind") == "event"]
+        self._acknowledged_sequence = max((r.get("cursor", 0) for r in records if r.get("kind") == "flush_receipt"), default=0)
+        self._flushed = any(r.get("kind") == "flush_receipt" and r.get("adapter_state") in {"delivered", "already_applied"} for r in records)
 
     @property
     def events(self) -> tuple[dict[str, Any], ...]:
@@ -52,25 +61,37 @@ class BoundedSupervisionDaemon:
     def accept_event(self, event: dict[str, Any], *, now: datetime) -> bool:
         """Accept an event only while this lease is eligible."""
         if not self.lease.capture_eligible(run_id=event.get("run_id", self.lease.run_id), now=now):
+            self.journal.append("rejection", operation="event", reason="lease_inactive", event=event)
             return False
         if self._flushed or any(item.get("sequence") == event.get("sequence") for item in self._events):
             return False
         self._events.append(dict(event))
         self._events.sort(key=lambda item: int(item["sequence"]))
+        self.journal.append("event", event=dict(event))
         if self.journal.state() == "armed":
             self.journal.transition("capturing")
         return True
 
     def flush(self, *, now: datetime) -> DaemonResult:
         if not self.lease.capture_eligible(run_id=self.lease.run_id, now=now):
+            self.journal.append("rejection", operation="flush", reason="lease_inactive")
             return DaemonResult(False, "lease_inactive")
+        if self.journal.state() == "closed":
+            self.journal.append("rejection", operation="flush", reason="closed")
+            return DaemonResult(False, "closed")
         if self._flushed:
             return DaemonResult(False, "bundle_already_selected")
         decision = choose_flush(self._events, acknowledged_sequence=self._acknowledged_sequence, now=now, lease=self.lease, run_id=self.lease.run_id, expected_root=self.lease.root)
         if not decision.flush:
             return DaemonResult(False, decision.reason, decision)
         message = json.dumps(list(decision.events), sort_keys=True, separators=(",", ":"))
-        receipt = self.adapter.send(self.binding, message, idempotency_key=f"{self.lease.run_id}:{decision.start_sequence}-{decision.end_sequence}")
+        key = f"{self.lease.run_id}:{decision.start_sequence}-{decision.end_sequence}"
+        prior = self.adapter.lookup(self.binding, idempotency_key=key)
+        if prior.found:
+            receipt = SendReceipt(self.binding, key, prior.state, "recorded")
+        else:
+            receipt = self.adapter.send(self.binding, message, idempotency_key=key)
+        self.journal.append("flush_receipt", cursor=decision.end_sequence, flush_start=decision.start_sequence, flush_end=decision.end_sequence, idempotency_key=key, lineage=self.binding.__dict__, adapter_state=receipt.state.value, message_fingerprint=receipt.message_fingerprint)
         if receipt.state.value == "paused_reconciliation":
             self.journal.transition("paused_reconciliation", delivery_uncertain=True)
             return DaemonResult(False, "paused_reconciliation", decision)
@@ -81,5 +102,5 @@ class BoundedSupervisionDaemon:
     def close(self) -> None:
         if self.journal.state() != "closed":
             self.journal.transition("closed")
+            self.journal.append("closure", lineage=self.binding.__dict__)
         self.lease = self.lease.close()
-
