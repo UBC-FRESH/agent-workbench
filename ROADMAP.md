@@ -115,14 +115,15 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
 | P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Complete (qualified) — quality validated; protocol and economics not accepted |
-| P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Parked - P114 capability-parity prerequisite |
+| P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Active - baseline C4 package route admitted; economics remains unassessed |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned - P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
 | P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 / PR #653 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PRs #652 and #653 merged; parent issue #648 closed; P107 remains parked pending a separate resume decision |
-| P114 Codex-Ollama C4 capability parity and viability | #661 | `feature/p114-c4-ollama-capability-parity` | Active - P107 remains parked pending capability proof |
+| P114 Codex-Ollama C4 capability parity and viability | #661 / PR #667 | `feature/p114-c4-ollama-capability-parity` | Complete - PR #667 merged; baseline P107 route admitted |
 | P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientific-artifact-inspection` | Planned - starts after P114 merges/closes and P107 finishes, unless parallel activation is authorized |
+| P116 Event-driven supervision control plane | #669 | `feature/p116-event-driven-supervision-control-plane` | Planned - targeted P107 control-plane repair; no economics claim |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6043,3 +6044,70 @@ Acceptance criteria:
   agent-runtime expansion.
 
 See `planning/p115_scientific_artifact_inspection_plan.md`.
+
+## Phase 116: Event-Driven Supervision Control Plane
+
+Parent issue: #669
+
+Branch: `feature/p116-event-driven-supervision-control-plane`
+
+Status: planned. This is a targeted control-plane repair authorized alongside
+P107 baseline preparation. Do not treat it as a P107 economics result, activate
+P115, or alter P114's accepted bridge route.
+
+Goal: make the Supervisor an evidence-driven active participant in a live
+Worker run. A Coordinator-owned controller will reduce sanitized Worker events,
+re-invoke the Supervisor on new evidence, and relay an approved constructive
+nudge to the same Worker session when warranted.
+
+Problem statement: native `wait_agent` exposes lifecycle state, not the
+intermediate tool/error/file evidence needed for supervision. A chat Supervisor
+also does not continue executing after it has returned. The observed P107/P114
+Qwen run therefore had an active Worker but no durable supervision loop. P116
+repairs the information and invocation path; it does not attempt to make a
+message-model Worker deterministic.
+
+Boundaries:
+
+- Preserve the accepted P114 provider/bridge/tool route; P116 does not change
+  endpoint, model route, or Worker tool schemas.
+- The Coordinator binds run/session identifiers, owns controller lifecycle and
+  Worker messaging, and makes acceptance decisions.
+- The Supervisor reads only sanitized new-event deltas and returns a structured
+  assessment/nudge recommendation. It does not edit the task, operate tools,
+  or accept results.
+- A Worker has no Supervisor callback credential or new authority. Hook output
+  is local, bounded, redacted event evidence only.
+- No nested spawning, generic autonomous daemon, fixed retry cap, or P107
+  economics conclusion is in scope.
+
+Tasks:
+
+- [ ] P116.1 Freeze the run manifest, sanitized event, cursor, Supervisor
+      packet, and Coordinator action-log contracts.
+- [ ] P116.2 Probe the actual Codex command-hook payload/ordering and implement
+      sanitized hook-to-event capture with containment and redaction tests.
+- [ ] P116.3 Implement the coordinator-owned event reducer/controller with
+      deterministic cursor, idempotency, and restart-recovery tests.
+- [ ] P116.4 Specify and implement the Supervisor delta-review contract:
+      productive repair versus material repeat, deviation, or block; proposed
+      constructive nudge; and evidence citation.
+- [ ] P116.5 Prove the supported route to re-invoke the same Supervisor and
+      deliver one Coordinator-approved message to the same Worker session.
+- [ ] P116.6 Run one bounded native coding task through the complete loop and
+      inspect actual session, event, packet, action, artifact, and token data.
+- [ ] P116.7 Publish the P107 re-entry decision packet and closeout record.
+
+Acceptance criteria:
+
+- A Supervisor recommendation is traceable to a sanitized event delta and
+  cursor, while Coordinator action is traceable to that recommendation.
+- The demonstrated loop observes ordinary repair without treating it as a
+  failure, and sends useful feedback only when new evidence supports it.
+- Contract/controller tests, hook evidence, and the native run agree; no event
+  or packet contains provider headers, credentials, raw unrestricted command
+  arguments, or raw tool output.
+- Quality, protocol, and economics verdicts remain separate. P107 economics is
+  not usable without its distinct checkpoint/token-ledger evidence.
+
+See `planning/p116_event_driven_supervision_control_plane_plan.md`.
