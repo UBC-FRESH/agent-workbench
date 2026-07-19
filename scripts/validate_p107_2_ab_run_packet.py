@@ -86,7 +86,41 @@ def _worktree(value: Any, name: str, baseline: str, errors: list[str]) -> Path |
     return path.resolve()
 
 
-def validate_run_packet(path: str | Path) -> list[str]:
+def _clean_worktree(path: Path, name: str, errors: list[str]) -> None:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(path), "status", "--porcelain"],
+            capture_output=True, text=True, check=True, timeout=5,
+        )
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        errors.append(f"{name}.worktree status could not be inspected")
+        return
+    if result.stdout:
+        errors.append(f"{name}.worktree must be clean at closeout")
+
+
+def _allowed_paths(value: Any, worktrees: list[tuple[str, Path]], closeout: bool, errors: list[str]) -> None:
+    if not isinstance(value, list) or not value:
+        errors.append("implementation_scope.allowed_paths must be a nonempty list")
+        return
+    for index, entry in enumerate(value):
+        label = f"implementation_scope.allowed_paths[{index}]"
+        if not isinstance(entry, str) or not entry:
+            errors.append(f"{label} must be a repository-relative string")
+            continue
+        candidate = Path(entry)
+        if candidate.is_absolute() or ".." in candidate.parts or candidate.as_posix() != entry.replace("\\", "/"):
+            errors.append(f"{label} must be a canonical repository-relative path")
+            continue
+        if closeout:
+            for name, worktree in worktrees:
+                try:
+                    (worktree / candidate).resolve().relative_to(worktree)
+                except ValueError:
+                    errors.append(f"{label} must remain under {name}.worktree")
+
+
+def validate_run_packet(path: str | Path, *, closeout: bool = False) -> list[str]:
     try:
         packet = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -110,6 +144,8 @@ def validate_run_packet(path: str | Path) -> list[str]:
         candidate = _worktree(lane.get("worktree"), name, baseline, errors)
         if candidate is not None:
             worktrees.append((name, candidate))
+            if closeout:
+                _clean_worktree(candidate, name, errors)
         if lane.get("fresh_implementation_session_required") is not True:
             errors.append(f"{name}.fresh_implementation_session_required must be true")
     if len(worktrees) == 2 and worktrees[0][1] == worktrees[1][1]:
@@ -128,6 +164,13 @@ def validate_run_packet(path: str | Path) -> list[str]:
     for section_name in ("ticket", "acceptance_fixture", "usability_rubric"):
         section = _object(packet.get(section_name), section_name, errors)
         _materialized_file(section.get("path"), section_name, run_root, section.get("sha256"), errors)
+    for name, lane in (("lanes.retail", retail), ("lanes.workbench", workbench)):
+        manifest = lane.get("manifest")
+        if manifest is not None:
+            manifest_section = _object(manifest, f"{name}.manifest", errors)
+            _materialized_file(manifest_section.get("path"), f"{name}.manifest", run_root, manifest_section.get("sha256"), errors)
+        elif closeout:
+            errors.append(f"{name}.manifest is required at closeout")
     if not _nonempty(
         _object(packet.get("acceptance_fixture"), "acceptance_fixture", errors).get("command"),
         "acceptance_fixture.command",
@@ -136,8 +179,7 @@ def validate_run_packet(path: str | Path) -> list[str]:
         pass
 
     scope = _object(packet.get("implementation_scope"), "implementation_scope", errors)
-    if not isinstance(scope.get("allowed_paths"), list) or not scope["allowed_paths"]:
-        errors.append("implementation_scope.allowed_paths must be a nonempty list")
+    _allowed_paths(scope.get("allowed_paths"), worktrees, closeout, errors)
 
     review = _object(packet.get("review_policy"), "review_policy", errors)
     expected_review = {
@@ -191,6 +233,10 @@ def validate_run_packet(path: str | Path) -> list[str]:
 
     accounting = _object(packet.get("accounting"), "accounting", errors)
     _nonempty(accounting.get("record_path"), "accounting.record_path", errors)
+    if closeout:
+        _materialized_file(accounting.get("record_path"), "accounting", run_root, accounting.get("sha256"), errors)
+        if "manifest_path" in accounting:
+            _materialized_file(accounting.get("manifest_path"), "accounting.manifest", run_root, accounting.get("manifest_sha256"), errors)
     if accounting.get("record_schema") != "p107_accounting_record_v1":
         errors.append("accounting.record_schema must be p107_accounting_record_v1")
     required_accounting_fields = {
@@ -203,9 +249,9 @@ def validate_run_packet(path: str | Path) -> list[str]:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        raise SystemExit("usage: validate_p107_2_ab_run_packet.py <materialized-run-packet.json>")
-    errors = validate_run_packet(sys.argv[1])
+    if len(sys.argv) not in (2, 3) or (len(sys.argv) == 3 and sys.argv[2] != "--closeout"):
+        raise SystemExit("usage: validate_p107_2_ab_run_packet.py <materialized-run-packet.json> [--closeout]")
+    errors = validate_run_packet(sys.argv[1], closeout=len(sys.argv) == 3)
     if errors:
         print("\n".join(errors))
         raise SystemExit(1)

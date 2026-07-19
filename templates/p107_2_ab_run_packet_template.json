@@ -5,10 +5,12 @@
   "lanes": {
     "retail": {
       "worktree": "REPLACE_WITH_ABSOLUTE_RETAIL_WORKTREE",
+      "manifest": {"path": "REPLACE_WITH_ABSOLUTE_RETAIL_MANIFEST_PATH", "sha256": "REPLACE_WITH_RETAIL_MANIFEST_SHA256"},
       "fresh_implementation_session_required": true
     },
     "workbench": {
       "worktree": "REPLACE_WITH_ABSOLUTE_WORKBENCH_WORKTREE",
+      "manifest": {"path": "REPLACE_WITH_ABSOLUTE_WORKBENCH_MANIFEST_PATH", "sha256": "REPLACE_WITH_WORKBENCH_MANIFEST_SHA256"},
       "fresh_implementation_session_required": true,
       "coordinator_role": "gpt-5.6-luna",
       "supervisor_role": "gpt_luna_supervisor",
@@ -75,6 +77,7 @@
   },
   "accounting": {
     "record_path": "REPLACE_WITH_DEDICATED_P107_ACCOUNTING_RECORD_PATH",
+    "sha256": "REPLACE_WITH_ACCOUNTING_RECORD_SHA256",
     "record_schema": "p107_accounting_record_v1",
     "required_fields": ["source_session_identity", "pricing_catalog", "run_accounting", "roles", "tokens", "token_usd", "checkpoints", "provider", "model", "provenance"],
     "role_token_checkpoints_required": true,

@@ -19,9 +19,21 @@ TEMPLATE = ROOT / "templates" / "p107_2_ab_run_packet_template.json"
 def materialized_packet(tmp_path: Path) -> dict[str, object]:
     document = json.loads(TEMPLATE.read_text(encoding="utf-8"))
     document["run_id"] = "p107-2-pilot"
-    document["baseline_commit"] = "95a9785e8ef726d9a4ae52e37d93b0bf1eb91442"
-    document["lanes"]["retail"]["worktree"] = "C:\\Users\\gep\\AppData\\Local\\Temp\\pytest-of-gep\\pytest-1262\\test_materialized_packet_is_va0\\retail-worktree"
-    document["lanes"]["workbench"]["worktree"] = "C:\\Users\\gep\\AppData\\Local\\Temp\\pytest-of-gep\\pytest-1262\\test_materialized_packet_is_va0\\workbench-worktree"
+    repos = []
+    retail_repo = tmp_path / "retail-worktree"
+    retail_repo.mkdir(parents=True)
+    subprocess.run(["git", "init", "-q", str(retail_repo)], check=True)
+    (retail_repo / "README.md").write_text("baseline", encoding="utf-8")
+    subprocess.run(["git", "-C", str(retail_repo), "add", "README.md"], check=True)
+    subprocess.run(["git", "-C", str(retail_repo), "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "baseline"], check=True)
+    repos = [retail_repo]
+    for lane in ("workbench",):
+        repo = tmp_path / f"{lane}-worktree"
+        subprocess.run(["git", "clone", "-q", str(retail_repo), str(repo)], check=True)
+        repos.append(repo)
+    document["baseline_commit"] = subprocess.run(["git", "-C", str(repos[0]), "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+    for lane, repo in zip(("retail", "workbench"), repos):
+        document["lanes"][lane]["worktree"] = str(repo.resolve())
     for name in ("ticket", "acceptance_fixture", "usability_rubric"):
         artifact = tmp_path / f"{name}.json"
         artifact.write_text(name, encoding="utf-8")
@@ -29,7 +41,14 @@ def materialized_packet(tmp_path: Path) -> dict[str, object]:
         document[name]["sha256"] = hashlib.sha256(name.encode()).hexdigest()
     document["acceptance_fixture"]["command"] = "python -m pytest acceptance -q"
     document["implementation_scope"]["allowed_paths"] = ["src/example.py"]
-    document["accounting"]["record_path"] = str((tmp_path / "accounting.json").resolve())
+    for lane in ("retail", "workbench"):
+        manifest = tmp_path / f"{lane}-manifest.json"
+        manifest.write_text("{}", encoding="utf-8")
+        document["lanes"][lane]["manifest"] = {"path": str(manifest.resolve()), "sha256": hashlib.sha256(b"{}").hexdigest()}
+    accounting = tmp_path / "accounting.json"
+    accounting.write_text("{}", encoding="utf-8")
+    document["accounting"]["record_path"] = str(accounting.resolve())
+    document["accounting"]["sha256"] = hashlib.sha256(b"{}").hexdigest()
     return document
 
 
@@ -45,6 +64,28 @@ def test_template_is_deliberately_not_materialized() -> None:
 
 def test_materialized_packet_is_valid(tmp_path: Path) -> None:
     assert validate_run_packet(write_packet(tmp_path, materialized_packet(tmp_path))) == []
+
+
+def test_closeout_rejects_dirty_worktree(tmp_path: Path) -> None:
+    document = materialized_packet(tmp_path)
+    (Path(document["lanes"]["retail"]["worktree"]) / "dirty.txt").write_text("dirty", encoding="utf-8")
+    errors = validate_run_packet(write_packet(tmp_path, document), closeout=True)
+    assert any("must be clean at closeout" in error for error in errors)
+
+
+def test_closeout_rejects_missing_accounting(tmp_path: Path) -> None:
+    document = materialized_packet(tmp_path)
+    document["accounting"]["record_path"] = str((tmp_path / "missing-accounting.json").resolve())
+    errors = validate_run_packet(write_packet(tmp_path, document), closeout=True)
+    assert any("accounting.path must be an existing file" in error for error in errors)
+
+
+def test_closeout_rejects_unsafe_allowed_paths(tmp_path: Path) -> None:
+    for index, value in enumerate(("../../outside", "C:/Windows/System32", 7)):
+        document = materialized_packet(tmp_path / str(index))
+        document["implementation_scope"]["allowed_paths"] = [value]
+        errors = validate_run_packet(write_packet(tmp_path / str(index), document), closeout=True)
+        assert any("allowed_paths[0]" in error for error in errors)
 
 
 def test_rejects_nonexistent_worktree(tmp_path: Path) -> None:
