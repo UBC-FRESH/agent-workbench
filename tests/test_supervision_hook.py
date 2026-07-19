@@ -12,6 +12,7 @@ from agent_workbench.supervision_hook import (
     SUPERVISION_DIR_ENV,
     capture_from_environment,
     event_from_hook_payload,
+    record_hook_invocation,
 )
 
 
@@ -67,11 +68,13 @@ def test_event_marks_wrong_session_root(tmp_path: Path) -> None:
     assert value["root_match"] is False
 
 
-def test_capture_is_inert_without_explicit_run_environment(monkeypatch) -> None:
+def test_capture_is_inert_without_explicit_run_environment(tmp_path: Path, monkeypatch) -> None:
     for name in (RUN_ID_ENV, ASSIGNED_ROOT_ENV, SUPERVISION_DIR_ENV):
         monkeypatch.delenv(name, raising=False)
+    monkeypatch.chdir(tmp_path)
 
     assert capture_from_environment(payload(cwd=str(Path.cwd()))) is False
+    assert not (tmp_path / "invocation_receipt.json").exists()
 
 
 def test_capture_uses_staged_activation_manifest(tmp_path: Path, monkeypatch) -> None:
@@ -149,6 +152,38 @@ def test_capture_records_bounded_local_error(tmp_path: Path, monkeypatch) -> Non
     assert event["run_id"] == "p116-hook-probe"
     assert "raw private failure details" not in json.dumps(event)
     assert set(event) <= {"schema_version", "sequence", "event_id", "timestamp", "kind", "stage", "outcome", "redaction_applied", "run_id", "hook_event", "tool_name", "root_match", "error_code"}
+
+
+def test_invocation_receipt_distinguishes_invoked_from_event_written(tmp_path: Path, monkeypatch) -> None:
+    supervision_dir = tmp_path / "supervision"
+    monkeypatch.setenv(RUN_ID_ENV, "p116-hook-probe")
+    monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path))
+    monkeypatch.setenv(SUPERVISION_DIR_ENV, str(supervision_dir))
+
+    assert record_hook_invocation()
+    receipt = json.loads((supervision_dir / "invocation_receipt.json").read_text())
+    assert receipt == {"receipt_version": 1, "status": "invoked"}
+    assert capture_from_environment(payload(cwd=str(tmp_path)))
+    receipt = json.loads((supervision_dir / "invocation_receipt.json").read_text())
+    assert receipt["status"] == "event_written"
+    assert set(receipt) == {"receipt_version", "status"}
+
+
+def test_entrypoint_records_payload_rejected_and_remains_sanitized(tmp_path: Path) -> None:
+    env = os.environ | {
+        RUN_ID_ENV: "p116-hook-receipt",
+        ASSIGNED_ROOT_ENV: str(tmp_path),
+        SUPERVISION_DIR_ENV: str(tmp_path / "supervision"),
+    }
+    root = Path(__file__).resolve().parents[1]
+    completed = subprocess.run(
+        ["python", str(root / "scripts" / "p116_capture_hook.py")],
+        cwd=root, input="[\"raw command\"]", text=True, capture_output=True, env=env, check=False,
+    )
+    assert completed.returncode == 0
+    receipt = json.loads((tmp_path / "supervision" / "invocation_receipt.json").read_text())
+    assert receipt == {"receipt_version": 1, "status": "payload_rejected"}
+    assert "raw command" not in json.dumps(receipt)
 
 
 def test_configured_windows_hook_command_captures_event(tmp_path: Path) -> None:

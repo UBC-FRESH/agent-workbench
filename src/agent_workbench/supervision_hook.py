@@ -16,6 +16,8 @@ RUN_ID_ENV = "P116_RUN_ID"
 ASSIGNED_ROOT_ENV = "P116_ASSIGNED_ROOT"
 SUPERVISION_DIR_ENV = "P116_SUPERVISION_DIR"
 ACTIVATION_FILENAME = "activation.json"
+RECEIPT_FILENAME = "invocation_receipt.json"
+RECEIPT_STATUSES = {"invoked", "payload_rejected", "event_written"}
 
 
 def _activation_manifest(project_root: Path) -> dict[str, str] | None:
@@ -76,23 +78,17 @@ def event_from_hook_payload(
 
 def capture_from_environment(payload: dict[str, Any]) -> bool:
     """Append one event from explicit environment or staged root-local activation."""
-    run_id = os.environ.get(RUN_ID_ENV)
-    assigned_root_text = os.environ.get(ASSIGNED_ROOT_ENV)
-    supervision_dir_text = os.environ.get(SUPERVISION_DIR_ENV)
-    if not (run_id and assigned_root_text and supervision_dir_text):
-        activation = _activation_manifest(Path.cwd())
-        if activation is None:
-            return False
-        run_id = activation["run_id"]
-        assigned_root_text = activation["assigned_root"]
-        supervision_dir_text = activation["supervision_dir"]
+    context = _capture_context()
+    if context is None:
+        return False
+    run_id, assigned_root, supervision_dir = context
 
-    assigned_root = Path(assigned_root_text).resolve()
-    events_path = Path(supervision_dir_text) / "events.jsonl"
+    events_path = supervision_dir / "events.jsonl"
     if not _within(events_path.parent, assigned_root):
         return False
     try:
         events_path.parent.mkdir(parents=True, exist_ok=True)
+        _write_receipt(supervision_dir, "invoked")
         sequence = _next_sequence(events_path)
         event = event_from_hook_payload(
             payload,
@@ -103,9 +99,11 @@ def capture_from_environment(payload: dict[str, Any]) -> bool:
         validation = validate_events([event], assigned_root=assigned_root)
         if not validation.ok:
             _append_error_event(events_path, assigned_root, sequence, run_id, "invalid_event")
+            _write_receipt(supervision_dir, "payload_rejected")
             return True
         with events_path.open("a", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(event, sort_keys=True) + "\n")
+        _write_receipt(supervision_dir, "event_written")
     except (OSError, TypeError, ValueError):
         try:
             _append_error_event(
@@ -118,6 +116,67 @@ def capture_from_environment(payload: dict[str, Any]) -> bool:
         except (OSError, ValueError):
             return False
     return True
+
+
+def record_hook_invocation() -> bool:
+    """Record that the hook command started, without inspecting its payload."""
+    context = _capture_context()
+    if context is None:
+        return False
+    _, assigned_root, supervision_dir = context
+    if not _within(supervision_dir, assigned_root):
+        return False
+    try:
+        supervision_dir.mkdir(parents=True, exist_ok=True)
+        _write_receipt(supervision_dir, "invoked")
+        return True
+    except OSError:
+        return False
+
+
+def record_hook_payload_rejected() -> bool:
+    """Record unusable hook input using only a categorical status."""
+    context = _capture_context()
+    if context is None:
+        return False
+    _, assigned_root, supervision_dir = context
+    if not _within(supervision_dir, assigned_root):
+        return False
+    try:
+        supervision_dir.mkdir(parents=True, exist_ok=True)
+        _write_receipt(supervision_dir, "payload_rejected")
+        return True
+    except OSError:
+        return False
+
+
+def _capture_context() -> tuple[str, Path, Path] | None:
+    run_id = os.environ.get(RUN_ID_ENV)
+    assigned_text = os.environ.get(ASSIGNED_ROOT_ENV)
+    supervision_text = os.environ.get(SUPERVISION_DIR_ENV)
+    if not (run_id and assigned_text and supervision_text):
+        activation = _activation_manifest(Path.cwd())
+        if activation is None:
+            return None
+        run_id, assigned_text, supervision_text = (
+            activation["run_id"], activation["assigned_root"], activation["supervision_dir"]
+        )
+    try:
+        assigned_root = Path(assigned_text).resolve()
+        supervision_dir = Path(supervision_text).resolve()
+    except (TypeError, OSError, ValueError):
+        return None
+    if not _within(supervision_dir, assigned_root):
+        return None
+    return run_id, assigned_root, supervision_dir
+
+
+def _write_receipt(supervision_dir: Path, status: str) -> None:
+    if status not in RECEIPT_STATUSES:
+        raise ValueError("invalid receipt status")
+    receipt = {"receipt_version": 1, "status": status}
+    receipt_path = supervision_dir / RECEIPT_FILENAME
+    receipt_path.write_text(json.dumps(receipt, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def _event_type(hook_event: str, cwd_matches_root: bool) -> tuple[str, str]:
