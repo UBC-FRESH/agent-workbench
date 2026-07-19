@@ -1,0 +1,16 @@
+{
+  "schema_version": "p107_accounting_record_v1",
+  "evaluation_block_id": "block-2026-01",
+  "run_id": "run-0001",
+  "configuration_id": "C1",
+  "source_session_identity": {"run_id": "run-0001", "session_ids": ["coordinator-session"]},
+  "pricing_catalog": {"catalog_id": "catalog-2026-01", "catalog_date": "2026-01-15", "provenance": "public catalog snapshot"},
+  "local_cost": {"status": "unknown", "amount_usd": null, "basis": "not measured"},
+  "roles": [
+    {
+      "role": "coordinator", "session_id": "coordinator-session", "provider": "provider-id", "model": "model-id",
+      "tokens": {"uncached_input": 0, "cached_input": 0, "output": 0, "reasoning": 0},
+      "checkpoints": {"start": "checkpoint-start", "end": "checkpoint-end"}, "confidence": "high"
+    }
+  ]
+}
