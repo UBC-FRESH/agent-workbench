@@ -6093,7 +6093,7 @@ Tasks:
         live hook-firing requirement.
 - [x] P116.3 Implement the coordinator-owned event reducer/controller with
       deterministic cursor, idempotency, and restart-recovery tests.
-- [ ] P116.4 Specify and implement the Supervisor delta-review contract:
+- [x] P116.4 Specify and implement the Supervisor delta-review contract:
       productive repair versus material repeat, deviation, or block; proposed
       constructive nudge; and evidence citation.
 - [ ] P116.5 Prove the supported route to re-invoke the same Supervisor and

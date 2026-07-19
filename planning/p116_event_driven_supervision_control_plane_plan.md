@@ -127,6 +127,12 @@ provider credentials.
 
 ### P116.4 - Supervisor delta review
 
+Status: complete. `agent_workbench.supervision_review` renders and validates a
+local advisory review request over one non-empty sanitized delta. It requires
+an exact cursor citation, structured classification/recommendation/confidence,
+and a bounded constructive nudge only where intervention is warranted. It does
+not invoke a Supervisor, send a Worker message, or carry provider credentials.
+
 - Freeze a compact Supervisor prompt that says the Worker is expected to use
   feedback loops and must not be judged merely for an initial tool failure.
 - Require citation of the new event cursor range and a structured
