@@ -38,11 +38,16 @@ def _schema(data: Any, schema: dict[str, Any], label: str) -> list[str]:
             continue
         if "enum" in rule and value not in rule["enum"]:
             errors.append(f"{label}.{key} has invalid value")
+        if "const" in rule and value != rule["const"]:
+            errors.append(f"{label}.{key} must equal {rule['const']!r}")
         if isinstance(value, int) and not isinstance(value, bool):
             if "minimum" in rule and value < rule["minimum"]: errors.append(f"{label}.{key} is below minimum")
             if "maximum" in rule and value > rule["maximum"]: errors.append(f"{label}.{key} exceeds maximum")
         if isinstance(value, str) and "pattern" in rule and not re.fullmatch(rule["pattern"], value):
             errors.append(f"{label}.{key} has invalid format")
+        if isinstance(value, list):
+            if "minItems" in rule and len(value) < rule["minItems"]: errors.append(f"{label}.{key} has too few items")
+            if "maxItems" in rule and len(value) > rule["maxItems"]: errors.append(f"{label}.{key} has too many items")
         if isinstance(value, list) and isinstance(rule.get("items"), dict):
             for i, item in enumerate(value):
                 errors.extend(_schema(item, rule["items"], f"{label}.{key}[{i}]"))
@@ -89,7 +94,7 @@ def validate_review(bundle_path: str | Path, verdict_path: str | Path, *, prior_
     if verdict.get("review_number") != bundle.get("review_number"): errors.append("review number mismatch")
     review_number, kind = bundle.get("review_number"), bundle.get("packet_kind")
     if kind == "initial" and review_number != 1: errors.append("initial packet must be review 1")
-    if kind == "repair_delta" and (not isinstance(review_number, int) or review_number < 2): errors.append("repair packet must be review 2 through 8")
+    if kind == "repair_delta" and (not isinstance(review_number, int) or review_number not in (2, 3)): errors.append("repair packet must be review 2 through 3")
     declared = bundle.get("bundle_sha256")
     if not isinstance(declared, str) or not SHA256.fullmatch(declared): errors.append("bundle_sha256 must be lowercase SHA-256")
     else:
