@@ -19,7 +19,7 @@ def setup(tmp_path: Path, records: list[object], **doc) -> tuple[Path, Path]:
 
 
 def record(**kw):
-    value = {"document_id": "d1", "chunk_id": "c1", "object_type": "paragraph", "source_path": "doc.txt"}
+    value = {"document_id": "d1", "chunk_id": "c1", "object_type": "paragraph", "source_path": "doc.txt", "source_quote": "héllo source"}
     value.update(kw)
     return value
 

@@ -218,9 +218,11 @@ def build_parser() -> argparse.ArgumentParser:
     source_audit_parser = subparsers.add_parser(
         "source-audit", help="Audit source-anchored JSONL records offline."
     )
-    source_audit_parser.add_argument("--manifest", type=Path, required=True)
-    source_audit_parser.add_argument("--jsonl", "--records", dest="records", type=Path, required=True)
-    source_audit_parser.add_argument("--output", type=Path, required=True)
+    source_audit_group = source_audit_parser.add_mutually_exclusive_group(required=True)
+    source_audit_group.add_argument("--manifest", type=Path)
+    source_audit_group.add_argument("--source", type=Path)
+    source_audit_parser.add_argument("--jsonl", "--records", dest="records", type=Path)
+    source_audit_parser.add_argument("--output", type=Path)
     source_audit_parser.set_defaults(func=run_source_audit)
 
     smoke_parser = subparsers.add_parser(
@@ -1705,7 +1707,32 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def run_source_audit(args: argparse.Namespace) -> int:
-    result = audit_files(args.manifest, args.records, args.output)
+    if args.source:
+        if not args.records:
+            print("--records is required with --source", file=sys.stderr)
+            return 2
+        digest = __import__("hashlib").sha256(args.source.read_bytes()).hexdigest()
+        manifest = args.source.parent / ".source-audit-manifest.json"
+        manifest.write_text(json.dumps({"documents": [{"document_id": "source", "path": args.source.name, "source_sha256": digest}]}), encoding="utf-8")
+        record_root = args.records
+    else:
+        manifest = args.manifest
+        if args.records:
+            record_root = args.records
+        else:
+            try:
+                data = json.loads(manifest.read_text(encoding="utf-8-sig"))
+                record_root = Path(data.get("records", data.get("records_path")))
+                if not record_root.is_absolute():
+                    record_root = manifest.parent / record_root
+            except (OSError, UnicodeError, json.JSONDecodeError, TypeError):
+                print("invalid manifest: records path is required", file=sys.stderr)
+                return 2
+    try:
+        result = audit_files(manifest, record_root, args.output)
+    except (OSError, UnicodeError, ValueError, TypeError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
     return 0 if result["status"] == "accepted" else 1
 

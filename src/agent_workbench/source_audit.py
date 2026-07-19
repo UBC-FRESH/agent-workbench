@@ -4,10 +4,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 REQUIRED = ("document_id", "chunk_id", "object_type")
+HASH_FIELDS = ("source_sha256", "source_hash")
+
+
+def _normalise(value: str) -> str:
+    return re.sub(r"\s+", " ", value).strip()
 
 
 def _error(code: str, **details: Any) -> dict[str, Any]:
@@ -98,14 +104,28 @@ def audit(manifest_path: Path, records_path: Path) -> dict[str, Any]:
         ref = documents.get(doc_id)
         if ref is None and doc_id:
             row_errors.append(_error("unknown_document_id", document_id=doc_id))
-        if ref and isinstance(item.get("source_path"), str):
-            resolved, path_error = _resolve(root, item["source_path"])
-            if path_error or resolved != ref[0]:
-                row_errors.append(path_error or _error("provenance_conflict", field="source_path"))
-                if path_error:
-                    row_errors.append(_error("provenance_conflict", field="source_path"))
-        if ref and item.get("source_sha256", item.get("source_hash")) not in (None, ref[1]):
-            row_errors.append(_error("provenance_conflict", field="source_sha256"))
+        if "source_path" in item and not isinstance(item["source_path"], str):
+            row_errors.append(_error("invalid_field", field="source_path"))
+        if ref:
+            if "source_path" not in item or not isinstance(item.get("source_path"), str):
+                row_errors.append(_error("invalid_field", field="source_path"))
+            else:
+                resolved, path_error = _resolve(root, item["source_path"])
+                if path_error or resolved != ref[0]:
+                    row_errors.append(path_error or _error("provenance_conflict", field="source_path"))
+                    if path_error:
+                        row_errors.append(_error("provenance_conflict", field="source_path"))
+            for field in HASH_FIELDS:
+                if field in item and not isinstance(item[field], str):
+                    row_errors.append(_error("invalid_field", field=field))
+            supplied_hash = item.get("source_sha256", item.get("source_hash"))
+            if supplied_hash is not None and (not isinstance(supplied_hash, str) or supplied_hash != ref[1]):
+                row_errors.append(_error("provenance_conflict", field="source_sha256"))
+            quote = item.get("source_quote")
+            if not isinstance(quote, str) or not quote.strip():
+                row_errors.append(_error("invalid_field", field="source_quote"))
+            elif _normalise(quote) not in _normalise(ref[0].read_text(encoding="utf-8")):
+                row_errors.append(_error("source_quote_mismatch", field="source_quote"))
         rows.append({"line": line_no, "status": "accepted" if not row_errors else "invalid", "record": item, "errors": row_errors})
     if not rows:
         errors.append(_error("empty_jsonl"))
