@@ -6091,7 +6091,7 @@ Tasks:
   - [x] Record the fresh native CLI observation as a provider stream-disconnect
         before the first tool call, not as a hook failure. P116.6 retains the
         live hook-firing requirement.
-- [ ] P116.3 Implement the coordinator-owned event reducer/controller with
+- [x] P116.3 Implement the coordinator-owned event reducer/controller with
       deterministic cursor, idempotency, and restart-recovery tests.
 - [ ] P116.4 Specify and implement the Supervisor delta-review contract:
       productive repair versus material repeat, deviation, or block; proposed

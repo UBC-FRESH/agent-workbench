@@ -110,6 +110,12 @@ invocation.
 
 ### P116.3 - Coordinator event reducer/controller
 
+Status: complete. `agent_workbench.supervision_controller` loads only validated
+events, derives a compact unacknowledged-event delta, and atomically records a
+review cursor. The companion script can render a delta and optionally
+acknowledge it. It does not call a model, send a Worker message, or carry
+provider credentials.
+
 - Implement a local Python controller that tails validated events and maintains
   an idempotent cursor/recovery record.
 - Reduce events into a compact Supervisor input packet and write all decisions
