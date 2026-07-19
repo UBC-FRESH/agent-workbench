@@ -287,7 +287,7 @@ def test_configured_windows_hook_command_captures_event(tmp_path: Path) -> None:
         entry["matcher"]
         for matcher in config["hooks"].values()
         for entry in matcher
-    ] == ["^exec$", "^exec$"]
+    ] == ["^Bash$", "^Bash$"]
     assert all(
         "commandWindows" not in hook
         for matcher in config["hooks"].values()
