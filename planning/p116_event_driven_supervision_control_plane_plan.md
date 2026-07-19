@@ -86,6 +86,15 @@ decisions.
 
 ### P116.2 - Hook-to-event capture probe
 
+Status: complete with a bounded native-transport caveat. The project-local
+`PreToolUse`/`PostToolUse` command hook and inert capture entry point reduce a
+documented lifecycle payload to a validated P116 event without retaining raw
+tool input or output. Focused tests include the exact configured Windows
+PowerShell command. A fresh Qwen CLI observation reached the expected P116
+root and loaded hooks, but its remote Responses stream disconnected before the
+model issued its first tool call, so it provides no live hook-firing verdict.
+P116.6 must obtain that end-to-end evidence.
+
 - Run a local, no-provider probe to capture the actual Codex command-hook
   payload, hook ordering, failure behavior, and coexistence with existing
   hooks on Windows.
