@@ -71,6 +71,39 @@ def _canonical_artifact(root: Path, value: Any, label: str, errors: list[str]) -
     return path
 
 
+def _checkpoint_record(path: Path, label: str, session_id: str, errors: list[str]) -> tuple[int | None, str | None, dict[str, int]]:
+    try:
+        record = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        errors.append(f"{label} must contain a canonical parsed session record: {exc}")
+        return None, None, {}
+    if not isinstance(record, dict):
+        errors.append(f"{label} must contain a canonical parsed session record")
+        return None, None, {}
+    if record.get("session_id") != session_id:
+        errors.append(f"{label}.session_id must match role session")
+    ordinal = record.get("event_ordinal")
+    if isinstance(ordinal, bool) or not isinstance(ordinal, int) or ordinal < 0:
+        errors.append(f"{label}.event_ordinal must be a finite nonnegative integer")
+        ordinal = None
+    timestamp = record.get("event_timestamp")
+    if not _nonempty(timestamp):
+        errors.append(f"{label}.event_timestamp is required")
+        timestamp = None
+    snapshot = record.get("token_snapshot")
+    if not isinstance(snapshot, dict):
+        errors.append(f"{label}.token_snapshot must be an object")
+        snapshot = {}
+    counters: dict[str, int] = {}
+    for key in TOKEN_CLASSES:
+        value = snapshot.get(key)
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            errors.append(f"{label}.token_snapshot.{key} must be a finite nonnegative integer")
+        else:
+            counters[key] = value
+    return ordinal, timestamp, counters
+
+
 def validate_accounting_record(path: str | Path) -> list[str]:
     try:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -187,14 +220,25 @@ def validate_accounting_record(path: str | Path) -> list[str]:
             for point in ("start", "end"):
                 checkpoint = checkpoints.get(point)
                 if not isinstance(checkpoint, dict):
-                    errors.append(f"roles[{index}].checkpoints.{point} must identify a hashed raw-session snapshot")
+                    errors.append(f"roles[{index}].checkpoints.{point} must identify a hashed parsed session record")
                     continue
-                if checkpoint.get("session_id") != session or checkpoint.get("session_id") not in manifest_sessions:
+                checkpoint_session = checkpoint.get("session_id")
+                if checkpoint_session != session or checkpoint_session not in manifest_sessions:
+                    errors.append(f"roles[{index}].checkpoints.{point}.session_id must match a manifest session and role session")
+                if session not in manifest_sessions:
                     errors.append(f"roles[{index}].checkpoints.{point}.session_id must match a manifest session")
-                snapshot = _canonical_artifact(manifest_path.parent if manifest_path else Path(path).parent, checkpoint.get("snapshot_path"), f"roles[{index}].checkpoints.{point}.snapshot_path", errors)
-                expected = manifest_sessions.get(checkpoint.get("session_id"), {}).get("raw_session_path")
-                if snapshot and manifest_path and expected and snapshot.as_posix() != (manifest_path.parent / expected).as_posix(): errors.append(f"roles[{index}].checkpoints.{point}.snapshot_path must match manifest raw session")
+                root = manifest_path.parent if manifest_path else Path(path).parent
+                snapshot = _canonical_artifact(root, checkpoint.get("snapshot_path"), f"roles[{index}].checkpoints.{point}.snapshot_path", errors)
                 if snapshot and checkpoint.get("snapshot_sha256") != hashlib.sha256(snapshot.read_bytes()).hexdigest(): errors.append(f"roles[{index}].checkpoints.{point}.snapshot_sha256 does not match snapshot")
+                if snapshot:
+                    ordinal, timestamp, counters = _checkpoint_record(snapshot, f"roles[{index}].checkpoints.{point}", checkpoint_session, errors)
+                    checkpoint["_ordinal"] = ordinal
+                    checkpoint["_timestamp"] = timestamp
+                    checkpoint["_counters"] = counters
+            if all(isinstance(checkpoints.get(point), dict) for point in ("start", "end")):
+                start, end = checkpoints["start"], checkpoints["end"]
+                if start.get("_ordinal") is not None and end.get("_ordinal") is not None and end["_ordinal"] <= start["_ordinal"]:
+                    errors.append(f"roles[{index}].checkpoints start and end must be distinct ordered events")
         if role.get("confidence") not in {"high", "medium", "low"}: errors.append(f"roles[{index}].confidence must be high, medium, or low")
     if not _finite_number(data.get("total_paid_usd")) or data.get("total_paid_usd") != total_usd: errors.append("total_paid_usd must equal derived role total")
     if config in CONFIG_ROLES and seen_roles != CONFIG_ROLES[config]: errors.append("roles must contain exactly the required paid roles for configuration_id")
