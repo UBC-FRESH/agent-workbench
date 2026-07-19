@@ -4266,3 +4266,16 @@ exact staged lines, then restored the temp config hash byte-for-byte.
   unassessed, and does not activate P115. The Advisor profile is retained at
   `gpt-5.6-sol` with `model_reasoning_effort = "medium"`; the live Advisor
   review for this plan was verified at that setting.
+
+## 2026-07-19 - Completed P116.1 supervision event contract
+
+- Added `agent_workbench.supervision` with a versioned local supervision
+  manifest, sanitized event, cursor, Supervisor-packet, and Coordinator-action
+  validation contract.
+- The contract binds an absolute assigned root while requiring run artifacts and
+  observed event paths to stay relative to that root. It rejects reordered
+  events, unobserved cursor acknowledgements, raw command/output/header fields,
+  oversized text, and private-looking values.
+- Focused deterministic tests accept a normal productive-repair event and
+  reject the control-plane failure modes that P116 is meant to surface. No hook,
+  controller, provider, or Worker authority was added in this task.

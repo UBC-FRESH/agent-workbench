@@ -71,6 +71,12 @@ between a recommendation and a Worker message.
 
 ### P116.1 - Freeze contracts
 
+Status: complete. `agent_workbench.supervision` now defines the v1 manifest,
+event, cursor, Supervisor-packet, and Coordinator-action validation surface.
+Focused tests cover valid productive repair, root/path containment, ordered
+cursors, forbidden raw payload fields, private-looking values, and structured
+decisions.
+
 - Specify JSON schemas, versioning, root containment, size limits, redaction,
   cursor semantics, duplicate-event behavior, and restart recovery.
 - Add deterministic fixtures for a successful tool action, normal repair,
