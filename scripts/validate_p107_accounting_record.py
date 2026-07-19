@@ -16,6 +16,10 @@ def _nonempty(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
 
+def _finite_number(value: Any) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
 def _required_object(data: dict[str, Any], key: str, errors: list[str]) -> dict[str, Any]:
     value = data.get(key)
     if not isinstance(value, dict):
@@ -88,6 +92,7 @@ def validate_accounting_record(path: str | Path) -> list[str]:
     allowed = {"measured", "unknown"} if config == "C4" else {"measured", "unknown", "not_applicable"}
     if status not in allowed: errors.append("local_cost.status is invalid for configuration")
     amount = local.get("amount_usd")
+    if isinstance(amount, (int, float)) and not _finite_number(amount): errors.append("local_cost.amount_usd must be finite")
     if status == "unknown" and amount == 0: errors.append("unknown local cost cannot be represented as zero")
     if status == "measured" and (isinstance(amount, bool) or not isinstance(amount, (int, float))): errors.append("measured local cost requires numeric amount_usd")
     if isinstance(amount, (int, float)) and amount < 0: errors.append("local_cost.amount_usd must be nonnegative")
@@ -99,9 +104,9 @@ def validate_accounting_record(path: str | Path) -> list[str]:
     if run.get("adapter_identity") is not None and not _nonempty(run.get("adapter_identity")): errors.append("run_accounting.adapter_identity is required")
     for key in ("active_time_seconds", "wait_time_seconds", "review_count", "repair_count", "transport_count"):
         value = run.get(key)
-        if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0: errors.append(f"run_accounting.{key} must be nonnegative")
+        if not _finite_number(value) or value < 0: errors.append(f"run_accounting.{key} must be a finite nonnegative number")
     if not isinstance(run.get("maintainer_intervention"), bool): errors.append("run_accounting.maintainer_intervention must be boolean")
-    if isinstance(run.get("invalid_run_spend_usd"), bool) or not isinstance(run.get("invalid_run_spend_usd"), (int, float)) or run.get("invalid_run_spend_usd") < 0: errors.append("run_accounting.invalid_run_spend_usd must be nonnegative")
+    if not _finite_number(run.get("invalid_run_spend_usd")) or run.get("invalid_run_spend_usd") < 0: errors.append("run_accounting.invalid_run_spend_usd must be a finite nonnegative number")
     if status == "measured":
         if not _nonempty(run.get("adapter_identity")):
             errors.append("measured local cost requires run_accounting.adapter_identity")
@@ -132,20 +137,20 @@ def validate_accounting_record(path: str | Path) -> list[str]:
             value = tokens.get(key) if isinstance(tokens, dict) else None
             if isinstance(value, bool) or not isinstance(value, int) or value < 0: errors.append(f"roles[{index}].tokens.{key} must be a nonnegative integer")
             usd = prices.get(key) if isinstance(prices, dict) else None
-            if isinstance(usd, bool) or not isinstance(usd, (int, float)) or usd < 0: errors.append(f"roles[{index}].token_usd.{key} must be nonnegative")
+            if not _finite_number(usd) or usd < 0: errors.append(f"roles[{index}].token_usd.{key} must be a finite nonnegative number")
             rate = rate_map[key]
-            if rate is None or isinstance(rate, bool) or not isinstance(rate, (int, float)) or rate < 0:
+            if not _finite_number(rate) or rate < 0:
                 errors.append(f"pricing catalog rate for {role.get('model')}.{key} is invalid")
             elif isinstance(value, int) and not isinstance(value, bool):
                 derived = value * rate / 1_000_000
                 if isinstance(usd, (int, float)) and not math.isclose(usd, derived, rel_tol=0, abs_tol=1e-12):
                     errors.append(f"roles[{index}].token_usd.{key} must equal catalog-derived USD")
                 role_total += derived
-        if role.get("total_usd") != role_total: errors.append(f"roles[{index}].total_usd must equal derived token USD total")
+        if not _finite_number(role.get("total_usd")) or role.get("total_usd") != role_total: errors.append(f"roles[{index}].total_usd must equal derived token USD total")
         total_usd += role_total
         if not isinstance(role.get("checkpoints"), dict) or not _nonempty(role["checkpoints"].get("start")) or not _nonempty(role["checkpoints"].get("end")): errors.append(f"roles[{index}].checkpoints must have start and end")
         if role.get("confidence") not in {"high", "medium", "low"}: errors.append(f"roles[{index}].confidence must be high, medium, or low")
-    if data.get("total_paid_usd") != total_usd: errors.append("total_paid_usd must equal derived role total")
+    if not _finite_number(data.get("total_paid_usd")) or data.get("total_paid_usd") != total_usd: errors.append("total_paid_usd must equal derived role total")
     if config in CONFIG_ROLES and seen_roles != CONFIG_ROLES[config]: errors.append("roles must contain exactly the required paid roles for configuration_id")
     if isinstance(source.get("session_ids"), list) and set(source["session_ids"]) != seen_sessions: errors.append("source_session_identity.session_ids must contain exactly all role session IDs")
     configured = source.get("role_sessions")

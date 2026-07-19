@@ -2,6 +2,7 @@ import json
 import hashlib
 import sys
 from pathlib import Path
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -103,3 +104,41 @@ def test_measured_local_cost_requires_adapter_identity(tmp_path: Path) -> None:
     data["run_accounting"]["adapter_identity"] = None
     path.write_text(json.dumps(data))
     assert any("measured local cost requires run_accounting.adapter_identity" in e for e in validate_accounting_record(path))
+
+
+@pytest.mark.parametrize("nonfinite", [float("inf"), float("-inf"), float("nan")])
+@pytest.mark.parametrize("location", [
+    "local_cost.amount_usd",
+    "run_accounting.active_time_seconds",
+    "run_accounting.wait_time_seconds",
+    "run_accounting.review_count",
+    "run_accounting.repair_count",
+    "run_accounting.transport_count",
+    "run_accounting.invalid_run_spend_usd",
+    "roles[0].tokens.output",
+    "roles[0].token_usd.output",
+    "roles[0].total_usd",
+    "total_paid_usd",
+])
+def test_rejects_nonfinite_accounting_numbers(tmp_path: Path, nonfinite: float, location: str) -> None:
+    path, data = make_record(tmp_path)
+    target = data
+    parts = location.replace("]", "").replace("[", ".").split(".")
+    for part in parts[:-1]:
+        target = target[int(part)] if part.isdigit() else target[part]
+    target[parts[-1]] = nonfinite
+    path.write_text(json.dumps(data))
+    assert validate_accounting_record(path), location
+
+
+@pytest.mark.parametrize("nonfinite", [float("inf"), float("-inf"), float("nan")])
+def test_rejects_nonfinite_catalog_rates(tmp_path: Path, nonfinite: float) -> None:
+    path, data = make_record(tmp_path)
+    catalog_path = Path(data["pricing_catalog"]["path"])
+    catalog = json.loads(catalog_path.read_text())
+    catalog["entries"][0]["rates"]["output_per_1m_usd"] = nonfinite
+    raw = json.dumps(catalog).encode()
+    catalog_path.write_bytes(raw)
+    data["pricing_catalog"]["content_hash"] = "sha256:" + hashlib.sha256(raw).hexdigest()
+    path.write_text(json.dumps(data))
+    assert any("pricing catalog rate" in error for error in validate_accounting_record(path))
