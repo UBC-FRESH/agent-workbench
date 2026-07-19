@@ -12,6 +12,9 @@
     "accounting_complete": {"type": "boolean"},
     "baseline_run_id": {"type": ["string", "null"]},
     "paid_run_cost": {"type": "number", "minimum": 0},
-    "roi_status": {"enum": ["eligible_baseline", "comparable", "not_comparable"]}
+    "roi_status": {"enum": ["eligible_baseline", "comparable", "not_comparable"]},
+    "evaluation_block_valid": {"type": "boolean"}, "advisor_binding_valid": {"type": "boolean"},
+    "accounting_provenance_valid": {"type": "boolean"}, "configuration_topology_valid": {"type": "boolean"},
+    "model_identity_valid": {"type": "boolean"}, "reason_codes": {"type": "array", "items": {"type": "string"}}
   }
 }
