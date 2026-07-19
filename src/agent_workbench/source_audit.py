@@ -91,7 +91,10 @@ def _one(root: Path, source_value: Any, records_value: Any, input_id: str | None
         if digest: documents["document-1"] = (source, digest)
     rows: list[dict[str, Any]] = []
     if records and not findings: rows, row_errors = _record_rows(root, records, documents, relaxed=True); findings.extend(row_errors)
-    result: dict[str, Any] = {"input_id": input_id, "source_sha256": digest, "record_count": len(rows), "valid_record_count": sum(r["status"] == "accepted" for r in rows), "invalid_record_count": sum(r["status"] != "accepted" for r in rows), "provenance_status": "accepted" if not findings else "invalid", "findings": findings, "records": rows}
+    synthetic_invalid = 1 if findings and not rows else 0
+    valid_count = sum(r["status"] == "accepted" for r in rows)
+    invalid_count = sum(r["status"] != "accepted" for r in rows) + synthetic_invalid
+    result: dict[str, Any] = {"input_id": input_id, "source_sha256": digest, "record_count": valid_count + invalid_count, "valid_record_count": valid_count, "invalid_record_count": invalid_count, "provenance_status": "accepted" if not findings and invalid_count == 0 else "invalid", "findings": findings, "records": rows}
     return result
 
 def audit(manifest_path: Path, records_path: Path | None = None) -> dict[str, Any]:
@@ -103,9 +106,13 @@ def audit(manifest_path: Path, records_path: Path | None = None) -> dict[str, An
         if not isinstance(inputs, list) or not inputs or any(not isinstance(x, dict) for x in inputs): raise ValueError("invalid batch manifest inputs")
         ids = [x.get("input_id") for x in inputs]
         if any(not isinstance(i, str) or not i.strip() for i in ids) or len(set(ids)) != len(ids): raise ValueError("invalid or duplicate input_id")
+        for item in inputs:
+            for field in ("source", "records"):
+                if not isinstance(item.get(field), str) or not item[field].strip():
+                    raise ValueError(f"invalid batch manifest {field}")
         results = [_one(root, x.get("source"), x.get("records"), x["input_id"]) for x in inputs]
         results.sort(key=lambda x: x["input_id"])
-        return {"schema_version": data["schema_version"], "input_count": len(results), "record_count": sum(x["record_count"] for x in results), "valid_input_count": sum(x["provenance_status"] == "accepted" and x["invalid_record_count"] == 0 for x in results), "invalid_input_count": sum(x["provenance_status"] != "accepted" or x["invalid_record_count"] for x in results), "valid_record_count": sum(x["valid_record_count"] for x in results), "invalid_record_count": sum(x["invalid_record_count"] + (1 if x["provenance_status"] != "accepted" and not x["records"] else 0) for x in results), "results": results}
+        return {"schema_version": data["schema_version"], "input_count": len(results), "record_count": sum(x["record_count"] for x in results), "valid_input_count": sum(x["provenance_status"] == "accepted" for x in results), "invalid_input_count": sum(x["provenance_status"] != "accepted" for x in results), "valid_record_count": sum(x["valid_record_count"] for x in results), "invalid_record_count": sum(x["invalid_record_count"] for x in results), "results": results}
     entries = data.get("documents") if isinstance(data, dict) else None
     if not isinstance(entries, list): return {"schema_version": "p107_source_audit_v1", "status": "error", "errors": [_error("invalid_manifest", message="expected a documents list")], "records": []}
     documents: dict[str, tuple[Path, str]] = {}; errors: list[dict[str, Any]] = []

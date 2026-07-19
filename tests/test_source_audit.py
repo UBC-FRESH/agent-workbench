@@ -155,3 +155,33 @@ def test_batch_results_are_lexical(tmp_path):
 def test_batch_output_is_deterministic(tmp_path):
     m, r = setup(tmp_path, [record()]); data=json.loads(m.read_text()); data={"schema_version":"provenance_audit_batch_v1","inputs":[{"input_id":"a","source":"doc.txt","records":"records.jsonl"}]}; r.rename(tmp_path/"records.jsonl"); m.write_text(json.dumps(data))
     assert audit_files(m) == audit_files(m)
+
+def test_batch_missing_required_fields_is_configuration_error(tmp_path):
+    m = tmp_path / "m.json"
+    m.write_text(json.dumps({"schema_version": "provenance_audit_batch_v1", "inputs": [{"input_id": "x", "source": ""}]}))
+    with pytest.raises(ValueError): audit_files(m)
+
+def test_batch_failed_inputs_preserve_aggregate_invariants(tmp_path):
+    source = tmp_path / "source.txt"; source.write_text("text")
+    records = tmp_path / "records.jsonl"; records.write_text("{}\n")
+    m = tmp_path / "m.json"
+    m.write_text(json.dumps({"schema_version": "provenance_audit_batch_v1", "inputs": [
+        {"input_id": "bad", "source": "missing.txt", "records": "records.jsonl"},
+        {"input_id": "good", "source": "source.txt", "records": "records.jsonl"},
+    ]}))
+    result = audit_files(m)
+    assert result["record_count"] == result["valid_record_count"] + result["invalid_record_count"]
+    assert result["invalid_input_count"] == 2
+    assert all(item["provenance_status"] != "accepted" for item in result["results"])
+
+def test_batch_symlink_escape_is_invalid_input(tmp_path):
+    outside = tmp_path.parent / "outside-source.txt"; outside.write_text("outside")
+    link = tmp_path / "source.txt"
+    try:
+        link.symlink_to(outside)
+    except (OSError, NotImplementedError):
+        pytest.skip("symlinks unavailable")
+    records = tmp_path / "records.jsonl"; records.write_text("{}\n")
+    m = tmp_path / "m.json"; m.write_text(json.dumps({"schema_version": "provenance_audit_batch_v1", "inputs": [{"input_id": "x", "source": "source.txt", "records": "records.jsonl"}]}))
+    result = audit_files(m)
+    assert result["results"][0]["findings"][0]["code"] == "path_escape"

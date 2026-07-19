@@ -1731,10 +1731,16 @@ def run_source_audit(args: argparse.Namespace) -> int:
             print("invalid manifest: file does not exist", file=sys.stderr)
             return 2
     try:
-        result = audit_files(manifest, record_root, args.output)
+        result = audit_files(manifest, record_root)
     except (OSError, UnicodeError, ValueError, TypeError) as exc:
         print(str(exc), file=sys.stderr)
         return 2
+    if result.get("status") == "error":
+        print("invalid source-audit configuration", file=sys.stderr)
+        return 2
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
     if result.get("schema_version") == "provenance_audit_batch_v1":
         return 0 if result["invalid_input_count"] == 0 and result["invalid_record_count"] == 0 else 1
