@@ -4355,3 +4355,16 @@ exact staged lines, then restored the temp config hash byte-for-byte.
 - Quality, protocol, and economics remain separate. P117 economics is
   unassessed, and this planning entry makes no P107 economics claim. No code,
   configuration, runtime, or GitHub changes are part of this planning surface.
+
+## 2026-07-19 - Completed P117 run-scoped supervision daemon
+
+- Completed P117.3-P117.6 and added completed task P117.7 (#699) for the
+  production native adapter and receipt-bound restart proof.
+- The bounded r17 evidence records ordered sanitized events, a run-scoped lease
+  and journal, native delivery and restart-reconciliation receipts, deterministic
+  closure, and rejection after closure. The evidence supports duplicate
+  suppression across the bounded restart boundary.
+- Repeated audits reached the same separate verdict: quality is a validated
+  candidate and protocol is accepted. Economics is unassessed; P117 makes no
+  P107 economics claim. The result remains bounded to one run at a time and does
+  not establish an unattended or unbounded autonomous runtime.
