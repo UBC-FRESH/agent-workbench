@@ -109,3 +109,11 @@ def test_caller_driven_restart_completes_cursor_without_second_request(tmp_path:
     assert reconciled is None
     assert restarted.journal.records()[-1]["kind"] == "cursor_receipt"
     assert restarted._acknowledged_sequence == 1
+    records = restarted.journal.records()
+    assert sum(r["kind"] == "flush_request" for r in records) == 1
+    assert sum(r["kind"] == "delivery_intent" for r in records) == 1
+    reconciled = [r for r in records if r["kind"] == "native_receipt_reconciled"]
+    assert len(reconciled) == 1
+    assert reconciled[0]["target_worker_session_id"] == daemon.binding.session_id
+    assert reconciled[0]["submission_id"] == "sub-daemon-2"
+    assert reconciled[0]["reconciled"] is True

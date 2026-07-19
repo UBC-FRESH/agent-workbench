@@ -133,9 +133,17 @@ class BoundedSupervisionDaemon:
             return None
         message = json.dumps(list(decision.events), sort_keys=True, separators=(",", ":"))
         key = f"{self.lease.run_id}:{decision.start_sequence}-{decision.end_sequence}"
-        self.journal.append("flush_request", flush_start=decision.start_sequence,
-                            flush_end=decision.end_sequence, idempotency_key=key,
-                            message_fingerprint=sha256(message.encode("utf-8")).hexdigest())
+        fingerprint = sha256(message.encode("utf-8")).hexdigest()
+        durable_native = any(r.get("kind") == "native_receipt"
+                             and r.get("idempotency_key") == key
+                             and r.get("lineage") == self.binding.__dict__
+                             and r.get("target_worker_session_id") == self.binding.session_id
+                             and r.get("message_fingerprint") == fingerprint
+                             for r in self.journal.records())
+        if not durable_native:
+            self.journal.append("flush_request", flush_start=decision.start_sequence,
+                                flush_end=decision.end_sequence, idempotency_key=key,
+                                message_fingerprint=fingerprint)
         prepared = self.delivery.prepare(message, idempotency_key=key)
         if prepared.receipt is not None:
             self._complete_cursor(decision, key, prepared.receipt)

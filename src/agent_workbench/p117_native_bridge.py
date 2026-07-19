@@ -67,14 +67,21 @@ class NativeDeliveryBridge:
                     record.get("message_fingerprint") != fingerprint):
                 raise ValueError("durable receipt identity mismatch")
         receipt_record = next((r for r in reversed(prior) if r.get("kind") == "native_receipt"), None)
-        self.journal.append("delivery_intent", operation="multi_agent_v1__send_input",
-                            target_worker_session_id=self.binding.session_id,
-                            idempotency_key=idempotency_key, message_fingerprint=fingerprint,
-                            lineage=lineage)
         if receipt_record:
-            return PreparedDelivery(request, SendReceipt(
+            receipt = SendReceipt(
                 self.binding, idempotency_key, DeliveryState(receipt_record["adapter_state"]),
-                fingerprint, submission_id=receipt_record["submission_id"]))
+                fingerprint, submission_id=receipt_record["submission_id"])
+            self.journal.append("native_receipt_reconciled", operation="multi_agent_v1__send_input",
+                                target_worker_session_id=self.binding.session_id,
+                                idempotency_key=idempotency_key, message_fingerprint=fingerprint,
+                                submission_id=receipt.submission_id, adapter_state=receipt.state.value,
+                                reconciled=True, lineage=lineage)
+            return PreparedDelivery(request, receipt)
+        if not any(r.get("kind") == "delivery_intent" for r in prior):
+            self.journal.append("delivery_intent", operation="multi_agent_v1__send_input",
+                                target_worker_session_id=self.binding.session_id,
+                                idempotency_key=idempotency_key, message_fingerprint=fingerprint,
+                                lineage=lineage)
         return PreparedDelivery(request)
 
     def record_submission(self, request: NativeSendRequest, submission_id: str) -> SendReceipt:
