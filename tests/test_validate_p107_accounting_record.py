@@ -7,42 +7,69 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from validate_p107_accounting_record import validate_accounting_record
 
 
-def record(tmp_path: Path) -> Path:
+def make_record(tmp_path: Path, configuration: str = "C1") -> tuple[Path, dict]:
     data = json.loads((ROOT / "templates/p107_accounting_record_template.json").read_text())
-    data["configuration_id"] = "C0"
-    data["roles"].append({"role": "advisor", "session_id": "advisor-session", "provider": "terra", "model": "medium", "tokens": {k: 1 for k in ("uncached_input", "cached_input", "output", "reasoning")}, "checkpoints": {"start": "a", "end": "b"}, "confidence": "medium"})
-    path = tmp_path / "accounting.json"; path.write_text(json.dumps(data)); return path
+    data["configuration_id"] = configuration
+    if configuration == "C0":
+        data["roles"] = [r for r in data["roles"] if r["role"] in {"coordinator", "advisor"}]
+    elif configuration in {"C2", "C3", "C4"}:
+        supervisor = dict(data["roles"][0])
+        supervisor["role"] = "supervisor"
+        supervisor["session_id"] = "supervisor-session"
+        data["roles"].append(supervisor)
+    data["source_session_identity"]["session_ids"] = [r["session_id"] for r in data["roles"]]
+    path = tmp_path / "record.json"
+    path.write_text(json.dumps(data))
+    return path, data
 
 
-def role(name: str) -> dict[str, object]:
-    return {"role": name, "session_id": f"{name}-session", "provider": "provider", "model": "model", "tokens": {k: 1 for k in ("uncached_input", "cached_input", "output", "reasoning")}, "checkpoints": {"start": "a", "end": "b"}, "confidence": "high"}
-
-
-def test_valid_role_sets_for_c0_through_c4(tmp_path: Path) -> None:
-    expected = {
-        "C0": {"coordinator", "advisor"},
-        "C1": {"coordinator", "worker", "advisor"},
-        "C2": {"coordinator", "supervisor", "worker", "advisor"},
-        "C3": {"coordinator", "supervisor", "worker", "advisor"},
-        "C4": {"coordinator", "supervisor", "worker", "advisor"},
-    }
-    for configuration, names in expected.items():
-        data = json.loads((ROOT / "templates/p107_accounting_record_template.json").read_text())
-        data["configuration_id"] = configuration
-        data["roles"] = [role(name) for name in names]
-        path = tmp_path / f"{configuration}.json"; path.write_text(json.dumps(data))
+def test_valid_configurations(tmp_path: Path) -> None:
+    for config in ("C0", "C1", "C2", "C3", "C4"):
+        path, _ = make_record(tmp_path, config)
         assert validate_accounting_record(path) == []
 
 
-def test_missing_role_and_unknown_zero_cost_fail_closed(tmp_path: Path) -> None:
-    path = record(tmp_path); data = json.loads(path.read_text()); data["roles"] = data["roles"][:1]; data["local_cost"]["amount_usd"] = 0; path.write_text(json.dumps(data))
+def test_role_sessions_must_be_unique_and_source_bound(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["roles"][1]["session_id"] = data["roles"][0]["session_id"]
+    data["source_session_identity"]["session_ids"] = ["coordinator-session"]
+    path.write_text(json.dumps(data))
     errors = validate_accounting_record(path)
-    assert "roles must contain exactly the required paid roles for configuration_id" in errors
+    assert any("duplicate session_id" in e for e in errors)
+    assert any("exactly all role session IDs" in e for e in errors)
+
+
+def test_tokens_prices_totals_and_catalog_are_checked(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["roles"][0]["tokens"]["output"] = 1.5
+    data["roles"][0]["token_usd"]["output"] = 2.0
+    data["roles"][0]["total_usd"] = 2.0
+    data["pricing_catalog"].pop("content_hash")
+    path.write_text(json.dumps(data))
+    errors = validate_accounting_record(path)
+    assert any("nonnegative integer" in e for e in errors)
+    assert any("pricing_catalog.content_hash" in e for e in errors)
+
+
+def test_c4_unknown_or_measured_local_cost_only(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path, "C4")
+    data["local_cost"] = {"status": "not_applicable", "amount_usd": 0}
+    path.write_text(json.dumps(data))
+    errors = validate_accounting_record(path)
+    assert any("invalid for configuration" in e for e in errors)
+    assert any("cannot be zero" in e for e in errors)
+
+
+def test_unknown_local_cost_never_zero_and_required_run_accounting(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["local_cost"]["amount_usd"] = 0
+    data["run_accounting"].pop("adapter_identity")
+    path.write_text(json.dumps(data))
+    errors = validate_accounting_record(path)
     assert "unknown local cost cannot be represented as zero" in errors
+    assert "run_accounting.adapter_identity is required" in errors
 
 
-def test_missing_token_class_and_catalog_provenance_fail(tmp_path: Path) -> None:
-    path = record(tmp_path); data = json.loads(path.read_text()); del data["roles"][0]["tokens"]["reasoning"]; data["pricing_catalog"]["provenance"] = ""; path.write_text(json.dumps(data))
-    errors = validate_accounting_record(path)
-    assert any("tokens.reasoning" in error for error in errors)
-    assert "pricing_catalog.provenance is required" in errors
+def test_cli_success_does_not_claim_comparison_eligibility() -> None:
+    text = (ROOT / "scripts/validate_p107_accounting_record.py").read_text()
+    assert "comparison eligible" not in text
