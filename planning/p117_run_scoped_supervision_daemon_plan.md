@@ -3,7 +3,7 @@
 Parent issue: #686  
 Child issue: #687  
 Branch: `feature/p117-run-scoped-supervision-daemon`  
-Status: active planning surface
+Status: complete
 
 ## Motivation
 
@@ -66,6 +66,23 @@ Replay sanitized policy inputs offline and score candidate policies.
 Audit native and offline artifacts. Report separately whether quality is
 validated, protocol is accepted, and economics is usable. Economics is
 unassessed and no P107 economics claim is made by P117.
+
+### P117.7 - Production native adapter and receipt-bound restart proof
+
+Complete. The bounded r17 evidence records the production native adapter route
+with run-scoped lease and journal state, ordered sanitized events, durable
+delivery and restart-reconciliation receipts, deterministic closure, and
+post-closure rejection. The proof demonstrates duplicate suppression across a
+bounded restart boundary without creating an unattended service or expanding
+worker authority.
+
+## Closeout verdict
+
+Repeated audits of the bounded native and offline evidence reached the same
+separate verdict: quality is a validated candidate, protocol is accepted, and
+economics is unassessed. P117 makes no P107 economics claim. The accepted
+boundary remains one run at a time, with explicit stop conditions and no
+unbounded autonomous supervision.
 
 ## Out of scope
 

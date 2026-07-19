@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+import pytest
 
 from agent_workbench.p117_daemon import BoundedSupervisionDaemon
-from agent_workbench.p117_session_adapter import FakeNativeSessionAdapter, SessionBinding
+from agent_workbench.p117_session_adapter import CallerDrivenNativeSessionAdapter, FakeNativeSessionAdapter, SessionBinding
 from agent_workbench.supervision import SupervisionJournal, create_run_lease
 
 
@@ -81,3 +82,38 @@ def test_closed_run_writes_post_close_rejection_receipt(tmp_path: Path):
     assert not daemon.accept_event(event(), now=NOW)
     assert not daemon.flush(now=NOW).accepted
     assert all(record.get("reason") == "closed" for record in daemon.journal.records() if record.get("kind") == "rejection")
+
+
+def test_caller_driven_flush_prepare_and_submission(tmp_path: Path):
+    daemon, _ = make_daemon(tmp_path)
+    daemon.adapter = CallerDrivenNativeSessionAdapter(lambda *_: pytest.fail("daemon must not send"))
+    daemon.delivery.adapter = daemon.adapter
+    assert daemon.accept_event(event(), now=NOW)
+    request = daemon.prepare_flush(now=NOW)
+    assert request is not None
+    assert request.target_worker_session_id == daemon.binding.session_id
+    assert request.idempotency_key == "run-117:1-1"
+    result = daemon.record_flush_submission(request, "sub-daemon-1")
+    assert result.accepted
+    assert [r["kind"] for r in daemon.journal.records() if r["kind"] in {"native_receipt", "flush_receipt", "cursor_receipt"}] == ["native_receipt", "flush_receipt", "cursor_receipt"]
+
+
+def test_caller_driven_restart_completes_cursor_without_second_request(tmp_path: Path):
+    daemon, _ = make_daemon(tmp_path)
+    assert daemon.accept_event(event(), now=NOW)
+    request = daemon.prepare_flush(now=NOW)
+    assert request is not None
+    daemon.delivery.record_submission(request, "sub-daemon-2")
+    restarted, _ = make_daemon(tmp_path)
+    reconciled = restarted.prepare_flush(now=NOW)
+    assert reconciled is None
+    assert restarted.journal.records()[-1]["kind"] == "cursor_receipt"
+    assert restarted._acknowledged_sequence == 1
+    records = restarted.journal.records()
+    assert sum(r["kind"] == "flush_request" for r in records) == 1
+    assert sum(r["kind"] == "delivery_intent" for r in records) == 1
+    reconciled = [r for r in records if r["kind"] == "native_receipt_reconciled"]
+    assert len(reconciled) == 1
+    assert reconciled[0]["target_worker_session_id"] == daemon.binding.session_id
+    assert reconciled[0]["submission_id"] == "sub-daemon-2"
+    assert reconciled[0]["reconciled"] is True

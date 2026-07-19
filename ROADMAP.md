@@ -6131,10 +6131,10 @@ Parent issue: #686
 
 Branch: `feature/p117-run-scoped-supervision-daemon`
 
-Status: active - planning surface only. Child issue #687 is the approved
-run-scoped supervision daemon design task. P117 is motivated by P116's r11
-stale-post-cursor finding: supervision state can outlive the cursor boundary
-unless lease, closure, journal, and flush behavior are bound to one run.
+Status: complete. P117 is motivated by P116's r11 stale-post-cursor finding:
+supervision state can outlive the cursor boundary unless lease, closure,
+journal, and flush behavior are bound to one run. The accepted result remains
+bounded to one run and does not establish an unbounded autonomous runtime.
 
 Goal: define a bounded, evidence-auditable supervision daemon boundary for one
 run at a time, preserving deterministic recovery and native-session authority
@@ -6146,13 +6146,14 @@ Tasks:
       terminal-state contract.
 - [x] P117.2 Specify and test the deterministic flusher, including restart,
       ordering, idempotency, and closure behavior.
-- [ ] P117.3 Specify the native session adapter and its bounded authority and
+- [x] P117.3 Specify the native session adapter and its bounded authority and
       session-lineage evidence requirements.
-- [ ] P117.4 Produce one bounded native daemon proof with exact run-scoped
+- [x] P117.4 Produce one bounded native daemon proof with exact run-scoped
       artifacts and stop conditions.
-- [ ] P117.5 Run the offline sanitized policy replay.
-- [ ] P117.6 Perform the evidence audit, reporting quality, protocol, and
+- [x] P117.5 Run the offline sanitized policy replay.
+- [x] P117.6 Perform the evidence audit, reporting quality, protocol, and
       economics separately.
+- [x] P117.7 Production native adapter and receipt-bound restart proof (#699).
 
 Acceptance criteria:
 
@@ -6160,6 +6161,10 @@ Acceptance criteria:
   is bound to one run and has deterministic ordering and terminal behavior.
 - The native proof is bounded and shows the actual native session lineage;
   offline replay is clearly identified as offline evidence.
+- The bounded r17 evidence records ordered sanitized events, run-scoped lease
+  and journal state, native delivery and restart-reconciliation receipts,
+  deterministic closure, and rejection after closure. Repeated audits reached
+  the same verdict: quality is a validated candidate and protocol is accepted.
 - Quality, protocol, and economics remain separate. Economics is unassessed
   for P117, and P117 makes no P107 economics claim.
 

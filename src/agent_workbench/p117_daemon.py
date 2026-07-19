@@ -14,7 +14,8 @@ from hashlib import sha256
 from typing import Any
 
 from .p117_flush_policy import FlushDecision, choose_flush
-from .p117_session_adapter import NativeSessionAdapter, SendReceipt, SessionBinding
+from .p117_native_bridge import NativeDeliveryBridge, NativeSendRequest
+from .p117_session_adapter import NativeSessionAdapter, SessionBinding
 from .supervision import RunLease, SupervisionJournal
 
 
@@ -42,6 +43,7 @@ class BoundedSupervisionDaemon:
         self.journal = journal
         self.adapter = adapter
         self.binding = binding
+        self.delivery = NativeDeliveryBridge(adapter=adapter, journal=journal, binding=binding)
         records = journal.records()
         for record in records:
             if record.get("run_id") != lease.run_id:
@@ -106,19 +108,8 @@ class BoundedSupervisionDaemon:
             idempotency_key=key,
             message_fingerprint=sha256(message.encode("utf-8")).hexdigest(),
         )
-        self.journal.append("delivery_intent", idempotency_key=key, flush_start=decision.start_sequence, flush_end=decision.end_sequence)
-        prior = self.adapter.lookup(self.binding, idempotency_key=key)
-        if prior.found:
-            receipt = SendReceipt(self.binding, key, prior.state, "recorded")
-        else:
-            receipt = self.adapter.send(self.binding, message, idempotency_key=key)
-        self.journal.append(
-            "native_receipt",
-            idempotency_key=key,
-            adapter_state=receipt.state.value,
-            message_fingerprint=receipt.message_fingerprint,
-            reconciled=bool(prior.found),
-        )
+        delivery = self.delivery.deliver(message, idempotency_key=key)
+        receipt = delivery.receipt
         self.journal.append("flush_receipt", cursor=decision.end_sequence, flush_start=decision.start_sequence, flush_end=decision.end_sequence, idempotency_key=key, lineage=self.binding.__dict__, adapter_state=receipt.state.value, message_fingerprint=receipt.message_fingerprint)
         if receipt.state.value == "paused_reconciliation":
             self.journal.transition("paused_reconciliation", delivery_uncertain=True)
@@ -127,6 +118,60 @@ class BoundedSupervisionDaemon:
         self.journal.append("cursor_receipt", cursor=self._acknowledged_sequence, flush_start=decision.start_sequence, flush_end=decision.end_sequence, idempotency_key=key, adapter_state=receipt.state.value)
         self._flushed = True
         return DaemonResult(True, decision.reason, decision)
+
+    def prepare_flush(self, *, now: datetime) -> NativeSendRequest | None:
+        """Persist one flush and return the request for the Coordinator's tool call."""
+        if self.journal.state() == "closed":
+            self.journal.append("rejection", operation="flush", reason="closed")
+            return None
+        if self.journal.state() == "paused_reconciliation" or self._flushed:
+            return None
+        decision = choose_flush(self._events, acknowledged_sequence=self._acknowledged_sequence,
+                                now=now, lease=self.lease, run_id=self.lease.run_id,
+                                expected_root=self.lease.root)
+        if not decision.flush:
+            return None
+        message = json.dumps(list(decision.events), sort_keys=True, separators=(",", ":"))
+        key = f"{self.lease.run_id}:{decision.start_sequence}-{decision.end_sequence}"
+        fingerprint = sha256(message.encode("utf-8")).hexdigest()
+        durable_native = any(r.get("kind") == "native_receipt"
+                             and r.get("idempotency_key") == key
+                             and r.get("lineage") == self.binding.__dict__
+                             and r.get("target_worker_session_id") == self.binding.session_id
+                             and r.get("message_fingerprint") == fingerprint
+                             for r in self.journal.records())
+        if not durable_native:
+            self.journal.append("flush_request", flush_start=decision.start_sequence,
+                                flush_end=decision.end_sequence, idempotency_key=key,
+                                message_fingerprint=fingerprint)
+        prepared = self.delivery.prepare(message, idempotency_key=key)
+        if prepared.receipt is not None:
+            self._complete_cursor(decision, key, prepared.receipt)
+            return None
+        return prepared.request
+
+    def record_flush_submission(self, request: NativeSendRequest, submission_id: str) -> DaemonResult:
+        """Persist native, flush, and cursor receipts after the Coordinator sends."""
+        receipt = self.delivery.record_submission(request, submission_id)
+        records = self.journal.records()
+        flush = next(r for r in reversed(records)
+                     if r.get("kind") == "flush_request" and r.get("idempotency_key") == request.idempotency_key)
+        decision = FlushDecision(True, "eligible", tuple(), flush["flush_start"], flush["flush_end"])
+        self._complete_cursor(decision, request.idempotency_key, receipt)
+        return DaemonResult(True, "eligible", decision)
+
+    def _complete_cursor(self, decision: FlushDecision, key: str, receipt: object) -> None:
+        self.journal.append("flush_receipt", cursor=decision.end_sequence,
+                            flush_start=decision.start_sequence, flush_end=decision.end_sequence,
+                            idempotency_key=key, lineage=self.binding.__dict__,
+                            adapter_state=receipt.state.value, message_fingerprint=receipt.message_fingerprint,
+                            submission_id=receipt.submission_id)
+        self._acknowledged_sequence = decision.end_sequence or self._acknowledged_sequence
+        self.journal.append("cursor_receipt", cursor=self._acknowledged_sequence,
+                            flush_start=decision.start_sequence, flush_end=decision.end_sequence,
+                            idempotency_key=key, adapter_state=receipt.state.value,
+                            submission_id=receipt.submission_id)
+        self._flushed = True
 
     def close(self) -> None:
         if self.journal.state() != "closed":
