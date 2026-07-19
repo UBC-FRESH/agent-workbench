@@ -6083,7 +6083,7 @@ Boundaries:
 
 Tasks:
 
-- [ ] P116.1 Freeze the run manifest, sanitized event, cursor, Supervisor
+- [x] P116.1 Freeze the run manifest, sanitized event, cursor, Supervisor
       packet, and Coordinator action-log contracts.
 - [ ] P116.2 Probe the actual Codex command-hook payload/ordering and implement
       sanitized hook-to-event capture with containment and redaction tests.
