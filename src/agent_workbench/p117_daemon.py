@@ -14,7 +14,7 @@ from hashlib import sha256
 from typing import Any
 
 from .p117_flush_policy import FlushDecision, choose_flush
-from .p117_native_bridge import NativeDeliveryBridge
+from .p117_native_bridge import NativeDeliveryBridge, NativeSendRequest
 from .p117_session_adapter import NativeSessionAdapter, SessionBinding
 from .supervision import RunLease, SupervisionJournal
 
@@ -118,6 +118,52 @@ class BoundedSupervisionDaemon:
         self.journal.append("cursor_receipt", cursor=self._acknowledged_sequence, flush_start=decision.start_sequence, flush_end=decision.end_sequence, idempotency_key=key, adapter_state=receipt.state.value)
         self._flushed = True
         return DaemonResult(True, decision.reason, decision)
+
+    def prepare_flush(self, *, now: datetime) -> NativeSendRequest | None:
+        """Persist one flush and return the request for the Coordinator's tool call."""
+        if self.journal.state() == "closed":
+            self.journal.append("rejection", operation="flush", reason="closed")
+            return None
+        if self.journal.state() == "paused_reconciliation" or self._flushed:
+            return None
+        decision = choose_flush(self._events, acknowledged_sequence=self._acknowledged_sequence,
+                                now=now, lease=self.lease, run_id=self.lease.run_id,
+                                expected_root=self.lease.root)
+        if not decision.flush:
+            return None
+        message = json.dumps(list(decision.events), sort_keys=True, separators=(",", ":"))
+        key = f"{self.lease.run_id}:{decision.start_sequence}-{decision.end_sequence}"
+        self.journal.append("flush_request", flush_start=decision.start_sequence,
+                            flush_end=decision.end_sequence, idempotency_key=key,
+                            message_fingerprint=sha256(message.encode("utf-8")).hexdigest())
+        prepared = self.delivery.prepare(message, idempotency_key=key)
+        if prepared.receipt is not None:
+            self._complete_cursor(decision, key, prepared.receipt)
+            return None
+        return prepared.request
+
+    def record_flush_submission(self, request: NativeSendRequest, submission_id: str) -> DaemonResult:
+        """Persist native, flush, and cursor receipts after the Coordinator sends."""
+        receipt = self.delivery.record_submission(request, submission_id)
+        records = self.journal.records()
+        flush = next(r for r in reversed(records)
+                     if r.get("kind") == "flush_request" and r.get("idempotency_key") == request.idempotency_key)
+        decision = FlushDecision(True, "eligible", tuple(), flush["flush_start"], flush["flush_end"])
+        self._complete_cursor(decision, request.idempotency_key, receipt)
+        return DaemonResult(True, "eligible", decision)
+
+    def _complete_cursor(self, decision: FlushDecision, key: str, receipt: object) -> None:
+        self.journal.append("flush_receipt", cursor=decision.end_sequence,
+                            flush_start=decision.start_sequence, flush_end=decision.end_sequence,
+                            idempotency_key=key, lineage=self.binding.__dict__,
+                            adapter_state=receipt.state.value, message_fingerprint=receipt.message_fingerprint,
+                            submission_id=receipt.submission_id)
+        self._acknowledged_sequence = decision.end_sequence or self._acknowledged_sequence
+        self.journal.append("cursor_receipt", cursor=self._acknowledged_sequence,
+                            flush_start=decision.start_sequence, flush_end=decision.end_sequence,
+                            idempotency_key=key, adapter_state=receipt.state.value,
+                            submission_id=receipt.submission_id)
+        self._flushed = True
 
     def close(self) -> None:
         if self.journal.state() != "closed":

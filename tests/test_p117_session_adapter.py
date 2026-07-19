@@ -1,6 +1,7 @@
 import pytest
 
 from agent_workbench.p117_session_adapter import (
+    CallerDrivenNativeSessionAdapter,
     DeliveryState,
     FakeNativeSessionAdapter,
     SessionBinding,
@@ -71,3 +72,63 @@ def test_native_bridge_reconciles_persisted_intent_without_duplicate_send(tmp_pa
 
     assert result.reconciled
     assert adapter.messages == ["continue"]
+
+
+def test_caller_driven_adapter_records_literal_submission_id(binding):
+    calls = []
+    adapter = CallerDrivenNativeSessionAdapter(
+        lambda target, message, key: calls.append((target, message, key)) or {"submission_id": "sub-42"}
+    )
+    receipt = adapter.send(binding, "continue", idempotency_key="delivery-1")
+    assert receipt.submission_id == "sub-42"
+    assert calls == [(binding.session_id, "continue", "delivery-1")]
+
+
+def test_restart_reconciles_from_durable_receipt_without_adapter_lookup(tmp_path, binding):
+    journal = SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id=binding.run_id)
+    calls = []
+    adapter = CallerDrivenNativeSessionAdapter(
+        lambda target, message, key: calls.append((target, message, key)) or {"submission_id": "sub-1"}
+    )
+    NativeDeliveryBridge(adapter=adapter, journal=journal, binding=binding).deliver(
+        "continue", idempotency_key="delivery-1"
+    )
+    NativeDeliveryBridge(adapter=adapter, journal=journal, binding=binding).deliver(
+        "continue", idempotency_key="delivery-1"
+    )
+    assert len(calls) == 1
+    assert journal.records()[1]["submission_id"] == "sub-1"
+
+
+def test_durable_receipt_rejects_fingerprint_mismatch(tmp_path, binding):
+    journal = SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id=binding.run_id)
+    adapter = CallerDrivenNativeSessionAdapter(lambda *_: {"submission_id": "sub-1"})
+    bridge = NativeDeliveryBridge(adapter=adapter, journal=journal, binding=binding)
+    bridge.deliver("continue", idempotency_key="delivery-1")
+    with pytest.raises(ValueError, match="identity mismatch"):
+        bridge.deliver("different", idempotency_key="delivery-1")
+
+
+def test_two_stage_api_returns_request_and_records_coordinator_submission(tmp_path, binding):
+    journal = SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id=binding.run_id)
+    bridge = NativeDeliveryBridge(
+        adapter=CallerDrivenNativeSessionAdapter(lambda *_: pytest.fail("host callback must not run")),
+        journal=journal, binding=binding,
+    )
+    prepared = bridge.prepare("continue", idempotency_key="delivery-2")
+    assert prepared.receipt is None
+    assert prepared.request.target_worker_session_id == binding.session_id
+    assert prepared.request.message == "continue"
+    receipt = bridge.record_submission(prepared.request, "sub-coordinator-1")
+    assert receipt.submission_id == "sub-coordinator-1"
+
+
+def test_two_stage_restart_returns_receipt_without_new_request_or_send(tmp_path, binding):
+    journal = SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id=binding.run_id)
+    bridge = NativeDeliveryBridge(adapter=FakeNativeSessionAdapter(binding), journal=journal, binding=binding)
+    prepared = bridge.prepare("continue", idempotency_key="delivery-3")
+    bridge.record_submission(prepared.request, "sub-coordinator-2")
+    restarted = NativeDeliveryBridge(adapter=FakeNativeSessionAdapter(binding), journal=journal, binding=binding)
+    reconciled = restarted.prepare("continue", idempotency_key="delivery-3")
+    assert reconciled.receipt is not None
+    assert reconciled.receipt.submission_id == "sub-coordinator-2"

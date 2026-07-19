@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 from hashlib import sha256
-from typing import Protocol
+from typing import Callable, Protocol
 
 
 class DeliveryState(StrEnum):
@@ -47,6 +47,8 @@ class SendReceipt:
     idempotency_key: str
     state: DeliveryState
     message_fingerprint: str
+    operation: str = "multi_agent_v1__send_input"
+    submission_id: str = ""
 
 
 @dataclass(frozen=True)
@@ -67,6 +69,38 @@ class NativeSessionAdapter(Protocol):
     def send(self, binding: SessionBinding, message: str, *, idempotency_key: str) -> SendReceipt: ...
 
     def lookup(self, binding: SessionBinding, *, idempotency_key: str) -> LookupReceipt: ...
+
+
+class CallerDrivenNativeSessionAdapter:
+    """Production boundary: the caller supplies the already-bound native tool call.
+
+    Python does not discover or invoke host tools.  ``send_tool`` must be the
+    coordinator's call to ``multi_agent_v1__send_input`` and return its literal
+    submission identifier (or a mapping containing ``submission_id``).
+    """
+
+    def __init__(self, send_tool: Callable[[str, str, str], object]) -> None:
+        self._send_tool = send_tool
+
+    def inspect(self, binding: SessionBinding, *, idempotency_key: str) -> InspectReceipt:
+        raise RuntimeError("caller must provide native inspect receipt")
+
+    def resume(self, binding: SessionBinding, *, idempotency_key: str) -> ResumeReceipt:
+        raise RuntimeError("caller must provide native resume receipt")
+
+    def send(self, binding: SessionBinding, message: str, *, idempotency_key: str) -> SendReceipt:
+        result = self._send_tool(binding.session_id, message, idempotency_key)
+        submission_id = result.get("submission_id") if isinstance(result, dict) else str(result)
+        if not submission_id:
+            raise ValueError("multi_agent_v1__send_input returned no submission_id")
+        return SendReceipt(
+            binding, idempotency_key, DeliveryState.DELIVERED,
+            sha256(message.encode("utf-8")).hexdigest(),
+            submission_id=submission_id,
+        )
+
+    def lookup(self, binding: SessionBinding, *, idempotency_key: str) -> LookupReceipt:
+        return LookupReceipt(binding, idempotency_key, False, None)
 
 
 class FakeNativeSessionAdapter:
