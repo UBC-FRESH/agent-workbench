@@ -14,6 +14,7 @@ MANIFEST = {
     "worker_session_id": "worker-session",
     "supervisor_session_id": "supervisor-session",
     "assigned_root": "C:/workspace",
+    "supervision_dir": "C:/workspace/supervision",
     "events_path": "supervision/events.jsonl",
     "cursor_path": "supervision/cursor.json",
     "packets_path": "supervision/packets.jsonl",

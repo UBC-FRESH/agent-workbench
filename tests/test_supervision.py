@@ -20,6 +20,7 @@ def manifest() -> dict[str, object]:
         "worker_session_id": "worker-019f77d9",
         "supervisor_session_id": "supervisor-019f77db",
         "assigned_root": str(Path.cwd()),
+        "supervision_dir": str(Path.cwd() / "supervision"),
         "events_path": "supervision/events.jsonl",
         "cursor_path": "supervision/cursor.json",
         "packets_path": "supervision/packets.jsonl",

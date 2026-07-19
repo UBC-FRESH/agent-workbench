@@ -14,6 +14,7 @@ from agent_workbench.supervision_hook import (
     event_from_hook_payload,
     record_hook_invocation,
 )
+from agent_workbench.supervision import validate_events
 
 
 WINDOWS_HOOK_COMMAND_BODY = (
@@ -204,6 +205,34 @@ def test_capture_appends_sanitized_ordered_events(tmp_path: Path, monkeypatch) -
     assert [event["sequence"] for event in events] == [1, 2]
     assert [event["kind"] for event in events] == ["tool_started", "tool_completed"]
     assert "tool_input" not in events[0]
+
+
+def test_capture_drops_next_event_at_total_payload_bound(tmp_path: Path, monkeypatch) -> None:
+    supervision_dir = tmp_path / "supervision"
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv(RUN_ID_ENV, "p116-hook-probe")
+    monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path))
+    monkeypatch.setenv(SUPERVISION_DIR_ENV, str(supervision_dir))
+
+    while True:
+        assert capture_from_environment(payload(cwd=str(tmp_path)))
+        events = [
+            json.loads(line)
+            for line in (supervision_dir / "events.jsonl").read_text(encoding="utf-8").splitlines()
+        ]
+        if len(events) > 1 and not capture_from_environment(payload(cwd=str(tmp_path))):
+            break
+        receipt = json.loads((supervision_dir / "invocation_receipt.json").read_text(encoding="utf-8"))
+        if receipt["status"] == "event_dropped":
+            break
+
+    retained = [
+        json.loads(line)
+        for line in (supervision_dir / "events.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert json.loads((supervision_dir / "invocation_receipt.json").read_text(encoding="utf-8"))["status"] == "event_dropped"
+    assert validate_events(retained, assigned_root=tmp_path).ok
+    assert len(retained) == len(events)
 
 
 def test_capture_refuses_output_directory_outside_assigned_root(tmp_path: Path, monkeypatch) -> None:

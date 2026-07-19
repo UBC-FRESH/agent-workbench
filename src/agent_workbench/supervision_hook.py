@@ -17,7 +17,7 @@ ASSIGNED_ROOT_ENV = "P116_ASSIGNED_ROOT"
 SUPERVISION_DIR_ENV = "P116_SUPERVISION_DIR"
 ACTIVATION_FILENAME = "activation.json"
 RECEIPT_FILENAME = "invocation_receipt.json"
-RECEIPT_STATUSES = {"invoked", "payload_rejected", "event_written"}
+RECEIPT_STATUSES = {"invoked", "payload_rejected", "event_dropped", "event_written"}
 
 
 def _activation_manifest(project_root: Path) -> dict[str, str] | None:
@@ -113,6 +113,14 @@ def capture_from_environment(payload: dict[str, Any]) -> bool:
         if not validation.ok:
             _append_error_event(events_path, assigned_root, sequence, run_id, "invalid_event")
             _write_receipt(supervision_dir, "payload_rejected")
+            return True
+        existing = _read_events(events_path)
+        if not validate_events(existing, assigned_root=assigned_root).ok:
+            _write_receipt(supervision_dir, "payload_rejected")
+            return True
+        combined_validation = validate_events([*existing, event], assigned_root=assigned_root)
+        if not combined_validation.ok:
+            _write_receipt(supervision_dir, "event_dropped")
             return True
         with events_path.open("a", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(event, sort_keys=True) + "\n")
@@ -219,6 +227,20 @@ def _next_sequence(events_path: Path) -> int:
         if isinstance(sequence, int):
             highest = max(highest, sequence)
     return highest + 1
+
+
+def _read_events(events_path: Path) -> list[dict[str, Any]]:
+    if not events_path.exists():
+        return []
+    events: list[dict[str, Any]] = []
+    for line in events_path.read_text(encoding="utf-8").splitlines():
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict):
+            events.append(value)
+    return events
 
 
 def _safe_tool_name(value: object) -> str:

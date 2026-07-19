@@ -17,9 +17,11 @@ def event(sequence: int) -> dict[str, object]:
 def setup_run(tmp_path: Path, events: list[dict[str, object]]) -> Path:
     root = tmp_path / "run"
     root.mkdir()
-    (root / "events.jsonl").write_text("\n".join(json.dumps(e) for e in events) + "\n", encoding="utf-8")
-    manifest = {"schema_version": SCHEMA_VERSION, "run_id": "run-1", "worker_session_id": "worker-1", "supervisor_session_id": "supervisor-1", "assigned_root": str(root), "events_path": "events.jsonl", "cursor_path": "cursor.json", "packets_path": "supervisor_packets.jsonl", "actions_path": "coordinator_actions.jsonl"}
-    path = root / "manifest.json"
+    supervision = root / "supervision"
+    supervision.mkdir()
+    (supervision / "events.jsonl").write_text("\n".join(json.dumps(e) for e in events) + "\n", encoding="utf-8")
+    manifest = {"schema_version": SCHEMA_VERSION, "run_id": "run-1", "worker_session_id": "worker-1", "supervisor_session_id": "supervisor-1", "assigned_root": str(root), "supervision_dir": str(supervision), "events_path": "supervision/events.jsonl", "cursor_path": "supervision/cursor.json", "packets_path": "supervision/supervisor_packets.jsonl", "actions_path": "supervision/coordinator_actions.jsonl"}
+    path = supervision / "manifest.json"
     path.write_text(json.dumps(manifest), encoding="utf-8")
     return path
 
@@ -41,6 +43,14 @@ def test_manifest_bound_review_and_ack_chain(tmp_path: Path) -> None:
     acknowledge_cursor(manifest_path=manifest, last_sequence=2, packet=p, action=action(p))
     assert json.loads((manifest.parent / "cursor.json").read_text())["last_sequence"] == 2
     assert len((manifest.parent / "supervisor_packets.jsonl").read_text().splitlines()) == 1
+
+
+def test_manifest_rejects_location_outside_declared_supervision_dir(tmp_path: Path) -> None:
+    manifest = setup_run(tmp_path, [event(1)])
+    outside = manifest.parent.parent / "manifest.json"
+    outside.write_text(manifest.read_text(), encoding="utf-8")
+    with pytest.raises(ValueError, match="within supervision_dir"):
+        prepare_review_delta(manifest_path=outside)
 
 
 def test_ack_requires_reviewed_packet_action_chain(tmp_path: Path) -> None:
