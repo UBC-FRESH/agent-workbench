@@ -39,7 +39,7 @@
   },
   "review_policy": {
     "reviewer_role": "gpt_sol_advisor",
-    "reviewer_model": "gpt-5.6-terra",
+    "reviewer_model": "gpt-5.6-sol",
     "reviewer_reasoning_effort": "medium",
     "reviewer_lane_neutral": true,
     "fresh_session_per_run": true,

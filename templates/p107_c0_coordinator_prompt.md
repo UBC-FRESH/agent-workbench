@@ -37,7 +37,7 @@ correctly. This is a Coordinator-owned evidence repair only if no outside source
 was read or copied and no bad output reached the Advisor; otherwise stop for
 contamination.
 
-Dispatch one fresh Terra/Medium Advisor only through the experiment controller;
+Dispatch one fresh Sol/Medium Advisor only through the experiment controller;
 reuse that same session with `send_input` for repair reviews. Once a packet is
 dispatched, enter ADVISOR_HARD_WAIT. Until a schema-valid Advisor
 verdict arrives, you may only wait and append non-mutating orchestration

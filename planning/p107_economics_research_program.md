@@ -9,7 +9,7 @@ paid cost and less maintainer steering than BAU.
 
 ## Comparator and units
 
-BAU C0 is one fresh GPT Luna/High Coordinator plus a fresh Terra/Medium Advisor.
+BAU C0 is one fresh GPT Luna/High Coordinator plus a fresh Sol/Medium Advisor.
 The Advisor persists within that run across reviews. The Coordinator implements,
 validates, and repairs itself. The Advisor is a
 non-mutating Developer pro tem; its cost is included in C0 and every treatment.
@@ -29,7 +29,7 @@ spend as not comparable.
 
 | ID | Topology | Delta under study |
 | --- | --- | --- |
-| C0 | Terra Coordinator plus Advisor | BAU control: Coordinator does the job. |
+| C0 | Luna/High Coordinator plus Sol/Medium Advisor | BAU control: Coordinator does the job. |
 | C1 | Coordinator to Luna Light Worker plus Advisor | Flat paid Worker delegation. |
 | C2 | Coordinator to Luna Supervisor and Coordinator to Luna Light Worker plus Advisor | Flat supervisory assistance; Supervisor cannot spawn. |
 | C3 | Coordinator to Luna Supervisor to Luna Light Worker plus Advisor | Nested delegation. |
@@ -82,7 +82,7 @@ comparative ROI claim.
 ## Advisor gate
 
 Each implementation role starts fresh; the root Coordinator and one
-Terra/Medium Advisor stay alive across their own run's repairs and Advisor
+Sol/Medium Advisor stay alive across their own run's repairs and Advisor
 gates. All initial delegate spawns use `fork_context:false`; later Advisor
 reviews use `send_input` to that same Advisor session.
 
