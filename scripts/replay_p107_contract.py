@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 from typing import Any, Mapping
 from p107_contract_codes import REASON_CODES, REVIEW_CAP
 from validate_p107_advisor_review import validate_review
+from validate_p107_run_evidence_manifest import validate_manifest, EXPECTED
 
 
 def _bool(state: Mapping[str, Any], key: str, default: bool = False) -> bool:
@@ -76,10 +78,21 @@ def replay_contract(state: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(state, Mapping):
         return {"outcome": "not_comparable", "reason_codes": ["accounting_ineligible"], "roi": None}
     reasons: list[str] = []
-    topology_ok = _bool(state, "topology_valid") and not _bool(state, "session_reuse")
+    manifest_path, manifest_hash = state.get("evidence_manifest_path"), state.get("evidence_manifest_sha256")
+    manifest = None
+    if not isinstance(manifest_path, str) or not isinstance(manifest_hash, str):
+        reasons.append("topology_session_reuse")
+    else:
+        try:
+            target = Path(manifest_path)
+            if hashlib.sha256(target.read_bytes()).hexdigest() != manifest_hash or validate_manifest(target): reasons.append("topology_session_reuse")
+            else: manifest = json.loads(target.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError): reasons.append("topology_session_reuse")
+    topology_ok = bool(manifest and {(e.get("parent_role"), e.get("child_role")) for e in manifest.get("spawn_edges", [])} == EXPECTED.get(manifest.get("configuration_id")))
     if not topology_ok:
         reasons.append("topology_session_reuse")
-    if not _bool(state, "frozen_inputs_valid") or _bool(state, "hash_drift"):
+    frozen_ok = bool(manifest and isinstance(manifest.get("starting_commit"), str) and len(manifest["starting_commit"]) == 40)
+    if not frozen_ok or _bool(state, "hash_drift"):
         reasons.append("frozen_input_hash_drift")
     advisor_terminal = _advisor_terminal(state)
     if advisor_terminal is None:

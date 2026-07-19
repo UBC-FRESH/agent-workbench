@@ -1,11 +1,12 @@
 """Fail-closed, offline P107 C0-relative comparison contract."""
 from __future__ import annotations
-import json, math, sys
+import hashlib, json, math, sys
 from pathlib import Path
 from typing import Any
 from validate_p107_advisor_review import validate_review
 from validate_p107_accounting_record import validate_accounting_record
 from validate_p107_evaluation_block import validate
+from validate_p107_run_evidence_manifest import validate_manifest
 
 _CONFIGURATIONS = {"C0", "C1", "C2", "C3", "C4"}
 _BOOLEAN_FLAGS = ("evaluation_block_valid", "deterministic_acceptance", "advisor_binding_valid",
@@ -33,8 +34,23 @@ def _advisor_artifacts_valid(row: dict[str, Any]) -> bool:
     except (OSError, TypeError, ValueError, json.JSONDecodeError):
         return False
 
+def _bind_manifest(row: dict[str, Any]) -> list[str]:
+    path, digest = row.get("evidence_manifest_path"), row.get("evidence_manifest_sha256")
+    if not isinstance(path, str) or not path.strip(): return ["missing_evidence_manifest"]
+    target = Path(path)
+    if not target.is_file(): return ["missing_evidence_manifest"]
+    if not isinstance(digest, str) or hashlib.sha256(target.read_bytes()).hexdigest() != digest: return ["evidence_manifest_hash_mismatch"]
+    if validate_manifest(target): return ["invalid_evidence_manifest"]
+    manifest = json.loads(target.read_text(encoding="utf-8"))
+    errors = []
+    if row.get("run_id") != manifest.get("run_id"): errors.append("run_id_manifest_mismatch")
+    if row.get("configuration_id") != manifest.get("configuration_id"): errors.append("configuration_manifest_mismatch")
+    if row.get("worktree_path") is not None and row["worktree_path"] != manifest.get("repository_path"): errors.append("worktree_manifest_mismatch")
+    return errors
+
 def _reasons(row: dict[str, Any], *, baseline: bool = False, duplicate_ids: bool = False) -> list[str]:
     reasons = []
+    reasons.extend(_bind_manifest(row))
     if not isinstance(row.get("run_id"), str) or not row["run_id"].strip(): reasons.append("missing_run_id")
     if row.get("configuration_id") not in _CONFIGURATIONS: reasons.append("invalid_configuration")
     for field in _BOOLEAN_FLAGS:

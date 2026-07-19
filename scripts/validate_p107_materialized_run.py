@@ -8,6 +8,7 @@ import re
 import sys
 from pathlib import Path
 from typing import Any
+from validate_p107_run_evidence_manifest import validate_manifest
 
 from validate_p107_advisor_review import validate_review
 
@@ -80,6 +81,21 @@ def validate_materialized_run(path: str | Path) -> list[str]:
         return ["materialized run root must be an object"]
 
     errors: list[str] = []
+    manifest_path = document.get("evidence_manifest_path")
+    manifest_sha = document.get("evidence_manifest_sha256")
+    manifest = None
+    if not isinstance(manifest_path, str) or not manifest_path.strip() or Path(manifest_path).is_absolute() or ".." in Path(manifest_path).parts:
+        errors.append("evidence_manifest_path must be a canonical relative path")
+    else:
+        target = document_path.parent / manifest_path
+        if not target.is_file(): errors.append("evidence manifest is missing")
+        elif not isinstance(manifest_sha, str) or not SHA256.fullmatch(manifest_sha) or hashlib.sha256(target.read_bytes()).hexdigest() != manifest_sha:
+            errors.append("evidence manifest hash mismatch")
+        else:
+            problems = validate_manifest(target)
+            errors.extend(f"evidence manifest: {p}" for p in problems)
+            if not problems:
+                manifest = json.loads(target.read_text(encoding="utf-8"))
     if document.get("schema_version") != "p107_materialized_run_v1":
         errors.append("schema_version must be p107_materialized_run_v1")
     run_id = document.get("run_id")
@@ -88,6 +104,18 @@ def validate_materialized_run(path: str | Path) -> list[str]:
     configuration = document.get("configuration_id")
     if configuration not in {"C0", "C1", "C2", "C3", "C4"}:
         errors.append("configuration_id must be one of C0, C1, C2, C3, C4")
+    if isinstance(manifest, dict):
+        if document.get("run_id") != manifest.get("run_id"): errors.append("run_id does not match evidence manifest")
+        if document.get("configuration_id") != manifest.get("configuration_id"): errors.append("configuration_id does not match evidence manifest")
+        declared = {(s.get("role"), s.get("session_id")) for s in document.get("sessions", []) if isinstance(s, dict)}
+        actual = {(s.get("role"), s.get("session_id")) for s in manifest.get("raw_sessions", []) if isinstance(s, dict)}
+        if declared != actual: errors.append("sessions do not match evidence manifest")
+        edge_roles = [(e.get("parent_role"), e.get("child_role")) for e in manifest.get("spawn_edges", []) if isinstance(e, dict)]
+        expected_children = [c for p, c in edge_roles if p == "coordinator"]
+        if document.get("topology", {}).get("coordinator_children") != expected_children: errors.append("topology contradicts evidence manifest")
+        if document.get("repository_path") is not None and document.get("repository_path") != manifest.get("repository_path"): errors.append("repository_path does not match evidence manifest")
+        if document.get("starting_commit") is not None and document.get("starting_commit") != manifest.get("starting_commit"): errors.append("starting_commit does not match evidence manifest")
+        if document.get("terminal_event") is not None and document.get("terminal_event") != manifest.get("terminal_event"): errors.append("terminal_event does not match evidence manifest")
 
     frozen = document.get("frozen_files")
     if not isinstance(frozen, list) or not frozen:
