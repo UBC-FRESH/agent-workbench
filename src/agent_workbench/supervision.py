@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import datetime, timezone
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -55,6 +56,86 @@ MAX_TOTAL_PAYLOAD_BYTES = 16 * 1024
 class SupervisionValidation:
     ok: bool
     errors: list[str]
+
+
+@dataclass(frozen=True)
+class RunLease:
+    """The explicit authority boundary for one supervised run."""
+
+    run_id: str
+    worker_id: str
+    supervisor_id: str
+    root: Path
+    armed: bool
+    closed: bool
+    expires_at: datetime
+
+    def capture_eligible(self, *, run_id: str, now: datetime | None = None) -> bool:
+        """Return whether a capture belongs to this still-live lease."""
+        current = now or datetime.now(timezone.utc)
+        if current.tzinfo is None:
+            current = current.replace(tzinfo=timezone.utc)
+        return (
+            run_id == self.run_id
+            and self.armed
+            and not self.closed
+            and current < self.expires_at
+        )
+
+    def close(self) -> "RunLease":
+        return RunLease(self.run_id, self.worker_id, self.supervisor_id, self.root, self.armed, True, self.expires_at)
+
+
+class SupervisionJournal:
+    """Small append-only state journal; unknown delivery always pauses."""
+
+    _allowed = {
+        "armed": {"capturing", "closed", "paused_reconciliation"},
+        "capturing": {"capturing", "closed", "paused_reconciliation"},
+        "paused_reconciliation": {"paused_reconciliation", "capturing", "closed"},
+        "closed": set(),
+    }
+
+    def __init__(self, path: Path, *, root: Path, run_id: str) -> None:
+        self.path = path.resolve()
+        self.root = root.resolve()
+        self.run_id = run_id
+        try:
+            self.path.relative_to(self.root)
+        except ValueError as exc:
+            raise ValueError("journal path must stay within run root") from exc
+
+    def state(self) -> str:
+        if not self.path.exists():
+            return "armed"
+        lines = self.path.read_text(encoding="utf-8").splitlines()
+        if not lines:
+            return "armed"
+        return json.loads(lines[-1])["state"]
+
+    def transition(self, state: str, *, delivery_uncertain: bool = False) -> dict[str, Any]:
+        target = "paused_reconciliation" if delivery_uncertain else state
+        current = self.state()
+        if target not in self._allowed[current]:
+            raise ValueError(f"invalid journal transition: {current} -> {target}")
+        record = {"schema_version": SCHEMA_VERSION, "run_id": self.run_id, "from_state": current, "state": target}
+        _reject_forbidden_payload(record, [], "journal")
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self.path.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n")
+        return record
+
+
+def create_run_lease(*, run_id: str, worker_id: str, supervisor_id: str, root: Path, expires_at: datetime, armed: bool = True) -> RunLease:
+    """Construct a sanitized lease; callers must explicitly provide its expiry."""
+    for label, value in (("run_id", run_id), ("worker_id", worker_id), ("supervisor_id", supervisor_id)):
+        if not isinstance(value, str) or not SAFE_ID.match(value):
+            raise ValueError(f"{label} must be a safe identifier")
+    if not root.is_absolute():
+        raise ValueError("root must be absolute")
+    if expires_at.tzinfo is None:
+        raise ValueError("expires_at must be timezone-aware")
+    return RunLease(run_id, worker_id, supervisor_id, root.resolve(), armed, False, expires_at)
 
 
 def validate_schema_version(value: Any) -> SupervisionValidation:

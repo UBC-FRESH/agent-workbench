@@ -124,6 +124,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P114 Codex-Ollama C4 capability parity and viability | #661 / PR #667 | `feature/p114-c4-ollama-capability-parity` | Complete - PR #667 merged; baseline P107 route admitted |
 | P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientific-artifact-inspection` | Planned - starts after P114 merges/closes and P107 finishes, unless parallel activation is authorized |
 | P116 Event-driven supervision control plane | #669 | `feature/p116-event-driven-supervision-control-plane` | Planned - targeted P107 control-plane repair; no economics claim |
+| P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Active - planning surface; no economics claim |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6123,3 +6124,42 @@ Acceptance criteria:
   not usable without its distinct checkpoint/token-ledger evidence.
 
 See `planning/p116_event_driven_supervision_control_plane_plan.md`.
+
+## Phase 117: Run-Scoped Supervision Daemon
+
+Parent issue: #686
+
+Branch: `feature/p117-run-scoped-supervision-daemon`
+
+Status: active - planning surface only. Child issue #687 is the approved
+run-scoped supervision daemon design task. P117 is motivated by P116's r11
+stale-post-cursor finding: supervision state can outlive the cursor boundary
+unless lease, closure, journal, and flush behavior are bound to one run.
+
+Goal: define a bounded, evidence-auditable supervision daemon boundary for one
+run at a time, preserving deterministic recovery and native-session authority
+without turning the control plane into an unbounded autonomous runtime.
+
+Tasks:
+
+- [ ] P117.2 Define the run-scoped lease, closure, journal, ownership, and
+      terminal-state contract.
+- [ ] P117.3 Specify and test the deterministic flusher, including restart,
+      ordering, idempotency, and closure behavior.
+- [ ] P117.4 Specify the native session adapter and its bounded authority and
+      session-lineage evidence requirements.
+- [ ] P117.5 Produce one bounded native daemon proof with exact run-scoped
+      artifacts and stop conditions.
+- [ ] P117.6 Run the offline sanitized policy replay and perform the evidence
+      audit, reporting quality, protocol, and economics separately.
+
+Acceptance criteria:
+
+- Every lease, journal entry, flush, closure, adapter action, and proof artifact
+  is bound to one run and has deterministic ordering and terminal behavior.
+- The native proof is bounded and shows the actual native session lineage;
+  offline replay is clearly identified as offline evidence.
+- Quality, protocol, and economics remain separate. Economics is unassessed
+  for P117, and P117 makes no P107 economics claim.
+
+See `planning/p117_run_scoped_supervision_daemon_plan.md`.
