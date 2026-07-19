@@ -159,10 +159,7 @@ better or worse.
   quality regression.
 - G6: default-policy promotion requires replication in two independent blocks.
 
-Each live configuration has explicit budget authorization. C0 establishes the
-reference; treatment provisional paid ceiling is 1.25 times C0 paid cost. A
-budget excess during Advisor hard wait cannot bypass the gate; after verdict it
-prevents another repair. Two failures from the same mechanism stop that branch.
+C0 establishes the reference. Two failures from the same mechanism stop that branch.
 If C1-C4 yield no accepted positive ROI, pivot workload/ticket/delegation
 boundary and obtain a new C0 rather than sweeping models. C5+ needs tranche
 synthesis authorization.
