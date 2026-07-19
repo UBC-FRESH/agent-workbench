@@ -79,7 +79,7 @@ def validate_gate(gate_path: str | Path) -> list[str]:
     review = _mapping(_required(gate, "review", "gate", errors), "review", errors)
     expected_review = {
         "reviewer_role": "gpt_sol_advisor",
-        "reviewer_model": "gpt-5.6-terra",
+        "reviewer_model": "gpt-5.6-sol",
         "reviewer_reasoning_effort": "medium",
         "reviewer_lane_neutral": True,
         "fresh_session_per_run": True,

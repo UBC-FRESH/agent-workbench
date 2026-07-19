@@ -184,7 +184,7 @@ def validate_run_packet(path: str | Path, *, closeout: bool = False) -> list[str
     review = _object(packet.get("review_policy"), "review_policy", errors)
     expected_review = {
         "reviewer_role": "gpt_sol_advisor",
-        "reviewer_model": "gpt-5.6-terra",
+        "reviewer_model": "gpt-5.6-sol",
         "reviewer_reasoning_effort": "medium",
         "reviewer_lane_neutral": True,
         "fresh_session_per_run": True,
