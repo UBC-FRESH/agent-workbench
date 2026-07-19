@@ -55,19 +55,34 @@ def capture_from_environment(payload: dict[str, Any]) -> bool:
 
     assigned_root = Path(assigned_root_text).resolve()
     events_path = Path(supervision_dir_text) / "events.jsonl"
-    events_path.parent.mkdir(parents=True, exist_ok=True)
-    sequence = _next_sequence(events_path)
-    event = event_from_hook_payload(
-        payload,
-        run_id=run_id,
-        assigned_root=assigned_root,
-        sequence=sequence,
-    )
-    validation = validate_events([event], assigned_root=assigned_root)
-    if not validation.ok:
-        raise ValueError("refusing invalid hook event: " + "; ".join(validation.errors))
-    with events_path.open("a", encoding="utf-8", newline="\n") as handle:
-        handle.write(json.dumps(event, sort_keys=True) + "\n")
+    if not _within(events_path.parent, assigned_root):
+        return False
+    try:
+        events_path.parent.mkdir(parents=True, exist_ok=True)
+        sequence = _next_sequence(events_path)
+        event = event_from_hook_payload(
+            payload,
+            run_id=run_id,
+            assigned_root=assigned_root,
+            sequence=sequence,
+        )
+        validation = validate_events([event], assigned_root=assigned_root)
+        if not validation.ok:
+            _append_error_event(events_path, assigned_root, sequence, run_id, "invalid_event")
+            return True
+        with events_path.open("a", encoding="utf-8", newline="\n") as handle:
+            handle.write(json.dumps(event, sort_keys=True) + "\n")
+    except (OSError, TypeError, ValueError):
+        try:
+            _append_error_event(
+                events_path,
+                assigned_root,
+                _next_sequence(events_path),
+                run_id,
+                "capture_failure",
+            )
+        except (OSError, ValueError):
+            return False
     return True
 
 
@@ -110,3 +125,40 @@ def _same_path(value: object, assigned_root: Path) -> bool:
         return Path(value).resolve() == assigned_root.resolve()
     except OSError:
         return False
+
+
+def _within(path: Path, assigned_root: Path) -> bool:
+    try:
+        path.resolve().relative_to(assigned_root.resolve())
+        return True
+    except (OSError, ValueError):
+        return False
+
+
+def _append_error_event(
+    events_path: Path,
+    assigned_root: Path,
+    sequence: int,
+    run_id: str,
+    code: str,
+) -> None:
+    event = {
+        "schema_version": SCHEMA_VERSION,
+        "sequence": sequence,
+        "event_id": f"hook-{uuid.uuid4().hex}",
+        "timestamp": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        "kind": "tool_failed",
+        "stage": "hook",
+        "outcome": "failed",
+        "redaction_applied": True,
+        "run_id": run_id,
+        "hook_event": "hook_error",
+        "tool_name": "hook",
+        "root_match": True,
+        "error_code": code[:32],
+    }
+    validation = validate_events([event], assigned_root=assigned_root)
+    if not validation.ok:
+        return
+    with events_path.open("a", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(event, sort_keys=True) + "\n")

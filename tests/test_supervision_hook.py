@@ -5,6 +5,7 @@ import os
 import subprocess
 from pathlib import Path
 
+import agent_workbench.supervision_hook as supervision_hook
 from agent_workbench.supervision_hook import (
     ASSIGNED_ROOT_ENV,
     RUN_ID_ENV,
@@ -80,14 +81,43 @@ def test_capture_appends_sanitized_ordered_events(tmp_path: Path, monkeypatch) -
     assert "tool_input" not in events[0]
 
 
+def test_capture_refuses_output_directory_outside_assigned_root(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setenv(RUN_ID_ENV, "p116-hook-probe")
+    monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path / "assigned"))
+    monkeypatch.setenv(SUPERVISION_DIR_ENV, str(tmp_path / "outside" / "supervision"))
+
+    assert capture_from_environment(payload(cwd=str(tmp_path / "assigned"))) is False
+    assert not (tmp_path / "outside" / "supervision" / "events.jsonl").exists()
+
+
+def test_capture_records_bounded_local_error(tmp_path: Path, monkeypatch) -> None:
+    supervision_dir = tmp_path / "supervision"
+    monkeypatch.setenv(RUN_ID_ENV, "p116-hook-probe")
+    monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path))
+    monkeypatch.setenv(SUPERVISION_DIR_ENV, str(supervision_dir))
+
+    def fail_event(*args, **kwargs):
+        raise ValueError("raw private failure details")
+
+    monkeypatch.setattr(supervision_hook, "event_from_hook_payload", fail_event)
+    assert capture_from_environment(payload(cwd=str(tmp_path)))
+    event = json.loads((supervision_dir / "events.jsonl").read_text(encoding="utf-8"))
+    assert event["kind"] == "tool_failed"
+    assert event["stage"] == "hook"
+    assert event["error_code"] == "capture_failure"
+    assert event["run_id"] == "p116-hook-probe"
+    assert "raw private failure details" not in json.dumps(event)
+    assert set(event) <= {"schema_version", "sequence", "event_id", "timestamp", "kind", "stage", "outcome", "redaction_applied", "run_id", "hook_event", "tool_name", "root_match", "error_code"}
+
+
 def test_configured_windows_hook_command_captures_event(tmp_path: Path) -> None:
     root = Path(__file__).resolve().parents[1]
     env = os.environ | {
         RUN_ID_ENV: "p116-hook-subprocess",
-        ASSIGNED_ROOT_ENV: str(root),
+        ASSIGNED_ROOT_ENV: str(tmp_path),
         SUPERVISION_DIR_ENV: str(tmp_path / "supervision"),
     }
-    input_payload = json.dumps(payload(cwd=str(root), event="PreToolUse"))
+    input_payload = json.dumps(payload(cwd=str(tmp_path), event="PreToolUse"))
     command = (
         "& python (Join-Path (git rev-parse --show-toplevel) "
         "'scripts\\p116_capture_hook.py')"

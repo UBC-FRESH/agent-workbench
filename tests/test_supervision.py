@@ -8,6 +8,7 @@ from agent_workbench.supervision import (
     validate_cursor,
     validate_events,
     validate_manifest,
+    validate_schema_version,
     validate_supervisor_packet,
 )
 
@@ -92,6 +93,37 @@ def test_events_reject_reordered_sequence_and_out_of_root_path() -> None:
     assert not result.ok
     assert any("strictly increasing" in error for error in result.errors)
     assert any("assigned_root" in error for error in result.errors)
+
+
+def test_schema_version_requires_explicit_migration_surface() -> None:
+    assert validate_schema_version(SCHEMA_VERSION).ok
+    result = validate_schema_version("p116_supervision_v0")
+    assert not result.ok
+    assert any("schema_version" in error for error in result.errors)
+
+
+def test_representative_event_fixtures_cover_progress_repair_repeat_deviation_terminal() -> None:
+    fixtures = [
+        {**event(1), "kind": "tool_completed", "outcome": "succeeded"},
+        {**event(2), "kind": "tool_failed", "outcome": "failed", "error_fingerprint": "syntax-error"},
+        {**event(3), "kind": "tool_failed", "outcome": "failed", "error_fingerprint": "syntax-error"},
+        {**event(4), "kind": "workspace_mismatch", "outcome": "denied", "observed_path": "src/ok.py"},
+        {**event(5), "kind": "terminal", "outcome": "terminal"},
+    ]
+    result = validate_events(fixtures, assigned_root=Path.cwd())
+    assert result.ok, result.errors
+
+
+def test_events_reject_duplicate_ids_and_bounded_total_payload() -> None:
+    duplicate = [event(1), {**event(2), "event_id": "event-1"}]
+    result = validate_events(duplicate, assigned_root=Path.cwd())
+    assert not result.ok
+    assert any("duplicate event_id" in error for error in result.errors)
+
+    oversized = {**event(), "details": "x" * 512}
+    result = validate_events([oversized] * 40, assigned_root=Path.cwd())
+    assert not result.ok
+    assert any("total payload" in error for error in result.errors)
 
 
 def test_events_reject_raw_tool_payload_and_private_values() -> None:

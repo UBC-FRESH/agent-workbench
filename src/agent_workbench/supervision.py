@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -11,6 +12,11 @@ from .evidence import find_private_values
 
 
 SCHEMA_VERSION = "p116_supervision_v1"
+SUPPORTED_SCHEMA_VERSIONS = frozenset({SCHEMA_VERSION})
+# A migration entry is required before a new version can be accepted.  Keeping
+# this explicit makes version changes auditable instead of silently coercing
+# old artifacts.
+SCHEMA_MIGRATIONS: dict[str, str] = {}
 EVENT_KINDS = {
     "tool_started",
     "tool_completed",
@@ -42,12 +48,26 @@ FORBIDDEN_EVENT_KEYS = {
 SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{2,127}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 MAX_TEXT_LENGTH = 512
+MAX_TOTAL_PAYLOAD_BYTES = 16 * 1024
 
 
 @dataclass(frozen=True)
 class SupervisionValidation:
     ok: bool
     errors: list[str]
+
+
+def validate_schema_version(value: Any) -> SupervisionValidation:
+    """Expose the version/migration gate used by every contract validator."""
+    if value in SUPPORTED_SCHEMA_VERSIONS:
+        return SupervisionValidation(ok=True, errors=[])
+    if isinstance(value, str) and value in SCHEMA_MIGRATIONS:
+        return SupervisionValidation(ok=False, errors=[
+            f"schema_version {value!r} requires migration to {SCHEMA_MIGRATIONS[value]!r}"
+        ])
+    return SupervisionValidation(ok=False, errors=[
+        f"schema_version must be one of {sorted(SUPPORTED_SCHEMA_VERSIONS)!r}"
+    ])
 
 
 def validate_manifest(manifest: dict[str, Any]) -> SupervisionValidation:
@@ -65,8 +85,7 @@ def validate_manifest(manifest: dict[str, Any]) -> SupervisionValidation:
         "actions_path",
     )
     _required_strings(manifest, required, errors)
-    if manifest.get("schema_version") != SCHEMA_VERSION:
-        errors.append(f"schema_version must be {SCHEMA_VERSION!r}")
+    errors.extend(f"manifest: {error}" for error in validate_schema_version(manifest.get("schema_version")).errors)
     for field in ("run_id", "worker_session_id", "supervisor_session_id"):
         value = manifest.get(field)
         if isinstance(value, str) and not SAFE_ID.match(value):
@@ -82,6 +101,7 @@ def validate_manifest(manifest: dict[str, Any]) -> SupervisionValidation:
         value = manifest.get(field)
         if isinstance(value, str) and not _is_relative_path(value):
             errors.append(f"{field} must be a relative path within the run directory")
+    _validate_total_payload(manifest, errors, "manifest")
 
     return SupervisionValidation(ok=not errors, errors=errors)
 
@@ -92,6 +112,7 @@ def validate_events(
     """Validate a strictly ordered, redacted event sequence."""
     errors: list[str] = []
     previous_sequence = 0
+    event_ids: set[str] = set()
     for index, event in enumerate(events, 1):
         prefix = f"event {index}"
         _required_strings(
@@ -100,8 +121,12 @@ def validate_events(
             errors,
             prefix=prefix,
         )
-        if event.get("schema_version") != SCHEMA_VERSION:
-            errors.append(f"{prefix}: invalid schema_version")
+        errors.extend(f"{prefix}: {error}" for error in validate_schema_version(event.get("schema_version")).errors)
+        event_id = event.get("event_id")
+        if isinstance(event_id, str):
+            if event_id in event_ids:
+                errors.append(f"{prefix}: duplicate event_id: {event_id}")
+            event_ids.add(event_id)
         sequence = event.get("sequence")
         if not isinstance(sequence, int) or sequence < 1:
             errors.append(f"{prefix}: sequence must be a positive integer")
@@ -124,16 +149,17 @@ def validate_events(
         _validate_bounded_text(event, errors, prefix)
         for finding in find_private_values(event):
             errors.append(f"{prefix}: private-looking value detected: {finding}")
+    _validate_total_payload(events, errors, "events")
     return SupervisionValidation(ok=not errors, errors=errors)
 
 
 def validate_cursor(cursor: dict[str, Any], *, max_sequence: int) -> SupervisionValidation:
     errors: list[str] = []
-    if cursor.get("schema_version") != SCHEMA_VERSION:
-        errors.append("cursor: invalid schema_version")
+    errors.extend(f"cursor: {error}" for error in validate_schema_version(cursor.get("schema_version")).errors)
     last_sequence = cursor.get("last_sequence")
     if not isinstance(last_sequence, int) or not 0 <= last_sequence <= max_sequence:
         errors.append("cursor: last_sequence must be within observed event range")
+    _validate_total_payload(cursor, errors, "cursor")
     return SupervisionValidation(ok=not errors, errors=errors)
 
 
@@ -145,8 +171,7 @@ def validate_supervisor_packet(packet: dict[str, Any]) -> SupervisionValidation:
         errors,
         prefix="packet",
     )
-    if packet.get("schema_version") != SCHEMA_VERSION:
-        errors.append("packet: invalid schema_version")
+    errors.extend(f"packet: {error}" for error in validate_schema_version(packet.get("schema_version")).errors)
     if packet.get("classification") not in SUPERVISOR_CLASSIFICATIONS:
         errors.append("packet: invalid classification")
     if packet.get("recommended_action") not in COORDINATOR_ACTIONS:
@@ -159,6 +184,7 @@ def validate_supervisor_packet(packet: dict[str, Any]) -> SupervisionValidation:
     _validate_bounded_text(packet, errors, "packet")
     for finding in find_private_values(packet):
         errors.append(f"packet: private-looking value detected: {finding}")
+    _validate_total_payload(packet, errors, "packet")
     return SupervisionValidation(ok=not errors, errors=errors)
 
 
@@ -170,8 +196,7 @@ def validate_coordinator_action(action: dict[str, Any]) -> SupervisionValidation
         errors,
         prefix="action",
     )
-    if action.get("schema_version") != SCHEMA_VERSION:
-        errors.append("action: invalid schema_version")
+    errors.extend(f"action: {error}" for error in validate_schema_version(action.get("schema_version")).errors)
     if action.get("decision") not in COORDINATOR_ACTIONS:
         errors.append("action: invalid decision")
     digest = action.get("packet_sha256")
@@ -181,6 +206,7 @@ def validate_coordinator_action(action: dict[str, Any]) -> SupervisionValidation
     _validate_bounded_text(action, errors, "action")
     for finding in find_private_values(action):
         errors.append(f"action: private-looking value detected: {finding}")
+    _validate_total_payload(action, errors, "action")
     return SupervisionValidation(ok=not errors, errors=errors)
 
 
@@ -230,6 +256,16 @@ def _validate_bounded_text(value: Any, errors: list[str], prefix: str, path: str
             _validate_bounded_text(child, errors, prefix, f"{path}[{index}]")
     elif isinstance(value, str) and len(value) > MAX_TEXT_LENGTH:
         errors.append(f"{prefix}: text exceeds {MAX_TEXT_LENGTH} characters at {path}")
+
+
+def _validate_total_payload(value: Any, errors: list[str], prefix: str) -> None:
+    try:
+        size = len(json.dumps(value, ensure_ascii=True, separators=(",", ":")).encode("utf-8"))
+    except (TypeError, ValueError):
+        errors.append(f"{prefix}: payload must be JSON serializable")
+        return
+    if size > MAX_TOTAL_PAYLOAD_BYTES:
+        errors.append(f"{prefix}: total payload exceeds {MAX_TOTAL_PAYLOAD_BYTES} bytes")
 
 
 def _is_relative_path(value: str) -> bool:
