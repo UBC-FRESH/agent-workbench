@@ -81,13 +81,13 @@ def test_verified_blocker_is_a_valid_terminal_verdict(tmp_path):
 def test_orphan_review_three_is_rejected_without_history(tmp_path):
     bp, vp = write_pair(tmp_path, kind="repair_delta", review=3)
     errors = validate_review(bp, vp)
-    assert any("immutable prior review evidence" in error for error in errors)
+    assert any("history is required" in error for error in errors)
 
 
 def test_broken_prior_hash_cannot_be_represented_as_valid_history(tmp_path):
     bp, vp = write_pair(tmp_path, kind="repair_delta", review=2)
     errors = validate_review(bp, vp)
-    assert any("immutable prior review evidence" in error for error in errors)
+    assert any("history is required" in error for error in errors)
 
 
 def test_advisor_identity_change_does_not_supply_history(tmp_path):
@@ -95,7 +95,7 @@ def test_advisor_identity_change_does_not_supply_history(tmp_path):
     data = json.loads(vp.read_text()); data["advisor_session_id"] = "advisor-2"; vp.write_text(json.dumps(data))
     errors = validate_review(bp, vp)
     assert any("session/lineage mismatch" in error for error in errors)
-    assert any("immutable prior review evidence" in error for error in errors)
+    assert any("history is required" in error for error in errors)
 
 
 def test_verified_blocker_requires_explicit_evidence(tmp_path):
@@ -112,3 +112,44 @@ def test_defect_packet_must_be_complete(tmp_path):
         vp.write_text(json.dumps(data))
         assert validate_review(bp, vp)
         data["defect_packet"][field] = "present"
+
+
+def write_history(tmp_path, count=3):
+    entries = []
+    prior = None
+    for review in range(1, count + 1):
+        folder = tmp_path / f"r{review}"; folder.mkdir()
+        bp, vp = write_pair(folder, kind="initial" if review == 1 else "repair_delta", review=review, verdict="accepted" if review == count else "defect_packet")
+        entries.append({"review_number": review, "bundle_path": f"r{review}/{bp.name}", "verdict_path": f"r{review}/{vp.name}", "bundle_sha256": hashlib.sha256(bp.read_bytes()).hexdigest(), "verdict_sha256": hashlib.sha256(vp.read_bytes()).hexdigest(), "prior_verdict_sha256": prior, "advisor_lineage_id": "line-1", "advisor_session_id": "advisor-1"})
+        prior = entries[-1]["verdict_sha256"]
+    history = tmp_path / "history.json"; history.write_text(json.dumps({"entries": entries}) + "\n")
+    return history, tmp_path / f"r{count}" / "bundle.json", tmp_path / f"r{count}" / "verdict.json"
+
+
+def test_valid_three_review_history(tmp_path):
+    history, bp, vp = write_history(tmp_path)
+    assert validate_review(bp, vp, history_path=history) == []
+
+
+def test_history_rejects_missing_middle_review(tmp_path):
+    history, bp, vp = write_history(tmp_path)
+    data = json.loads(history.read_text()); data["entries"].pop(1); history.write_text(json.dumps(data))
+    assert any("contiguous" in error for error in validate_review(bp, vp, history_path=history))
+
+
+def test_history_rejects_broken_prior_hash(tmp_path):
+    history, bp, vp = write_history(tmp_path)
+    data = json.loads(history.read_text()); data["entries"][2]["prior_verdict_sha256"] = "f" * 64; history.write_text(json.dumps(data))
+    assert any("prior verdict hash" in error for error in validate_review(bp, vp, history_path=history))
+
+
+def test_history_rejects_advisor_identity_change(tmp_path):
+    history, bp, vp = write_history(tmp_path)
+    data = json.loads(history.read_text()); data["entries"][1]["advisor_session_id"] = "advisor-2"; history.write_text(json.dumps(data))
+    assert any("Advisor identity mismatch" in error for error in validate_review(bp, vp, history_path=history))
+
+
+def test_history_rejects_altered_artifact_bytes(tmp_path):
+    history, bp, vp = write_history(tmp_path)
+    first = tmp_path / "r1" / "bundle.json"; first.write_text(first.read_text() + " ")
+    assert any("sha256 mismatch" in error for error in validate_review(bp, vp, history_path=history))

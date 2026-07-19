@@ -67,7 +67,7 @@ def _read(path: Path, label: str) -> tuple[dict[str, Any] | None, list[str]]:
     return (value, []) if isinstance(value, dict) else (None, [f"{label} root must be an object"])
 
 
-def _safe_path(path: Path, label: str, other: Path) -> list[str]:
+def _safe_path(path: Path, label: str, other: Path, *, root: Path | None = None) -> list[str]:
     errors: list[str] = []
     if not path.is_file(): errors.append(f"{label} must be an existing file")
     # CLI inputs may be absolute; reject traversal components only for paths
@@ -76,10 +76,15 @@ def _safe_path(path: Path, label: str, other: Path) -> list[str]:
     if path.suffix.lower() != ".json": errors.append(f"{label} must be a JSON path")
     if path == other: errors.append("bundle and verdict paths must be distinct")
     if path.is_symlink(): errors.append(f"{label} must not be a symlink")
+    if root is not None:
+        try:
+            path.resolve(strict=False).relative_to(root.resolve())
+        except ValueError:
+            errors.append(f"{label} must remain under the history manifest root")
     return errors
 
 
-def validate_review(bundle_path: str | Path, verdict_path: str | Path, *, prior_session_ids: set[str] | None = None) -> list[str]:
+def _validate_single(bundle_path: str | Path, verdict_path: str | Path, *, prior_session_ids: set[str] | None = None) -> list[str]:
     bundle_file, verdict_file = Path(bundle_path), Path(verdict_path)
     errors = _safe_path(bundle_file, "bundle path", verdict_file) + _safe_path(verdict_file, "verdict path", bundle_file)
     bundle, read_errors = _read(bundle_file, "bundle")
@@ -95,8 +100,6 @@ def validate_review(bundle_path: str | Path, verdict_path: str | Path, *, prior_
     review_number, kind = bundle.get("review_number"), bundle.get("packet_kind")
     if kind == "initial" and review_number != 1: errors.append("initial packet must be review 1")
     if kind == "repair_delta" and (not isinstance(review_number, int) or review_number not in (2, 3)): errors.append("repair packet must be review 2 through 3")
-    if isinstance(review_number, int) and review_number > 1:
-        errors.append("review history is unsupported: immutable prior review evidence is required")
     declared = bundle.get("bundle_sha256")
     if not isinstance(declared, str) or not SHA256.fullmatch(declared): errors.append("bundle_sha256 must be lowercase SHA-256")
     else:
@@ -125,8 +128,92 @@ def validate_review(bundle_path: str | Path, verdict_path: str | Path, *, prior_
     return errors
 
 
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _validate_history(history_path: Path, bundle_path: Path, verdict_path: Path) -> list[str]:
+    errors: list[str] = []
+    errors += _safe_path(history_path, "review history path", history_path.parent / "__review_artifact__.json")
+    history, read_errors = _read(history_path, "review history")
+    errors += read_errors
+    if history is None:
+        return errors
+    schema_path = REPOSITORY_ROOT / "templates/p107_advisor_review_history.schema.json"
+    errors += _schema(history, json.loads(schema_path.read_text(encoding="utf-8")), "review history")
+    entries = history.get("entries")
+    if not isinstance(entries, list) or not 1 <= len(entries) <= 3:
+        return errors + ["review history entries must contain 1 through 3 reviews"]
+    root = history_path.parent
+    expected_identity: tuple[str, str] | None = None
+    prior_verdict_hash: str | None = None
+    for index, entry in enumerate(entries):
+        label = f"review history entries[{index}]"
+        if not isinstance(entry, dict):
+            errors.append(f"{label} must be an object")
+            continue
+        number = entry.get("review_number")
+        if number != index + 1:
+            errors.append("review history review numbers must be contiguous from 1")
+        bundle_ref, verdict_ref = entry.get("bundle_path"), entry.get("verdict_path")
+        if not isinstance(bundle_ref, str) or not isinstance(verdict_ref, str):
+            errors.append(f"{label} must name bundle_path and verdict_path")
+            continue
+        bp, vp = root / bundle_ref, root / verdict_ref
+        errors += _safe_path(bp, f"{label}.bundle_path", vp, root=root)
+        errors += _safe_path(vp, f"{label}.verdict_path", bp, root=root)
+        if not bp.is_file() or not vp.is_file():
+            continue
+        for key, path in (("bundle_sha256", bp), ("verdict_sha256", vp)):
+            declared = entry.get(key)
+            if not isinstance(declared, str) or not SHA256.fullmatch(declared):
+                errors.append(f"{label}.{key} must be lowercase SHA-256")
+            elif _sha256(path) != declared:
+                errors.append(f"{label} {key} mismatch")
+        errors += _validate_single(bp, vp)
+        bundle, _ = _read(bp, "history bundle")
+        verdict, _ = _read(vp, "history verdict")
+        if bundle is None or verdict is None:
+            continue
+        identity = (bundle.get("advisor_lineage_id"), bundle.get("advisor_session_id"))
+        if expected_identity is None:
+            expected_identity = identity
+        elif identity != expected_identity:
+            errors.append("Advisor identity changed across review history")
+        if entry.get("advisor_lineage_id") != identity[0] or entry.get("advisor_session_id") != identity[1]:
+            errors.append(f"{label} Advisor identity mismatch")
+        if index == 0:
+            if bundle.get("review_number") != 1:
+                errors.append("review history must begin with review 1")
+            if entry.get("prior_verdict_sha256") is not None:
+                errors.append("review 1 cannot have a prior verdict hash")
+        elif entry.get("prior_verdict_sha256") != prior_verdict_hash:
+            errors.append(f"{label} does not chain to the prior verdict hash")
+        prior_verdict_hash = entry.get("verdict_sha256")
+    final = entries[-1] if isinstance(entries[-1], dict) else {}
+    if final.get("review_number") != len(entries):
+        errors.append("final history entry must be the terminal review")
+    if root / final.get("bundle_path", "") != bundle_path or root / final.get("verdict_path", "") != verdict_path:
+        errors.append("terminal verdict must be the final history entry")
+    return errors
+
+
+def validate_review(bundle_path: str | Path, verdict_path: str | Path, *, prior_session_ids: set[str] | None = None, history_path: str | Path | None = None) -> list[str]:
+    errors = _validate_single(bundle_path, verdict_path, prior_session_ids=prior_session_ids)
+    bundle, _ = _read(Path(bundle_path), "bundle")
+    review_number = bundle.get("review_number") if bundle else None
+    if isinstance(review_number, int) and review_number > 1:
+        if history_path is None:
+            errors.append("review history is required for review 2 through 3")
+        else:
+            errors += _validate_history(Path(history_path), Path(bundle_path), Path(verdict_path))
+    elif history_path is not None:
+        errors += _validate_history(Path(history_path), Path(bundle_path), Path(verdict_path))
+    return errors
+
+
 if __name__ == "__main__":
-    if len(sys.argv) != 3: raise SystemExit("usage: validate_p107_advisor_review.py <bundle.json> <verdict.json>")
-    problems = validate_review(sys.argv[1], sys.argv[2])
+    if len(sys.argv) not in (3, 4): raise SystemExit("usage: validate_p107_advisor_review.py <bundle.json> <verdict.json> [history.json]")
+    problems = validate_review(sys.argv[1], sys.argv[2], history_path=sys.argv[3] if len(sys.argv) == 4 else None)
     if problems: print("\n".join(problems)); raise SystemExit(1)
     print("P107 Advisor review bundle/verdict is valid")
