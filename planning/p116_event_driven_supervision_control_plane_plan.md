@@ -2,6 +2,15 @@
 
 ## Decision
 
+## Corrective status — 2026-07-19
+
+P116.1–P116.4 are reopened as local candidates, not accepted phase completion:
+their earlier closure overstated native and protocol evidence. The Copilot SDK
+is rejected as a P116 proof route. The binding P116 reference surfaces are the
+native Codex Supervisor and Worker session identities and the declared run
+artifacts. Quality is limited to local candidates, protocol is unaccepted, and
+economics is unassessed.
+
 P116 is a planned, narrow control-plane repair for the Agent Hub. It gives the
 Coordinator and Supervisor the evidence path and repeatable invocation path
 needed to supervise an already-running Worker. It is not a new model route,

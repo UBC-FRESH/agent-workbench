@@ -4316,3 +4316,13 @@ exact staged lines, then restored the temp config hash byte-for-byte.
   authority-expanding proposals are rejected.
 - This is an advisory contract only. P116.5 still owns Supervisor re-invocation
   and same-Worker delivery; no provider/model or Worker-message surface exists.
+
+## 2026-07-19 - P116 corrective reconciliation
+
+- An independent audit found that P116.1–P116.4 are local candidates but were
+  closed before their claimed native/protocol evidence existed. Their child
+  issues are reopened; the phase remains active.
+- The Copilot SDK is not a P116 proof route. P116's binding reference surfaces
+  are native Codex Supervisor/Worker sessions and the declared run artifacts.
+- Quality is limited to local candidates, protocol is unaccepted, and economics
+  remains unassessed. No P107 economics claim is made.
