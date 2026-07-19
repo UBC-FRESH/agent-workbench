@@ -95,6 +95,8 @@ def validate_review(bundle_path: str | Path, verdict_path: str | Path, *, prior_
     review_number, kind = bundle.get("review_number"), bundle.get("packet_kind")
     if kind == "initial" and review_number != 1: errors.append("initial packet must be review 1")
     if kind == "repair_delta" and (not isinstance(review_number, int) or review_number not in (2, 3)): errors.append("repair packet must be review 2 through 3")
+    if isinstance(review_number, int) and review_number > 1:
+        errors.append("review history is unsupported: immutable prior review evidence is required")
     declared = bundle.get("bundle_sha256")
     if not isinstance(declared, str) or not SHA256.fullmatch(declared): errors.append("bundle_sha256 must be lowercase SHA-256")
     else:
@@ -116,6 +118,10 @@ def validate_review(bundle_path: str | Path, verdict_path: str | Path, *, prior_
         packet = verdict.get("defect_packet")
         if not isinstance(packet, dict) or any(not isinstance(packet.get(k), str) or not packet[k].strip() for k in ("defect_id", "failed_evidence", "acceptance_condition")):
             errors.append("defect_packet requires defect_id, failed_evidence, and acceptance_condition")
+    if verdict.get("verdict") == "verified_blocker":
+        evidence = verdict.get("critical_defects")
+        if not isinstance(evidence, list) or not evidence or any(not isinstance(item, str) or not item.strip() for item in evidence):
+            errors.append("verified_blocker requires explicit blocker evidence in critical_defects")
     return errors
 
 

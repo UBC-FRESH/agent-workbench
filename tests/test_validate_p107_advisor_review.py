@@ -74,8 +74,34 @@ def test_review_numbers_are_exactly_one_through_three(tmp_path):
 
 def test_verified_blocker_is_a_valid_terminal_verdict(tmp_path):
     bp, vp = write_pair(tmp_path, verdict="verified_blocker")
-    data = json.loads(vp.read_text()); data["deterministic_acceptance"] = False; vp.write_text(json.dumps(data))
+    data = json.loads(vp.read_text()); data["deterministic_acceptance"] = False; data["critical_defects"] = ["worker evidence unavailable"]; vp.write_text(json.dumps(data))
     assert validate_review(bp, vp) == []
+
+
+def test_orphan_review_three_is_rejected_without_history(tmp_path):
+    bp, vp = write_pair(tmp_path, kind="repair_delta", review=3)
+    errors = validate_review(bp, vp)
+    assert any("immutable prior review evidence" in error for error in errors)
+
+
+def test_broken_prior_hash_cannot_be_represented_as_valid_history(tmp_path):
+    bp, vp = write_pair(tmp_path, kind="repair_delta", review=2)
+    errors = validate_review(bp, vp)
+    assert any("immutable prior review evidence" in error for error in errors)
+
+
+def test_advisor_identity_change_does_not_supply_history(tmp_path):
+    bp, vp = write_pair(tmp_path, kind="repair_delta", review=2)
+    data = json.loads(vp.read_text()); data["advisor_session_id"] = "advisor-2"; vp.write_text(json.dumps(data))
+    errors = validate_review(bp, vp)
+    assert any("session/lineage mismatch" in error for error in errors)
+    assert any("immutable prior review evidence" in error for error in errors)
+
+
+def test_verified_blocker_requires_explicit_evidence(tmp_path):
+    bp, vp = write_pair(tmp_path, verdict="verified_blocker")
+    data = json.loads(vp.read_text()); data["deterministic_acceptance"] = False; vp.write_text(json.dumps(data))
+    assert any("explicit blocker evidence" in error for error in validate_review(bp, vp))
 
 
 def test_defect_packet_must_be_complete(tmp_path):
