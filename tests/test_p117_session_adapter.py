@@ -5,6 +5,8 @@ from agent_workbench.p117_session_adapter import (
     FakeNativeSessionAdapter,
     SessionBinding,
 )
+from agent_workbench.p117_native_bridge import NativeDeliveryBridge
+from agent_workbench.supervision import SupervisionJournal
 
 
 @pytest.fixture
@@ -43,3 +45,29 @@ def test_uncertain_delivery_pauses_reconciliation_and_is_lookupable(binding):
     assert receipt.state is DeliveryState.PAUSED_RECONCILIATION
     assert adapter.messages == []
     assert adapter.lookup(binding, idempotency_key="uncertain-1").state is DeliveryState.PAUSED_RECONCILIATION
+
+
+def test_native_bridge_persists_intent_before_send_and_receipt_after(tmp_path, binding):
+    journal = SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id=binding.run_id)
+    adapter = FakeNativeSessionAdapter(binding)
+    bridge = NativeDeliveryBridge(adapter=adapter, journal=journal, binding=binding)
+
+    result = bridge.deliver("continue", idempotency_key="delivery-1")
+
+    assert result.receipt.state is DeliveryState.DELIVERED
+    assert not result.reconciled
+    assert [record["kind"] for record in journal.records()] == ["delivery_intent", "native_receipt"]
+    assert journal.records()[0]["message_fingerprint"] == journal.records()[1]["message_fingerprint"]
+
+
+def test_native_bridge_reconciles_persisted_intent_without_duplicate_send(tmp_path, binding):
+    journal = SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id=binding.run_id)
+    adapter = FakeNativeSessionAdapter(binding)
+    first = NativeDeliveryBridge(adapter=adapter, journal=journal, binding=binding)
+    first.deliver("continue", idempotency_key="delivery-1")
+    second = NativeDeliveryBridge(adapter=adapter, journal=journal, binding=binding)
+
+    result = second.deliver("continue", idempotency_key="delivery-1")
+
+    assert result.reconciled
+    assert adapter.messages == ["continue"]

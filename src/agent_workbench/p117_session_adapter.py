@@ -70,7 +70,7 @@ class NativeSessionAdapter(Protocol):
 
 
 class FakeNativeSessionAdapter:
-    """Deterministic test adapter; no network or host integration."""
+    """Test-only deterministic adapter; never use for native production delivery."""
 
     def __init__(self, binding: SessionBinding, *, uncertain_delivery: bool = False) -> None:
         self.binding = binding

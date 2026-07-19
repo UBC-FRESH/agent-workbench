@@ -14,7 +14,8 @@ from hashlib import sha256
 from typing import Any
 
 from .p117_flush_policy import FlushDecision, choose_flush
-from .p117_session_adapter import NativeSessionAdapter, SendReceipt, SessionBinding
+from .p117_native_bridge import NativeDeliveryBridge
+from .p117_session_adapter import NativeSessionAdapter, SessionBinding
 from .supervision import RunLease, SupervisionJournal
 
 
@@ -42,6 +43,7 @@ class BoundedSupervisionDaemon:
         self.journal = journal
         self.adapter = adapter
         self.binding = binding
+        self.delivery = NativeDeliveryBridge(adapter=adapter, journal=journal, binding=binding)
         records = journal.records()
         for record in records:
             if record.get("run_id") != lease.run_id:
@@ -106,19 +108,8 @@ class BoundedSupervisionDaemon:
             idempotency_key=key,
             message_fingerprint=sha256(message.encode("utf-8")).hexdigest(),
         )
-        self.journal.append("delivery_intent", idempotency_key=key, flush_start=decision.start_sequence, flush_end=decision.end_sequence)
-        prior = self.adapter.lookup(self.binding, idempotency_key=key)
-        if prior.found:
-            receipt = SendReceipt(self.binding, key, prior.state, "recorded")
-        else:
-            receipt = self.adapter.send(self.binding, message, idempotency_key=key)
-        self.journal.append(
-            "native_receipt",
-            idempotency_key=key,
-            adapter_state=receipt.state.value,
-            message_fingerprint=receipt.message_fingerprint,
-            reconciled=bool(prior.found),
-        )
+        delivery = self.delivery.deliver(message, idempotency_key=key)
+        receipt = delivery.receipt
         self.journal.append("flush_receipt", cursor=decision.end_sequence, flush_start=decision.start_sequence, flush_end=decision.end_sequence, idempotency_key=key, lineage=self.binding.__dict__, adapter_state=receipt.state.value, message_fingerprint=receipt.message_fingerprint)
         if receipt.state.value == "paused_reconciliation":
             self.journal.transition("paused_reconciliation", delivery_uncertain=True)
