@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import math
 import sys
 from pathlib import Path
 from typing import Any
@@ -18,6 +20,38 @@ def _required_object(data: dict[str, Any], key: str, errors: list[str]) -> dict[
     value = data.get(key)
     if not isinstance(value, dict):
         errors.append(f"{key} must be an object")
+        return {}
+    return value
+
+
+def _catalog_path(catalog: dict[str, Any]) -> Any:
+    return catalog.get("path", catalog.get("catalog_path", catalog.get("artifact_path")))
+
+
+def _catalog_hash(catalog: dict[str, Any]) -> Any:
+    return catalog.get("sha256", catalog.get("content_hash"))
+
+
+def _load_catalog(catalog: dict[str, Any], errors: list[str]) -> dict[str, Any]:
+    path_value = _catalog_path(catalog)
+    if not _nonempty(path_value):
+        errors.append("pricing_catalog materialized artifact path is required")
+        return {}
+    artifact = Path(path_value).expanduser()
+    try:
+        raw = artifact.read_bytes()
+        actual = hashlib.sha256(raw).hexdigest()
+        expected = _catalog_hash(catalog)
+        if not _nonempty(expected):
+            errors.append("pricing_catalog content hash is required")
+        elif expected.removeprefix("sha256:").lower() != actual:
+            errors.append("pricing_catalog content hash does not match artifact")
+        value = json.loads(raw.decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        errors.append(f"cannot load pricing_catalog artifact: {exc}")
+        return {}
+    if not isinstance(value, dict) or not isinstance(value.get("entries"), list):
+        errors.append("pricing_catalog artifact must contain an entries list")
         return {}
     return value
 
@@ -46,6 +80,8 @@ def validate_accounting_record(path: str | Path) -> list[str]:
     catalog = _required_object(data, "pricing_catalog", errors)
     for key in ("catalog_id", "catalog_date", "provenance", "content_hash"):
         if not _nonempty(catalog.get(key)): errors.append(f"pricing_catalog.{key} is required")
+    catalog_data = _load_catalog(catalog, errors)
+    catalog_entries = {entry.get("model_id"): entry for entry in catalog_data.get("entries", []) if isinstance(entry, dict)}
 
     local = _required_object(data, "local_cost", errors)
     status = local.get("status")
@@ -66,6 +102,11 @@ def validate_accounting_record(path: str | Path) -> list[str]:
         if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0: errors.append(f"run_accounting.{key} must be nonnegative")
     if not isinstance(run.get("maintainer_intervention"), bool): errors.append("run_accounting.maintainer_intervention must be boolean")
     if isinstance(run.get("invalid_run_spend_usd"), bool) or not isinstance(run.get("invalid_run_spend_usd"), (int, float)) or run.get("invalid_run_spend_usd") < 0: errors.append("run_accounting.invalid_run_spend_usd must be nonnegative")
+    if status == "measured":
+        if not _nonempty(run.get("adapter_identity")):
+            errors.append("measured local cost requires run_accounting.adapter_identity")
+        if not _nonempty(local.get("basis")) and not isinstance(local.get("metadata"), dict):
+            errors.append("measured local cost requires basis or metadata")
 
     roles = data.get("roles")
     if not isinstance(roles, list): errors.append("roles must be a list"); roles = []
@@ -83,12 +124,23 @@ def validate_accounting_record(path: str | Path) -> list[str]:
         if not isinstance(tokens, dict): errors.append(f"roles[{index}].tokens must be an object")
         if not isinstance(prices, dict): errors.append(f"roles[{index}].token_usd must be an object")
         role_total = 0.0
+        entry = catalog_entries.get(role.get("model"))
+        rates = entry.get("rates", {}) if entry else {}
+        rate_map = {"uncached_input": rates.get("input_per_1m_usd"), "cached_input": rates.get("cached_input_read_per_1m_usd"), "output": rates.get("output_per_1m_usd"), "reasoning": rates.get("output_per_1m_usd")}
+        if not entry: errors.append(f"roles[{index}].model is absent from pricing catalog")
         for key in TOKEN_CLASSES:
             value = tokens.get(key) if isinstance(tokens, dict) else None
             if isinstance(value, bool) or not isinstance(value, int) or value < 0: errors.append(f"roles[{index}].tokens.{key} must be a nonnegative integer")
             usd = prices.get(key) if isinstance(prices, dict) else None
             if isinstance(usd, bool) or not isinstance(usd, (int, float)) or usd < 0: errors.append(f"roles[{index}].token_usd.{key} must be nonnegative")
-            if isinstance(usd, (int, float)) and isinstance(value, int) and not isinstance(value, bool): role_total += usd
+            rate = rate_map[key]
+            if rate is None or isinstance(rate, bool) or not isinstance(rate, (int, float)) or rate < 0:
+                errors.append(f"pricing catalog rate for {role.get('model')}.{key} is invalid")
+            elif isinstance(value, int) and not isinstance(value, bool):
+                derived = value * rate / 1_000_000
+                if isinstance(usd, (int, float)) and not math.isclose(usd, derived, rel_tol=0, abs_tol=1e-12):
+                    errors.append(f"roles[{index}].token_usd.{key} must equal catalog-derived USD")
+                role_total += derived
         if role.get("total_usd") != role_total: errors.append(f"roles[{index}].total_usd must equal derived token USD total")
         total_usd += role_total
         if not isinstance(role.get("checkpoints"), dict) or not _nonempty(role["checkpoints"].get("start")) or not _nonempty(role["checkpoints"].get("end")): errors.append(f"roles[{index}].checkpoints must have start and end")
@@ -96,6 +148,9 @@ def validate_accounting_record(path: str | Path) -> list[str]:
     if data.get("total_paid_usd") != total_usd: errors.append("total_paid_usd must equal derived role total")
     if config in CONFIG_ROLES and seen_roles != CONFIG_ROLES[config]: errors.append("roles must contain exactly the required paid roles for configuration_id")
     if isinstance(source.get("session_ids"), list) and set(source["session_ids"]) != seen_sessions: errors.append("source_session_identity.session_ids must contain exactly all role session IDs")
+    configured = source.get("role_sessions")
+    if isinstance(configured, dict) and any(configured.get(role) != next((r.get("session_id") for r in roles if isinstance(r, dict) and r.get("role") == role), None) for role in configured):
+        errors.append("source_session_identity.role_sessions must match configured role sessions")
     return errors
 
 

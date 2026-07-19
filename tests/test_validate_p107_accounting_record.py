@@ -1,4 +1,5 @@
 import json
+import hashlib
 import sys
 from pathlib import Path
 
@@ -18,6 +19,12 @@ def make_record(tmp_path: Path, configuration: str = "C1") -> tuple[Path, dict]:
         supervisor["session_id"] = "supervisor-session"
         data["roles"].append(supervisor)
     data["source_session_identity"]["session_ids"] = [r["session_id"] for r in data["roles"]]
+    catalog = {"schema_version": 1, "entries": [{"model_id": "model-id", "rates": {"input_per_1m_usd": 1.0, "cached_input_read_per_1m_usd": 0.1, "output_per_1m_usd": 2.0}}]}
+    catalog_path = tmp_path / "pricing-catalog.json"
+    raw = json.dumps(catalog).encode()
+    catalog_path.write_bytes(raw)
+    data["pricing_catalog"]["path"] = str(catalog_path)
+    data["pricing_catalog"]["content_hash"] = "sha256:" + hashlib.sha256(raw).hexdigest()
     path = tmp_path / "record.json"
     path.write_text(json.dumps(data))
     return path, data
@@ -73,3 +80,26 @@ def test_unknown_local_cost_never_zero_and_required_run_accounting(tmp_path: Pat
 def test_cli_success_does_not_claim_comparison_eligibility() -> None:
     text = (ROOT / "scripts/validate_p107_accounting_record.py").read_text()
     assert "comparison eligible" not in text
+
+
+def test_rejects_missing_or_tampered_catalog(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["pricing_catalog"]["path"] = str(tmp_path / "missing.json")
+    path.write_text(json.dumps(data))
+    assert any("cannot load pricing_catalog artifact" in e for e in validate_accounting_record(path))
+
+
+def test_rejects_incorrect_derived_usd(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["roles"][0]["tokens"]["output"] = 10
+    data["roles"][0]["token_usd"]["output"] = 0
+    path.write_text(json.dumps(data))
+    assert any("catalog-derived USD" in e for e in validate_accounting_record(path))
+
+
+def test_measured_local_cost_requires_adapter_identity(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["local_cost"] = {"status": "measured", "amount_usd": 1.0, "basis": "metered"}
+    data["run_accounting"]["adapter_identity"] = None
+    path.write_text(json.dumps(data))
+    assert any("measured local cost requires run_accounting.adapter_identity" in e for e in validate_accounting_record(path))
