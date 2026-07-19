@@ -16,8 +16,13 @@ def make_run(tmp_path: Path, configuration: str = "C1") -> Path:
     frozen = tmp_path / "frozen.txt"
     frozen.write_text("public fixture\n", encoding="utf-8")
     digest = hashlib.sha256(frozen.read_bytes()).hexdigest()
-    bundle = tmp_path / "bundle.json"; bundle.write_text("{}", encoding="utf-8")
-    verdict = tmp_path / "verdict.json"; verdict.write_text("{}", encoding="utf-8")
+    bundle = tmp_path / "bundle.json"
+    bundle_data = {"bundle_sha256": "", "run_id": "run-1", "review_number": 1, "packet_kind": "initial", "packet_bytes": 1, "estimated_input_tokens": 1, "acceptance_output": "ok", "scope_report": "ok", "changed_files": [], "contamination_status": "clean", "advisor_session_id": "advisor-1", "advisor_lineage_id": "line-1", "previous_defect_packet": None}
+    bundle_data["bundle_sha256"] = hashlib.sha256((json.dumps(bundle_data, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()
+    bundle.write_text(json.dumps(bundle_data), encoding="utf-8")
+    verdict = tmp_path / "verdict.json"
+    verdict_data = {"review_number": 1, "verdict": "accepted", "deterministic_acceptance": True, "correctness": 4, "score": 10, "critical_defects": [], "defect_packet": None, "run_id": "run-1", "bundle_sha256": bundle_data["bundle_sha256"], "advisor_session_id": "advisor-1", "advisor_lineage_id": "line-1"}
+    verdict.write_text(json.dumps(verdict_data), encoding="utf-8")
     active = {"C0": ["coordinator", "advisor"], "C1": ["coordinator", "worker", "advisor"], "C2": ["coordinator", "supervisor", "worker", "advisor"], "C3": ["coordinator", "supervisor", "advisor", "worker"], "C4": ["coordinator", "supervisor", "worker", "advisor"]}[configuration]
     sessions = [{"session_id": f"{role}-1", "role": role, "provider": "fixture", "model_class": "fixture"} for role in active]
     document = {
@@ -101,3 +106,26 @@ def test_rejects_supervisor_spawn_in_flat_configurations(tmp_path: Path, configu
     doc["topology"]["supervisor_spawned"] = True
     path.write_text(json.dumps(doc))
     assert f"{configuration} Supervisor spawn is forbidden" in validate_materialized_run(path)
+
+
+@pytest.mark.parametrize("configuration", ["C2", "C4"])
+def test_rejects_nested_worker_spawn_in_flat_configurations(tmp_path: Path, configuration: str) -> None:
+    path = make_run(tmp_path, configuration)
+    doc = json.loads(path.read_text()); doc["topology"]["nested_worker_spawned"] = True
+    path.write_text(json.dumps(doc))
+    assert f"{configuration} nested Worker spawn must be explicitly false" in validate_materialized_run(path)
+
+
+def test_rejects_empty_advisor_artifacts(tmp_path: Path) -> None:
+    path = make_run(tmp_path)
+    for name in ("bundle.json", "verdict.json"):
+        (tmp_path / name).write_text("{}", encoding="utf-8")
+    assert any("Advisor review:" in error for error in validate_materialized_run(path))
+
+
+def test_rejects_cross_artifact_identity_mismatch(tmp_path: Path) -> None:
+    path = make_run(tmp_path)
+    verdict = tmp_path / "verdict.json"
+    data = json.loads(verdict.read_text()); data["advisor_lineage_id"] = "other"
+    verdict.write_text(json.dumps(data), encoding="utf-8")
+    assert "Advisor review: Advisor session/lineage mismatch" in validate_materialized_run(path)

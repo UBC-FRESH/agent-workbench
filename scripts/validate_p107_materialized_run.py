@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from validate_p107_advisor_review import validate_review
+
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 ROLES = {
     "C0": ["coordinator", "advisor"],
@@ -118,6 +120,8 @@ def validate_materialized_run(path: str | Path) -> list[str]:
         errors.append("topology coordinator children mismatch")
     if configuration == "C3" and topology.get("nested_worker_spawned") is not True:
         errors.append("C3 nested Worker spawn is required")
+    if configuration in {"C0", "C1", "C2", "C4"} and topology.get("nested_worker_spawned") is not False:
+        errors.append(f"{configuration} nested Worker spawn must be explicitly false")
     if configuration in {"C0", "C1", "C2", "C4"} and topology.get("supervisor_spawned") is True:
         errors.append(f"{configuration} Supervisor spawn is forbidden")
     if configuration in {"C1", "C2", "C3", "C4"}:
@@ -186,6 +190,20 @@ def validate_materialized_run(path: str | Path) -> list[str]:
         if target is not None and _sha(advisor.get(key), f"advisor.{key}", errors):
             if hashlib.sha256(target.read_bytes()).hexdigest() != advisor[key]:
                 errors.append(f"advisor.{key} hash mismatch")
+    if bundle is not None and verdict is not None:
+        review_errors = validate_review(bundle, verdict, prior_session_ids=set(prior) if isinstance(prior, list) else None)
+        errors.extend(f"Advisor review: {problem}" for problem in review_errors)
+        try:
+            bundle_data = json.loads(bundle.read_text(encoding="utf-8"))
+            verdict_data = json.loads(verdict.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            bundle_data = verdict_data = {}
+        if verdict_data.get("verdict") != advisor.get("verdict"):
+            errors.append("Advisor terminal outcome mismatch")
+        if bundle_data.get("run_id") != run_id or verdict_data.get("run_id") != run_id:
+            errors.append("Advisor review run binding mismatch")
+        if advisor.get("lineage_id") not in {bundle_data.get("advisor_lineage_id"), verdict_data.get("advisor_lineage_id")}:
+            errors.append("Advisor review lineage binding mismatch")
     return errors
 
 
