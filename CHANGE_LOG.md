@@ -4305,3 +4305,14 @@ exact staged lines, then restored the temp config hash byte-for-byte.
 - Focused tests cover acknowledged-event non-replay, malformed/reordered input,
   invalid cursor rejection, workspace-mismatch signaling, atomic cursor writes,
   and the script smoke path.
+
+## 2026-07-19 - Completed P116.4 Supervisor delta-review contract
+
+- Added a local-only Supervisor review request and packet validator over one
+  non-empty sanitized event delta. It preserves ordinary repair as
+  `productive_repair` and binds every recommendation to the supplied cursor.
+- Constructive nudges require observed fact, relevant feedback, validation seam,
+  and the unchanged ticket boundary; free-form, uncited, imperative, and
+  authority-expanding proposals are rejected.
+- This is an advisory contract only. P116.5 still owns Supervisor re-invocation
+  and same-Worker delivery; no provider/model or Worker-message surface exists.
