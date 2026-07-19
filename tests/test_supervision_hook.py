@@ -82,6 +82,7 @@ def test_capture_uses_staged_activation_manifest(tmp_path: Path, monkeypatch) ->
     supervision_dir = run_dir / "supervision"
     supervision_dir.mkdir(parents=True)
     (supervision_dir / "activation.json").write_text(json.dumps({
+        "active": True,
         "run_id": "run-1", "assigned_root": str(tmp_path),
         "supervision_dir": str(supervision_dir),
     }), encoding="utf-8")
@@ -107,8 +108,88 @@ def test_staged_activation_rejects_malformed_and_out_of_root(tmp_path: Path, mon
         assert capture_from_environment(payload(cwd=str(tmp_path))) is False
 
 
+def test_stale_activation_manifests_do_not_suppress_active_manifest(tmp_path: Path, monkeypatch) -> None:
+    jobs_dir = tmp_path / "runtime" / "agent_jobs"
+    stale_dir = jobs_dir / "old-run" / "supervision"
+    active_dir = jobs_dir / "active-run" / "supervision"
+    stale_dir.mkdir(parents=True)
+    active_dir.mkdir(parents=True)
+    stale_dir.joinpath("activation.json").write_text(json.dumps({
+        "run_id": "old-run", "assigned_root": str(tmp_path),
+        "supervision_dir": str(stale_dir),
+    }), encoding="utf-8")
+    active_dir.joinpath("activation.json").write_text(json.dumps({
+        "active": True, "run_id": "active-run", "assigned_root": str(tmp_path),
+        "supervision_dir": str(active_dir),
+    }), encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    for name in (RUN_ID_ENV, ASSIGNED_ROOT_ENV, SUPERVISION_DIR_ENV):
+        monkeypatch.delenv(name, raising=False)
+
+    assert capture_from_environment(payload(cwd=str(tmp_path)))
+    event = json.loads(active_dir.joinpath("events.jsonl").read_text(encoding="utf-8"))
+    assert event["run_id"] == "active-run"
+    assert not stale_dir.joinpath("events.jsonl").exists()
+
+
+def test_multiple_active_activation_manifests_fail_closed(tmp_path: Path, monkeypatch) -> None:
+    jobs_dir = tmp_path / "runtime" / "agent_jobs"
+    for run_id in ("active-one", "active-two"):
+        supervision_dir = jobs_dir / run_id / "supervision"
+        supervision_dir.mkdir(parents=True)
+        supervision_dir.joinpath("activation.json").write_text(json.dumps({
+            "active": True, "run_id": run_id, "assigned_root": str(tmp_path),
+            "supervision_dir": str(supervision_dir),
+        }), encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    for name in (RUN_ID_ENV, ASSIGNED_ROOT_ENV, SUPERVISION_DIR_ENV):
+        monkeypatch.delenv(name, raising=False)
+
+    assert capture_from_environment(payload(cwd=str(tmp_path))) is False
+
+
+def test_active_staged_manifest_overrides_inherited_environment(tmp_path: Path, monkeypatch) -> None:
+    run_dir = tmp_path / "runtime" / "agent_jobs" / "active-run"
+    supervision_dir = run_dir / "supervision"
+    supervision_dir.mkdir(parents=True)
+    supervision_dir.joinpath("activation.json").write_text(json.dumps({
+        "active": True, "run_id": "active-run", "assigned_root": str(tmp_path),
+        "supervision_dir": str(supervision_dir),
+    }), encoding="utf-8")
+    inherited_dir = tmp_path / "old-run-supervision"
+    monkeypatch.setenv(RUN_ID_ENV, "old-run")
+    monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path))
+    monkeypatch.setenv(SUPERVISION_DIR_ENV, str(inherited_dir))
+    monkeypatch.chdir(tmp_path)
+
+    assert capture_from_environment(payload(cwd=str(tmp_path)))
+    event = json.loads(supervision_dir.joinpath("events.jsonl").read_text(encoding="utf-8"))
+    assert event["run_id"] == "active-run"
+    assert not inherited_dir.joinpath("events.jsonl").exists()
+
+
+def test_multiple_active_manifests_do_not_fall_back_to_environment(tmp_path: Path, monkeypatch) -> None:
+    jobs_dir = tmp_path / "runtime" / "agent_jobs"
+    for run_id in ("active-one", "active-two"):
+        supervision_dir = jobs_dir / run_id / "supervision"
+        supervision_dir.mkdir(parents=True)
+        supervision_dir.joinpath("activation.json").write_text(json.dumps({
+            "active": True, "run_id": run_id, "assigned_root": str(tmp_path),
+            "supervision_dir": str(supervision_dir),
+        }), encoding="utf-8")
+    inherited_dir = tmp_path / "old-run-supervision"
+    monkeypatch.setenv(RUN_ID_ENV, "old-run")
+    monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path))
+    monkeypatch.setenv(SUPERVISION_DIR_ENV, str(inherited_dir))
+    monkeypatch.chdir(tmp_path)
+
+    assert capture_from_environment(payload(cwd=str(tmp_path))) is False
+    assert not inherited_dir.joinpath("events.jsonl").exists()
+
+
 def test_capture_appends_sanitized_ordered_events(tmp_path: Path, monkeypatch) -> None:
     supervision_dir = tmp_path / "supervision"
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setenv(RUN_ID_ENV, "p116-hook-probe")
     monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path))
     monkeypatch.setenv(SUPERVISION_DIR_ENV, str(supervision_dir))
@@ -126,6 +207,7 @@ def test_capture_appends_sanitized_ordered_events(tmp_path: Path, monkeypatch) -
 
 
 def test_capture_refuses_output_directory_outside_assigned_root(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setenv(RUN_ID_ENV, "p116-hook-probe")
     monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path / "assigned"))
     monkeypatch.setenv(SUPERVISION_DIR_ENV, str(tmp_path / "outside" / "supervision"))
@@ -136,6 +218,7 @@ def test_capture_refuses_output_directory_outside_assigned_root(tmp_path: Path, 
 
 def test_capture_records_bounded_local_error(tmp_path: Path, monkeypatch) -> None:
     supervision_dir = tmp_path / "supervision"
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setenv(RUN_ID_ENV, "p116-hook-probe")
     monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path))
     monkeypatch.setenv(SUPERVISION_DIR_ENV, str(supervision_dir))
@@ -156,6 +239,7 @@ def test_capture_records_bounded_local_error(tmp_path: Path, monkeypatch) -> Non
 
 def test_invocation_receipt_distinguishes_invoked_from_event_written(tmp_path: Path, monkeypatch) -> None:
     supervision_dir = tmp_path / "supervision"
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setenv(RUN_ID_ENV, "p116-hook-probe")
     monkeypatch.setenv(ASSIGNED_ROOT_ENV, str(tmp_path))
     monkeypatch.setenv(SUPERVISION_DIR_ENV, str(supervision_dir))
@@ -178,7 +262,7 @@ def test_entrypoint_records_payload_rejected_and_remains_sanitized(tmp_path: Pat
     root = Path(__file__).resolve().parents[1]
     completed = subprocess.run(
         ["python", str(root / "scripts" / "p116_capture_hook.py")],
-        cwd=root, input="[\"raw command\"]", text=True, capture_output=True, env=env, check=False,
+        cwd=tmp_path, input="[\"raw command\"]", text=True, capture_output=True, env=env, check=False,
     )
     assert completed.returncode == 0
     receipt = json.loads((tmp_path / "supervision" / "invocation_receipt.json").read_text())
@@ -199,6 +283,11 @@ def test_configured_windows_hook_command_captures_event(tmp_path: Path) -> None:
         EXPECTED_WINDOWS_HOOK_COMMAND,
         EXPECTED_WINDOWS_HOOK_COMMAND,
     ]
+    assert [
+        entry["matcher"]
+        for matcher in config["hooks"].values()
+        for entry in matcher
+    ] == ["^exec$", "^exec$"]
     assert all(
         "commandWindows" not in hook
         for matcher in config["hooks"].values()
@@ -211,11 +300,11 @@ def test_configured_windows_hook_command_captures_event(tmp_path: Path) -> None:
         SUPERVISION_DIR_ENV: str(tmp_path / "supervision"),
     }
     input_payload = json.dumps(payload(cwd=str(tmp_path), event="PreToolUse"))
-    command = WINDOWS_HOOK_COMMAND_BODY
+    command = f"& python '{root / 'scripts' / 'p116_capture_hook.py'}'"
 
     completed = subprocess.run(
         ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command],
-        cwd=root,
+        cwd=tmp_path,
         input=input_payload,
         text=True,
         capture_output=True,

@@ -3,7 +3,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": ".*",
+        "matcher": "^exec$",
         "hooks": [
           {
             "type": "command",
@@ -16,7 +16,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": ".*",
+        "matcher": "^exec$",
         "hooks": [
           {
             "type": "command",

@@ -21,31 +21,44 @@ RECEIPT_STATUSES = {"invoked", "payload_rejected", "event_written"}
 
 
 def _activation_manifest(project_root: Path) -> dict[str, str] | None:
-    """Load the one Coordinator-staged activation manifest for this root."""
+    """Load the one explicitly active Coordinator manifest for this root."""
+    manifest, _ = _staged_activation(project_root)
+    return manifest
+
+
+def _staged_activation(project_root: Path) -> tuple[dict[str, str] | None, bool]:
+    """Return the active manifest and whether any active marker was staged."""
     candidates = sorted(
         (project_root / "runtime" / "agent_jobs").glob(f"*/supervision/{ACTIVATION_FILENAME}")
     )
-    if len(candidates) != 1:
-        return None
-    manifest_path = candidates[0]
+    active_manifests: list[tuple[Path, dict[str, object]]] = []
+    for manifest_path in candidates:
+        try:
+            value = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, TypeError, ValueError, json.JSONDecodeError):
+            continue
+        if isinstance(value, dict) and value.get("active") is True:
+            active_manifests.append((manifest_path, value))
+    if len(active_manifests) != 1:
+        return None, bool(active_manifests)
+    manifest_path, value = active_manifests[0]
     try:
-        value = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if not isinstance(value, dict) or manifest_path.parent.parent.name == "":
-            return None
+        if manifest_path.parent.parent.name == "":
+            return None, True
         run_id = value.get("run_id")
         assigned_root = value.get("assigned_root")
         supervision_dir = value.get("supervision_dir")
         if not all(isinstance(item, str) and item for item in (run_id, assigned_root, supervision_dir)):
-            return None
+            return None, True
         root = project_root.resolve()
         assigned = Path(assigned_root).resolve()
         output = Path(supervision_dir).resolve()
         run_dir = manifest_path.parent.parent.resolve()
         if assigned != root or not _within(output, root) or not _within(output, run_dir):
-            return None
-        return {"run_id": run_id, "assigned_root": str(assigned), "supervision_dir": str(output)}
+            return None, True
+        return {"run_id": run_id, "assigned_root": str(assigned), "supervision_dir": str(output)}, True
     except (OSError, TypeError, ValueError, json.JSONDecodeError):
-        return None
+        return None, True
 
 
 def event_from_hook_payload(
@@ -151,11 +164,15 @@ def record_hook_payload_rejected() -> bool:
 
 
 def _capture_context() -> tuple[str, Path, Path] | None:
+    activation, active_staged = _staged_activation(Path.cwd())
+    if activation is not None:
+        return activation["run_id"], Path(activation["assigned_root"]), Path(activation["supervision_dir"])
+    if active_staged:
+        return None
     run_id = os.environ.get(RUN_ID_ENV)
     assigned_text = os.environ.get(ASSIGNED_ROOT_ENV)
     supervision_text = os.environ.get(SUPERVISION_DIR_ENV)
     if not (run_id and assigned_text and supervision_text):
-        activation = _activation_manifest(Path.cwd())
         if activation is None:
             return None
         run_id, assigned_text, supervision_text = (
