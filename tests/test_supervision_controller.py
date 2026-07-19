@@ -1,141 +1,77 @@
 from __future__ import annotations
 
+import hashlib
 import json
-import subprocess
-import sys
 from pathlib import Path
 
 import pytest
 
 from agent_workbench.supervision import SCHEMA_VERSION
-from agent_workbench.supervision_controller import (
-    acknowledge_cursor,
-    build_review_delta,
-    load_cursor,
-    prepare_review_delta,
-)
+from agent_workbench.supervision_controller import acknowledge_cursor, prepare_review_delta
 
 
-def event(sequence: int, *, kind: str = "tool_completed") -> dict[str, object]:
-    return {
-        "schema_version": SCHEMA_VERSION,
-        "sequence": sequence,
-        "event_id": f"event-{sequence}",
-        "timestamp": "2026-07-19T01:00:00Z",
-        "kind": kind,
-        "stage": "tool",
-        "outcome": "failed" if kind == "workspace_mismatch" else "succeeded",
-        "redaction_applied": True,
-        "run_id": "p116-controller-probe",
-        "hook_event": "PostToolUse",
-        "tool_name": "Bash",
-        "root_match": kind != "workspace_mismatch",
-    }
+def event(sequence: int) -> dict[str, object]:
+    return {"schema_version": SCHEMA_VERSION, "sequence": sequence, "event_id": f"event-{sequence}", "timestamp": "2026-07-19T01:00:00Z", "kind": "tool_completed", "stage": "tool", "outcome": "succeeded", "redaction_applied": True, "run_id": "run-1", "hook_event": "PostToolUse", "tool_name": "Bash", "root_match": True}
 
 
-def write_events(path: Path, records: list[dict[str, object]]) -> None:
-    path.write_text("\n".join(json.dumps(record) for record in records) + "\n", encoding="utf-8")
+def setup_run(tmp_path: Path, events: list[dict[str, object]]) -> Path:
+    root = tmp_path / "run"
+    root.mkdir()
+    (root / "events.jsonl").write_text("\n".join(json.dumps(e) for e in events) + "\n", encoding="utf-8")
+    manifest = {"schema_version": SCHEMA_VERSION, "run_id": "run-1", "worker_session_id": "worker-1", "supervisor_session_id": "supervisor-1", "assigned_root": str(root), "events_path": "events.jsonl", "cursor_path": "cursor.json", "packets_path": "supervisor_packets.jsonl", "actions_path": "coordinator_actions.jsonl"}
+    path = root / "manifest.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    return path
 
 
-def test_delta_keeps_only_unacknowledged_safe_events(tmp_path: Path) -> None:
-    events_path = tmp_path / "events.jsonl"
-    write_events(events_path, [event(1), event(2, kind="workspace_mismatch")])
-    acknowledge_cursor(
-        tmp_path / "cursor.json", last_sequence=1, assigned_root=tmp_path
-    )
-
-    delta, maximum = prepare_review_delta(
-        events_path=events_path,
-        cursor_path=tmp_path / "cursor.json",
-        assigned_root=tmp_path,
-    )
-
-    assert maximum == 2
-    assert delta["cursor_start_sequence"] == 1
-    assert delta["cursor_end_sequence"] == 2
-    assert delta["event_count"] == 1
-    assert delta["signals"]["workspace_mismatch"] == 1
-    assert "redaction_applied" not in delta["events"][0]
+def packet(end: int) -> dict[str, object]:
+    return {"schema_version": SCHEMA_VERSION, "run_id": "run-1", "classification": "productive_repair", "recommended_action": "continue", "evidence_summary": "validated event delta", "event_start_sequence": 1, "event_end_sequence": end}
 
 
-def test_acknowledged_events_are_not_replayed_after_restart(tmp_path: Path) -> None:
-    events_path = tmp_path / "events.jsonl"
-    cursor_path = tmp_path / "cursor.json"
-    write_events(events_path, [event(1), event(2)])
-    acknowledge_cursor(cursor_path, last_sequence=2, assigned_root=tmp_path)
-
-    delta, maximum = prepare_review_delta(
-        events_path=events_path, cursor_path=cursor_path, assigned_root=tmp_path
-    )
-
-    assert maximum == 2
-    assert delta["event_count"] == 0
-    assert delta["cursor_start_sequence"] == 2
-    assert delta["cursor_end_sequence"] == 2
+def action(value: dict[str, object]) -> dict[str, object]:
+    digest = hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return {"schema_version": SCHEMA_VERSION, "run_id": "run-1", "packet_sha256": digest, "decision": "continue"}
 
 
-def test_rejects_invalid_cursor_or_reordered_events(tmp_path: Path) -> None:
-    events_path = tmp_path / "events.jsonl"
-    cursor_path = tmp_path / "cursor.json"
-    write_events(events_path, [event(2), event(1)])
-
-    with pytest.raises(ValueError, match="strictly increasing"):
-        prepare_review_delta(events_path=events_path, cursor_path=cursor_path, assigned_root=tmp_path)
-
-    write_events(events_path, [event(1)])
-    cursor_path.write_text(json.dumps({"schema_version": SCHEMA_VERSION, "last_sequence": 2}), encoding="utf-8")
-    with pytest.raises(ValueError, match="within observed event range"):
-        prepare_review_delta(events_path=events_path, cursor_path=cursor_path, assigned_root=tmp_path)
+def test_manifest_bound_review_and_ack_chain(tmp_path: Path) -> None:
+    manifest = setup_run(tmp_path, [event(1), event(2)])
+    delta, maximum = prepare_review_delta(manifest_path=manifest)
+    assert delta["event_count"] == 2 and maximum == 2
+    p = packet(2)
+    acknowledge_cursor(manifest_path=manifest, last_sequence=2, packet=p, action=action(p))
+    assert json.loads((manifest.parent / "cursor.json").read_text())["last_sequence"] == 2
+    assert len((manifest.parent / "supervisor_packets.jsonl").read_text().splitlines()) == 1
 
 
-def test_cursor_write_is_atomic_and_valid(tmp_path: Path) -> None:
-    cursor_path = tmp_path / "nested" / "cursor.json"
-    acknowledge_cursor(cursor_path, last_sequence=4, assigned_root=tmp_path)
-
-    assert load_cursor(cursor_path, max_sequence=4) == 4
-    assert not cursor_path.with_suffix(".json.tmp").exists()
-
-
-def test_rejects_event_or_cursor_paths_outside_assigned_root(tmp_path: Path) -> None:
-    outside = tmp_path.parent / "outside.jsonl"
-    outside.write_text("", encoding="utf-8")
-
-    with pytest.raises(ValueError, match="events path must stay within assigned_root"):
-        prepare_review_delta(
-            events_path=outside,
-            cursor_path=tmp_path / "cursor.json",
-            assigned_root=tmp_path,
-        )
-    with pytest.raises(ValueError, match="cursor path must stay within assigned_root"):
-        acknowledge_cursor(outside, last_sequence=0, assigned_root=tmp_path)
+def test_ack_requires_reviewed_packet_action_chain(tmp_path: Path) -> None:
+    manifest = setup_run(tmp_path, [event(1)])
+    p = packet(1)
+    with pytest.raises(ValueError, match="packet_sha256"):
+        acknowledge_cursor(manifest_path=manifest, last_sequence=1, packet=p, action={**action(p), "packet_sha256": "0" * 64})
+    assert not (manifest.parent / "cursor.json").exists()
 
 
-def test_controller_script_renders_and_acknowledges(tmp_path: Path) -> None:
-    root = Path(__file__).resolve().parents[1]
-    events_path = tmp_path / "events.jsonl"
-    cursor_path = tmp_path / "cursor.json"
-    write_events(events_path, [event(1)])
+def test_ack_rejects_sequence_beyond_observed_events(tmp_path: Path) -> None:
+    manifest = setup_run(tmp_path, [event(1)])
+    p = packet(2)
+    with pytest.raises(ValueError, match="observed validated event maximum"):
+        acknowledge_cursor(manifest_path=manifest, last_sequence=2, packet=p, action=action(p))
+    assert not (manifest.parent / "cursor.json").exists()
+    assert not (manifest.parent / "supervisor_packets.jsonl").exists()
 
-    completed = subprocess.run(
-        [
-            sys.executable,
-            str(root / "scripts" / "p116_supervision_controller.py"),
-            "--events",
-            str(events_path),
-            "--cursor",
-            str(cursor_path),
-            "--assigned-root",
-            str(tmp_path),
-            "--ack",
-        ],
-        cwd=root,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
 
-    assert completed.returncode == 0, completed.stderr
-    output = json.loads(completed.stdout)
-    assert output["event_count"] == 1
-    assert output["acknowledged_through_sequence"] == 1
-    assert load_cursor(cursor_path, max_sequence=1) == 1
+def test_truncated_event_log_fails_closed_after_restart(tmp_path: Path) -> None:
+    manifest = setup_run(tmp_path, [event(1)])
+    events = manifest.parent / "events.jsonl"
+    events.write_bytes(events.read_bytes().rstrip(b"\n"))
+    with pytest.raises(ValueError, match="truncated"):
+        prepare_review_delta(manifest_path=manifest)
+
+
+def test_manifest_rejects_absolute_artifact_path(tmp_path: Path) -> None:
+    manifest = setup_run(tmp_path, [event(1)])
+    value = json.loads(manifest.read_text())
+    value["events_path"] = str(manifest.parent / "events.jsonl")
+    manifest.write_text(json.dumps(value), encoding="utf-8")
+    with pytest.raises(ValueError, match="relative path"):
+        prepare_review_delta(manifest_path=manifest)

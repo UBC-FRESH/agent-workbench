@@ -16,22 +16,23 @@ from agent_workbench.supervision_controller import acknowledge_cursor, prepare_r
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--events", type=Path, required=True)
-    parser.add_argument("--cursor", type=Path, required=True)
-    parser.add_argument("--assigned-root", type=Path, required=True)
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--packet", type=Path)
+    parser.add_argument("--action", type=Path)
     parser.add_argument("--ack", action="store_true")
     args = parser.parse_args()
     try:
-        delta, maximum = prepare_review_delta(
-            events_path=args.events,
-            cursor_path=args.cursor,
-            assigned_root=args.assigned_root,
-        )
+        delta, maximum = prepare_review_delta(manifest_path=args.manifest)
         if args.ack:
+            if not args.packet or not args.action:
+                raise ValueError("--ack requires --packet and --action")
+            packet = json.loads(args.packet.read_text(encoding="utf-8"))
+            action = json.loads(args.action.read_text(encoding="utf-8"))
             acknowledge_cursor(
-                args.cursor,
+                manifest_path=args.manifest,
                 last_sequence=maximum,
-                assigned_root=args.assigned_root,
+                packet=packet,
+                action=action,
             )
             delta["acknowledged_through_sequence"] = maximum
         print(json.dumps(delta, indent=2, sort_keys=True))
