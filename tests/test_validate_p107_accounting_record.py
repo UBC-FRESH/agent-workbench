@@ -28,11 +28,20 @@ def make_record(tmp_path: Path, configuration: str = "C1") -> tuple[Path, dict]:
         subprocess.run(["git", "config", "user.name", "Fixture"], cwd=repo, check=True)
         (repo / "tracked").write_text("fixture\n"); subprocess.run(["git", "add", "tracked"], cwd=repo, check=True); subprocess.run(["git", "commit", "-qm", "fixture"], cwd=repo, check=True)
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
+    expected_edges = {
+        "C0": [("coordinator", "advisor")],
+        "C1": [("coordinator", "worker"), ("coordinator", "advisor")],
+        "C2": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")],
+        "C3": [("coordinator", "supervisor"), ("coordinator", "advisor"), ("supervisor", "worker")],
+        "C4": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")],
+    }[configuration]
+    parent_by_role = {child: parent for parent, child in expected_edges}
     raw_sessions = []
     for role in {r["role"] for r in data["roles"]}:
         raw = tmp_path / f"{role}.jsonl"; raw.write_text(f"{role}\n")
-        raw_sessions.append({"role": role, "session_id": f"{role}-session", "parent_session_id": None if role == "coordinator" else "coordinator-session", "provider": "fixture", "model_class": "fixture", "raw_session_path": raw.name, "sha256": hashlib.sha256(raw.read_bytes()).hexdigest(), "terminal_event": "completed"})
-    edges = [{"parent_session_id": "coordinator-session", "child_session_id": f"{role}-session", "parent_role": "coordinator", "child_role": role, "fork_context": False, "source_artifact_path": f"edge-{role}.json", "source_artifact_sha256": ""} for role in {r["role"] for r in data["roles"]} if role != "coordinator"]
+        parent_role = parent_by_role.get(role)
+        raw_sessions.append({"role": role, "session_id": f"{role}-session", "parent_session_id": None if parent_role is None else f"{parent_role}-session", "provider": "fixture", "model_class": "fixture", "raw_session_path": raw.name, "sha256": hashlib.sha256(raw.read_bytes()).hexdigest(), "terminal_event": "completed"})
+    edges = [{"parent_session_id": f"{parent}-session", "child_session_id": f"{child}-session", "parent_role": parent, "child_role": child, "fork_context": False, "source_artifact_path": f"edge-{parent}-{child}.json", "source_artifact_sha256": ""} for parent, child in expected_edges]
     for edge in edges:
         artifact = tmp_path / edge["source_artifact_path"]; artifact.write_text(edge["child_role"]); edge["source_artifact_sha256"] = hashlib.sha256(artifact.read_bytes()).hexdigest()
     manifest = {"schema_version": "p107_run_evidence_manifest_v1", "run_id": data["run_id"], "configuration_id": configuration, "repository_path": str(repo), "starting_commit": commit, "terminal_event": "completed", "raw_sessions": raw_sessions, "spawn_edges": edges}

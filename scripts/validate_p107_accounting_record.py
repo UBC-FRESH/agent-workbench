@@ -193,7 +193,7 @@ def validate_accounting_record(path: str | Path) -> list[str]:
                     errors.append(f"roles[{index}].checkpoints.{point}.session_id must match a manifest session")
                 snapshot = _canonical_artifact(manifest_path.parent if manifest_path else Path(path).parent, checkpoint.get("snapshot_path"), f"roles[{index}].checkpoints.{point}.snapshot_path", errors)
                 expected = manifest_sessions.get(checkpoint.get("session_id"), {}).get("raw_session_path")
-                if snapshot and snapshot.as_posix() != (manifest_path.parent / expected).as_posix(): errors.append(f"roles[{index}].checkpoints.{point}.snapshot_path must match manifest raw session")
+                if snapshot and manifest_path and expected and snapshot.as_posix() != (manifest_path.parent / expected).as_posix(): errors.append(f"roles[{index}].checkpoints.{point}.snapshot_path must match manifest raw session")
                 if snapshot and checkpoint.get("snapshot_sha256") != hashlib.sha256(snapshot.read_bytes()).hexdigest(): errors.append(f"roles[{index}].checkpoints.{point}.snapshot_sha256 does not match snapshot")
         if role.get("confidence") not in {"high", "medium", "low"}: errors.append(f"roles[{index}].confidence must be high, medium, or low")
     if not _finite_number(data.get("total_paid_usd")) or data.get("total_paid_usd") != total_usd: errors.append("total_paid_usd must equal derived role total")
