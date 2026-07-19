@@ -7,7 +7,7 @@ from scripts.validate_p107_advisor_review import validate_review
 
 def write_pair(tmp_path, *, kind="initial", review=1, verdict="accepted"):
     bundle = {"bundle_sha256":"0"*64,"run_id":"run-1","review_number":review,"packet_kind":kind,"packet_bytes":1,"estimated_input_tokens":1,"acceptance_output":"pass","scope_report":"clean","changed_files":[],"contamination_status":"clean","previous_defect_packet":None,"advisor_session_id":"advisor-1","advisor_lineage_id":"line-1"}
-    if kind == "repair_delta": bundle["previous_defect_packet"] = {"defect_id":"D1"}
+    if kind == "repair_delta": bundle["previous_defect_packet"] = {"defect_id":"D1", "failed_evidence":"test failed", "acceptance_condition":"test passes"}
     unsigned = dict(bundle); unsigned["bundle_sha256"] = ""
     bundle["bundle_sha256"] = hashlib.sha256((json.dumps(unsigned, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()
     result = {"run_id":"run-1","review_number":review,"verdict":verdict,"bundle_sha256":bundle["bundle_sha256"],"deterministic_acceptance":True,"correctness":4,"score":9,"critical_defects":[],"defect_packet":None,"advisor_session_id":"advisor-1","advisor_lineage_id":"line-1"}
@@ -122,7 +122,7 @@ def write_history(tmp_path, count=3):
         bp, vp = write_pair(folder, kind="initial" if review == 1 else "repair_delta", review=review, verdict="accepted" if review == count else "defect_packet")
         entries.append({"review_number": review, "bundle_path": f"r{review}/{bp.name}", "verdict_path": f"r{review}/{vp.name}", "bundle_sha256": hashlib.sha256(bp.read_bytes()).hexdigest(), "verdict_sha256": hashlib.sha256(vp.read_bytes()).hexdigest(), "prior_verdict_sha256": prior, "advisor_lineage_id": "line-1", "advisor_session_id": "advisor-1"})
         prior = entries[-1]["verdict_sha256"]
-    history = tmp_path / "history.json"; history.write_text(json.dumps({"entries": entries}) + "\n")
+    history = tmp_path / "history.json"; history.write_text(json.dumps({"entries": entries, "terminal_verdict": "accepted"}) + "\n")
     return history, tmp_path / f"r{count}" / "bundle.json", tmp_path / f"r{count}" / "verdict.json"
 
 
@@ -153,3 +153,27 @@ def test_history_rejects_altered_artifact_bytes(tmp_path):
     history, bp, vp = write_history(tmp_path)
     first = tmp_path / "r1" / "bundle.json"; first.write_text(first.read_text() + " ")
     assert any("sha256 mismatch" in error for error in validate_review(bp, vp, history_path=history))
+
+
+def test_history_rejects_unrelated_defect_lineage(tmp_path):
+    history, bp, vp = write_history(tmp_path, count=2)
+    repair_path = tmp_path / "r2" / "bundle.json"
+    repair = json.loads(repair_path.read_text())
+    repair["previous_defect_packet"] = {"defect_id": "UNRELATED"}
+    unsigned = dict(repair); unsigned["bundle_sha256"] = ""
+    repair["bundle_sha256"] = hashlib.sha256((json.dumps(unsigned, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()
+    repair_path.write_text(json.dumps(repair) + "\n")
+    data = json.loads(history.read_text()); data["entries"][1]["bundle_sha256"] = hashlib.sha256(repair_path.read_bytes()).hexdigest(); history.write_text(json.dumps(data) + "\n")
+    assert any("does not match the prior verdict" in error for error in validate_review(bp, vp, history_path=history))
+
+
+def test_history_rejects_repair_after_terminal_verdicts(tmp_path):
+    for terminal in ("accepted", "verified_blocker"):
+        case = tmp_path / terminal; case.mkdir()
+        history, bp, vp = write_history(case, count=2)
+        first_verdict = case / "r1" / "verdict.json"
+        verdict = json.loads(first_verdict.read_text()); verdict["verdict"] = terminal
+        if terminal == "verified_blocker": verdict["deterministic_acceptance"] = False; verdict["critical_defects"] = ["blocked"]
+        first_verdict.write_text(json.dumps(verdict) + "\n")
+        data = json.loads(history.read_text()); data["entries"][0]["verdict_sha256"] = hashlib.sha256(first_verdict.read_bytes()).hexdigest(); data["entries"][1]["prior_verdict_sha256"] = data["entries"][0]["verdict_sha256"]; history.write_text(json.dumps(data) + "\n")
+        assert any("cannot follow terminal verdict" in error for error in validate_review(bp, vp, history_path=history))

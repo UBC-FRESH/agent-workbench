@@ -1,8 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": ["entries"],
+  "required": ["entries", "terminal_verdict"],
   "properties": {
+    "terminal_verdict": {"enum": ["accepted", "defect_packet", "verified_blocker"]},
     "entries": {
       "type": "array",
       "minItems": 1,

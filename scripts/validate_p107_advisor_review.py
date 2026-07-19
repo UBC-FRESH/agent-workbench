@@ -147,6 +147,7 @@ def _validate_history(history_path: Path, bundle_path: Path, verdict_path: Path)
     root = history_path.parent
     expected_identity: tuple[str, str] | None = None
     prior_verdict_hash: str | None = None
+    prior_verdict: dict[str, Any] | None = None
     for index, entry in enumerate(entries):
         label = f"review history entries[{index}]"
         if not isinstance(entry, dict):
@@ -189,12 +190,20 @@ def _validate_history(history_path: Path, bundle_path: Path, verdict_path: Path)
                 errors.append("review 1 cannot have a prior verdict hash")
         elif entry.get("prior_verdict_sha256") != prior_verdict_hash:
             errors.append(f"{label} does not chain to the prior verdict hash")
+        if prior_verdict is not None:
+            if prior_verdict.get("verdict") in {"accepted", "verified_blocker"}:
+                errors.append(f"{label} cannot follow terminal verdict {prior_verdict['verdict']}")
+            elif prior_verdict.get("verdict") == "defect_packet" and bundle.get("previous_defect_packet") != prior_verdict.get("defect_packet"):
+                errors.append(f"{label} defect packet does not match the prior verdict")
         prior_verdict_hash = entry.get("verdict_sha256")
+        prior_verdict = verdict
     final = entries[-1] if isinstance(entries[-1], dict) else {}
     if final.get("review_number") != len(entries):
         errors.append("final history entry must be the terminal review")
     if root / final.get("bundle_path", "") != bundle_path or root / final.get("verdict_path", "") != verdict_path:
         errors.append("terminal verdict must be the final history entry")
+    if history.get("terminal_verdict") != (prior_verdict or {}).get("verdict"):
+        errors.append("review history terminal_verdict must equal the final verdict")
     return errors
 
 
