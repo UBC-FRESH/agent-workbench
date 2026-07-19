@@ -14,5 +14,13 @@
   "model_catalog_sha256": "REPLACE_WITH_SHA256",
   "effective_config_path": "REPLACE_WITH_EFFECTIVE_CONFIG_SNAPSHOT",
   "effective_config_sha256": "REPLACE_WITH_SHA256",
+  "required_inputs": [
+    {"name": "c0_prompt", "path": "REPLACE_WITH_C0_PROMPT_PATH", "sha256": "REPLACE_WITH_SHA256"},
+    {"name": "c1_prompt", "path": "REPLACE_WITH_C1_PROMPT_PATH", "sha256": "REPLACE_WITH_SHA256"},
+    {"name": "c2_prompt", "path": "REPLACE_WITH_C2_PROMPT_PATH", "sha256": "REPLACE_WITH_SHA256"},
+    {"name": "c3_prompt", "path": "REPLACE_WITH_C3_PROMPT_PATH", "sha256": "REPLACE_WITH_SHA256"},
+    {"name": "c4_prompt", "path": "REPLACE_WITH_C4_PROMPT_PATH", "sha256": "REPLACE_WITH_SHA256"},
+    {"name": "advisor_rubric", "path": "REPLACE_WITH_ADVISOR_RUBRIC_PATH", "sha256": "REPLACE_WITH_SHA256"}
+  ],
   "ambient_memories_enabled": false
 }

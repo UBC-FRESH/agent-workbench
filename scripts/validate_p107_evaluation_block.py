@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 import sys
 from pathlib import Path
 
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 COMMIT = re.compile(r"^[0-9a-f]{40}$")
+REQUIRED_INPUTS = ("c0_prompt", "c1_prompt", "c2_prompt", "c3_prompt", "c4_prompt", "advisor_rubric")
 
 
 def validate(path: str | Path) -> list[str]:
@@ -32,6 +34,55 @@ def validate(path: str | Path) -> list[str]:
             errors.append(f"{field} must be materialized")
     if block.get("ambient_memories_enabled") is not False:
         errors.append("ambient_memories_enabled must be false")
+    inputs = block.get("required_inputs")
+    if not isinstance(inputs, list):
+        return errors + ["required_inputs must list every C0-C4 prompt and Advisor rubric"]
+    by_name = {}
+    paths = set()
+    block_path = Path(path).resolve()
+    for item in inputs:
+        if not isinstance(item, dict):
+            errors.append("required input must be an object")
+            continue
+        name, rel, digest = item.get("name"), item.get("path"), item.get("sha256")
+        if isinstance(name, str):
+            if name in by_name:
+                errors.append(f"duplicate required input: {name}")
+            by_name[name] = item
+        if not isinstance(rel, str) or not rel.strip() or "REPLACE_WITH" in rel:
+            errors.append(f"{name or 'required input'} path must be materialized")
+            continue
+        if not isinstance(digest, str) or not SHA256.fullmatch(digest):
+            errors.append(f"{name or 'required input'} sha256 must be a lowercase SHA-256")
+        candidate = Path(rel)
+        if candidate.is_absolute() or any(part == ".." for part in candidate.parts):
+            errors.append(f"{name or 'required input'} path must stay relative to the block")
+            continue
+        target = block_path.parent / candidate
+        try:
+            current = block_path.parent
+            components = []
+            for part in candidate.parts:
+                current = current / part
+                components.append(current)
+            if any(part.is_symlink() for part in components):
+                errors.append(f"{name or 'required input'} path must not use symlinks")
+                continue
+            resolved = target.resolve(strict=True)
+            if resolved != target.resolve() or not resolved.is_file():
+                errors.append(f"{name or 'required input'} path must name a regular file")
+                continue
+            if rel in paths:
+                errors.append(f"duplicate required input path: {rel}")
+            paths.add(rel)
+            actual = hashlib.sha256(resolved.read_bytes()).hexdigest()
+            if isinstance(digest, str) and SHA256.fullmatch(digest) and actual != digest:
+                errors.append(f"{name or 'required input'} sha256 does not match file")
+        except (OSError, RuntimeError):
+            errors.append(f"{name or 'required input'} file is missing or inaccessible")
+    for name in REQUIRED_INPUTS:
+        if name not in by_name:
+            errors.append(f"missing required input: {name}")
     return errors
 
 
