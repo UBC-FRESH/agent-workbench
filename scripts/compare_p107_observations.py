@@ -16,6 +16,9 @@ _BOOLEAN_FLAGS = ("evaluation_block_valid", "deterministic_acceptance", "advisor
 def _cost_valid(value: Any) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value > 0
 
+def _legacy_cost_compatible(row: dict[str, Any], validated_cost: Any) -> bool:
+    return "paid_run_cost" not in row or row.get("paid_run_cost") == validated_cost
+
 def _artifact_valid(row: dict[str, Any], field: str, validator: Any) -> bool:
     path = row.get(field)
     if not isinstance(path, str) or not path.strip():
@@ -30,7 +33,25 @@ def _advisor_artifacts_valid(row: dict[str, Any]) -> bool:
     if not isinstance(bundle, str) or not isinstance(verdict, str):
         return False
     try:
-        return not validate_review(bundle, verdict, history_path=row.get("advisor_history_path"))
+        if validate_review(bundle, verdict, history_path=row.get("advisor_history_path")):
+            return False
+        bundle_data = json.loads(Path(bundle).read_text(encoding="utf-8"))
+        verdict_data = json.loads(Path(verdict).read_text(encoding="utf-8"))
+        manifest_data = json.loads(Path(row["evidence_manifest_path"]).read_text(encoding="utf-8"))
+        advisor_sessions = [s.get("session_id") for s in manifest_data.get("raw_sessions", [])
+                            if isinstance(s, dict) and s.get("role") == "advisor"]
+        advisor_session = advisor_sessions[0] if len(advisor_sessions) == 1 else None
+        return (
+            verdict_data.get("verdict") == "accepted"
+            and verdict_data.get("deterministic_acceptance") is True
+            and bundle_data.get("run_id") == row.get("run_id")
+            and verdict_data.get("run_id") == row.get("run_id")
+            and bundle_data.get("advisor_session_id") == advisor_session
+            and verdict_data.get("advisor_session_id") == advisor_session
+            and bundle_data.get("advisor_lineage_id") == verdict_data.get("advisor_lineage_id")
+            and (row.get("advisor_session_id") is None or row.get("advisor_session_id") == advisor_session)
+            and (row.get("advisor_lineage_id") is None or row.get("advisor_lineage_id") == bundle_data.get("advisor_lineage_id"))
+        )
     except (OSError, TypeError, ValueError, json.JSONDecodeError):
         return False
 
@@ -92,7 +113,10 @@ def _reasons(row: dict[str, Any], *, baseline: bool = False, duplicate_ids: bool
             if edges != EXPECTED.get(row.get("configuration_id")): reasons.append("topology_session_reuse")
         except (OSError, json.JSONDecodeError): reasons.append("topology_session_reuse")
     if row.get("model_identity_valid") is not True: reasons.append("frozen_input_hash_drift")
-    if accounting is None or not _cost_valid(accounting.get("total_paid_usd")): reasons.append("accounting_ineligible")
+    if accounting is None or not _cost_valid(accounting.get("total_paid_usd")):
+        reasons.append("accounting_ineligible")
+    elif not _legacy_cost_compatible(row, accounting.get("total_paid_usd")):
+        reasons.append("accounting_ineligible")
     if baseline and row.get("baseline_run_id") is not None: reasons.append("baseline_id_invalid")
     if not baseline and (not isinstance(row.get("baseline_run_id"), str) or not row["baseline_run_id"].strip()): reasons.append("missing_baseline_id")
     return list(dict.fromkeys(reasons))
