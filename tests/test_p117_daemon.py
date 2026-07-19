@@ -46,15 +46,38 @@ def test_restart_reconciles_recorded_flush_without_resending(tmp_path: Path):
     restarted = BoundedSupervisionDaemon(
         lease=daemon.lease,
         journal=SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id="run-117"),
-        adapter=adapter,
+        adapter=FakeNativeSessionAdapter(daemon.binding),
         binding=daemon.binding,
     )
     assert restarted.flush(now=NOW).reason == "bundle_already_selected"
     assert len(adapter.messages) == 1
 
 
+def test_restart_preserves_unknown_delivery_as_fail_closed(tmp_path: Path):
+    daemon, _adapter = make_daemon(tmp_path)
+    assert daemon.accept_event(event(), now=NOW)
+    uncertain = FakeNativeSessionAdapter(daemon.binding, uncertain_delivery=True)
+    paused = BoundedSupervisionDaemon(
+        lease=daemon.lease,
+        journal=SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id="run-117"),
+        adapter=uncertain,
+        binding=daemon.binding,
+    )
+    assert paused.flush(now=NOW).reason == "paused_reconciliation"
+    restarted = BoundedSupervisionDaemon(
+        lease=daemon.lease,
+        journal=SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id="run-117"),
+        adapter=FakeNativeSessionAdapter(daemon.binding),
+        binding=daemon.binding,
+    )
+    assert restarted.flush(now=NOW).reason == "paused_reconciliation"
+    kinds = [record["kind"] for record in restarted.journal.records()]
+    assert "flush_request" in kinds and "delivery_intent" in kinds and "native_receipt" in kinds
+
+
 def test_closed_run_writes_post_close_rejection_receipt(tmp_path: Path):
     daemon, _adapter = make_daemon(tmp_path)
     daemon.close()
     assert not daemon.accept_event(event(), now=NOW)
-    assert any(record.get("kind") == "rejection" for record in daemon.journal.records())
+    assert not daemon.flush(now=NOW).accepted
+    assert all(record.get("reason") == "closed" for record in daemon.journal.records() if record.get("kind") == "rejection")
