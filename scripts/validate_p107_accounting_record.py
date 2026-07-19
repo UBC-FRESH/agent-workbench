@@ -60,6 +60,17 @@ def _load_catalog(catalog: dict[str, Any], errors: list[str]) -> dict[str, Any]:
     return value
 
 
+def _canonical_artifact(root: Path, value: Any, label: str, errors: list[str]) -> Path | None:
+    if not isinstance(value, str) or not value or Path(value).is_absolute() or ".." in Path(value).parts or Path(value).as_posix() != value:
+        errors.append(f"{label} must be a canonical relative path")
+        return None
+    path = root / value
+    if not path.is_file() or path.is_symlink():
+        errors.append(f"{label} must be an existing regular file")
+        return None
+    return path
+
+
 def validate_accounting_record(path: str | Path) -> list[str]:
     try:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -74,12 +85,33 @@ def validate_accounting_record(path: str | Path) -> list[str]:
     config = data.get("configuration_id")
     if config not in CONFIG_ROLES: errors.append("configuration_id must be one of C0, C1, C2, C3, C4")
 
+    binding = _required_object(data, "run_evidence_manifest", errors)
+    manifest_path = _canonical_artifact(Path(path).parent, binding.get("path"), "run_evidence_manifest.path", errors) if binding else None
+    manifest: dict[str, Any] = {}
+    manifest_sessions: dict[str, dict[str, Any]] = {}
+    if manifest_path:
+        digest = binding.get("sha256")
+        actual = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+        if not isinstance(digest, str) or digest.removeprefix("sha256:") != actual:
+            errors.append("run_evidence_manifest.sha256 does not match artifact")
+        try:
+            from validate_p107_run_evidence_manifest import validate_manifest
+            errors.extend(f"run evidence manifest: {e}" for e in validate_manifest(manifest_path))
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"cannot load run evidence manifest: {exc}")
+    if manifest:
+        if data.get("run_id") != manifest.get("run_id"): errors.append("run_id must match run evidence manifest")
+        if data.get("configuration_id") != manifest.get("configuration_id"): errors.append("configuration_id must match run evidence manifest")
+        manifest_sessions = {s.get("session_id"): s for s in manifest.get("raw_sessions", []) if isinstance(s, dict) and _nonempty(s.get("session_id"))}
+
     source = _required_object(data, "source_session_identity", errors)
     if source:
         if source.get("run_id") != data.get("run_id"): errors.append("source_session_identity.run_id must match run_id")
         ids = source.get("session_ids")
         if not isinstance(ids, list) or not ids or not all(_nonempty(x) for x in ids) or len(ids) != len(set(ids)):
             errors.append("source_session_identity.session_ids must be a nonempty unique list")
+        if manifest_sessions and set(ids or []) != set(manifest_sessions): errors.append("source_session_identity.session_ids must match manifest sessions")
 
     catalog = _required_object(data, "pricing_catalog", errors)
     for key in ("catalog_id", "catalog_date", "provenance", "content_hash"):
@@ -148,7 +180,21 @@ def validate_accounting_record(path: str | Path) -> list[str]:
                 role_total += derived
         if not _finite_number(role.get("total_usd")) or role.get("total_usd") != role_total: errors.append(f"roles[{index}].total_usd must equal derived token USD total")
         total_usd += role_total
-        if not isinstance(role.get("checkpoints"), dict) or not _nonempty(role["checkpoints"].get("start")) or not _nonempty(role["checkpoints"].get("end")): errors.append(f"roles[{index}].checkpoints must have start and end")
+        checkpoints = role.get("checkpoints")
+        if not isinstance(checkpoints, dict):
+            errors.append(f"roles[{index}].checkpoints must have start and end")
+        else:
+            for point in ("start", "end"):
+                checkpoint = checkpoints.get(point)
+                if not isinstance(checkpoint, dict):
+                    errors.append(f"roles[{index}].checkpoints.{point} must identify a hashed raw-session snapshot")
+                    continue
+                if checkpoint.get("session_id") != session or checkpoint.get("session_id") not in manifest_sessions:
+                    errors.append(f"roles[{index}].checkpoints.{point}.session_id must match a manifest session")
+                snapshot = _canonical_artifact(manifest_path.parent if manifest_path else Path(path).parent, checkpoint.get("snapshot_path"), f"roles[{index}].checkpoints.{point}.snapshot_path", errors)
+                expected = manifest_sessions.get(checkpoint.get("session_id"), {}).get("raw_session_path")
+                if snapshot and snapshot.as_posix() != (manifest_path.parent / expected).as_posix(): errors.append(f"roles[{index}].checkpoints.{point}.snapshot_path must match manifest raw session")
+                if snapshot and checkpoint.get("snapshot_sha256") != hashlib.sha256(snapshot.read_bytes()).hexdigest(): errors.append(f"roles[{index}].checkpoints.{point}.snapshot_sha256 does not match snapshot")
         if role.get("confidence") not in {"high", "medium", "low"}: errors.append(f"roles[{index}].confidence must be high, medium, or low")
     if not _finite_number(data.get("total_paid_usd")) or data.get("total_paid_usd") != total_usd: errors.append("total_paid_usd must equal derived role total")
     if config in CONFIG_ROLES and seen_roles != CONFIG_ROLES[config]: errors.append("roles must contain exactly the required paid roles for configuration_id")

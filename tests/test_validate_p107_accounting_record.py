@@ -3,6 +3,7 @@ import hashlib
 import sys
 from pathlib import Path
 import pytest
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -20,6 +21,27 @@ def make_record(tmp_path: Path, configuration: str = "C1") -> tuple[Path, dict]:
         supervisor["session_id"] = "supervisor-session"
         data["roles"].append(supervisor)
     data["source_session_identity"]["session_ids"] = [r["session_id"] for r in data["roles"]]
+    repo = tmp_path / "repo"; repo.mkdir(exist_ok=True)
+    if not (repo / ".git").exists():
+        subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
+        subprocess.run(["git", "config", "user.name", "Fixture"], cwd=repo, check=True)
+        (repo / "tracked").write_text("fixture\n"); subprocess.run(["git", "add", "tracked"], cwd=repo, check=True); subprocess.run(["git", "commit", "-qm", "fixture"], cwd=repo, check=True)
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
+    raw_sessions = []
+    for role in {r["role"] for r in data["roles"]}:
+        raw = tmp_path / f"{role}.jsonl"; raw.write_text(f"{role}\n")
+        raw_sessions.append({"role": role, "session_id": f"{role}-session", "parent_session_id": None if role == "coordinator" else "coordinator-session", "provider": "fixture", "model_class": "fixture", "raw_session_path": raw.name, "sha256": hashlib.sha256(raw.read_bytes()).hexdigest(), "terminal_event": "completed"})
+    edges = [{"parent_session_id": "coordinator-session", "child_session_id": f"{role}-session", "parent_role": "coordinator", "child_role": role, "fork_context": False, "source_artifact_path": f"edge-{role}.json", "source_artifact_sha256": ""} for role in {r["role"] for r in data["roles"]} if role != "coordinator"]
+    for edge in edges:
+        artifact = tmp_path / edge["source_artifact_path"]; artifact.write_text(edge["child_role"]); edge["source_artifact_sha256"] = hashlib.sha256(artifact.read_bytes()).hexdigest()
+    manifest = {"schema_version": "p107_run_evidence_manifest_v1", "run_id": data["run_id"], "configuration_id": configuration, "repository_path": str(repo), "starting_commit": commit, "terminal_event": "completed", "raw_sessions": raw_sessions, "spawn_edges": edges}
+    manifest_path = tmp_path / "run-evidence-manifest.json"; manifest_path.write_text(json.dumps(manifest))
+    data["run_evidence_manifest"] = {"path": manifest_path.name, "sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest()}
+    for role in data["roles"]:
+        raw = next(s for s in raw_sessions if s["role"] == role["role"])
+        checkpoint = {"session_id": role["session_id"], "snapshot_path": raw["raw_session_path"], "snapshot_sha256": raw["sha256"]}
+        role["checkpoints"] = {"start": checkpoint, "end": checkpoint}
     catalog = {"schema_version": 1, "entries": [{"model_id": "model-id", "rates": {"input_per_1m_usd": 1.0, "cached_input_read_per_1m_usd": 0.1, "output_per_1m_usd": 2.0}}]}
     catalog_path = tmp_path / "pricing-catalog.json"
     raw = json.dumps(catalog).encode()
@@ -96,6 +118,28 @@ def test_rejects_incorrect_derived_usd(tmp_path: Path) -> None:
     data["roles"][0]["token_usd"]["output"] = 0
     path.write_text(json.dumps(data))
     assert any("catalog-derived USD" in e for e in validate_accounting_record(path))
+
+def test_rejects_nonexistent_or_altered_manifest(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["run_evidence_manifest"]["path"] = "missing.json"
+    path.write_text(json.dumps(data))
+    assert any("run_evidence_manifest.path" in e for e in validate_accounting_record(path))
+    path, data = make_record(tmp_path)
+    data["run_evidence_manifest"]["sha256"] = "0" * 64
+    path.write_text(json.dumps(data))
+    assert any("run_evidence_manifest.sha256" in e for e in validate_accounting_record(path))
+
+def test_rejects_checkpoint_not_bound_to_manifest_session(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["roles"][0]["checkpoints"]["start"]["session_id"] = "forged-session"
+    path.write_text(json.dumps(data))
+    assert any("must match a manifest session" in e for e in validate_accounting_record(path))
+
+def test_rejects_checkpoint_without_snapshot_evidence(tmp_path: Path) -> None:
+    path, data = make_record(tmp_path)
+    data["roles"][0]["checkpoints"]["end"] = "checkpoint prose"
+    path.write_text(json.dumps(data))
+    assert any("hashed raw-session snapshot" in e for e in validate_accounting_record(path))
 
 
 def test_measured_local_cost_requires_adapter_identity(tmp_path: Path) -> None:
