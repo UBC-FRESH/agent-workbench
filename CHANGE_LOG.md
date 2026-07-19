@@ -4345,8 +4345,8 @@ exact staged lines, then restored the temp config hash byte-for-byte.
 ## 2026-07-18 - Planned P117 run-scoped supervision daemon
 
 - Activated parent issue #686 on branch
-  `feature/p117-run-scoped-supervision-daemon`; child issue #687 is the
-  planning/design task, with planned tasks P117.2-P117.6.
+  `feature/p117-run-scoped-supervision-daemon`; child issue #687 is P117.1,
+  with planned tasks P117.2-P117.6.
 - The design responds to P116's r11 stale-post-cursor finding: a supervision
   cursor must not cross a run's lease, journal, or closure boundary. P117
   therefore plans run-scoped lease/closure/journal state, deterministic

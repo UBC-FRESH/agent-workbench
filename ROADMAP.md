@@ -6142,16 +6142,17 @@ without turning the control plane into an unbounded autonomous runtime.
 
 Tasks:
 
-- [ ] P117.2 Define the run-scoped lease, closure, journal, ownership, and
+- [x] P117.1 Define the run-scoped lease, closure, journal, ownership, and
       terminal-state contract.
-- [ ] P117.3 Specify and test the deterministic flusher, including restart,
+- [x] P117.2 Specify and test the deterministic flusher, including restart,
       ordering, idempotency, and closure behavior.
-- [ ] P117.4 Specify the native session adapter and its bounded authority and
+- [ ] P117.3 Specify the native session adapter and its bounded authority and
       session-lineage evidence requirements.
-- [ ] P117.5 Produce one bounded native daemon proof with exact run-scoped
+- [ ] P117.4 Produce one bounded native daemon proof with exact run-scoped
       artifacts and stop conditions.
-- [ ] P117.6 Run the offline sanitized policy replay and perform the evidence
-      audit, reporting quality, protocol, and economics separately.
+- [ ] P117.5 Run the offline sanitized policy replay.
+- [ ] P117.6 Perform the evidence audit, reporting quality, protocol, and
+      economics separately.
 
 Acceptance criteria:
 
