@@ -4293,3 +4293,15 @@ exact staged lines, then restored the temp config hash byte-for-byte.
   A fresh Qwen CLI attempt loaded the P116 root/hooks but disconnected from the
   remote Responses stream before the first model tool call. This is retained as
   transport evidence, not a hook failure; P116.6 still requires live firing.
+
+## 2026-07-19 - Completed P116.3 coordinator event reducer
+
+- Added a credential-free controller module that refuses invalid event JSONL or
+  cursors, reduces only unacknowledged validated events to a compact
+  Supervisor-review delta, and atomically persists acknowledgement for restart
+  recovery.
+- Added a small local script that renders one delta and can acknowledge it; the
+  script has no model, Worker-message, process-control, or provider surface.
+- Focused tests cover acknowledged-event non-replay, malformed/reordered input,
+  invalid cursor rejection, workspace-mismatch signaling, atomic cursor writes,
+  and the script smoke path.
