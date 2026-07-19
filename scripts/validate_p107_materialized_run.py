@@ -10,6 +10,20 @@ from pathlib import Path
 from typing import Any
 
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+ROLES = {
+    "C0": ["coordinator", "advisor"],
+    "C1": ["coordinator", "worker", "advisor"],
+    "C2": ["coordinator", "supervisor", "worker", "advisor"],
+    "C3": ["coordinator", "supervisor", "advisor", "worker"],
+    "C4": ["coordinator", "supervisor", "worker", "advisor"],
+}
+CHILDREN = {
+    "C0": ["advisor"],
+    "C1": ["worker", "advisor"],
+    "C2": ["supervisor", "worker", "advisor"],
+    "C3": ["supervisor", "advisor"],
+    "C4": ["supervisor", "worker", "advisor"],
+}
 
 
 def _obj(value: Any, name: str, errors: list[str]) -> dict[str, Any]:
@@ -24,6 +38,33 @@ def _sha(value: Any, name: str, errors: list[str]) -> bool:
         errors.append(f"{name} must be a lowercase SHA-256")
         return False
     return True
+
+
+def _artifact(raw: Any, label: str, root: Path, errors: list[str], *, json_only: bool = False) -> Path | None:
+    if not isinstance(raw, str) or not raw.strip():
+        errors.append(f"{label} must be materialized")
+        return None
+    candidate = Path(raw)
+    if candidate.is_absolute() or ".." in candidate.parts:
+        errors.append(f"{label} must be beneath the materialized-run directory")
+        return None
+    target = (root / candidate).resolve(strict=False)
+    try:
+        target.relative_to(root.resolve())
+    except ValueError:
+        errors.append(f"{label} must be beneath the materialized-run directory")
+        return None
+    current = root.resolve()
+    for part in candidate.parts:
+        current = current / part
+        if current.is_symlink():
+            errors.append(f"{label} must not be a symlink")
+            return None
+    if json_only and target.suffix.lower() != ".json":
+        errors.append(f"{label} must be a JSON path")
+    if not target.is_file():
+        errors.append(f"{label} must be an existing file")
+    return target
 
 
 def validate_materialized_run(path: str | Path) -> list[str]:
@@ -57,38 +98,39 @@ def validate_materialized_run(path: str | Path) -> list[str]:
                 errors.append(f"frozen_files[{index}].path must be materialized")
                 continue
             if _sha(entry.get("sha256"), f"frozen_files[{index}].sha256", errors):
-                target = Path(raw)
-                if not target.is_absolute():
-                    target = document_path.parent / target
-                try:
-                    actual = hashlib.sha256(target.read_bytes()).hexdigest()
-                except OSError as exc:
-                    errors.append(f"frozen_files[{index}] cannot read named file: {exc}")
-                else:
-                    if actual != entry["sha256"]:
-                        errors.append(f"frozen_files[{index}] hash mismatch")
+                target = _artifact(raw, f"frozen_files[{index}].path", document_path.parent, errors)
+                if target is not None:
+                    try:
+                        actual = hashlib.sha256(target.read_bytes()).hexdigest()
+                    except OSError as exc:
+                        errors.append(f"frozen_files[{index}] cannot read named file: {exc}")
+                    else:
+                        if actual != entry["sha256"]:
+                            errors.append(f"frozen_files[{index}] hash mismatch")
 
     topology = _obj(document.get("topology"), "topology", errors)
     children = topology.get("coordinator_children")
     if not isinstance(children, list):
         errors.append("topology.coordinator_children must be a list")
         children = []
-    expected = {"C0": {"advisor"}, "C1": {"worker", "advisor"}, "C2": {"supervisor", "worker", "advisor"},
-                "C3": {"supervisor", "advisor"}, "C4": {"supervisor", "worker", "advisor"}}.get(configuration, set())
-    if set(children) != expected:
+    expected = CHILDREN.get(configuration, [])
+    if children != expected or len(children) != len(set(children)):
         errors.append("topology coordinator children mismatch")
-    if configuration == "C2" and topology.get("supervisor_spawned") is True:
-        errors.append("C2 Supervisor spawn is forbidden")
-    if configuration in {"C1", "C4"}:
+    if configuration == "C3" and topology.get("nested_worker_spawned") is not True:
+        errors.append("C3 nested Worker spawn is required")
+    if configuration in {"C0", "C1", "C2", "C4"} and topology.get("supervisor_spawned") is True:
+        errors.append(f"{configuration} Supervisor spawn is forbidden")
+    if configuration in {"C1", "C2", "C3", "C4"}:
         edits = _obj(document.get("implementation_edits"), "implementation_edits", errors)
         paths = edits.get("coordinator_paths", [])
         if not isinstance(paths, list):
             errors.append("implementation_edits.coordinator_paths must be a list")
         elif paths:
-            errors.append("Coordinator implementation edits are forbidden for C1/C4")
+            errors.append("Coordinator implementation edits are forbidden for C1-C4")
 
     sessions = document.get("sessions")
     ids: list[str] = []
+    roles: list[str] = []
     if not isinstance(sessions, list) or not sessions:
         errors.append("sessions must be a nonempty list")
     else:
@@ -99,8 +141,19 @@ def validate_materialized_run(path: str | Path) -> list[str]:
                 errors.append(f"sessions[{index}].session_id must be materialized")
             else:
                 ids.append(sid)
+            role = session.get("role")
+            if role not in ROLES.get(configuration, []):
+                errors.append(f"sessions[{index}].role is not active for configuration")
+            else:
+                roles.append(role)
+            for field in ("provider", "model_class"):
+                if not isinstance(session.get(field), str) or not session[field].strip():
+                    errors.append(f"sessions[{index}].{field} must be declared")
         if len(ids) != len(set(ids)):
             errors.append("duplicate session IDs")
+        expected_roles = set(ROLES.get(configuration, []))
+        if len(roles) != len(set(roles)) or set(roles) != expected_roles:
+            errors.append("sessions must contain each active role exactly once")
     prior = document.get("prior_session_ids", [])
     if not isinstance(prior, list):
         errors.append("prior_session_ids must be a list")
@@ -125,6 +178,14 @@ def validate_materialized_run(path: str | Path) -> list[str]:
         errors.append("Advisor verdict is missing or invalid")
     if advisor.get("bundle_path") == advisor.get("verdict_path"):
         errors.append("Advisor bundle and verdict must be distinct files")
+    bundle = _artifact(advisor.get("bundle_path"), "advisor.bundle_path", document_path.parent, errors, json_only=True)
+    verdict = _artifact(advisor.get("verdict_path"), "advisor.verdict_path", document_path.parent, errors, json_only=True)
+    if bundle is not None and verdict is not None and bundle == verdict:
+        errors.append("Advisor bundle and verdict must be distinct files")
+    for target, key in ((bundle, "bundle_sha256"), (verdict, "verdict_sha256")):
+        if target is not None and _sha(advisor.get(key), f"advisor.{key}", errors):
+            if hashlib.sha256(target.read_bytes()).hexdigest() != advisor[key]:
+                errors.append(f"advisor.{key} hash mismatch")
     return errors
 
 
