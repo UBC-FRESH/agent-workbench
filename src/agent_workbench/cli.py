@@ -169,6 +169,7 @@ from .economics import (
     compute_indexed_cost,
     render_economics_markdown,
 )
+from .source_audit import audit_files
 from .retrieval import PromotedIndex, query_by_page_range, trace_full_document
 from .workflow import (
     load_workflow_step,
@@ -213,6 +214,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Agent Workbench checkout root. Defaults to the installed editable checkout.",
     )
     subparsers = parser.add_subparsers(dest="command")
+
+    source_audit_parser = subparsers.add_parser(
+        "source-audit", help="Audit source-anchored JSONL records offline."
+    )
+    source_audit_parser.add_argument("--manifest", type=Path, required=True)
+    source_audit_parser.add_argument("--jsonl", "--records", dest="records", type=Path, required=True)
+    source_audit_parser.add_argument("--output", type=Path, required=True)
+    source_audit_parser.set_defaults(func=run_source_audit)
 
     smoke_parser = subparsers.add_parser(
         "smoke",
@@ -1693,6 +1702,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser.set_defaults(func=run_overview)
     return parser
+
+
+def run_source_audit(args: argparse.Namespace) -> int:
+    result = audit_files(args.manifest, args.records, args.output)
+    print(json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+    return 0 if result["status"] == "accepted" else 1
 
 
 def add_copilot_sdk_turn_args(parser: argparse.ArgumentParser) -> None:
