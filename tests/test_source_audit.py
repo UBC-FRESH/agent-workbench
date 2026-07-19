@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 from agent_workbench.source_audit import audit_files
@@ -61,3 +64,58 @@ def test_empty_input_is_structured(tmp_path):
     result = audit_files(manifest, records)
     assert result["status"] == "invalid"
     assert result["errors"] == [{"code": "empty_jsonl"}]
+
+
+def cli(tmp_path: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")
+    return subprocess.run(
+        [sys.executable, "-m", "agent_workbench.cli", *args],
+        cwd=tmp_path, env=env, text=True, capture_output=True, check=False,
+    )
+
+
+def test_cli_help_and_source_records_entrypoint(tmp_path):
+    manifest, records = setup(tmp_path, [record()])
+    help_result = cli(tmp_path, "source-audit", "--help")
+    assert help_result.returncode == 0
+    assert all(flag in help_result.stdout for flag in ("--manifest", "--source", "--records"))
+    result = cli(tmp_path, "source-audit", "--manifest", str(manifest), "--records", str(records))
+    assert result.returncode == 0
+    assert json.loads(result.stdout)["status"] == "accepted"
+
+
+def test_cli_manifest_only_and_exit_statuses(tmp_path):
+    manifest, records = setup(tmp_path, [record()])
+    manifest.write_text(json.dumps({"documents": [{"document_id": "d1", "path": "doc.txt", "source_sha256": hashlib.sha256((tmp_path / "doc.txt").read_bytes()).hexdigest()}], "records": records.name}), encoding="utf-8")
+    assert cli(tmp_path, "source-audit", "--manifest", str(manifest)).returncode == 0
+    bad = tmp_path / "bad.jsonl"
+    bad.write_text(json.dumps(record(source_quote="missing")) + "\n", encoding="utf-8")
+    assert cli(tmp_path, "source-audit", "--manifest", str(manifest), "--records", str(bad)).returncode == 1
+    assert cli(tmp_path, "source-audit", "--source", str(tmp_path / "doc.txt")).returncode == 2
+    assert cli(tmp_path, "source-audit", "--manifest", str(tmp_path / "missing.json")).returncode == 2
+
+
+def test_audit_rejects_nonstring_provenance_and_duplicate_ids_deterministically(tmp_path):
+    manifest, records = setup(tmp_path, [record(source_path=3, source_quote="hÃ©llo source"), record(document_id="d1")])
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    data["documents"].append(data["documents"][0])
+    manifest.write_text(json.dumps(data), encoding="utf-8")
+    first = audit_files(manifest, records)
+    second = audit_files(manifest, records)
+    assert first == second
+    assert any(error["code"] == "duplicate_document_id" for error in first["errors"])
+    assert any(error["code"] == "invalid_field" for error in first["records"][0]["errors"])
+
+
+def test_audit_malformed_and_empty_manifest_are_structured(tmp_path):
+    records = tmp_path / "records.jsonl"
+    records.write_text("{}\n", encoding="utf-8")
+    malformed = tmp_path / "malformed.json"
+    malformed.write_text("not json", encoding="utf-8")
+    empty = tmp_path / "empty.json"
+    empty.write_text(json.dumps({"documents": []}), encoding="utf-8")
+    for path in (malformed, empty):
+        result = audit_files(path, records)
+        assert result["status"] in {"error", "invalid"}
+        assert result["errors"] or any(row["errors"] for row in result["records"])

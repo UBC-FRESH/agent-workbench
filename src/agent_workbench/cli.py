@@ -216,13 +216,18 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command")
 
     source_audit_parser = subparsers.add_parser(
-        "source-audit", help="Audit source-anchored JSONL records offline."
+        "source-audit",
+        help="Audit source-anchored JSONL records offline.",
+        description="Audit source-anchored JSONL records offline.",
     )
     source_audit_group = source_audit_parser.add_mutually_exclusive_group(required=True)
     source_audit_group.add_argument("--manifest", type=Path)
     source_audit_group.add_argument("--source", type=Path)
-    source_audit_parser.add_argument("--jsonl", "--records", dest="records", type=Path)
-    source_audit_parser.add_argument("--output", type=Path)
+    source_audit_parser.add_argument(
+        "--jsonl", "--records", dest="records", type=Path,
+        help="JSONL records file; with --manifest it may be inferred from the manifest.",
+    )
+    source_audit_parser.add_argument("--output", type=Path, help="Optional JSON result path.")
     source_audit_parser.set_defaults(func=run_source_audit)
 
     smoke_parser = subparsers.add_parser(
@@ -1711,7 +1716,11 @@ def run_source_audit(args: argparse.Namespace) -> int:
         if not args.records:
             print("--records is required with --source", file=sys.stderr)
             return 2
-        digest = __import__("hashlib").sha256(args.source.read_bytes()).hexdigest()
+        try:
+            digest = __import__("hashlib").sha256(args.source.read_bytes()).hexdigest()
+        except (OSError, UnicodeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
         manifest = args.source.parent / ".source-audit-manifest.json"
         manifest.write_text(json.dumps({"documents": [{"document_id": "source", "path": args.source.name, "source_sha256": digest}]}), encoding="utf-8")
         record_root = args.records
