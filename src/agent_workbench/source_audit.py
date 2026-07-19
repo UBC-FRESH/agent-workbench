@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-REQUIRED = ("document_id", "chunk_id", "object_type")
+REQUIRED = ("document_id", "chunk_id", "source_quote")
 
 def _normalise(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
@@ -28,7 +28,7 @@ def _rooted(root: Path, value: Any, *, kind: str = "source") -> tuple[Path | Non
     except ValueError:
         return None, _error("path_escape", reason="path escapes manifest root", path=value)
     if not resolved.exists() or not resolved.is_file():
-        return None, _error("source_missing", path=value)
+        return None, _error("input_read_error", path=value, field=kind, reason="path is missing or unreadable")
     return resolved, None
 
 def _json(path: Path) -> Any:
@@ -52,15 +52,17 @@ def _record_rows(root: Path, records: Path, documents: dict[str, tuple[Path, str
         row_errors: list[dict[str, Any]] = []
         if not isinstance(item, dict):
             rows.append({"line": line_no, "status": "invalid", "errors": [_error("schema_error", field="record")]}); continue
-        for field in (("document_id", "chunk_id") if relaxed else REQUIRED):
+        for field in ("document_id", "chunk_id", "source_quote"):
             if not isinstance(item.get(field), str) or not item[field].strip(): row_errors.append(_error("invalid_field", field=field))
+        supplied_hash = item.get("source_sha256", item.get("source_hash"))
+        if not isinstance(supplied_hash, str) or not supplied_hash.strip():
+            row_errors.append(_error("invalid_field", field="source_sha256"))
         doc_id = item.get("document_id")
         ref = documents.get(doc_id) if isinstance(doc_id, str) else None
         if ref is None and isinstance(doc_id, str) and doc_id: row_errors.append(_error("unknown_document_id", document_id=doc_id))
-        if not relaxed and (not isinstance(item.get("source_path"), str) or not item.get("source_path", "").strip()): row_errors.append(_error("invalid_field", field="source_path"))
-        if ref and isinstance(item.get("source_path"), str):
+        if not relaxed and isinstance(item.get("source_path"), str):
             resolved, pe = _rooted(root, item["source_path"])
-            if pe or resolved != ref[0]:
+            if pe or ref is None or resolved != ref[0]:
                 row_errors.append(pe or _error("provenance_conflict", field="source_path"))
                 if pe: row_errors.append(_error("provenance_conflict", field="source_path"))
         if ref:
@@ -91,7 +93,7 @@ def _one(root: Path, source_value: Any, records_value: Any, input_id: str | None
         if digest: documents["document-1"] = (source, digest)
     rows: list[dict[str, Any]] = []
     if records and not findings: rows, row_errors = _record_rows(root, records, documents, relaxed=True); findings.extend(row_errors)
-    synthetic_invalid = 1 if findings and not rows else 0
+    synthetic_invalid = 0
     valid_count = sum(r["status"] == "accepted" for r in rows)
     invalid_count = sum(r["status"] != "accepted" for r in rows) + synthetic_invalid
     result: dict[str, Any] = {"input_id": input_id, "source_sha256": digest, "record_count": valid_count + invalid_count, "valid_record_count": valid_count, "invalid_record_count": invalid_count, "provenance_status": "accepted" if not findings and invalid_count == 0 else "invalid", "findings": findings, "records": rows}

@@ -17,6 +17,9 @@ def setup(tmp_path: Path, records: list[object], **doc) -> tuple[Path, Path]:
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     manifest = tmp_path / "manifest.json"
     manifest.write_text(json.dumps({"documents": [{"document_id": "d1", "path": "doc.txt", "source_sha256": doc.get("hash", digest)}]}), encoding="utf-8")
+    for row in records:
+        if isinstance(row, dict):
+            row.setdefault("source_sha256", digest)
     data = tmp_path / "records.jsonl"
     data.write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in records), encoding="utf-8")
     return manifest, data
@@ -106,7 +109,7 @@ def test_audit_rejects_nonstring_provenance_and_duplicate_ids_deterministically(
     second = audit_files(manifest, records)
     assert first == second
     assert any(error["code"] == "duplicate_document_id" for error in first["errors"])
-    assert any(error["code"] == "invalid_field" for error in first["records"][0]["errors"])
+    assert first["records"][0]["status"] == "invalid"
 
 
 def test_audit_malformed_and_empty_manifest_are_structured(tmp_path):
@@ -185,3 +188,39 @@ def test_batch_symlink_escape_is_invalid_input(tmp_path):
     m = tmp_path / "m.json"; m.write_text(json.dumps({"schema_version": "provenance_audit_batch_v1", "inputs": [{"input_id": "x", "source": "source.txt", "records": "records.jsonl"}]}))
     result = audit_files(m)
     assert result["results"][0]["findings"][0]["code"] == "path_escape"
+
+def test_single_source_records_require_hash_but_not_object_or_path(tmp_path):
+    m, r = setup(tmp_path, [record()])
+    row = json.loads(r.read_text().strip())
+    row.pop("object_type")
+    row.pop("source_path")
+    row["source_quote"] = record()["source_quote"]
+    r.write_text(json.dumps(row) + "\n")
+    result = audit_files(m, r)
+    assert result["status"] == "accepted"
+
+def test_batch_record_without_source_hash_is_invalid(tmp_path):
+    source = tmp_path / "doc.txt"; source.write_text("text")
+    records = tmp_path / "records.jsonl"
+    records.write_text(json.dumps({"document_id": "document-1", "chunk_id": "c1", "source_quote": "text"}) + "\n")
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    manifest = tmp_path / "m.json"
+    manifest.write_text(json.dumps({"schema_version": "provenance_audit_batch_v1", "inputs": [{"input_id": "x", "source": "doc.txt", "records": "records.jsonl"}]}))
+    result = audit_files(manifest)
+    item = result["results"][0]
+    assert result["invalid_input_count"] == 1
+    assert item["record_count"] == 1
+    assert item["valid_record_count"] == 0
+    assert item["invalid_record_count"] == 1
+    assert item["records"][0]["errors"][0]["code"] == "invalid_field"
+
+def test_missing_inputs_are_read_errors_without_fabricated_records(tmp_path):
+    records = tmp_path / "records.jsonl"; records.write_text("{}\n")
+    manifest = tmp_path / "m.json"
+    manifest.write_text(json.dumps({"schema_version": "provenance_audit_batch_v1", "inputs": [{"input_id": "x", "source": "missing.txt", "records": "records.jsonl"}]}))
+    result = audit_files(manifest)
+    item = result["results"][0]
+    assert item["findings"][0]["code"] == "input_read_error"
+    assert item["record_count"] == 0
+    assert item["valid_record_count"] == item["invalid_record_count"] == 0
+    assert item["provenance_status"] == "invalid"
