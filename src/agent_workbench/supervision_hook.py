@@ -15,6 +15,35 @@ from .supervision import SCHEMA_VERSION, validate_events
 RUN_ID_ENV = "P116_RUN_ID"
 ASSIGNED_ROOT_ENV = "P116_ASSIGNED_ROOT"
 SUPERVISION_DIR_ENV = "P116_SUPERVISION_DIR"
+ACTIVATION_FILENAME = "activation.json"
+
+
+def _activation_manifest(project_root: Path) -> dict[str, str] | None:
+    """Load the one Coordinator-staged activation manifest for this root."""
+    candidates = sorted(
+        (project_root / "runtime" / "agent_jobs").glob(f"*/supervision/{ACTIVATION_FILENAME}")
+    )
+    if len(candidates) != 1:
+        return None
+    manifest_path = candidates[0]
+    try:
+        value = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if not isinstance(value, dict) or manifest_path.parent.parent.name == "":
+            return None
+        run_id = value.get("run_id")
+        assigned_root = value.get("assigned_root")
+        supervision_dir = value.get("supervision_dir")
+        if not all(isinstance(item, str) and item for item in (run_id, assigned_root, supervision_dir)):
+            return None
+        root = project_root.resolve()
+        assigned = Path(assigned_root).resolve()
+        output = Path(supervision_dir).resolve()
+        run_dir = manifest_path.parent.parent.resolve()
+        if assigned != root or not _within(output, root) or not _within(output, run_dir):
+            return None
+        return {"run_id": run_id, "assigned_root": str(assigned), "supervision_dir": str(output)}
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        return None
 
 
 def event_from_hook_payload(
@@ -46,12 +75,17 @@ def event_from_hook_payload(
 
 
 def capture_from_environment(payload: dict[str, Any]) -> bool:
-    """Append one event when the explicit P116 probe environment is present."""
+    """Append one event from explicit environment or staged root-local activation."""
     run_id = os.environ.get(RUN_ID_ENV)
     assigned_root_text = os.environ.get(ASSIGNED_ROOT_ENV)
     supervision_dir_text = os.environ.get(SUPERVISION_DIR_ENV)
-    if not run_id or not assigned_root_text or not supervision_dir_text:
-        return False
+    if not (run_id and assigned_root_text and supervision_dir_text):
+        activation = _activation_manifest(Path.cwd())
+        if activation is None:
+            return False
+        run_id = activation["run_id"]
+        assigned_root_text = activation["assigned_root"]
+        supervision_dir_text = activation["supervision_dir"]
 
     assigned_root = Path(assigned_root_text).resolve()
     events_path = Path(supervision_dir_text) / "events.jsonl"

@@ -15,6 +15,17 @@ from agent_workbench.supervision_hook import (
 )
 
 
+WINDOWS_HOOK_COMMAND_BODY = (
+    "& python (Join-Path (git rev-parse --show-toplevel) "
+    "'scripts\\p116_capture_hook.py')"
+)
+EXPECTED_WINDOWS_HOOK_COMMAND = (
+    'powershell -NoProfile -ExecutionPolicy Bypass -Command "'
+    + WINDOWS_HOOK_COMMAND_BODY
+    + '"'
+)
+
+
 def payload(*, cwd: str, event: str = "PostToolUse") -> dict[str, object]:
     return {
         "session_id": "worker-019f77d9",
@@ -61,6 +72,36 @@ def test_capture_is_inert_without_explicit_run_environment(monkeypatch) -> None:
         monkeypatch.delenv(name, raising=False)
 
     assert capture_from_environment(payload(cwd=str(Path.cwd()))) is False
+
+
+def test_capture_uses_staged_activation_manifest(tmp_path: Path, monkeypatch) -> None:
+    run_dir = tmp_path / "runtime" / "agent_jobs" / "run-1"
+    supervision_dir = run_dir / "supervision"
+    supervision_dir.mkdir(parents=True)
+    (supervision_dir / "activation.json").write_text(json.dumps({
+        "run_id": "run-1", "assigned_root": str(tmp_path),
+        "supervision_dir": str(supervision_dir),
+    }), encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    for name in (RUN_ID_ENV, ASSIGNED_ROOT_ENV, SUPERVISION_DIR_ENV):
+        monkeypatch.delenv(name, raising=False)
+
+    assert capture_from_environment(payload(cwd=str(tmp_path)))
+    event = json.loads((supervision_dir / "events.jsonl").read_text(encoding="utf-8"))
+    assert event["run_id"] == "run-1"
+
+
+def test_staged_activation_rejects_malformed_and_out_of_root(tmp_path: Path, monkeypatch) -> None:
+    run_dir = tmp_path / "runtime" / "agent_jobs" / "run-1" / "supervision"
+    run_dir.mkdir(parents=True)
+    activation = run_dir / "activation.json"
+    monkeypatch.chdir(tmp_path)
+    for name in (RUN_ID_ENV, ASSIGNED_ROOT_ENV, SUPERVISION_DIR_ENV):
+        monkeypatch.delenv(name, raising=False)
+    for value in ("not-json", {"run_id": "run-1", "assigned_root": str(tmp_path),
+                                "supervision_dir": str(tmp_path.parent / "outside")}):
+        activation.write_text(value if isinstance(value, str) else json.dumps(value), encoding="utf-8")
+        assert capture_from_environment(payload(cwd=str(tmp_path))) is False
 
 
 def test_capture_appends_sanitized_ordered_events(tmp_path: Path, monkeypatch) -> None:
@@ -112,16 +153,30 @@ def test_capture_records_bounded_local_error(tmp_path: Path, monkeypatch) -> Non
 
 def test_configured_windows_hook_command_captures_event(tmp_path: Path) -> None:
     root = Path(__file__).resolve().parents[1]
+    config = json.loads((root / ".codex" / "hooks.json").read_text(encoding="utf-8"))
+    configured_commands = [
+        hook["command"]
+        for matcher in config["hooks"].values()
+        for entry in matcher
+        for hook in entry["hooks"]
+    ]
+    assert configured_commands == [
+        EXPECTED_WINDOWS_HOOK_COMMAND,
+        EXPECTED_WINDOWS_HOOK_COMMAND,
+    ]
+    assert all(
+        "commandWindows" not in hook
+        for matcher in config["hooks"].values()
+        for entry in matcher
+        for hook in entry["hooks"]
+    )
     env = os.environ | {
         RUN_ID_ENV: "p116-hook-subprocess",
         ASSIGNED_ROOT_ENV: str(tmp_path),
         SUPERVISION_DIR_ENV: str(tmp_path / "supervision"),
     }
     input_payload = json.dumps(payload(cwd=str(tmp_path), event="PreToolUse"))
-    command = (
-        "& python (Join-Path (git rev-parse --show-toplevel) "
-        "'scripts\\p116_capture_hook.py')"
-    )
+    command = WINDOWS_HOOK_COMMAND_BODY
 
     completed = subprocess.run(
         ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command],

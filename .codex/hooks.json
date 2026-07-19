@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& python (Join-Path (git rev-parse --show-toplevel) 'scripts\\p116_capture_hook.py')\"",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& python (Join-Path (git rev-parse --show-toplevel) 'scripts\\p116_capture_hook.py')\"",
             "timeout": 5,
             "statusMessage": "Capturing sanitized supervision event"
           }
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& python (Join-Path (git rev-parse --show-toplevel) 'scripts\\p116_capture_hook.py')\"",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& python (Join-Path (git rev-parse --show-toplevel) 'scripts\\p116_capture_hook.py')\"",
             "timeout": 5,
             "statusMessage": "Capturing sanitized supervision event"
           }
