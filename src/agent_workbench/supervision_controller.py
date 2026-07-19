@@ -29,8 +29,10 @@ def load_manifest(path: Path) -> tuple[dict[str, Any], Path]:
     if not validation.ok:
         raise ValueError("invalid manifest: " + "; ".join(validation.errors))
     root = Path(manifest["assigned_root"]).resolve()
-    if path.resolve() != (root / "manifest.json").resolve():
-        raise ValueError("manifest: manifest file must be assigned_root/manifest.json")
+    supervision_dir = Path(manifest["supervision_dir"]).resolve()
+    _require_within(supervision_dir, root, "supervision_dir")
+    if not path.resolve().is_relative_to(supervision_dir):
+        raise ValueError("manifest: manifest file must be within supervision_dir")
     return manifest, root
 
 

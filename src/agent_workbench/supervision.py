@@ -79,6 +79,7 @@ def validate_manifest(manifest: dict[str, Any]) -> SupervisionValidation:
         "worker_session_id",
         "supervisor_session_id",
         "assigned_root",
+        "supervision_dir",
         "events_path",
         "cursor_path",
         "packets_path",
@@ -96,6 +97,10 @@ def validate_manifest(manifest: dict[str, Any]) -> SupervisionValidation:
         root = Path(root_text)
         if not root.is_absolute():
             errors.append("assigned_root must be absolute")
+
+    supervision_text = manifest.get("supervision_dir")
+    if isinstance(supervision_text, str) and not Path(supervision_text).is_absolute():
+        errors.append("supervision_dir must be absolute")
 
     for field in ("events_path", "cursor_path", "packets_path", "actions_path"):
         value = manifest.get(field)
