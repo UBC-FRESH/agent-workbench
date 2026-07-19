@@ -77,6 +77,10 @@ def validate(path: str | Path) -> list[str]:
             result = subprocess.run(["git", "-C", str(root), "cat-file", "-e", f"{block['starting_commit']}^{{commit}}"], capture_output=True, text=True, check=False)
             if result.returncode != 0:
                 errors.append("starting_commit must be a resolvable local Git commit")
+            else:
+                head = subprocess.run(["git", "-C", str(root), "rev-parse", "--verify", "HEAD"], capture_output=True, text=True, check=False)
+                if head.returncode != 0 or head.stdout.strip() != block["starting_commit"]:
+                    errors.append("repository_root must be checked out at starting_commit")
         except OSError:
             errors.append("starting_commit must be a resolvable local Git commit")
     for path_field, hash_field in SEALED_ARTIFACTS.items():
@@ -132,6 +136,10 @@ def validate(path: str | Path) -> list[str]:
     for name in REQUIRED_INPUTS:
         if name not in by_name:
             errors.append(f"missing required input: {name}")
+    advisor = by_name.get("advisor_rubric")
+    if isinstance(advisor, dict) and isinstance(advisor.get("sha256"), str) and SHA256.fullmatch(advisor["sha256"]):
+        if block.get("rubric_sha256") != advisor["sha256"]:
+            errors.append("rubric_sha256 does not match advisor_rubric sha256")
     return errors
 
 

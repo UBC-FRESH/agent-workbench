@@ -37,6 +37,7 @@ def materialized(tmp_path: Path) -> dict[str, object]:
         file.write_text(source, encoding="utf-8")
         inputs.append({"name": name, "path": file.name, "sha256": hashlib.sha256(file.read_bytes()).hexdigest()})
     block["required_inputs"] = inputs
+    block["rubric_sha256"] = inputs[-1]["sha256"]
     return block
 
 
@@ -125,3 +126,22 @@ def test_rejects_invalid_starting_commit(tmp_path: Path) -> None:
     path = tmp_path / "block.json"
     path.write_text(json.dumps(block), encoding="utf-8")
     assert "starting_commit must be a resolvable local Git commit" in validate(path)
+
+
+def test_rejects_mismatched_rubric_hash(tmp_path: Path) -> None:
+    block = materialized(tmp_path)
+    block["rubric_sha256"] = "0" * 64
+    path = tmp_path / "block.json"
+    path.write_text(json.dumps(block), encoding="utf-8")
+    assert "rubric_sha256 does not match advisor_rubric sha256" in validate(path)
+
+
+def test_rejects_worktree_checked_out_at_different_commit(tmp_path: Path) -> None:
+    block = materialized(tmp_path)
+    repo = tmp_path / "repo"
+    (repo / "later").write_text("later", encoding="utf-8")
+    subprocess.run(["git", "add", "later"], cwd=repo, check=True)
+    subprocess.run(["git", "-c", "user.email=test@example.com", "-c", "user.name=Test", "commit", "-qm", "later"], cwd=repo, check=True)
+    path = tmp_path / "block.json"
+    path.write_text(json.dumps(block), encoding="utf-8")
+    assert "repository_root must be checked out at starting_commit" in validate(path)
