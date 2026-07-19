@@ -34,35 +34,38 @@ P117 defines a narrow control-plane design with these bounded surfaces:
 
 ## Planned tasks
 
-### P117.2 - Run-scoped state contract
+### P117.1 - Run-scoped state contract
 
 Define lease acquisition/renewal/loss, journal schema, closure states, cursor
 ownership, and terminal-state rules for one run.
 
-### P117.3 - Deterministic flusher
+### P117.2 - Deterministic flusher
 
 Specify ordering, idempotency, restart recovery, flush receipts, and the
 no-write-after-closure behavior. Deterministic checks must cover stale cursor
 and duplicate-flush cases.
 
-### P117.4 - Native session adapter
+### P117.3 - Native session adapter
 
 Define the adapter boundary, permitted native session operations, lineage
 binding, and the evidence needed to show that actions remained within the
 declared run and authority.
 
-### P117.5 - Bounded native daemon proof
+### P117.4 - Bounded native daemon proof
 
 Run one bounded native proof against the approved route. Capture the run lease,
 journal, flush, closure, session lineage, and stop-condition artifacts. Do not
 generalize one proof into a generic daemon capability.
 
-### P117.6 - Offline replay and evidence audit
+### P117.5 - Offline replay
 
-Replay sanitized policy inputs offline, then audit native and offline artifacts.
-Report separately whether quality is validated, protocol is accepted, and
-economics is usable. Economics is unassessed and no P107 economics claim is
-made by P117.
+Replay sanitized policy inputs offline and score candidate policies.
+
+### P117.6 - Evidence audit
+
+Audit native and offline artifacts. Report separately whether quality is
+validated, protocol is accepted, and economics is usable. Economics is
+unassessed and no P107 economics claim is made by P117.
 
 ## Out of scope
 
