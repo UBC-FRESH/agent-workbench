@@ -38,3 +38,23 @@ def test_rejects_wrong_run_and_expired_events(tmp_path: Path):
     assert not daemon.accept_event(event(run_id="other-run"), now=NOW)
     assert not daemon.accept_event(event(), now=NOW + timedelta(minutes=2))
 
+
+def test_restart_reconciles_recorded_flush_without_resending(tmp_path: Path):
+    daemon, adapter = make_daemon(tmp_path)
+    assert daemon.accept_event(event(), now=NOW)
+    assert daemon.flush(now=NOW).accepted
+    restarted = BoundedSupervisionDaemon(
+        lease=daemon.lease,
+        journal=SupervisionJournal(tmp_path / "journal.jsonl", root=tmp_path, run_id="run-117"),
+        adapter=adapter,
+        binding=daemon.binding,
+    )
+    assert restarted.flush(now=NOW).reason == "bundle_already_selected"
+    assert len(adapter.messages) == 1
+
+
+def test_closed_run_writes_post_close_rejection_receipt(tmp_path: Path):
+    daemon, _adapter = make_daemon(tmp_path)
+    daemon.close()
+    assert not daemon.accept_event(event(), now=NOW)
+    assert any(record.get("kind") == "rejection" for record in daemon.journal.records())

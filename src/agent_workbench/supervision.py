@@ -111,14 +111,34 @@ class SupervisionJournal:
         lines = self.path.read_text(encoding="utf-8").splitlines()
         if not lines:
             return "armed"
-        return json.loads(lines[-1])["state"]
+        for line in reversed(lines):
+            record = json.loads(line)
+            if "state" in record:
+                return record["state"]
+        return "armed"
+
+    def records(self) -> list[dict[str, Any]]:
+        if not self.path.exists():
+            return []
+        return [json.loads(line) for line in self.path.read_text(encoding="utf-8").splitlines() if line]
+
+    def append(self, kind: str, **payload: Any) -> dict[str, Any]:
+        """Persist one run-scoped receipt before it can affect a restart."""
+        if not isinstance(kind, str) or not kind:
+            raise ValueError("journal record kind must be non-empty")
+        record = {"schema_version": SCHEMA_VERSION, "run_id": self.run_id, "kind": kind, **payload}
+        _reject_forbidden_payload(record, [], "journal")
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self.path.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n")
+        return record
 
     def transition(self, state: str, *, delivery_uncertain: bool = False) -> dict[str, Any]:
         target = "paused_reconciliation" if delivery_uncertain else state
         current = self.state()
         if target not in self._allowed[current]:
             raise ValueError(f"invalid journal transition: {current} -> {target}")
-        record = {"schema_version": SCHEMA_VERSION, "run_id": self.run_id, "from_state": current, "state": target}
+        record = {"schema_version": SCHEMA_VERSION, "run_id": self.run_id, "kind": "state", "from_state": current, "state": target}
         _reject_forbidden_payload(record, [], "journal")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open("a", encoding="utf-8") as stream:
