@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "p107_run_evidence_manifest.schema.json",
+  "title": "P107 run-bound evidence manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "configuration_id", "repository_path", "starting_commit", "terminal_event", "raw_sessions", "spawn_edges"],
+  "properties": {
+    "schema_version": {"const": "p107_run_evidence_manifest_v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "configuration_id": {"enum": ["C0", "C1", "C2", "C3", "C4"]},
+    "repository_path": {"type": "string", "minLength": 1},
+    "starting_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "terminal_event": {"type": "string", "minLength": 1},
+    "raw_sessions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/rawSession"}},
+    "spawn_edges": {"type": "array", "items": {"$ref": "#/$defs/spawnEdge"}}
+  },
+  "$defs": {
+    "rawSession": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "role", "session_id", "parent_session_id", "provider", "model_class", "raw_session_path", "sha256", "terminal_event"],
+      "properties": {
+        "schema_version": {"const": "p107_raw_session_v1"},
+        "role": {"type": "string", "enum": ["coordinator", "supervisor", "worker", "advisor"]},
+        "session_id": {"type": "string", "minLength": 1},
+        "parent_session_id": {"type": ["string", "null"]},
+        "provider": {"type": "string", "minLength": 1},
+        "model_class": {"type": "string", "minLength": 1},
+        "raw_session_path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "terminal_event": {"type": "string", "minLength": 1},
+        "event_type": {"type": "string", "minLength": 1}
+      }
+    },
+    "spawnEdge": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "parent_session_id", "child_session_id", "parent_role", "child_role", "fork_context", "source_artifact_path", "source_artifact_sha256", "terminal_event"],
+      "properties": {
+        "schema_version": {"const": "p107_spawn_receipt_v1"},
+        "parent_session_id": {"type": "string", "minLength": 1},
+        "child_session_id": {"type": "string", "minLength": 1},
+        "parent_role": {"type": "string", "enum": ["coordinator", "supervisor", "worker", "advisor"]},
+        "child_role": {"type": "string", "enum": ["coordinator", "supervisor", "worker", "advisor"]},
+        "fork_context": {"type": "boolean"},
+        "source_artifact_path": {"type": "string", "minLength": 1},
+        "source_artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "terminal_event": {"type": "string", "minLength": 1},
+        "observed_event": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

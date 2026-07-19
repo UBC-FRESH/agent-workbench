@@ -5399,9 +5399,9 @@ Parent issue: #644
 
 Branch: `feature/p107-delegation-economics-policy`
 
-Status: baseline C4 execution authorized. P114 has merged and parent issue
-#661 has closed, so P107 may run the admitted baseline C4 package route. P107
-economics claims and P108 remain inactive.
+Status: P107.2 offline research contract is complete on the reconciled staging
+branch; P114 has admitted the baseline C4 package route. Fresh C0 remains the
+next configuration observation. P107 economics claims and P108 remain inactive.
 
 Goal: convert P106 evidence into a fail-closed authorization decision.
 
@@ -5419,14 +5419,25 @@ Tasks:
   - [x] Preserve historical quality evidence without using it as a fresh C4
         baseline.
   - [x] Record the effective-configuration and tool-route gaps as blockers.
-- [ ] P107.2 Evaluate economics
-  - [ ] Run at most one bounded Luna Supervisor -> Ollama Worker measurement
-        with clean paid-Coordinator start/end token checkpoints.
-  - [ ] Require conservative delegated paid cost at least 20% below direct.
-  - [ ] Reject missing spans, unverified model identity, or legacy pricing.
-- [ ] P107.3 Encode and document policy
-  - [ ] Authorize P108 only when every gate passes.
-  - [ ] Otherwise stop the alpha arc and open one targeted repair phase.
+- [x] P107.2 Research contract and offline replay (#646)
+  - [x] Freeze the provenance-audit bundle workload, rubric, configuration,
+        packet, review, accounting, observation, and comparison contracts.
+  - [x] Implement fail-closed materialized-run, topology, session, Advisor,
+        accounting, replay, and comparison validation with synthetic replay.
+  - [x] Implement and freeze the deterministic provenance-audit workload and
+        its batch acceptance fixture.
+  - [x] Verify the P107 selection offline: 150 passed, 2 privilege-dependent
+        skips; no live C0-C4 run and no economics conclusion.
+- [ ] P107.3 C0 BAU baseline (#647)
+  - [ ] Run one fresh C0 observation against the frozen P107.2 block.
+  - [ ] Require deterministic acceptance, Advisor acceptance, and complete
+        paid-role accounting before it becomes an eligible baseline.
+- [ ] P107.4-P107.7 C1-C4 configuration observations (#655, #656, #657, #658)
+  - [ ] Execute one authorized configuration at a time only after the prior
+        configuration has a recorded outcome.
+- [ ] P107.8 Tranche synthesis (#659)
+  - [ ] Compare only eligible observations and decide whether any C5+ work is
+        worth authorization.
 
 Entry evidence: P106 closed with quality validated but protocol and economics
 unaccepted. P113 proved a constrained one-tool adapter sandbox but did not

@@ -169,6 +169,7 @@ from .economics import (
     compute_indexed_cost,
     render_economics_markdown,
 )
+from .source_audit import audit_files
 from .retrieval import PromotedIndex, query_by_page_range, trace_full_document
 from .workflow import (
     load_workflow_step,
@@ -213,6 +214,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Agent Workbench checkout root. Defaults to the installed editable checkout.",
     )
     subparsers = parser.add_subparsers(dest="command")
+
+    source_audit_parser = subparsers.add_parser(
+        "source-audit",
+        help="Audit source-anchored JSONL records offline.",
+        description="Audit source-anchored JSONL records offline.",
+    )
+    source_audit_group = source_audit_parser.add_mutually_exclusive_group(required=True)
+    source_audit_group.add_argument("--manifest", type=Path)
+    source_audit_group.add_argument("--source", type=Path)
+    source_audit_parser.add_argument(
+        "--jsonl", "--records", dest="records", type=Path,
+        help="JSONL records file; with --manifest it may be inferred from the manifest.",
+    )
+    source_audit_parser.add_argument("--output", type=Path, help="Optional JSON result path.")
+    source_audit_parser.set_defaults(func=run_source_audit)
 
     smoke_parser = subparsers.add_parser(
         "smoke",
@@ -1693,6 +1709,42 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser.set_defaults(func=run_overview)
     return parser
+
+
+def run_source_audit(args: argparse.Namespace) -> int:
+    if args.source:
+        if not args.records:
+            print("--records is required with --source", file=sys.stderr)
+            return 2
+        try:
+            digest = __import__("hashlib").sha256(args.source.read_bytes()).hexdigest()
+        except (OSError, UnicodeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        manifest = args.source.parent / ".source-audit-manifest.json"
+        manifest.write_text(json.dumps({"documents": [{"document_id": "source", "path": args.source.name, "source_sha256": digest}]}), encoding="utf-8")
+        record_root = args.records
+    else:
+        manifest = args.manifest
+        record_root = args.records
+        if not manifest.exists():
+            print("invalid manifest: file does not exist", file=sys.stderr)
+            return 2
+    try:
+        result = audit_files(manifest, record_root)
+    except (OSError, UnicodeError, ValueError, TypeError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    if result.get("status") == "error":
+        print("invalid source-audit configuration", file=sys.stderr)
+        return 2
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+    print(json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+    if result.get("schema_version") == "provenance_audit_batch_v1":
+        return 0 if result["invalid_input_count"] == 0 and result["invalid_record_count"] == 0 else 1
+    return 0 if result["status"] == "accepted" else 1
 
 
 def add_copilot_sdk_turn_args(parser: argparse.ArgumentParser) -> None:

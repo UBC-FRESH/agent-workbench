@@ -1,0 +1,17 @@
+{
+  "schema_version": "p107_accounting_record_v1",
+  "evaluation_block_id": "block-2026-01",
+  "run_id": "run-0001",
+  "configuration_id": "C1",
+  "run_evidence_manifest": {"path": "run-evidence-manifest.json", "sha256": "sha256:materialized-manifest-hash"},
+  "source_session_identity": {"run_id": "run-0001", "session_ids": ["coordinator-session", "worker-session", "advisor-session"]},
+  "pricing_catalog": {"catalog_id": "catalog-2026-01", "catalog_date": "2026-01-15", "provenance": "public catalog snapshot", "content_hash": "sha256:materialized-catalog-hash"},
+  "local_cost": {"status": "unknown", "amount_usd": null, "basis": "not measured"},
+  "run_accounting": {"adapter_identity": "adapter-id", "active_time_seconds": 120, "wait_time_seconds": 30, "review_count": 1, "repair_count": 0, "transport_count": 1, "maintainer_intervention": false, "invalid_run_spend_usd": 0.0},
+  "total_paid_usd": 0.0,
+  "roles": [
+    {"role": "coordinator", "session_id": "coordinator-session", "provider": "provider-id", "model": "model-id", "tokens": {"uncached_input": 0, "cached_input": 0, "output": 0, "reasoning": 0}, "token_usd": {"uncached_input": 0.0, "cached_input": 0.0, "output": 0.0, "reasoning": 0.0}, "total_usd": 0.0, "checkpoints": {"start": {"session_id": "coordinator-session", "snapshot_path": "coordinator-start.json", "snapshot_sha256": "sha256:parsed-event-hash"}, "end": {"session_id": "coordinator-session", "snapshot_path": "coordinator-end.json", "snapshot_sha256": "sha256:parsed-event-hash"}}, "confidence": "high"},
+    {"role": "worker", "session_id": "worker-session", "provider": "provider-id", "model": "model-id", "tokens": {"uncached_input": 0, "cached_input": 0, "output": 0, "reasoning": 0}, "token_usd": {"uncached_input": 0.0, "cached_input": 0.0, "output": 0.0, "reasoning": 0.0}, "total_usd": 0.0, "checkpoints": {"start": "checkpoint-start", "end": "checkpoint-end"}, "confidence": "high"},
+    {"role": "advisor", "session_id": "advisor-session", "provider": "provider-id", "model": "model-id", "tokens": {"uncached_input": 0, "cached_input": 0, "output": 0, "reasoning": 0}, "token_usd": {"uncached_input": 0.0, "cached_input": 0.0, "output": 0.0, "reasoning": 0.0}, "total_usd": 0.0, "checkpoints": {"start": "checkpoint-start", "end": "checkpoint-end"}, "confidence": "high"}
+  ]
+}

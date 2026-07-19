@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
+from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +34,93 @@ def _sha(value: Any, name: str, errors: list[str]) -> None:
         errors.append(f"{name} must be a lowercase SHA-256")
 
 
-def validate_run_packet(path: str | Path) -> list[str]:
+def _materialized_file(value: Any, name: str, root: Path, declared_sha: Any, errors: list[str]) -> None:
+    path_text = _nonempty(value, f"{name}.path", errors)
+    _sha(declared_sha, f"{name}.sha256", errors)
+    if not path_text:
+        return
+    path = Path(path_text)
+    if not path.is_absolute():
+        errors.append(f"{name}.path must be absolute and canonical")
+        return
+    try:
+        resolved = path.resolve(strict=True)
+        allowed_root = root.resolve(strict=True)
+        resolved.relative_to(allowed_root)
+    except (OSError, ValueError):
+        errors.append(f"{name}.path must be an existing file under the run root")
+        return
+    if str(path) != str(resolved) or path.is_symlink() or not resolved.is_file():
+        errors.append(f"{name}.path must be a canonical regular non-symlink file")
+        return
+    if isinstance(declared_sha, str) and SHA256.fullmatch(declared_sha):
+        actual = sha256(resolved.read_bytes()).hexdigest()
+        if actual != declared_sha:
+            errors.append(f"{name}.sha256 does not match file contents")
+
+
+def _worktree(value: Any, name: str, baseline: str, errors: list[str]) -> Path | None:
+    text = _nonempty(value, f"{name}.worktree", errors)
+    if not text:
+        return None
+    path = Path(text)
+    if not path.is_absolute() or not path.is_dir() or path.is_symlink():
+        errors.append(f"{name}.worktree must be an existing non-symlink directory")
+        return None
+    try:
+        top = subprocess.run(
+            ["git", "-C", str(path), "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True, timeout=5,
+        ).stdout.strip()
+        head = subprocess.run(
+            ["git", "-C", str(path), "rev-parse", "HEAD"],
+            capture_output=True, text=True, check=True, timeout=5,
+        ).stdout.strip()
+        if Path(top).resolve() != path.resolve():
+            raise ValueError("not a git worktree root")
+        if head != baseline:
+            raise ValueError("worktree is not at baseline commit")
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError):
+        errors.append(f"{name}.worktree must be a git worktree at baseline_commit")
+        return None
+    return path.resolve()
+
+
+def _clean_worktree(path: Path, name: str, errors: list[str]) -> None:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(path), "status", "--porcelain"],
+            capture_output=True, text=True, check=True, timeout=5,
+        )
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        errors.append(f"{name}.worktree status could not be inspected")
+        return
+    if result.stdout:
+        errors.append(f"{name}.worktree must be clean at closeout")
+
+
+def _allowed_paths(value: Any, worktrees: list[tuple[str, Path]], closeout: bool, errors: list[str]) -> None:
+    if not isinstance(value, list) or not value:
+        errors.append("implementation_scope.allowed_paths must be a nonempty list")
+        return
+    for index, entry in enumerate(value):
+        label = f"implementation_scope.allowed_paths[{index}]"
+        if not isinstance(entry, str) or not entry:
+            errors.append(f"{label} must be a repository-relative string")
+            continue
+        candidate = Path(entry)
+        if candidate.is_absolute() or ".." in candidate.parts or candidate.as_posix() != entry.replace("\\", "/"):
+            errors.append(f"{label} must be a canonical repository-relative path")
+            continue
+        if closeout:
+            for name, worktree in worktrees:
+                try:
+                    (worktree / candidate).resolve().relative_to(worktree)
+                except ValueError:
+                    errors.append(f"{label} must remain under {name}.worktree")
+
+
+def validate_run_packet(path: str | Path, *, closeout: bool = False) -> list[str]:
     try:
         packet = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -50,10 +138,18 @@ def validate_run_packet(path: str | Path) -> list[str]:
     lanes = _object(packet.get("lanes"), "lanes", errors)
     retail = _object(lanes.get("retail"), "lanes.retail", errors)
     workbench = _object(lanes.get("workbench"), "lanes.workbench", errors)
+    baseline = packet.get("baseline_commit", "")
+    worktrees = []
     for name, lane in (("lanes.retail", retail), ("lanes.workbench", workbench)):
-        _nonempty(lane.get("worktree"), f"{name}.worktree", errors)
+        candidate = _worktree(lane.get("worktree"), name, baseline, errors)
+        if candidate is not None:
+            worktrees.append((name, candidate))
+            if closeout:
+                _clean_worktree(candidate, name, errors)
         if lane.get("fresh_implementation_session_required") is not True:
             errors.append(f"{name}.fresh_implementation_session_required must be true")
+    if len(worktrees) == 2 and worktrees[0][1] == worktrees[1][1]:
+        errors.append("lanes.retail.worktree and lanes.workbench.worktree must be distinct")
     for key, expected in {
         "coordinator_role": "gpt-5.6-luna",
         "supervisor_role": "gpt_luna_supervisor",
@@ -64,10 +160,17 @@ def validate_run_packet(path: str | Path) -> list[str]:
         if workbench.get(key) != expected:
             errors.append(f"lanes.workbench.{key} must be {expected!r}")
 
+    run_root = Path(path).resolve().parent
     for section_name in ("ticket", "acceptance_fixture", "usability_rubric"):
         section = _object(packet.get(section_name), section_name, errors)
-        _nonempty(section.get("path"), f"{section_name}.path", errors)
-        _sha(section.get("sha256"), f"{section_name}.sha256", errors)
+        _materialized_file(section.get("path"), section_name, run_root, section.get("sha256"), errors)
+    for name, lane in (("lanes.retail", retail), ("lanes.workbench", workbench)):
+        manifest = lane.get("manifest")
+        if manifest is not None:
+            manifest_section = _object(manifest, f"{name}.manifest", errors)
+            _materialized_file(manifest_section.get("path"), f"{name}.manifest", run_root, manifest_section.get("sha256"), errors)
+        elif closeout:
+            errors.append(f"{name}.manifest is required at closeout")
     if not _nonempty(
         _object(packet.get("acceptance_fixture"), "acceptance_fixture", errors).get("command"),
         "acceptance_fixture.command",
@@ -76,8 +179,7 @@ def validate_run_packet(path: str | Path) -> list[str]:
         pass
 
     scope = _object(packet.get("implementation_scope"), "implementation_scope", errors)
-    if not isinstance(scope.get("allowed_paths"), list) or not scope["allowed_paths"]:
-        errors.append("implementation_scope.allowed_paths must be a nonempty list")
+    _allowed_paths(scope.get("allowed_paths"), worktrees, closeout, errors)
 
     review = _object(packet.get("review_policy"), "review_policy", errors)
     expected_review = {
@@ -87,17 +189,20 @@ def validate_run_packet(path: str | Path) -> list[str]:
         "reviewer_lane_neutral": True,
         "fresh_session_per_run": True,
         "reuse_advisor_with_send_input": True,
-        "review_cap_kind": "soft_measured_stop_condition",
+        "review_cap_kind": "exact_three_review_cap",
+        "hard_wait": True,
+        "hard_wait_allowed_action": "wait_for_schema_valid_verdict",
+        "hard_wait_forbidden_actions": ["nudge", "timeout", "silence_inference", "repair", "implementation_spawn", "accept", "reject", "lane_end"],
     }
     for key, expected in expected_review.items():
         if review.get(key) != expected:
             errors.append(f"review_policy.{key} must be {expected!r}")
     review_cap = review.get("max_completed_reviews_per_lane")
     repair_cap = review.get("max_repair_cycles_per_lane")
-    if not isinstance(review_cap, int) or not 1 <= review_cap <= 8:
-        errors.append("review_policy.max_completed_reviews_per_lane must be an integer from 1 through 8")
-    if not isinstance(repair_cap, int) or repair_cap != max((review_cap or 0) - 1, 0):
-        errors.append("review_policy.max_repair_cycles_per_lane must equal max_completed_reviews_per_lane minus one")
+    if review_cap != 3:
+        errors.append("review_policy.max_completed_reviews_per_lane must be exactly 3")
+    if repair_cap != 2:
+        errors.append("review_policy.max_repair_cycles_per_lane must be exactly 2")
     if not isinstance(review.get("defect_packet_required_fields"), list):
         errors.append("review_policy.defect_packet_required_fields must be a list")
     if review.get("initial_packet_max_estimated_tokens") != 16000:
@@ -108,8 +213,12 @@ def validate_run_packet(path: str | Path) -> list[str]:
     liveness = _object(packet.get("liveness"), "liveness", errors)
     if not isinstance(liveness.get("interval_seconds"), int) or liveness["interval_seconds"] <= 0:
         errors.append("liveness.interval_seconds must be a positive integer")
-    if liveness.get("missed_interval_action") != "inspect_then_one_bounded_nudge_or_verified_blocker":
-        errors.append("liveness.missed_interval_action is invalid")
+    if liveness.get("missed_interval_action") != "inspect_metadata_only_until_schema_valid_verdict":
+        errors.append("liveness.missed_interval_action must be metadata-only hard wait")
+    forbidden = set(liveness.get("forbidden_wait_actions", []))
+    required_forbidden = {"nudge", "timeout", "silence_inference", "repair", "implementation_spawn", "accept", "reject", "lane_end"}
+    if forbidden != required_forbidden:
+        errors.append("liveness.forbidden_wait_actions must contain exactly the forbidden hard-wait actions")
 
     contamination = _object(packet.get("contamination_policy"), "contamination_policy", errors)
     for key in (
@@ -121,13 +230,28 @@ def validate_run_packet(path: str | Path) -> list[str]:
     ):
         if contamination.get(key) is not True:
             errors.append(f"contamination_policy.{key} must be true")
+
+    accounting = _object(packet.get("accounting"), "accounting", errors)
+    _nonempty(accounting.get("record_path"), "accounting.record_path", errors)
+    if closeout:
+        _materialized_file(accounting.get("record_path"), "accounting", run_root, accounting.get("sha256"), errors)
+        if "manifest_path" in accounting:
+            _materialized_file(accounting.get("manifest_path"), "accounting.manifest", run_root, accounting.get("manifest_sha256"), errors)
+    if accounting.get("record_schema") != "p107_accounting_record_v1":
+        errors.append("accounting.record_schema must be p107_accounting_record_v1")
+    required_accounting_fields = {
+        "source_session_identity", "pricing_catalog", "run_accounting", "roles",
+        "tokens", "token_usd", "checkpoints", "provider", "model", "provenance",
+    }
+    if set(accounting.get("required_fields", [])) != required_accounting_fields:
+        errors.append("accounting.required_fields must include all token and provenance fields")
     return errors
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        raise SystemExit("usage: validate_p107_2_ab_run_packet.py <materialized-run-packet.json>")
-    errors = validate_run_packet(sys.argv[1])
+    if len(sys.argv) not in (2, 3) or (len(sys.argv) == 3 and sys.argv[2] != "--closeout"):
+        raise SystemExit("usage: validate_p107_2_ab_run_packet.py <materialized-run-packet.json> [--closeout]")
+    errors = validate_run_packet(sys.argv[1], closeout=len(sys.argv) == 3)
     if errors:
         print("\n".join(errors))
         raise SystemExit(1)

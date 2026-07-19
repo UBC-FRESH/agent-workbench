@@ -5,7 +5,7 @@
   "properties": {
     "bundle_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "run_id": {"type": "string"},
-    "review_number": {"type": "integer", "minimum": 1, "maximum": 8},
+    "review_number": {"type": "integer", "minimum": 1, "maximum": 3},
     "packet_kind": {"enum": ["initial", "repair_delta"]},
     "packet_bytes": {"type": "integer", "minimum": 1},
     "estimated_input_tokens": {"type": "integer", "minimum": 1},

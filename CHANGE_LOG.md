@@ -4368,3 +4368,15 @@ exact staged lines, then restored the temp config hash byte-for-byte.
   candidate and protocol is accepted. Economics is unassessed; P117 makes no
   P107 economics claim. The result remains bounded to one run at a time and does
   not establish an unattended or unbounded autonomous runtime.
+
+## 2026-07-19 - Completed P107.2 offline research contract
+
+- Completed the P107.2 configuration/workload, immutable review, accounting,
+  observation, comparison, and synthetic-replay contract on the reconciled
+  staging branch.
+- Added the frozen provenance-audit bundle workload and verified its independent
+  acceptance fixture. The P107 test selection passed with 150 tests and two
+  privilege-dependent skips.
+- This is offline machinery only: no fresh C0-C4 configuration observation was
+  run, no P107 quality/protocol verdict for a live configuration is claimed,
+  and P107 economics remains unassessed.
