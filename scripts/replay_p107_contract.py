@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Mapping
 from p107_contract_codes import REASON_CODES, REVIEW_CAP
 from validate_p107_advisor_review import validate_review
+from validate_p107_accounting_record import validate_accounting_record
 from validate_p107_run_evidence_manifest import validate_manifest, EXPECTED
 
 
@@ -97,11 +98,28 @@ def replay_contract(state: Mapping[str, Any]) -> dict[str, Any]:
     advisor_terminal = _advisor_terminal(state)
     if advisor_terminal is None:
         reasons.append("advisor_hard_wait_failure")
-    if not _bool(state, "accounting_valid"):
+    accounting_path = state.get("accounting_record_path")
+    accounting = None
+    if isinstance(accounting_path, str):
+        try:
+            if not validate_accounting_record(accounting_path): accounting = json.loads(Path(accounting_path).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError): pass
+    binding = accounting.get("run_evidence_manifest") if isinstance(accounting, Mapping) else None
+    if (not isinstance(accounting, Mapping) or accounting.get("run_id") != manifest.get("run_id") or
+        accounting.get("configuration_id") != manifest.get("configuration_id") or
+        not isinstance(binding, Mapping) or binding.get("sha256", "").removeprefix("sha256:") != state.get("evidence_manifest_sha256")):
         reasons.append("accounting_ineligible")
     if _bool(state, "contaminated") or state.get("contamination_valid") is False:
         reasons.append("contaminated")
-    if not _bool(state, "c0_eligible") or _bool(state, "c0_mismatched"):
+    baseline_path = state.get("c0_baseline_path")
+    baseline = None
+    if isinstance(baseline_path, str):
+        try: baseline = json.loads(Path(baseline_path).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError): pass
+    if (not isinstance(baseline, Mapping) or baseline.get("configuration_id") != "C0" or
+        baseline.get("manifest_sha256") != state.get("evidence_manifest_sha256") or
+        not isinstance(baseline.get("accounting_record_path"), str) or
+        not Path(baseline["accounting_record_path"]).is_file()):
         reasons.append("c0_absent_or_mismatched")
     reasons = list(dict.fromkeys(reasons))
     if advisor_terminal == "verified_blocker":

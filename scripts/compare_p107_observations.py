@@ -6,7 +6,7 @@ from typing import Any
 from validate_p107_advisor_review import validate_review
 from validate_p107_accounting_record import validate_accounting_record
 from validate_p107_evaluation_block import validate
-from validate_p107_run_evidence_manifest import validate_manifest
+from validate_p107_run_evidence_manifest import validate_manifest, EXPECTED
 
 _CONFIGURATIONS = {"C0", "C1", "C2", "C3", "C4"}
 _BOOLEAN_FLAGS = ("evaluation_block_valid", "deterministic_acceptance", "advisor_binding_valid",
@@ -48,6 +48,24 @@ def _bind_manifest(row: dict[str, Any]) -> list[str]:
     if row.get("worktree_path") is not None and row["worktree_path"] != manifest.get("repository_path"): errors.append("worktree_manifest_mismatch")
     return errors
 
+def _accounting(row: dict[str, Any]) -> tuple[dict[str, Any] | None, list[str]]:
+    path = row.get("accounting_record_path")
+    if not isinstance(path, str) or not path.strip(): return None, ["accounting_ineligible"]
+    try:
+        if validate_accounting_record(path): return None, ["accounting_ineligible"]
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        manifest = json.loads(Path(row["evidence_manifest_path"]).read_text(encoding="utf-8"))
+    except (OSError, TypeError, ValueError, json.JSONDecodeError, KeyError): return None, ["accounting_ineligible"]
+    errors = []
+    if data.get("run_id") != row.get("run_id") or data.get("configuration_id") != row.get("configuration_id"): errors.append("accounting_ineligible")
+    binding = data.get("run_evidence_manifest")
+    if not isinstance(binding, dict): errors.append("accounting_ineligible")
+    else:
+        target = Path(path).parent / binding.get("path", "")
+        if not target.is_file() or hashlib.sha256(target.read_bytes()).hexdigest() != row.get("evidence_manifest_sha256"): errors.append("accounting_ineligible")
+    if data.get("source_session_identity", {}).get("session_ids") != [s.get("session_id") for s in manifest.get("raw_sessions", [])]: errors.append("accounting_ineligible")
+    return (data if not errors else None), errors
+
 def _reasons(row: dict[str, Any], *, baseline: bool = False, duplicate_ids: bool = False) -> list[str]:
     reasons = []
     reasons.extend(_bind_manifest(row))
@@ -63,11 +81,18 @@ def _reasons(row: dict[str, Any], *, baseline: bool = False, duplicate_ids: bool
     if row.get("deterministic_acceptance") is not True: reasons.append("deterministic_acceptance_failed")
     if row.get("advisor_verdict") != "accepted" or not _advisor_artifacts_valid(row): reasons.append("advisor_hard_wait_failure")
     if row.get("contaminated") is not False: reasons.append("contaminated")
-    if row.get("accounting_complete") is not True or not _artifact_valid(row, "accounting_record_path", validate_accounting_record): reasons.append("accounting_ineligible")
-    if row.get("accounting_provenance_valid") is not True: reasons.append("accounting_ineligible")
-    if row.get("configuration_topology_valid") is not True or not _artifact_valid(row, "topology_receipt_path", lambda p: _receipt_errors(p, row, "topology")): reasons.append("topology_session_reuse")
+    accounting, accounting_errors = _accounting(row)
+    reasons.extend(accounting_errors)
+    manifest_path = row.get("evidence_manifest_path")
+    if not isinstance(manifest_path, str) or not Path(manifest_path).is_file(): reasons.append("topology_session_reuse")
+    else:
+        try:
+            manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+            edges = {(e.get("parent_role"), e.get("child_role")) for e in manifest.get("spawn_edges", [])}
+            if edges != EXPECTED.get(row.get("configuration_id")): reasons.append("topology_session_reuse")
+        except (OSError, json.JSONDecodeError): reasons.append("topology_session_reuse")
     if row.get("model_identity_valid") is not True: reasons.append("frozen_input_hash_drift")
-    if not _cost_valid(row.get("paid_run_cost")): reasons.append("accounting_ineligible")
+    if accounting is None or not _cost_valid(accounting.get("total_paid_usd")): reasons.append("accounting_ineligible")
     if baseline and row.get("baseline_run_id") is not None: reasons.append("baseline_id_invalid")
     if not baseline and (not isinstance(row.get("baseline_run_id"), str) or not row["baseline_run_id"].strip()): reasons.append("missing_baseline_id")
     return list(dict.fromkeys(reasons))
@@ -104,7 +129,10 @@ def compare(path: str | Path) -> dict[str, Any]:
             if base.get("evaluation_block_id") != row.get("evaluation_block_id"): codes.append("evaluation_block_mismatch")
         codes = list(dict.fromkeys(codes))
         if codes: result.append({"run_id": row.get("run_id"), "roi_status": "not_comparable", "reason_codes": codes, "paid_roi": None}); continue
-        base_cost, cost = base["paid_run_cost"], row["paid_run_cost"]
+        base_accounting, _ = _accounting(base)
+        accounting, _ = _accounting(row)
+        base_cost = base_accounting.get("total_paid_usd") if base_accounting else None
+        cost = accounting.get("total_paid_usd") if accounting else None
         if not _cost_valid(base_cost) or not _cost_valid(cost): result.append({"run_id": row.get("run_id"), "roi_status": "not_comparable", "reason_codes": ["accounting_ineligible"], "paid_roi": None})
         else: result.append({"run_id": row.get("run_id"), "roi_status": "comparable", "reason_codes": [], "paid_roi": (base_cost-cost)/base_cost})
     return {"comparisons": result}
