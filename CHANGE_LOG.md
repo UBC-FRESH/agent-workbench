@@ -4250,3 +4250,19 @@ exact staged lines, then restored the temp config hash byte-for-byte.
 - The P107 baseline C4 suite may now use the admitted CLI-parent package-MCP
   route. This does not establish P107 task quality or economics, and does not
   authorize P108.
+
+## 2026-07-18 - Planned P116 event-driven supervision control plane
+
+- Created planned parent issue #669 and branch
+  `feature/p116-event-driven-supervision-control-plane` for a narrow repair to
+  active Worker supervision.
+- The plan responds to observed native-run evidence: lifecycle waiting did not
+  expose Worker progress, a returned chat Supervisor did not keep monitoring,
+  and the Coordinator held the usable session/message boundary. P116 adds a
+  sanitized event/cursor/packet/action contract and a Coordinator-owned
+  re-invocation loop; it does not attempt to force deterministic Worker
+  behavior.
+- P116 preserves the accepted P114 bridge route, keeps P107 economics
+  unassessed, and does not activate P115. The Advisor profile is retained at
+  `gpt-5.6-sol` with `model_reasoning_effort = "medium"`; the live Advisor
+  review for this plan was verified at that setting.
