@@ -19,13 +19,13 @@ def make_manifest(tmp_path: Path, config: str) -> Path:
     parent = {"coordinator": None, "supervisor": "coordinator", "worker": ("coordinator" if config == "C2" else "supervisor"), "advisor": "coordinator"}
     sessions = []
     for role in roles:
-        name = f"{role}.jsonl"; (tmp_path / name).write_text(role, encoding="utf-8")
-        sessions.append({"role": role, "session_id": f"{role}-1", "parent_session_id": (None if parent[role] is None else f"{parent[role]}-1"), "provider": "fixture", "model_class": "fixture", "raw_session_path": name, "sha256": hashlib.sha256((tmp_path / name).read_bytes()).hexdigest(), "terminal_event": "completed"})
+        name = f"{role}.json"; record = {"schema_version": "p107_raw_session_v1", "session_id": f"{role}-1", "parent_session_id": (None if parent[role] is None else f"{parent[role]}-1"), "role": role, "provider": "fixture", "model_class": "fixture", "terminal_event": "completed"}; (tmp_path / name).write_text(json.dumps(record), encoding="utf-8")
+        sessions.append({**record, "raw_session_path": name, "sha256": hashlib.sha256((tmp_path / name).read_bytes()).hexdigest()})
     pairs = {"C0": [("coordinator", "advisor")], "C2": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")], "C3": [("coordinator", "supervisor"), ("coordinator", "advisor"), ("supervisor", "worker")], "C4": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")]}[config]
     edges = []
     for p, c in pairs:
-        source = tmp_path / f"edge-{p}-{c}.json"; source.write_text(f"{p}->{c}", encoding="utf-8")
-        edges.append({"parent_session_id": f"{p}-1", "child_session_id": f"{c}-1", "parent_role": p, "child_role": c, "fork_context": False, "source_artifact_path": source.name, "source_artifact_sha256": hashlib.sha256(source.read_bytes()).hexdigest()})
+        source = tmp_path / f"edge-{p}-{c}.json"; record = {"schema_version": "p107_spawn_receipt_v1", "parent_session_id": f"{p}-1", "child_session_id": f"{c}-1", "parent_role": p, "child_role": c, "fork_context": False, "terminal_event": "completed"}; source.write_text(json.dumps(record), encoding="utf-8")
+        edges.append({**record, "source_artifact_path": source.name, "source_artifact_sha256": hashlib.sha256(source.read_bytes()).hexdigest()})
     path = tmp_path / "manifest.json"; path.write_text(json.dumps({"schema_version": "p107_run_evidence_manifest_v1", "run_id": "run-1", "configuration_id": config, "repository_path": str(repo), "starting_commit": commit, "terminal_event": "completed", "raw_sessions": sessions, "spawn_edges": edges}), encoding="utf-8")
     return path
 
@@ -60,3 +60,14 @@ def test_rejects_forbidden_nested_worker_and_dirty_repo(tmp_path: Path):
 def test_rejects_forged_lineage_duplicate_edges_and_extra_properties(tmp_path: Path, mutation, expected):
     path = make_manifest(tmp_path, "C2"); doc = json.loads(path.read_text()); mutation(doc); path.write_text(json.dumps(doc))
     assert any(expected in error for error in validate_manifest(path))
+
+def test_rejects_prose_and_mismatched_canonical_artifacts(tmp_path: Path):
+    path = make_manifest(tmp_path, "C2"); doc = json.loads(path.read_text())
+    raw = tmp_path / doc["raw_sessions"][0]["raw_session_path"]; raw.write_text("coordinator", encoding="utf-8")
+    assert any("canonical JSON object" in error for error in validate_manifest(path))
+    path = make_manifest(tmp_path / "mismatch", "C2"); doc = json.loads(path.read_text())
+    record = json.loads((path.parent / doc["raw_sessions"][0]["raw_session_path"]).read_text()); record["session_id"] = "forged"; (path.parent / doc["raw_sessions"][0]["raw_session_path"]).write_text(json.dumps(record), encoding="utf-8")
+    assert any("does not match manifest" in error for error in validate_manifest(path))
+    path = make_manifest(tmp_path / "edge-mismatch", "C2"); doc = json.loads(path.read_text())
+    edge = doc["spawn_edges"][0]; record = json.loads((path.parent / edge["source_artifact_path"]).read_text()); record["fork_context"] = True; (path.parent / edge["source_artifact_path"]).write_text(json.dumps(record), encoding="utf-8")
+    assert any("does not match manifest" in error for error in validate_manifest(path))

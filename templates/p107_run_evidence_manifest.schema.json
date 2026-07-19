@@ -18,8 +18,9 @@
   "$defs": {
     "rawSession": {
       "type": "object", "additionalProperties": false,
-      "required": ["role", "session_id", "parent_session_id", "provider", "model_class", "raw_session_path", "sha256", "terminal_event"],
+      "required": ["schema_version", "role", "session_id", "parent_session_id", "provider", "model_class", "raw_session_path", "sha256", "terminal_event"],
       "properties": {
+        "schema_version": {"const": "p107_raw_session_v1"},
         "role": {"type": "string", "enum": ["coordinator", "supervisor", "worker", "advisor"]},
         "session_id": {"type": "string", "minLength": 1},
         "parent_session_id": {"type": ["string", "null"]},
@@ -27,20 +28,24 @@
         "model_class": {"type": "string", "minLength": 1},
         "raw_session_path": {"type": "string", "minLength": 1},
         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "terminal_event": {"type": "string", "minLength": 1}
+        "terminal_event": {"type": "string", "minLength": 1},
+        "event_type": {"type": "string", "minLength": 1}
       }
     },
     "spawnEdge": {
       "type": "object", "additionalProperties": false,
-      "required": ["parent_session_id", "child_session_id", "parent_role", "child_role", "fork_context", "source_artifact_path", "source_artifact_sha256"],
+      "required": ["schema_version", "parent_session_id", "child_session_id", "parent_role", "child_role", "fork_context", "source_artifact_path", "source_artifact_sha256", "terminal_event"],
       "properties": {
+        "schema_version": {"const": "p107_spawn_receipt_v1"},
         "parent_session_id": {"type": "string", "minLength": 1},
         "child_session_id": {"type": "string", "minLength": 1},
         "parent_role": {"type": "string", "enum": ["coordinator", "supervisor", "worker", "advisor"]},
         "child_role": {"type": "string", "enum": ["coordinator", "supervisor", "worker", "advisor"]},
         "fork_context": {"type": "boolean"},
         "source_artifact_path": {"type": "string", "minLength": 1},
-        "source_artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        "source_artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "terminal_event": {"type": "string", "minLength": 1},
+        "observed_event": {"type": "string", "minLength": 1}
       }
     }
   }

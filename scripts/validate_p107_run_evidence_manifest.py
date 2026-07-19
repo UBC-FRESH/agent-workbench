@@ -16,8 +16,10 @@ ACTIVE = {"C0": {"coordinator", "advisor"}, "C1": {"coordinator", "worker", "adv
           "C2": {"coordinator", "supervisor", "worker", "advisor"}, "C3": {"coordinator", "supervisor", "worker", "advisor"},
           "C4": {"coordinator", "supervisor", "worker", "advisor"}}
 TOP_LEVEL_KEYS = {"schema_version", "run_id", "configuration_id", "repository_path", "starting_commit", "terminal_event", "raw_sessions", "spawn_edges"}
-SESSION_KEYS = {"role", "session_id", "parent_session_id", "provider", "model_class", "raw_session_path", "sha256", "terminal_event"}
-EDGE_KEYS = {"parent_session_id", "child_session_id", "parent_role", "child_role", "fork_context", "source_artifact_path", "source_artifact_sha256"}
+SESSION_KEYS = {"schema_version", "role", "session_id", "parent_session_id", "provider", "model_class", "raw_session_path", "sha256", "terminal_event", "event_type"}
+EDGE_KEYS = {"schema_version", "parent_session_id", "child_session_id", "parent_role", "child_role", "fork_context", "source_artifact_path", "source_artifact_sha256", "terminal_event", "observed_event"}
+RAW_ARTIFACT_KEYS = {"schema_version", "session_id", "parent_session_id", "role", "provider", "model_class", "terminal_event", "event_type"}
+SPAWN_ARTIFACT_KEYS = {"schema_version", "parent_session_id", "child_session_id", "parent_role", "child_role", "fork_context", "terminal_event", "observed_event"}
 
 def _file(root: Path, value: Any, label: str, errors: list[str]) -> Path | None:
     candidate = Path(value) if isinstance(value, str) else Path(".")
@@ -30,6 +32,22 @@ def _file(root: Path, value: Any, label: str, errors: list[str]) -> Path | None:
         if current.is_symlink(): errors.append(f"{label} must not be a symlink"); return None
     if not p.is_file() or p.is_symlink(): errors.append(f"{label} must be an existing regular file") ; return None
     return p
+
+def _json_record(file: Path, label: str, errors: list[str]) -> dict[str, Any] | None:
+    try:
+        record = json.loads(file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"{label} must contain a canonical JSON object: {exc}"); return None
+    if not isinstance(record, dict): errors.append(f"{label} must contain a JSON object"); return None
+    return record
+
+def _compare_record(record: dict[str, Any], declaration: dict[str, Any], keys: set[str], label: str, errors: list[str]) -> None:
+    if set(record) - keys: errors.append(f"{label} contains undeclared properties")
+    required = keys - {"event_type", "observed_event"}
+    if not required.issubset(record): errors.append(f"{label} is missing canonical properties")
+    for key in keys:
+        if key in record and key in declaration and record[key] != declaration[key]:
+            errors.append(f"{label} {key} does not match manifest")
 
 def validate_manifest(path: str | Path) -> list[str]:
     path = Path(path); errors: list[str] = []
@@ -73,6 +91,10 @@ def validate_manifest(path: str | Path) -> list[str]:
         digest = s.get("sha256")
         if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest): errors.append(f"raw_sessions[{i}] invalid SHA-256")
         elif raw and hashlib.sha256(raw.read_bytes()).hexdigest() != digest: errors.append(f"raw_sessions[{i}] hash mismatch")
+        if raw:
+            record = _json_record(raw, f"raw_sessions[{i}].raw_session_path", errors)
+            if record is not None:
+                _compare_record(record, s, RAW_ARTIFACT_KEYS, f"raw_sessions[{i}] raw artifact", errors)
     if config in ACTIVE and (set(s.get("role") for s in sessions if isinstance(s, dict)) != ACTIVE[config] or len(ids) != len(ACTIVE[config])): errors.append("raw session roles do not match configuration")
     edges = doc.get("spawn_edges")
     if not isinstance(edges, list): errors.append("spawn_edges must be a list"); edges = []
@@ -100,6 +122,10 @@ def validate_manifest(path: str | Path) -> list[str]:
         if not isinstance(source_hash, str) or len(source_hash) != 64 or any(c not in "0123456789abcdef" for c in source_hash): errors.append(f"spawn_edges[{i}] invalid source artifact SHA-256")
         art = _file(path.parent, e.get("source_artifact_path"), f"spawn_edges[{i}].source_artifact_path", errors)
         if art and hashlib.sha256(art.read_bytes()).hexdigest() != source_hash: errors.append(f"spawn_edges[{i}] source artifact hash mismatch")
+        if art:
+            record = _json_record(art, f"spawn_edges[{i}].source_artifact_path", errors)
+            if record is not None:
+                _compare_record(record, e, SPAWN_ARTIFACT_KEYS, f"spawn_edges[{i}] source artifact", errors)
     if actual != EXPECTED.get(config, set()): errors.append("spawn topology is undeclared or forbidden")
     for sid, session in ids.items():
         if session.get("role") != "coordinator":
