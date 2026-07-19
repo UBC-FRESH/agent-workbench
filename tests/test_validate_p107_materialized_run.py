@@ -38,14 +38,16 @@ def make_run(tmp_path: Path, configuration: str = "C1") -> Path:
     sessions = []
     for role in active:
         parent = None if role == "coordinator" else next(p for p, c in edges if c == role)
-        raw = tmp_path / f"{role}.jsonl"; raw.write_text(json.dumps({"session_id": f"{role}-1", "role": role}) + "\n", encoding="utf-8")
-        sessions.append({"session_id": f"{role}-1", "role": role, "provider": "fixture", "model_class": "fixture", "parent_session_id": None if parent is None else f"{parent}-1", "raw_session_path": raw.name, "sha256": hashlib.sha256(raw.read_bytes()).hexdigest(), "terminal_event": "completed"})
+        session = {"schema_version": "p107_raw_session_v1", "session_id": f"{role}-1", "parent_session_id": None if parent is None else f"{parent}-1", "role": role, "provider": "fixture", "model_class": "fixture", "terminal_event": "completed", "event_type": "session.completed"}
+        raw = tmp_path / f"{role}.json"; raw.write_text(json.dumps(session), encoding="utf-8")
+        sessions.append({**session, "raw_session_path": raw.name, "sha256": hashlib.sha256(raw.read_bytes()).hexdigest()})
     spawn_artifacts = []
     spawn_edges = []
     for parent, child in edges:
-        artifact = tmp_path / f"spawn_{parent}_{child}.json"; artifact.write_text(json.dumps({"parent": parent, "child": child}), encoding="utf-8")
+        edge = {"schema_version": "p107_spawn_receipt_v1", "parent_session_id": f"{parent}-1", "child_session_id": f"{child}-1", "parent_role": parent, "child_role": child, "fork_context": False, "terminal_event": "completed", "observed_event": "child.completed"}
+        artifact = tmp_path / f"spawn_{parent}_{child}.json"; artifact.write_text(json.dumps(edge), encoding="utf-8")
         spawn_artifacts.append(artifact)
-        spawn_edges.append({"parent_session_id": f"{parent}-1", "child_session_id": f"{child}-1", "parent_role": parent, "child_role": child, "fork_context": False, "source_artifact_path": artifact.name, "source_artifact_sha256": hashlib.sha256(artifact.read_bytes()).hexdigest()})
+        spawn_edges.append({**edge, "source_artifact_path": artifact.name, "source_artifact_sha256": hashlib.sha256(artifact.read_bytes()).hexdigest()})
     manifest = {"schema_version": "p107_run_evidence_manifest_v1", "run_id": "run-1", "configuration_id": configuration, "repository_path": str(repo), "starting_commit": commit, "terminal_event": "completed", "raw_sessions": sessions, "spawn_edges": spawn_edges}
     manifest_path = tmp_path / "evidence-manifest.json"; manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     document = {
