@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import sys
+import pytest
 from pathlib import Path
 
 from agent_workbench.source_audit import audit_files
@@ -119,3 +120,38 @@ def test_audit_malformed_and_empty_manifest_are_structured(tmp_path):
         result = audit_files(path, records)
         assert result["status"] in {"error", "invalid"}
         assert result["errors"] or any(row["errors"] for row in result["records"])
+
+def test_batch_duplicate_id_is_configuration_error(tmp_path):
+    p = tmp_path / "m.json"; p.write_text(json.dumps({"schema_version":"provenance_audit_batch_v1","inputs":[{"input_id":"x"},{"input_id":"x"}]}))
+    with pytest.raises(ValueError): audit_files(p)
+
+def test_batch_wrong_schema_is_not_accepted(tmp_path):
+    p = tmp_path / "m.json"; p.write_text(json.dumps({"schema_version":"wrong","inputs":[]}))
+    assert audit_files(p)["status"] == "error"
+
+def test_batch_empty_inputs_is_configuration_error(tmp_path):
+    p = tmp_path / "m.json"; p.write_text(json.dumps({"schema_version":"provenance_audit_batch_v1","inputs":[]}))
+    with pytest.raises(ValueError): audit_files(p)
+
+def test_list_document_id_does_not_raise(tmp_path):
+    m, r = setup(tmp_path, [record(document_id=[])])
+    assert audit_files(m, r)["status"] == "invalid"
+
+def test_non_utf8_records_is_structured(tmp_path):
+    m, r = setup(tmp_path, [record()]); r.write_bytes(b"\xff")
+    result = audit_files(m, r)
+    assert result["errors"][0]["code"] == "input_read_error"
+
+def test_relative_source_is_contained(tmp_path):
+    m, r = setup(tmp_path, [record(source_path="../outside")])
+    assert any(e["code"] == "path_escape" for e in audit_files(m, r)["records"][0]["errors"])
+
+def test_batch_results_are_lexical(tmp_path):
+    for name in ("a", "b"):
+        (tmp_path / f"{name}.txt").write_text(name); (tmp_path / f"{name}.jsonl").write_text("{}\n")
+    m = tmp_path / "m.json"; m.write_text(json.dumps({"schema_version":"provenance_audit_batch_v1","inputs":[{"input_id":"b","source":"b.txt","records":"b.jsonl"},{"input_id":"a","source":"a.txt","records":"a.jsonl"}]}))
+    assert [x["input_id"] for x in audit_files(m)["results"]] == ["a", "b"]
+
+def test_batch_output_is_deterministic(tmp_path):
+    m, r = setup(tmp_path, [record()]); data=json.loads(m.read_text()); data={"schema_version":"provenance_audit_batch_v1","inputs":[{"input_id":"a","source":"doc.txt","records":"records.jsonl"}]}; r.rename(tmp_path/"records.jsonl"); m.write_text(json.dumps(data))
+    assert audit_files(m) == audit_files(m)

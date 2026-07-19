@@ -77,6 +77,17 @@ Raw tickets, manifests, model outputs, and provider inputs should stay in
 ignored runtime paths. Promote only sanitized findings into tracked planning
 notes.
 
+Example batch audit:
+
+```powershell
+agent-workbench source-audit --manifest batch.json --output audit.json
+```
+
+The UTF-8 `provenance_audit_batch_v1` manifest contains `inputs` with
+`input_id`, `source`, and `records` paths relative to the manifest. Exit 0
+means clean, 1 means readable invalid input or record, and 2 means malformed
+configuration.
+
 Current boundary: the package is a local supervisor tool. It is not a VS Code
 extension, MCP server, hosted agent, dashboard, autonomous closeout system, or
 permission to delegate tracked-file or GitHub mutation to workers. It is also

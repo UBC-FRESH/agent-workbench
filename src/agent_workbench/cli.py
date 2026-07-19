@@ -1726,23 +1726,18 @@ def run_source_audit(args: argparse.Namespace) -> int:
         record_root = args.records
     else:
         manifest = args.manifest
-        if args.records:
-            record_root = args.records
-        else:
-            try:
-                data = json.loads(manifest.read_text(encoding="utf-8-sig"))
-                record_root = Path(data.get("records", data.get("records_path")))
-                if not record_root.is_absolute():
-                    record_root = manifest.parent / record_root
-            except (OSError, UnicodeError, json.JSONDecodeError, TypeError):
-                print("invalid manifest: records path is required", file=sys.stderr)
-                return 2
+        record_root = args.records
+        if not manifest.exists():
+            print("invalid manifest: file does not exist", file=sys.stderr)
+            return 2
     try:
         result = audit_files(manifest, record_root, args.output)
     except (OSError, UnicodeError, ValueError, TypeError) as exc:
         print(str(exc), file=sys.stderr)
         return 2
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+    if result.get("schema_version") == "provenance_audit_batch_v1":
+        return 0 if result["invalid_input_count"] == 0 and result["invalid_record_count"] == 0 else 1
     return 0 if result["status"] == "accepted" else 1
 
 
