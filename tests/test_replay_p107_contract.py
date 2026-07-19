@@ -8,6 +8,9 @@ from replay_p107_contract import replay_contract
 def valid():
     return {"topology_valid": True, "frozen_inputs_valid": True,
             "advisor_hard_wait_valid": True, "advisor_verdict_valid": True,
+            "advisor_validator_result": {"valid": True},
+            "advisor_evidence_summary": {"events_observed": 1},
+            "advisor_events": [{"to": "COORDINATOR_PRECHECK"}, {"to": "FREEZE_REVIEW_BUNDLE"}, {"to": "ADVISOR_HARD_WAIT"}, {"to": "ACCEPTED"}],
             "accounting_valid": True, "contamination_valid": True,
             "c0_eligible": True}
 
@@ -20,9 +23,9 @@ def test_each_failure_class_fails_closed():
     cases = {
         "topology_session_reuse": {"topology_valid": False},
         "frozen_input_hash_drift": {"hash_drift": True},
-        "advisor_hard_wait_failure": {"advisor_hard_wait_valid": False},
-        "accounting_invalid": {"accounting_valid": False},
-        "contamination": {"contaminated": True},
+        "advisor_hard_wait_failure": {"advisor_validator_result": {"valid": False}},
+        "accounting_ineligible": {"accounting_valid": False},
+        "contaminated": {"contaminated": True},
         "c0_absent_or_mismatched": {"c0_eligible": False},
     }
     for reason, change in cases.items():
@@ -38,3 +41,16 @@ def test_multiple_failures_are_all_reported_and_roi_is_not_fabricated():
     assert result["outcome"] == "not_comparable"
     assert result["reason_codes"] == ["topology_session_reuse", "frozen_input_hash_drift", "c0_absent_or_mismatched"]
     assert result["roi"] is None
+
+def test_verified_blocker_is_terminal_non_comparable_not_wait_failure():
+    state = valid(); state["advisor_events"][-1] = {"to": "VERIFIED_BLOCKER"}
+    result = replay_contract(state)
+    assert result == {"outcome": "not_comparable", "reason_codes": ["verified_blocker"], "roi": None}
+
+def test_mismatched_asserted_terminal_is_rejected():
+    state = valid(); state["advisor_terminal"] = "verified_blocker"
+    assert replay_contract(state)["reason_codes"] == ["advisor_hard_wait_failure"]
+
+def test_boolean_claims_without_validator_and_evidence_are_rejected():
+    state = valid(); state.pop("advisor_validator_result"); state.pop("advisor_evidence_summary")
+    assert replay_contract(state)["reason_codes"] == ["advisor_hard_wait_failure"]
