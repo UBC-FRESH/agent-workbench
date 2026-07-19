@@ -25,3 +25,15 @@ def test_missing_evidence_flag_is_not_comparable(tmp_path: Path) -> None:
     result = compare(path)["comparisons"][0]
     assert result["roi_status"] == "not_comparable"
     assert result["reason_codes"] == ["invalid_evaluation_block","advisor_binding_invalid","accounting_provenance_invalid","configuration_topology_mismatch","model_identity_mismatch"]
+
+def test_adversarial_costs_duplicates_and_shape(tmp_path: Path) -> None:
+    base = {"evaluation_block_id":"b", "evaluation_block_valid":True, "advisor_binding_valid":True, "accounting_provenance_valid":True, "configuration_topology_valid":True, "model_identity_valid":True, "run_id":"c0", "configuration_id":"C0", "deterministic_acceptance":True, "advisor_verdict":"accepted", "contaminated":False, "accounting_complete":True, "baseline_run_id":None}
+    rows = [dict(base, paid_run_cost=None), dict(base, run_id="c0", paid_run_cost=1), dict(base, run_id="t", configuration_id="C1", baseline_run_id="c0", paid_run_cost=-1), None]
+    results = compare_path = compare(_write(tmp_path, {"observations": rows}))["comparisons"]
+    assert all(r["roi_status"] == "not_comparable" for r in results)
+    assert "duplicate_run_id" in results[0]["reason_codes"]
+    assert "accounting_ineligible" in results[2]["reason_codes"]
+    assert results[3]["reason_codes"] == ["invalid_observation_shape"]
+
+def _write(tmp_path: Path, data: dict) -> Path:
+    path = tmp_path / "observations.json"; path.write_text(json.dumps(data)); return path

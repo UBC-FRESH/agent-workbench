@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": ["evaluation_block_id", "run_id", "configuration_id", "deterministic_acceptance", "advisor_verdict", "contaminated", "accounting_complete", "baseline_run_id", "paid_run_cost", "roi_status"],
+  "required": ["evaluation_block_id", "evaluation_block_valid", "run_id", "configuration_id", "deterministic_acceptance", "advisor_verdict", "contaminated", "accounting_complete", "baseline_run_id", "paid_run_cost", "roi_status", "advisor_binding_valid", "accounting_provenance_valid", "configuration_topology_valid", "model_identity_valid"],
   "properties": {
     "evaluation_block_id": {"type": "string", "minLength": 1},
     "run_id": {"type": "string", "minLength": 1},
@@ -11,7 +11,7 @@
     "contaminated": {"type": "boolean"},
     "accounting_complete": {"type": "boolean"},
     "baseline_run_id": {"type": ["string", "null"]},
-    "paid_run_cost": {"type": "number", "minimum": 0},
+    "paid_run_cost": {"type": "number", "exclusiveMinimum": 0},
     "roi_status": {"enum": ["eligible_baseline", "comparable", "not_comparable"]},
     "evaluation_block_valid": {"type": "boolean"}, "advisor_binding_valid": {"type": "boolean"},
     "accounting_provenance_valid": {"type": "boolean"}, "configuration_topology_valid": {"type": "boolean"},
