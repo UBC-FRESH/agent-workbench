@@ -6,7 +6,12 @@ import re
 from typing import Any
 
 from .evidence import find_private_values
-from .supervision import MAX_TEXT_LENGTH, SupervisionValidation, validate_supervisor_packet
+from .supervision import (
+    MAX_TEXT_LENGTH,
+    SupervisionValidation,
+    validate_manifest,
+    validate_supervisor_packet,
+)
 
 
 CONFIDENCE_LEVELS = {"low", "medium", "high"}
@@ -19,7 +24,7 @@ CLASSIFICATION_ACTIONS = {
 }
 NUDGE_FIELDS = ("observed_fact", "relevant_feedback", "validation_seam", "ticket_boundary")
 COMMAND_STYLE_NUDGE = re.compile(
-    r"^\s*(?:please\s+)?(?:run|execute|invoke|call|open|edit|write|delete|send|message)\b",
+    r"(?:^|[.!?]\s+)(?:please\s+)?(?:run|execute|invoke|call|open|edit|write|delete|send|message)\b",
     re.IGNORECASE,
 )
 SAFE_DELTA_EVENT_FIELDS = {
@@ -34,17 +39,26 @@ SAFE_DELTA_EVENT_FIELDS = {
     "tool_name",
     "root_match",
 }
+REVIEW_PACKET_FIELDS = {
+    "schema_version", "run_id", "event_start_sequence", "event_end_sequence",
+    "classification", "recommended_action", "confidence", "evidence_citation",
+    "evidence_summary", "nudge",
+}
 
 
 def build_supervisor_review_request(
-    delta: dict[str, Any], *, ticket_boundary: str
+    delta: dict[str, Any], *, ticket_boundary: str, manifest: dict[str, Any]
 ) -> dict[str, Any]:
     """Render the local-only review request; it neither invokes nor messages an agent."""
     errors = _validate_delta(delta) + _validate_ticket_boundary(ticket_boundary)
+    errors.extend(f"manifest: {error}" for error in validate_manifest(manifest).errors)
+    if delta.get("run_id") != manifest.get("run_id"):
+        errors.append("delta: run_id must match the supplied manifest")
     if errors:
         raise ValueError("invalid review request: " + "; ".join(errors))
     return {
         "ticket_boundary": ticket_boundary,
+        "run_id": manifest["run_id"],
         "delta": delta,
         "instructions": [
             "Review only the supplied unacknowledged event delta.",
@@ -66,12 +80,21 @@ def build_supervisor_review_request(
 
 
 def validate_delta_review_packet(
-    packet: dict[str, Any], *, delta: dict[str, Any], ticket_boundary: str
+    packet: dict[str, Any], *, delta: dict[str, Any], ticket_boundary: str,
+    manifest: dict[str, Any],
 ) -> SupervisionValidation:
     """Validate a Supervisor recommendation against its one supplied review delta."""
     errors = _validate_delta(delta) + _validate_ticket_boundary(ticket_boundary)
+    errors.extend(f"manifest: {error}" for error in validate_manifest(manifest).errors)
     packet_validation = validate_supervisor_packet(packet)
     errors.extend(packet_validation.errors)
+    unexpected = set(packet) - REVIEW_PACKET_FIELDS
+    if unexpected:
+        errors.append("packet: contains unknown or extra fields")
+    if packet.get("run_id") != manifest.get("run_id"):
+        errors.append("packet: run_id must match the supplied manifest")
+    if delta.get("run_id") != manifest.get("run_id"):
+        errors.append("delta: run_id must match the supplied manifest")
     start = delta.get("cursor_start_sequence")
     end = delta.get("cursor_end_sequence")
     if not isinstance(start, int) or not isinstance(end, int):
@@ -151,7 +174,7 @@ def _validate_nudge(nudge: Any, *, ticket_boundary: str) -> list[str]:
             errors.append(f"packet: nudge {field} must be a non-empty string")
         elif len(value) > MAX_TEXT_LENGTH:
             errors.append(f"packet: nudge {field} exceeds bounded length")
-        elif field != "ticket_boundary" and COMMAND_STYLE_NUDGE.match(value):
+        elif field != "ticket_boundary" and COMMAND_STYLE_NUDGE.search(value):
             errors.append(f"packet: nudge {field} must not prescribe a command")
     if nudge.get("ticket_boundary") != ticket_boundary:
         errors.append("packet: nudge must retain the supplied ticket boundary")

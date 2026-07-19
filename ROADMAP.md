@@ -6051,9 +6051,10 @@ Parent issue: #669
 
 Branch: `feature/p116-event-driven-supervision-control-plane`
 
-Status: planned. This is a targeted control-plane repair authorized alongside
-P107 baseline preparation. Do not treat it as a P107 economics result, activate
-P115, or alter P114's accepted bridge route.
+Status: active — corrective reconciliation in progress. Local P116.1–P116.4
+candidates are merged, but their closure overstated native/protocol evidence.
+Do not treat P116 as a P107 economics result, activate P115, or alter P114's
+accepted bridge route.
 
 Goal: make the Supervisor an evidence-driven active participant in a live
 Worker run. A Coordinator-owned controller will reduce sanitized Worker events,
@@ -6083,17 +6084,24 @@ Boundaries:
 
 Tasks:
 
-- [x] P116.1 Freeze the run manifest, sanitized event, cursor, Supervisor
+- [ ] P116.1 Freeze the run manifest, sanitized event, cursor, Supervisor
       packet, and Coordinator action-log contracts.
 - [x] P116.2 Probe the actual Codex command-hook payload/ordering and implement
       sanitized hook-to-event capture with containment and redaction tests.
   - [x] Validate the exact Windows command handler with a lifecycle payload.
-  - [x] Record the fresh native CLI observation as a provider stream-disconnect
-        before the first tool call, not as a hook failure. P116.6 retains the
-        live hook-firing requirement.
-- [x] P116.3 Implement the coordinator-owned event reducer/controller with
+  - [x] Observe native hook dispatch from a trusted `codex_vscode` session at
+        the exact P116 worktree: `Get-Location` caused run
+        `p116_hook_vscode_r8` to write sanitized `PreToolUse` evidence with
+        `tool_name: Bash`, `root_match: true`, and an `event_written` receipt.
+        The hook path is `Bash` (the inner shell command), not the outer custom
+        `exec` envelope.
+  - [x] Keep the verdicts separate: focused P116 tests pass and native hook
+        dispatch evidence is observed; economics are unassessed and no P107
+        economics claim is made. This does not prove end-to-end supervision,
+        automatic wake-up, Worker messaging, or native P116.3/P116.4 behavior.
+- [ ] P116.3 Implement the coordinator-owned event reducer/controller with
       deterministic cursor, idempotency, and restart-recovery tests.
-- [x] P116.4 Specify and implement the Supervisor delta-review contract:
+- [ ] P116.4 Specify and implement the Supervisor delta-review contract:
       productive repair versus material repeat, deviation, or block; proposed
       constructive nudge; and evidence citation.
 - [ ] P116.5 Prove the supported route to re-invoke the same Supervisor and

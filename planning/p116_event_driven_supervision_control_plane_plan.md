@@ -2,6 +2,15 @@
 
 ## Decision
 
+## Corrective status — 2026-07-19
+
+P116.1–P116.4 are reopened as local candidates, not accepted phase completion:
+their earlier closure overstated native and protocol evidence. The Copilot SDK
+is rejected as a P116 proof route. The binding P116 reference surfaces are the
+native Codex Supervisor and Worker session identities and the declared run
+artifacts. Quality is limited to local candidates, protocol is unaccepted, and
+economics is unassessed.
+
 P116 is a planned, narrow control-plane repair for the Agent Hub. It gives the
 Coordinator and Supervisor the evidence path and repeatable invocation path
 needed to supervise an already-running Worker. It is not a new model route,
@@ -86,14 +95,15 @@ decisions.
 
 ### P116.2 - Hook-to-event capture probe
 
-Status: complete with a bounded native-transport caveat. The project-local
-`PreToolUse`/`PostToolUse` command hook and inert capture entry point reduce a
-documented lifecycle payload to a validated P116 event without retaining raw
-tool input or output. Focused tests include the exact configured Windows
-PowerShell command. A fresh Qwen CLI observation reached the expected P116
-root and loaded hooks, but its remote Responses stream disconnected before the
-model issued its first tool call, so it provides no live hook-firing verdict.
-P116.6 must obtain that end-to-end evidence.
+Status: complete with evidence-backed native hook firing. A trusted native
+`codex_vscode` session at the exact P116 worktree executed `Get-Location`.
+Captured run `p116_hook_vscode_r8` wrote a sanitized `PreToolUse` event with
+`tool_name: Bash`, `root_match: true`, and an `event_written` receipt. The hook
+path is `Bash` (the inner shell command), not the outer custom `exec` envelope.
+Focused P116 tests pass and native hook dispatch evidence is observed. This is
+not end-to-end supervision, automatic wake-up, Worker messaging, or native
+P116.3/P116.4 proof; economics are unassessed and no P107 economics claim is
+made.
 
 - Run a local, no-provider probe to capture the actual Codex command-hook
   payload, hook ordering, failure behavior, and coexistence with existing
