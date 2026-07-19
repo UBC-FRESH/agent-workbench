@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
+from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +34,58 @@ def _sha(value: Any, name: str, errors: list[str]) -> None:
         errors.append(f"{name} must be a lowercase SHA-256")
 
 
+def _materialized_file(value: Any, name: str, root: Path, declared_sha: Any, errors: list[str]) -> None:
+    path_text = _nonempty(value, f"{name}.path", errors)
+    _sha(declared_sha, f"{name}.sha256", errors)
+    if not path_text:
+        return
+    path = Path(path_text)
+    if not path.is_absolute():
+        errors.append(f"{name}.path must be absolute and canonical")
+        return
+    try:
+        resolved = path.resolve(strict=True)
+        allowed_root = root.resolve(strict=True)
+        resolved.relative_to(allowed_root)
+    except (OSError, ValueError):
+        errors.append(f"{name}.path must be an existing file under the run root")
+        return
+    if str(path) != str(resolved) or path.is_symlink() or not resolved.is_file():
+        errors.append(f"{name}.path must be a canonical regular non-symlink file")
+        return
+    if isinstance(declared_sha, str) and SHA256.fullmatch(declared_sha):
+        actual = sha256(resolved.read_bytes()).hexdigest()
+        if actual != declared_sha:
+            errors.append(f"{name}.sha256 does not match file contents")
+
+
+def _worktree(value: Any, name: str, baseline: str, errors: list[str]) -> Path | None:
+    text = _nonempty(value, f"{name}.worktree", errors)
+    if not text:
+        return None
+    path = Path(text)
+    if not path.is_absolute() or not path.is_dir() or path.is_symlink():
+        errors.append(f"{name}.worktree must be an existing non-symlink directory")
+        return None
+    try:
+        top = subprocess.run(
+            ["git", "-C", str(path), "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True, timeout=5,
+        ).stdout.strip()
+        head = subprocess.run(
+            ["git", "-C", str(path), "rev-parse", "HEAD"],
+            capture_output=True, text=True, check=True, timeout=5,
+        ).stdout.strip()
+        if Path(top).resolve() != path.resolve():
+            raise ValueError("not a git worktree root")
+        if head != baseline:
+            raise ValueError("worktree is not at baseline commit")
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError):
+        errors.append(f"{name}.worktree must be a git worktree at baseline_commit")
+        return None
+    return path.resolve()
+
+
 def validate_run_packet(path: str | Path) -> list[str]:
     try:
         packet = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -50,10 +104,16 @@ def validate_run_packet(path: str | Path) -> list[str]:
     lanes = _object(packet.get("lanes"), "lanes", errors)
     retail = _object(lanes.get("retail"), "lanes.retail", errors)
     workbench = _object(lanes.get("workbench"), "lanes.workbench", errors)
+    baseline = packet.get("baseline_commit", "")
+    worktrees = []
     for name, lane in (("lanes.retail", retail), ("lanes.workbench", workbench)):
-        _nonempty(lane.get("worktree"), f"{name}.worktree", errors)
+        candidate = _worktree(lane.get("worktree"), name, baseline, errors)
+        if candidate is not None:
+            worktrees.append((name, candidate))
         if lane.get("fresh_implementation_session_required") is not True:
             errors.append(f"{name}.fresh_implementation_session_required must be true")
+    if len(worktrees) == 2 and worktrees[0][1] == worktrees[1][1]:
+        errors.append("lanes.retail.worktree and lanes.workbench.worktree must be distinct")
     for key, expected in {
         "coordinator_role": "gpt-5.6-luna",
         "supervisor_role": "gpt_luna_supervisor",
@@ -64,10 +124,10 @@ def validate_run_packet(path: str | Path) -> list[str]:
         if workbench.get(key) != expected:
             errors.append(f"lanes.workbench.{key} must be {expected!r}")
 
+    run_root = Path(path).resolve().parent
     for section_name in ("ticket", "acceptance_fixture", "usability_rubric"):
         section = _object(packet.get(section_name), section_name, errors)
-        _nonempty(section.get("path"), f"{section_name}.path", errors)
-        _sha(section.get("sha256"), f"{section_name}.sha256", errors)
+        _materialized_file(section.get("path"), section_name, run_root, section.get("sha256"), errors)
     if not _nonempty(
         _object(packet.get("acceptance_fixture"), "acceptance_fixture", errors).get("command"),
         "acceptance_fixture.command",
