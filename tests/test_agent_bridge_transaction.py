@@ -164,3 +164,35 @@ def test_transaction_cli_commits_and_restores_staged_toml(tmp_path: Path) -> Non
     )
     assert target.read_text(encoding="utf-8") == 'model = "qwen"\n'
     assert json.loads(journal.read_text(encoding="utf-8"))["state"] == "restored"
+
+
+def test_combined_toml_and_hooks_commit_restore_byte_for_byte(tmp_path: Path) -> None:
+    config, hooks = tmp_path / "config.toml", tmp_path / "hooks.json"
+    config.write_bytes(b'model = "qwen"\r\n')
+    hooks.write_bytes(b'{"original": true}\r\n')
+    config_backup, hooks_backup = tmp_path / "config.bak", tmp_path / "hooks.bak"
+    tx = BridgeConfigTransaction(run_id="combined", targets=(ConfigTarget(config, config_backup), ConfigTarget(hooks, hooks_backup, "hooks")), journal_path=tmp_path / "j", lock_path=tmp_path / "l")
+    tx.begin(); tx.stage(config, 'model = "changed"\n'); tx.stage(hooks, '{"staged": true}\n'); tx.commit()
+    tx.restore()
+    assert config.read_bytes() == b'model = "qwen"\r\n' and hooks.read_bytes() == b'{"original": true}\r\n'
+    tx.close()
+
+
+def test_invalid_hooks_json_is_rejected_before_mutation(tmp_path: Path) -> None:
+    config, hooks = tmp_path / "config.toml", tmp_path / "hooks.json"
+    config.write_text('model = "qwen"\n'); hooks.write_text('{"original": true}\n')
+    tx = BridgeConfigTransaction(run_id="bad-hooks", targets=(ConfigTarget(config, tmp_path / "cb"), ConfigTarget(hooks, tmp_path / "hb", "hooks")), journal_path=tmp_path / "j", lock_path=tmp_path / "l")
+    tx.begin(); original = (config.read_bytes(), hooks.read_bytes())
+    with pytest.raises((json.JSONDecodeError, BridgeTransactionError)):
+        tx.stage(hooks, '{broken')
+    assert (config.read_bytes(), hooks.read_bytes()) == original
+    tx.close()
+
+
+def test_transaction_cli_hooks_round_trip(tmp_path: Path) -> None:
+    target, backup, staged = tmp_path / "hooks.json", tmp_path / "hooks.bak", tmp_path / "hooks.staged.json"
+    target.write_bytes(b'{"before":true}\r\n'); staged.write_text('{"after":true}\n')
+    args = ["--run-id", "hooks-cli", "--journal", str(tmp_path / "j"), "--lock", str(tmp_path / "l")]
+    assert transaction_cli_main(["commit", *args, "--target", f"hooks|{target}|{backup}|{staged}"]) == 0
+    assert transaction_cli_main(["restore", *args, "--target", f"hooks|{target}|{backup}"]) == 0
+    assert target.read_bytes() == b'{"before":true}\r\n'

@@ -1,31 +1,3 @@
 {
-  "description": "P116 sanitized local supervision-event capture; inert without explicit P116 run environment.",
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "^Bash$",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& python (Join-Path (git rev-parse --show-toplevel) 'scripts\\p116_capture_hook.py')\"",
-            "timeout": 5,
-            "statusMessage": "Capturing sanitized supervision event"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "^Bash$",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& python (Join-Path (git rev-parse --show-toplevel) 'scripts\\p116_capture_hook.py')\"",
-            "timeout": 5,
-            "statusMessage": "Capturing sanitized supervision event"
-          }
-        ]
-      }
-    ]
-  }
+  "description": "No P116 hooks in the P107 workspace. Enable supervision capture only in an explicitly staged P116 workspace."
 }

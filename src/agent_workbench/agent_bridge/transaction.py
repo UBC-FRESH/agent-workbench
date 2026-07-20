@@ -13,7 +13,7 @@ from agent_workbench.agent_bridge.errors import BridgeTransactionError, Concurre
 from agent_workbench.agent_bridge.toml_guard import assert_valid_toml_file, assert_valid_toml_text
 
 
-TargetKind = Literal["config", "agent_role"]
+TargetKind = Literal["config", "agent_role", "hooks"]
 
 
 @dataclass(frozen=True)
@@ -77,7 +77,7 @@ class BridgeConfigTransaction:
             for target in self.targets:
                 target.path.parent.mkdir(parents=True, exist_ok=True)
                 target.backup_path.parent.mkdir(parents=True, exist_ok=True)
-                assert_valid_toml_file(target.path)
+                self._validate_file(target)
                 data = target.path.read_bytes()
                 target.backup_path.write_bytes(data)
                 self._snapshots[target.path] = TargetSnapshot(target=target, sha256=sha256_bytes(data))
@@ -97,22 +97,22 @@ class BridgeConfigTransaction:
 
     def stage(self, target_path: Path, content: str) -> None:
         target = self._target_for(target_path)
-        assert_valid_toml_text(content)
+        self._validate_text(target, content)
         self._staged[target.path] = content
 
     def commit(self) -> None:
         missing = [str(target.path) for target in self.targets if target.path not in self._staged]
         if missing:
             raise BridgeTransactionError(f"missing staged content for: {', '.join(missing)}")
-        for content in self._staged.values():
-            assert_valid_toml_text(content)
+        for target in self.targets:
+            self._validate_text(target, self._staged[target.path])
         self._write_journal("committing")
         replaced: list[ConfigTarget] = []
         try:
             for target in self.targets:
                 self._atomic_write_text(target.path, self._staged[target.path])
-                assert_valid_toml_file(target.path)
                 replaced.append(target)
+                self._validate_file(target)
         except Exception:
             for target in reversed(replaced):
                 target.path.write_bytes(target.backup_path.read_bytes())
@@ -125,7 +125,7 @@ class BridgeConfigTransaction:
             if not target.backup_path.exists():
                 raise BridgeTransactionError(f"backup missing: {target.backup_path}")
             target.path.write_bytes(target.backup_path.read_bytes())
-            assert_valid_toml_file(target.path)
+            self._validate_file(target)
         self._write_journal("restored")
 
     def restore_existing(self) -> None:
@@ -151,6 +151,27 @@ class BridgeConfigTransaction:
             if target.path.resolve() == resolved:
                 return target
         raise BridgeTransactionError(f"unmanaged target: {path}")
+
+    @staticmethod
+    def _validate_text(target: ConfigTarget, content: str) -> None:
+        if target.kind == "hooks":
+            value = json.loads(content)
+            if not isinstance(value, dict):
+                raise BridgeTransactionError("hooks content must be a JSON object")
+        else:
+            assert_valid_toml_text(content)
+
+    @classmethod
+    def _validate_file(cls, target: ConfigTarget) -> None:
+        if target.kind == "hooks":
+            try:
+                value = json.loads(target.path.read_text(encoding="utf-8"))
+            except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+                raise BridgeTransactionError(f"hooks file is not valid JSON: {target.path}") from exc
+            if not isinstance(value, dict):
+                raise BridgeTransactionError("hooks file must be a JSON object")
+        else:
+            assert_valid_toml_file(target.path)
 
     def _acquire_lock(self) -> None:
         self.lock_path.parent.mkdir(parents=True, exist_ok=True)

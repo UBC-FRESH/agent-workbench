@@ -6111,16 +6111,22 @@ Tasks:
         dispatch evidence is observed; economics are unassessed and no P107
         economics claim is made. This does not prove end-to-end supervision,
         automatic wake-up, Worker messaging, or native P116.3/P116.4 behavior.
-- [ ] P116.3 Implement the coordinator-owned event reducer/controller with
+- [x] P116.3 Implement the coordinator-owned event reducer/controller with
       deterministic cursor, idempotency, and restart-recovery tests.
-- [ ] P116.4 Specify and implement the Supervisor delta-review contract:
+- [x] P116.4 Specify and implement the Supervisor delta-review contract:
       productive repair versus material repeat, deviation, or block; proposed
       constructive nudge; and evidence citation.
-- [ ] P116.5 Prove the supported route to re-invoke the same Supervisor and
+- [x] P116.5 Prove the supported route to re-invoke the same Supervisor and
       deliver one Coordinator-approved message to the same Worker session.
-- [ ] P116.6 Run one bounded native coding task through the complete loop and
+  - [x] Execute the tracked r8 native contract: exact Worker/Supervisor binding,
+        meaningful delta, same-Supervisor `send_input`, Coordinator decision,
+        same-Worker delivery receipt, post-action observation, and transaction
+        restore. SDK and app-server evidence are non-qualifying.
+- [x] P116.6 Run one bounded native coding task through the complete loop and
       inspect actual session, event, packet, action, artifact, and token data.
-- [ ] P116.7 Publish the P107 re-entry decision packet and closeout record.
+- [x] P116.7 Publish the P107 re-entry decision packet and closeout record.
+  - [x] P107 may use the P116 control plane only from a fresh native controller
+        launched after run-scoped staging; P116 economics remains unassessed.
 
 Acceptance criteria:
 

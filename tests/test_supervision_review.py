@@ -1,10 +1,19 @@
 from __future__ import annotations
 
+import json
+import subprocess
+import sys
+from pathlib import Path
+
 from agent_workbench.supervision import SCHEMA_VERSION
 from agent_workbench.supervision_review import (
+    build_packet_repair_request,
     build_supervisor_review_request,
     validate_delta_review_packet,
 )
+
+
+SCRIPT = Path(__file__).parents[1] / "scripts" / "p116_supervision_review.py"
 
 
 BOUNDARY = "Edit only src/agent_workbench/example.py and run the declared unit test."
@@ -170,3 +179,60 @@ def test_malformed_delta_is_rejected_without_raising() -> None:
 
     assert not result.ok
     assert any("usable cursor range" in error for error in result.errors)
+
+
+def test_cli_renders_the_canonical_review_request(tmp_path: Path) -> None:
+    manifest_path = tmp_path / "manifest.json"
+    delta_path = tmp_path / "delta.json"
+    manifest_path.write_text(json.dumps(MANIFEST), encoding="utf-8")
+    delta_path.write_text(json.dumps(delta()), encoding="utf-8")
+    result = subprocess.run([
+        sys.executable, str(SCRIPT), "--manifest", str(manifest_path), "--delta", str(delta_path),
+        "--ticket-boundary", BOUNDARY, "--render-request",
+    ], capture_output=True, text=True)
+    request = json.loads(result.stdout)
+    assert result.returncode == 0 and request["delta"] == delta()
+
+
+def test_cli_packet_dash_reads_stdin_and_reports_invalid_json_validation_style(tmp_path: Path) -> None:
+    manifest_path = tmp_path / "manifest.json"
+    delta_path = tmp_path / "delta.json"
+    manifest_path.write_text(json.dumps(MANIFEST), encoding="utf-8")
+    delta_path.write_text(json.dumps(delta()), encoding="utf-8")
+    result = subprocess.run([
+        sys.executable, str(SCRIPT), "--manifest", str(manifest_path), "--delta", str(delta_path),
+        "--ticket-boundary", BOUNDARY, "--packet", "-",
+    ], input="not json", capture_output=True, text=True)
+    assert result.returncode == 2
+    assert json.loads(result.stdout) == {
+        "ok": False,
+        "errors": ["packet: unable to read JSON from stdin: invalid JSON"],
+    }
+
+
+def test_cli_repair_errors_reports_malformed_json_as_validation_envelope(tmp_path: Path) -> None:
+    manifest_path = tmp_path / "manifest.json"
+    delta_path = tmp_path / "delta.json"
+    repair_errors_path = tmp_path / "repair-errors.json"
+    manifest_path.write_text(json.dumps(MANIFEST), encoding="utf-8")
+    delta_path.write_text(json.dumps(delta()), encoding="utf-8")
+    repair_errors_path.write_text("not json", encoding="utf-8")
+    result = subprocess.run([
+        sys.executable, str(SCRIPT), "--manifest", str(manifest_path), "--delta", str(delta_path),
+        "--ticket-boundary", BOUNDARY, "--repair-errors", str(repair_errors_path),
+    ], capture_output=True, text=True)
+    assert result.returncode == 2
+    assert json.loads(result.stdout) == {
+        "ok": False,
+        "errors": ["repair-errors: unable to read JSON: invalid JSON"],
+    }
+
+
+def test_packet_repair_request_keeps_the_same_delta_and_boundary() -> None:
+    request = build_packet_repair_request(
+        delta(), ticket_boundary=BOUNDARY, manifest=MANIFEST,
+        errors=["packet: invalid classification"],
+    )
+    assert request["delta"] == delta()
+    assert request["ticket_boundary"] == BOUNDARY
+    assert request["validation_errors"] == ["packet: invalid classification"]

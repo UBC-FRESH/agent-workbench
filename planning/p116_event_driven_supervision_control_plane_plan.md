@@ -11,10 +11,20 @@ native Codex Supervisor and Worker session identities and the declared run
 artifacts. Quality is limited to local candidates, protocol is unaccepted, and
 economics is unassessed.
 
-P116 is a planned, narrow control-plane repair for the Agent Hub. It gives the
+P116 is a planned, narrow control-plane repair for the Agent Hub. Its required
+execution architecture is frozen in
+`planning/p116_controller_owned_runtime_design.md`. It gives the
 Coordinator and Supervisor the evidence path and repeatable invocation path
 needed to supervise an already-running Worker. It is not a new model route,
 tool bridge, or attempt to force deterministic Worker behavior.
+
+Native transport correction â€” 2026-07-19: a direct proof reused one live
+native Luna Worker session and submitted `multi_agent_v1__send_input` with
+`interrupt:true` while its shell action was active. The Worker received the
+intervention and returned its marker before normal turn completion. This
+supersedes the incorrect inference that native Codex lacks mid-turn re-entry.
+The remaining P116 implementation seam is automated binding from validated
+Worker events to that Coordinator-owned native tool call.
 
 The triggering evidence is the July 18 P107/P114 Qwen coding run: the Worker
 was active and making tool-assisted repairs, but the native lifecycle interface
@@ -153,14 +163,32 @@ not invoke a Supervisor, send a Worker message, or carry provider credentials.
 
 ### P116.5 - Re-invocation and same-Worker delivery feasibility
 
-- Probe the supported local route that lets the Coordinator re-invoke the same
-  Supervisor session/thread and submit one approved input to the same live
-  Worker session.
-- Record the exact API/controller boundary, session identifiers, lifecycle
-  behavior, and unsupported cases. Do not promise autonomous wake-up before
-  this probe succeeds.
-- If native re-invocation is unavailable, retain event capture/controller work
-  and make the next repair explicitly about the missing invocation surface.
+Status: active. The r8 native probe is the current authoritative execution
+contract. It is an ignored evidence run, not a P107 run and not a completion
+claim.
+
+1. Start exactly one native Luna Worker and one native Luna Supervisor from a
+   fresh root Coordinator session with `fork_context:false`; record their exact
+   native IDs.
+2. Bind both IDs to the inactive run manifest before the Worker uses a tool.
+3. Have the bound Worker perform one harmless live shell action that produces a
+   validated meaningful event while the Worker remains addressable.
+4. Give that sanitized delta to the same Supervisor through native
+   `send_input`; require a cursor-citing recommendation packet.
+5. Record the Coordinator's explicit approval decision, then—only for an
+   approved nudge—use native `send_input` to deliver one bounded message to
+   that same Worker ID.
+6. Inspect raw Worker and Supervisor session evidence plus the event, packet,
+   action, delivery submission, and post-action Worker acknowledgement; then
+   restore the temporary hook/MCP transaction.
+
+The proof is accepted only when the Supervisor ID is identical at spawn and
+re-invocation; the Worker ID is identical at binding and delivery; the packet
+cites the new cursor; the action log binds the packet, approval, IDs, and
+delivery submission; and the Worker session shows the intervention took
+effect. Missing evidence is an incomplete P116.5 result with the exact absent
+field. Copilot SDK and app-server material are diagnostic only and cannot
+substitute for this native proof.
 
 ### P116.6 - Native end-to-end proof
 
@@ -181,6 +209,35 @@ not invoke a Supervisor, send a Worker message, or carry provider credentials.
 - Decide whether P107 C4 may use the supervision control plane for a fresh
   measurement. No P107 economics claim transfers from P116.
 - Synchronize roadmap, changelog, issue task checklist, tests, and PR evidence.
+
+### P116.7 decision record - 2026-07-19
+
+The fresh-root native run `p116_native_coding_r3_20260719` is the qualifying
+P116.6 evidence. The Coordinator staged the run-scoped MCP and hook settings
+before launching a fresh native `codex exec` controller. That controller bound
+Worker `019f7e0f-a3e0-7182-b83f-a26d0e90350e` and Supervisor
+`019f7e0f-a687-70b2-b9fe-21dd9a183910` before Worker tool use. The Supervisor's
+native tool inventory exposed the run-scoped P116 MCP tool, directly received
+the ordered root-matched `events:1-3` delta, and recommended a bounded repair.
+The Coordinator validated the `events:1-3` packet, recorded the packet hash and
+delivery submission, and sent the bounded cue to that same Worker. The Worker
+repaired malformed `--repair-errors` JSON handling and the focused test passed.
+The run transaction restored the temporary settings afterward.
+
+- Quality: supported for the bounded control layer. The Worker repair and the
+  deterministic focused P116 suite passed; the exact r3 task command passed
+  after the cue.
+- Protocol: supported for the bounded fresh-controller route. Raw native
+  sessions, manifest binding, ordered event delta, Supervisor tool invocation,
+  packet, cursor, action, same-Worker delivery, and restore receipts agree.
+- Economics: unassessed. P116 captured no accepted P107-boundary token or cash
+  ledger, so it makes no economics-usable claim.
+
+Decision: P107 C4 may use the P116 control plane in a fresh measurement only
+when its run-scoped MCP/hook configuration is staged before the native
+Coordinator starts, and when it captures its own token/cash ledger. The prior
+same-process r2 missing-tool observation is explained by cached controller
+state and is not evidence that the staged MCP registration is unavailable.
 
 ## Observability and intervention logic
 

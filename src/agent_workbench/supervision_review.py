@@ -122,6 +122,25 @@ def validate_delta_review_packet(
     return SupervisionValidation(ok=not errors, errors=errors)
 
 
+def build_packet_repair_request(
+    delta: dict[str, Any], *, ticket_boundary: str, manifest: dict[str, Any], errors: list[str]
+) -> dict[str, Any]:
+    """Render one bounded same-Supervisor repair request for a malformed packet."""
+    request = build_supervisor_review_request(delta, ticket_boundary=ticket_boundary, manifest=manifest)
+    safe_errors = [error for error in errors if isinstance(error, str) and error][:16]
+    if not safe_errors:
+        raise ValueError("packet repair requires at least one validation error")
+    if any(len(error) > MAX_TEXT_LENGTH for error in safe_errors):
+        raise ValueError("packet repair error exceeds bounded length")
+    request["instructions"] = [
+        "Your prior packet was rejected. Return a corrected JSON packet only.",
+        "Keep the same supplied delta, exact cursor range, evidence citation, and ticket boundary.",
+        "Do not explain, issue commands, edit files, or contact the Worker.",
+    ]
+    request["validation_errors"] = safe_errors
+    return request
+
+
 def _validate_delta(delta: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     start = delta.get("cursor_start_sequence")
