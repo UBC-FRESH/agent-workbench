@@ -8,3 +8,18 @@ model_reasoning_effort = "medium"
 # Root Coordinator (depth 0) -> Supervisor (depth 1) -> Worker (depth 2).
 max_depth = 2
 max_threads = 6
+
+[agents.gpt_luna_supervisor]
+config_file = "agents/gpt_luna_supervisor.toml"
+
+[agents.gpt_luna_worker]
+config_file = "agents/gpt_luna_worker.toml"
+
+[agents.gpt_sol_advisor]
+config_file = "agents/gpt_sol_advisor.toml"
+
+[agents.ollama_supervisor]
+config_file = "agents/ollama_supervisor.toml"
+
+[agents.ollama_worker]
+config_file = "agents/ollama_worker.toml"

@@ -4342,6 +4342,18 @@ exact staged lines, then restored the temp config hash byte-for-byte.
   surfaces remain native Codex Supervisor/Worker session identities and the
   declared run artifacts.
 
+## 2026-07-19 - P116.5 native proof contract reconciled
+
+- The authoritative P116.5 plan now requires one combined native cycle:
+  exact Worker/Supervisor binding before Worker tool use, a meaningful
+  sanitized Worker delta, re-invocation of the same Supervisor through native
+  `send_input`, an explicit Coordinator decision, and one bounded delivery to
+  the same live Worker with post-action evidence.
+- The r8 run is staged only for that proof. It is not P107 work and does not
+  establish P116 completion, quality, protocol, or economics. Copilot SDK and
+  app-server artifacts remain diagnostic and are non-qualifying.
+- The temporary hook/MCP transaction must be restored after the evidence audit.
+
 ## 2026-07-18 - Planned P117 run-scoped supervision daemon
 
 - Activated parent issue #686 on branch
@@ -4380,3 +4392,19 @@ exact staged lines, then restored the temp config hash byte-for-byte.
 - This is offline machinery only: no fresh C0-C4 configuration observation was
   run, no P107 quality/protocol verdict for a live configuration is claimed,
   and P107 economics remains unassessed.
+
+## 2026-07-19 - Completed P116 native control-layer proof and P107 re-entry decision
+
+- The fresh-root `p116_native_coding_r3_20260719` run staged the P116 MCP/hook
+  transaction before starting the native Coordinator, bound one Worker and one
+  Supervisor before Worker tool use, and retained raw session, event, packet,
+  action, cursor, and restore artifacts under ignored runtime storage.
+- The Supervisor directly obtained the ordered `events:1-3` sanitized delta
+  through its native P116 MCP inventory. The Coordinator validated the packet,
+  recorded the hash and delivery receipt, and sent one bounded repair cue to
+  the same Worker. The Worker repaired malformed `--repair-errors` JSON
+  handling and the focused validation passed.
+- Quality and bounded native protocol are supported. Economics is unassessed:
+  no P107-boundary token/cash ledger exists, and P116 makes no P107 economics
+  claim. A future P107 C4 measurement may use this control layer only through
+  a fresh native Coordinator launched after run-scoped staging.

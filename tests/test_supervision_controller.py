@@ -2,12 +2,17 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
 from agent_workbench.supervision import SCHEMA_VERSION
 from agent_workbench.supervision_controller import acknowledge_cursor, prepare_review_delta
+
+
+SCRIPT = Path(__file__).parents[1] / "scripts" / "p116_supervision_controller.py"
 
 
 def event(sequence: int) -> dict[str, object]:
@@ -76,6 +81,21 @@ def test_truncated_event_log_fails_closed_after_restart(tmp_path: Path) -> None:
     events.write_bytes(events.read_bytes().rstrip(b"\n"))
     with pytest.raises(ValueError, match="truncated"):
         prepare_review_delta(manifest_path=manifest)
+
+
+def test_cli_records_native_nudge_receipt_and_cursor(tmp_path: Path) -> None:
+    manifest = setup_run(tmp_path, [event(1)])
+    packet_path = tmp_path / "packet.json"
+    packet_path.write_text(json.dumps(packet(1)), encoding="utf-8")
+    result = subprocess.run([
+        sys.executable, str(SCRIPT), "--manifest", str(manifest), "--packet", str(packet_path),
+        "--record-nudge", "--delivery-submission-id", "submission-1",
+        "--worker-session-id", "worker-1", "--supervisor-session-id", "supervisor-1",
+    ], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    action = json.loads((manifest.parent / "coordinator_actions.jsonl").read_text())
+    assert action["decision"] == "nudge" and action["delivery_submission_id"] == "submission-1"
+    assert json.loads((manifest.parent / "cursor.json").read_text())["last_sequence"] == 1
 
 
 def test_manifest_rejects_absolute_artifact_path(tmp_path: Path) -> None:

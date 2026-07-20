@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -40,7 +41,7 @@ def _staged_activation(project_root: Path) -> tuple[dict[str, str] | None, bool]
         if isinstance(value, dict) and value.get("active") is True:
             active_manifests.append((manifest_path, value))
     if len(active_manifests) != 1:
-        return None, bool(active_manifests)
+        return None, bool(candidates)
     manifest_path, value = active_manifests[0]
     try:
         if manifest_path.parent.parent.name == "":
@@ -48,7 +49,10 @@ def _staged_activation(project_root: Path) -> tuple[dict[str, str] | None, bool]
         run_id = value.get("run_id")
         assigned_root = value.get("assigned_root")
         supervision_dir = value.get("supervision_dir")
+        worker_session_id = value.get("worker_session_id")
         if not all(isinstance(item, str) and item for item in (run_id, assigned_root, supervision_dir)):
+            return None, True
+        if value.get("active") is not True or not isinstance(worker_session_id, str) or not worker_session_id:
             return None, True
         root = project_root.resolve()
         assigned = Path(assigned_root).resolve()
@@ -56,7 +60,7 @@ def _staged_activation(project_root: Path) -> tuple[dict[str, str] | None, bool]
         run_dir = manifest_path.parent.parent.resolve()
         if assigned != root or not _within(output, root) or not _within(output, run_dir):
             return None, True
-        return {"run_id": run_id, "assigned_root": str(assigned), "supervision_dir": str(output)}, True
+        return {"run_id": run_id, "assigned_root": str(assigned), "supervision_dir": str(output), "worker_session_id": worker_session_id}, True
     except (OSError, TypeError, ValueError, json.JSONDecodeError):
         return None, True
 
@@ -72,7 +76,7 @@ def event_from_hook_payload(
     hook_event = str(payload.get("hook_event_name", ""))
     tool_name = _safe_tool_name(payload.get("tool_name"))
     cwd_matches_root = _same_path(payload.get("cwd"), assigned_root)
-    kind, outcome = _event_type(hook_event, cwd_matches_root)
+    kind, outcome = _event_type(hook_event, cwd_matches_root, payload)
     return {
         "schema_version": SCHEMA_VERSION,
         "sequence": sequence,
@@ -94,7 +98,9 @@ def capture_from_environment(payload: dict[str, Any]) -> bool:
     context = _capture_context()
     if context is None:
         return False
-    run_id, assigned_root, supervision_dir = context
+    run_id, assigned_root, supervision_dir, worker_session_id = context
+    if worker_session_id is not None and payload.get("session_id") != worker_session_id:
+        return False
 
     events_path = supervision_dir / "events.jsonl"
     if not _within(events_path.parent, assigned_root):
@@ -144,7 +150,7 @@ def record_hook_invocation() -> bool:
     context = _capture_context()
     if context is None:
         return False
-    _, assigned_root, supervision_dir = context
+    _, assigned_root, supervision_dir, _ = context
     if not _within(supervision_dir, assigned_root):
         return False
     try:
@@ -160,7 +166,7 @@ def record_hook_payload_rejected() -> bool:
     context = _capture_context()
     if context is None:
         return False
-    _, assigned_root, supervision_dir = context
+    _, assigned_root, supervision_dir, _ = context
     if not _within(supervision_dir, assigned_root):
         return False
     try:
@@ -171,10 +177,10 @@ def record_hook_payload_rejected() -> bool:
         return False
 
 
-def _capture_context() -> tuple[str, Path, Path] | None:
+def _capture_context() -> tuple[str, Path, Path, str | None] | None:
     activation, active_staged = _staged_activation(Path.cwd())
     if activation is not None:
-        return activation["run_id"], Path(activation["assigned_root"]), Path(activation["supervision_dir"])
+        return activation["run_id"], Path(activation["assigned_root"]), Path(activation["supervision_dir"]), activation["worker_session_id"]
     if active_staged:
         return None
     run_id = os.environ.get(RUN_ID_ENV)
@@ -193,7 +199,7 @@ def _capture_context() -> tuple[str, Path, Path] | None:
         return None
     if not _within(supervision_dir, assigned_root):
         return None
-    return run_id, assigned_root, supervision_dir
+    return run_id, assigned_root, supervision_dir, None
 
 
 def _write_receipt(supervision_dir: Path, status: str) -> None:
@@ -204,14 +210,70 @@ def _write_receipt(supervision_dir: Path, status: str) -> None:
     receipt_path.write_text(json.dumps(receipt, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def _event_type(hook_event: str, cwd_matches_root: bool) -> tuple[str, str]:
+def _event_type(hook_event: str, cwd_matches_root: bool, tool_response: object = None) -> tuple[str, str]:
     if not cwd_matches_root:
         return "workspace_mismatch", "failed"
     if hook_event == "PreToolUse":
         return "tool_started", "started"
+    if hook_event == "PostToolUse" and _tool_response_failed(tool_response):
+        return "tool_failed", "failed"
     if hook_event == "PostToolUse":
         return "tool_completed", "succeeded"
     return "stage_transition", "started"
+
+
+def _tool_response_failed(value: object) -> bool:
+    return _scan_failure(value)
+
+
+def _failure_signal(value: object) -> bool:
+    if isinstance(value, int) and not isinstance(value, bool):
+        return value != 0
+    if isinstance(value, str):
+        if value.lower() in {"failed", "error", "denied"}:
+            return True
+        match = re.search(r"\bExit\s+code:\s*(-?\d+)\b", value, re.IGNORECASE)
+        return bool(match and int(match.group(1)) != 0)
+    if isinstance(value, dict):
+        exit_code = value.get("exit_code")
+        if isinstance(exit_code, int) and not isinstance(exit_code, bool) and exit_code != 0:
+            return True
+        if value.get("is_error") is True:
+            return True
+        if isinstance(value.get("status"), str) and value["status"].lower() in {"failed", "error", "denied"}:
+            return True
+        return any(_failure_signal(value.get(key)) for key in ("tool_response", "tool_result", "result", "content", "text", "output"))
+    if isinstance(value, list):
+        return any(_failure_signal(item) for item in value)
+    return False
+
+
+_FAILURE_SCAN_EXCLUDED_KEYS = {"input", "command", "arguments", "environment", "header", "headers", "secret", "secrets", "token", "tokens", "tool_input", "tool_arguments", "request", "params", "payload"}
+
+
+def _scan_failure(value: object, key: str | None = None) -> bool:
+    if key is not None and key.lower() in _FAILURE_SCAN_EXCLUDED_KEYS:
+        return False
+    if isinstance(value, dict):
+        for child_key, child_value in value.items():
+            normalized = str(child_key).lower()
+            if normalized in _FAILURE_SCAN_EXCLUDED_KEYS:
+                continue
+            if normalized == "exit_code" and isinstance(child_value, int) and not isinstance(child_value, bool) and child_value != 0:
+                return True
+            if normalized == "is_error" and child_value is True:
+                return True
+            if normalized == "status" and isinstance(child_value, str) and child_value.lower() in {"failed", "error", "denied"}:
+                return True
+            if _scan_failure(child_value, normalized):
+                return True
+        return False
+    if isinstance(value, list):
+        return any(_scan_failure(item, key) for item in value)
+    if isinstance(value, str):
+        match = re.fullmatch(r".*\bExit\s+code:\s*(-?\d+)\b.*", value, re.IGNORECASE)
+        return bool(match and int(match.group(1)) != 0)
+    return False
 
 
 def _next_sequence(events_path: Path) -> int:

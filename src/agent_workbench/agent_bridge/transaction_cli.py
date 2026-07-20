@@ -14,8 +14,8 @@ def _target(value: str) -> tuple[ConfigTarget, Path | None]:
     if len(parts) not in {3, 4}:
         raise argparse.ArgumentTypeError("target must be kind|path|backup or kind|path|backup|staged")
     kind, path, backup = parts[:3]
-    if kind not in {"config", "agent_role"}:
-        raise argparse.ArgumentTypeError("target kind must be config or agent_role")
+    if kind not in {"config", "agent_role", "hooks"}:
+        raise argparse.ArgumentTypeError("target kind must be config, agent_role, or hooks")
     staged = Path(parts[3]) if len(parts) == 4 else None
     return ConfigTarget(path=Path(path), backup_path=Path(backup), kind=kind), staged
 

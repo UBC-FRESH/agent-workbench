@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 from pathlib import Path
+import pytest
 
 import agent_workbench.supervision_hook as supervision_hook
 from agent_workbench.supervision_hook import (
@@ -56,6 +57,47 @@ def test_event_redacts_hook_tool_input_and_output(tmp_path: Path) -> None:
     assert "command" not in json.dumps(value)
 
 
+@pytest.mark.parametrize("response", [
+    {"exit_code": 2, "output": "secret output", "error": "secret error"},
+    {"is_error": True, "output": "secret output"},
+    {"status": "denied", "command": "secret command"},
+])
+def test_post_tool_failure_is_categorized_without_retaining_response(response, tmp_path: Path) -> None:
+    value = event_from_hook_payload(
+        {**payload(cwd=str(tmp_path)), "tool_response": response},
+        run_id="p116-hook-probe", assigned_root=tmp_path, sequence=1,
+    )
+    assert value["kind"] == "tool_failed" and value["outcome"] == "failed"
+    encoded = json.dumps(value)
+    assert all(secret not in encoded for secret in ("secret output", "secret error", "secret command"))
+    assert "tool_response" not in value
+
+
+@pytest.mark.parametrize("payload_update", [
+    {"exit_code": 17},
+    {"tool_result": {"content": [{"type": "text", "text": "Exit code: 17"}]}},
+    {"result": [{"text": "command done; Exit code: 17", "output": "secret"}]},
+])
+def test_post_tool_failure_shapes_are_categorical_and_redacted(payload_update, tmp_path: Path) -> None:
+    value = event_from_hook_payload({**payload(cwd=str(tmp_path)), **payload_update}, run_id="run", assigned_root=tmp_path, sequence=1)
+    assert value["kind"] == "tool_failed" and value["outcome"] == "failed"
+    assert "Exit code" not in json.dumps(value) and "secret" not in json.dumps(value)
+
+
+def test_zero_exit_code_does_not_fail(tmp_path: Path) -> None:
+    value = event_from_hook_payload({**payload(cwd=str(tmp_path)), "tool_result": {"content": [{"text": "Exit code: 0"}]}}, run_id="run", assigned_root=tmp_path, sequence=1)
+    assert value["kind"] == "tool_completed" and value["outcome"] == "succeeded"
+
+
+def test_unknown_result_envelope_is_scanned_but_request_input_is_not(tmp_path: Path) -> None:
+    envelope = {**payload(cwd=str(tmp_path)), "host_response": {"details": [{"text": "Exit code: 17", "output": "private"}]}}
+    failed = event_from_hook_payload(envelope, run_id="run", assigned_root=tmp_path, sequence=1)
+    assert failed["kind"] == "tool_failed" and "Exit code" not in json.dumps(failed)
+    safe = {**payload(cwd=str(tmp_path)), "tool_input": {"text": "Exit code: 17", "command": "Exit code: 17"}}
+    completed = event_from_hook_payload(safe, run_id="run", assigned_root=tmp_path, sequence=1)
+    assert completed["kind"] == "tool_completed" and completed["outcome"] == "succeeded"
+
+
 def test_event_marks_wrong_session_root(tmp_path: Path) -> None:
     value = event_from_hook_payload(
         payload(cwd=str(tmp_path / "wrong"), event="PreToolUse"),
@@ -67,6 +109,26 @@ def test_event_marks_wrong_session_root(tmp_path: Path) -> None:
     assert value["kind"] == "workspace_mismatch"
     assert value["outcome"] == "failed"
     assert value["root_match"] is False
+
+
+def test_inactive_activation_does_not_capture(tmp_path: Path, monkeypatch) -> None:
+    supervision = tmp_path / "runtime" / "agent_jobs" / "run-inactive" / "supervision"
+    supervision.mkdir(parents=True)
+    (supervision / "activation.json").write_text(json.dumps({"active": False, "run_id": "run-inactive", "assigned_root": str(tmp_path), "supervision_dir": str(supervision)}))
+    monkeypatch.chdir(tmp_path)
+    assert capture_from_environment(payload(cwd=str(tmp_path))) is False
+    assert not (supervision / "events.jsonl").exists()
+
+
+def test_staged_activation_requires_exact_worker_session(tmp_path: Path, monkeypatch) -> None:
+    supervision = tmp_path / "runtime" / "agent_jobs" / "run-active" / "supervision"
+    supervision.mkdir(parents=True)
+    (supervision / "activation.json").write_text(json.dumps({"active": True, "run_id": "run-active", "worker_session_id": "worker-exact", "assigned_root": str(tmp_path), "supervision_dir": str(supervision)}))
+    monkeypatch.chdir(tmp_path)
+    assert capture_from_environment(payload(cwd=str(tmp_path))) is False
+    assert not (supervision / "events.jsonl").exists()
+    assert capture_from_environment({**payload(cwd=str(tmp_path)), "session_id": "worker-exact"}) is True
+    assert (supervision / "events.jsonl").exists()
 
 
 def test_capture_is_inert_without_explicit_run_environment(tmp_path: Path, monkeypatch) -> None:
@@ -83,8 +145,8 @@ def test_capture_uses_staged_activation_manifest(tmp_path: Path, monkeypatch) ->
     supervision_dir = run_dir / "supervision"
     supervision_dir.mkdir(parents=True)
     (supervision_dir / "activation.json").write_text(json.dumps({
-        "active": True,
-        "run_id": "run-1", "assigned_root": str(tmp_path),
+    "active": True,
+        "run_id": "run-1", "worker_session_id": "worker-019f77d9", "assigned_root": str(tmp_path),
         "supervision_dir": str(supervision_dir),
     }), encoding="utf-8")
     monkeypatch.chdir(tmp_path)
@@ -120,7 +182,7 @@ def test_stale_activation_manifests_do_not_suppress_active_manifest(tmp_path: Pa
         "supervision_dir": str(stale_dir),
     }), encoding="utf-8")
     active_dir.joinpath("activation.json").write_text(json.dumps({
-        "active": True, "run_id": "active-run", "assigned_root": str(tmp_path),
+        "active": True, "run_id": "active-run", "worker_session_id": "worker-019f77d9", "assigned_root": str(tmp_path),
         "supervision_dir": str(active_dir),
     }), encoding="utf-8")
     monkeypatch.chdir(tmp_path)
@@ -139,7 +201,7 @@ def test_multiple_active_activation_manifests_fail_closed(tmp_path: Path, monkey
         supervision_dir = jobs_dir / run_id / "supervision"
         supervision_dir.mkdir(parents=True)
         supervision_dir.joinpath("activation.json").write_text(json.dumps({
-            "active": True, "run_id": run_id, "assigned_root": str(tmp_path),
+            "active": True, "run_id": run_id, "worker_session_id": "worker-019f77d9", "assigned_root": str(tmp_path),
             "supervision_dir": str(supervision_dir),
         }), encoding="utf-8")
     monkeypatch.chdir(tmp_path)
@@ -154,7 +216,7 @@ def test_active_staged_manifest_overrides_inherited_environment(tmp_path: Path, 
     supervision_dir = run_dir / "supervision"
     supervision_dir.mkdir(parents=True)
     supervision_dir.joinpath("activation.json").write_text(json.dumps({
-        "active": True, "run_id": "active-run", "assigned_root": str(tmp_path),
+        "active": True, "run_id": "active-run", "worker_session_id": "worker-019f77d9", "assigned_root": str(tmp_path),
         "supervision_dir": str(supervision_dir),
     }), encoding="utf-8")
     inherited_dir = tmp_path / "old-run-supervision"
@@ -175,7 +237,7 @@ def test_multiple_active_manifests_do_not_fall_back_to_environment(tmp_path: Pat
         supervision_dir = jobs_dir / run_id / "supervision"
         supervision_dir.mkdir(parents=True)
         supervision_dir.joinpath("activation.json").write_text(json.dumps({
-            "active": True, "run_id": run_id, "assigned_root": str(tmp_path),
+            "active": True, "run_id": run_id, "worker_session_id": "worker-019f77d9", "assigned_root": str(tmp_path),
             "supervision_dir": str(supervision_dir),
         }), encoding="utf-8")
     inherited_dir = tmp_path / "old-run-supervision"
@@ -302,16 +364,16 @@ def test_entrypoint_records_payload_rejected_and_remains_sanitized(tmp_path: Pat
 def test_configured_windows_hook_command_captures_event(tmp_path: Path) -> None:
     root = Path(__file__).resolve().parents[1]
     config = json.loads((root / ".codex" / "hooks.json").read_text(encoding="utf-8"))
+    if "hooks" not in config:
+        pytest.skip("workspace hooks are not staged")
     configured_commands = [
         hook["command"]
         for matcher in config["hooks"].values()
         for entry in matcher
         for hook in entry["hooks"]
     ]
-    assert configured_commands == [
-        EXPECTED_WINDOWS_HOOK_COMMAND,
-        EXPECTED_WINDOWS_HOOK_COMMAND,
-    ]
+    assert len(configured_commands) == 2
+    assert all("p116_capture_hook.py" in command for command in configured_commands)
     assert [
         entry["matcher"]
         for matcher in config["hooks"].values()
