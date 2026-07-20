@@ -4408,3 +4408,16 @@ exact staged lines, then restored the temp config hash byte-for-byte.
   no P107-boundary token/cash ledger exists, and P116 makes no P107 economics
   claim. A future P107 C4 measurement may use this control layer only through
   a fresh native Coordinator launched after run-scoped staging.
+
+## 2026-07-19 - Repaired VS Code in-session P116 live progress delivery
+
+- Repaired the native in-session event predicate so a newly captured,
+  sanitized successful Worker tool completion wakes the active VS Code Codex
+  Coordinator instead of timing out indefinitely.
+- A fresh native Coordinator bound one Worker and one advisory Supervisor,
+  received the live `tool_completed` delta in 0.83 seconds before terminal
+  completion, and allowed ordinary productive work to continue without an
+  unnecessary intervention.
+- The bounded Worker ticket added workflow-package CLI coverage and passed 20
+  focused tests. P116 control-layer quality and native protocol remain
+  supported; economics remains unassessed and no P107 economics claim is made.

@@ -2,14 +2,13 @@
 
 ## Decision
 
-## Corrective status — 2026-07-19
+## Corrective status — resolved 2026-07-19
 
-P116.1–P116.4 are reopened as local candidates, not accepted phase completion:
-their earlier closure overstated native and protocol evidence. The Copilot SDK
-is rejected as a P116 proof route. The binding P116 reference surfaces are the
-native Codex Supervisor and Worker session identities and the declared run
-artifacts. Quality is limited to local candidates, protocol is unaccepted, and
-economics is unassessed.
+P116.1–P116.4 were reopened as local candidates because their earlier closure
+overstated native and protocol evidence. The Copilot SDK is rejected as a P116
+proof route. The fresh-root native proof and closeout decision below resolved
+that reconciliation: bounded control-layer quality and protocol are supported;
+economics remains unassessed.
 
 P116 is a planned, narrow control-plane repair for the Agent Hub. Its required
 execution architecture is frozen in
@@ -163,9 +162,9 @@ not invoke a Supervisor, send a Worker message, or carry provider credentials.
 
 ### P116.5 - Re-invocation and same-Worker delivery feasibility
 
-Status: active. The r8 native probe is the current authoritative execution
-contract. It is an ignored evidence run, not a P107 run and not a completion
-claim.
+Status: complete. The r8 native probe established the execution contract; the
+fresh-root r3 run completed the qualifying same-Supervisor and same-Worker
+cycle. These ignored evidence runs are not P107 runs or economics claims.
 
 1. Start exactly one native Luna Worker and one native Luna Supervisor from a
    fresh root Coordinator session with `fork_context:false`; record their exact
@@ -238,6 +237,37 @@ when its run-scoped MCP/hook configuration is staged before the native
 Coordinator starts, and when it captures its own token/cash ledger. The prior
 same-process r2 missing-tool observation is explained by cached controller
 state and is not evidence that the staged MCP registration is unavailable.
+
+## VS Code in-session deployment follow-up — 2026-07-19
+
+The native control layer is also available to the active VS Code Codex
+Coordinator session, not only to the historical fresh-controller proof route.
+The Coordinator itself spawns one Worker and one advisory Supervisor, binds
+their native session IDs with `supervision_start_run`, receives sanitized
+progress through `supervision_wait_delta`, optionally re-invokes the same
+Supervisor, and uses its own `send_input` to steer that same Worker when the
+Coordinator approves a cue. No SDK, app-server, external controller, or daemon
+is part of this route.
+
+The initial in-session run exposed one implementation defect: hook capture
+projected successful native tools as `tool_completed`, while the broker treated
+that class as permanently routine and waited until timeout. The repair makes a
+new sanitized `tool_completed` delta wake the in-session Coordinator for
+review. A fresh VS Code native run then bound Worker
+`019f7e37-cba9-7e21-8510-efa9345e1965` and Supervisor
+`019f7e37-e02a-7601-96f8-d37c0960732f`; `supervision_wait_delta` returned one
+root-matched Worker event in 0.83 seconds before terminal completion. The
+Coordinator correctly left the advisory Supervisor idle for ordinary productive
+progress, and the Worker added a bounded workflow-package CLI regression test
+with 20 focused tests passing.
+
+- Quality: the broker regression suite and the bounded workflow-package test
+  passed.
+- Protocol: the native in-session bind, live delta, bounded Worker execution,
+  and run closure were observed. A Supervisor consultation and same-Worker cue
+  remain conditional actions, not mandatory for productive progress.
+- Economics: unassessed. Neither this deployment follow-up nor P116 supplies a
+  P107 measurement ledger.
 
 ## Observability and intervention logic
 

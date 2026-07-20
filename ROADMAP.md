@@ -5403,7 +5403,7 @@ Status: P107.2 offline research contract is complete on the reconciled staging
 branch; P114 has admitted the baseline C4 package route. Fresh C0 remains the
 next configuration observation. P107 economics claims and P108 remain inactive.
 
-Goal: convert P106 evidence into a fail-closed authorization decision.
+Goal: convert P106 evidence into a fail-closed economics decision.
 
 Parking decision: P113 closed the bounded one-tool adapter, containment, and
 first-call reliability sandbox. The later C4 observations did not deploy that
@@ -5429,7 +5429,12 @@ Tasks:
   - [x] Verify the P107 selection offline: 150 passed, 2 privilege-dependent
         skips; no live C0-C4 run and no economics conclusion.
 - [ ] P107.3 C0 BAU baseline (#647)
-  - [ ] Run one fresh C0 observation against the frozen P107.2 block.
+  - [x] Capture non-comparative C0 instrumentation evidence for root binding,
+        immutable review, and session-bound accounting on a microtask.
+  - [ ] Freeze and run one fresh C0 observation against the scaled
+        `p107-provenance-review-workbench-v2` capability block (policy, JSON
+        summary, Markdown report, integrity-checked bundle, and independent
+        bundle validation).
   - [ ] Require deterministic acceptance, Advisor acceptance, and complete
         paid-role accounting before it becomes an eligible baseline.
 - [ ] P107.4-P107.7 C1-C4 configuration observations (#655, #656, #657, #658)
@@ -5437,7 +5442,7 @@ Tasks:
         configuration has a recorded outcome.
 - [ ] P107.8 Tranche synthesis (#659)
   - [ ] Compare only eligible observations and decide whether any C5+ work is
-        worth authorization.
+        warranted as a separately declared configuration sequence.
 
 Entry evidence: P106 closed with quality validated but protocol and economics
 unaccepted. P113 proved a constrained one-tool adapter sandbox but did not
@@ -6063,10 +6068,10 @@ Parent issue: #669
 
 Branch: `feature/p116-event-driven-supervision-control-plane`
 
-Status: active — corrective reconciliation in progress. Local P116.1–P116.4
-candidates are merged, but their closure overstated native/protocol evidence.
-Do not treat P116 as a P107 economics result, activate P115, or alter P114's
-accepted bridge route.
+Status: complete — PR #706 merged and parent issue #669 closed after the
+fresh-root native control-cycle proof. The follow-up VS Code in-session
+deployment now returns sanitized live Worker progress to the active native
+Coordinator; it does not create a daemon or a P107 economics result.
 
 Goal: make the Supervisor an evidence-driven active participant in a live
 Worker run. A Coordinator-owned controller will reduce sanitized Worker events,
@@ -6096,7 +6101,7 @@ Boundaries:
 
 Tasks:
 
-- [ ] P116.1 Freeze the run manifest, sanitized event, cursor, Supervisor
+- [x] P116.1 Freeze the run manifest, sanitized event, cursor, Supervisor
       packet, and Coordinator action-log contracts.
 - [x] P116.2 Probe the actual Codex command-hook payload/ordering and implement
       sanitized hook-to-event capture with containment and redaction tests.
@@ -6127,6 +6132,10 @@ Tasks:
 - [x] P116.7 Publish the P107 re-entry decision packet and closeout record.
   - [x] P107 may use the P116 control plane only from a fresh native controller
         launched after run-scoped staging; P116 economics remains unassessed.
+  - [x] Repair the VS Code in-session delta predicate: a fresh native
+        Coordinator returned a sanitized `tool_completed` Worker delta before
+        terminal completion, then completed a bounded workflow-package test
+        ticket without unnecessary intervention.
 
 Acceptance criteria:
 
