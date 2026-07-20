@@ -29,12 +29,11 @@ def test_wakes_on_failure(tmp_path):
     assert "tool_name" in delta["events"][0] and "raw" not in delta["events"][0]
 
 
-def test_ignores_routine_progress_until_trigger(tmp_path):
+def test_wakes_on_sanitized_worker_progress(tmp_path):
     manifest = setup_manifest(tmp_path); write_events(manifest, [event("tool_completed", "implementation")])
-    with pytest.raises(TimeoutError):
-        SupervisionEventBroker(manifest, poll_interval=0).wait_for_trigger(timeout=0)
-    write_events(manifest, [event("tool_completed", "implementation"), event(sequence=2)])
-    assert SupervisionEventBroker(manifest, poll_interval=0).wait_for_trigger(timeout=0)["cursor_end_sequence"] == 2
+    delta = SupervisionEventBroker(manifest, poll_interval=0).wait_for_trigger(timeout=0)
+    assert delta["event_count"] == 1
+    assert delta["events"][0]["kind"] == "tool_completed"
 
 
 def test_timeout(tmp_path):

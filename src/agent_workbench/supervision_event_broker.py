@@ -41,8 +41,15 @@ class SupervisionEventBroker:
 
 
 def _meaningful(delta: dict[str, Any]) -> bool:
+    """Return fresh, sanitized Worker evidence to the in-session Coordinator.
+
+    Native Codex hook capture intentionally projects successful tools to the
+    generic ``tool_completed`` event.  Treating that projection as routine
+    forever leaves a Coordinator asleep while the Worker is actively making
+    progress, even though the new evidence is available for review.
+    """
     return any(
-        event.get("kind") in {"tool_failed", "workspace_mismatch", "terminal"}
+        event.get("kind") in {"tool_completed", "tool_failed", "workspace_mismatch", "terminal"}
         or event.get("kind") == "stage_transition" and event.get("stage") == "validation"
         for event in delta.get("events", [])
     )
