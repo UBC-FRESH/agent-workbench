@@ -1,0 +1,2 @@
+# Hash-bound evidence fixtures must retain their exact serialized bytes.
+tests/fixtures/p107_run_evidence_dossier_v3/** -text
