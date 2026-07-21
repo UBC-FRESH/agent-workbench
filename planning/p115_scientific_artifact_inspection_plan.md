@@ -2,9 +2,10 @@
 
 ## Decision
 
-P115 is the first forward-looking extension after P114. It is planned, not
-active, and must not start until P114 has merged and closed and P107 has
-finished, unless the maintainer explicitly authorizes a parallel phase.
+P115 is a retained future extension after P114. It is deferred, not active:
+P118 is the explicitly selected next deployment phase. Do not start P115 until
+P118 has produced its deployment decision or the maintainer explicitly
+reprioritizes this pilot.
 Its purpose is to turn the proven minimal Worker data plane into a useful
 scientific-workbench capability without attempting to build a generic agent
 platform.
