@@ -6257,3 +6257,67 @@ Acceptance criteria:
   for P117, and P117 makes no P107 economics claim.
 
 See `planning/p117_run_scoped_supervision_daemon_plan.md`.
+
+## Phase 118: FRESH vLLM Agent
+
+Parent issue: TBD
+
+Branch: `feature/p118-fresh-vllm-agent`
+
+Status: active
+
+Goal: establish a usable native VS Code Copilot Agent Hub deployment in which
+one configured remote vLLM coding model serves the Coordinator, Supervisor,
+Worker, and selective Advisor roles through distinct custom-agent instructions.
+The point is productive development work with one locally controlled model
+service, not a model sweep or a ritualized benchmark.
+
+Role separation comes from bounded authority, instructions, tool permissions,
+and session topology—not from pretending the underlying model is deterministic
+or that role labels create different models. Serial inference is a hardware
+requirement: at most one implementation or review child may be actively
+reasoning at a time.
+
+Completed tasks:
+
+- [x] P118.1 Provider and role-profile contract (#714)
+  - [x] Verify the configured vLLM endpoint/model identity locally without
+        tracking credentials.
+  - [x] Update all 7 role profiles with distinct authority and concise role
+        directives, retaining one model alias.
+  - [x] De-bloat `AGENTS.md` with single-model contract.
+
+Planned tasks:
+
+- [ ] P118.2 Serial single-model operating contract
+  - [ ] Encode one-active-intense-child limits in the Coordinator and Worker
+        directives.
+  - [ ] Define Worker delivery, Coordinator verification, and one bounded
+        repair handoff.
+  - [ ] Add a concise operator launch/checklist for the VS Code UI.
+- [ ] P118.3 Productive bounded ticket
+  - [ ] Select one ordinary repository task with objective acceptance.
+  - [ ] Run Coordinator-to-Worker delivery under the serial contract.
+  - [ ] Independently inspect the diff and validation result.
+- [ ] P118.4 Selective Advisor and recovery behavior
+  - [ ] Exercise a real ambiguity or failed recovery only if one naturally
+        occurs.
+  - [ ] Confirm Advisor remains advisory and Coordinator owns the follow-up.
+  - [ ] Confirm P116 cue delivery only when live evidence makes it useful.
+- [ ] P118.5 Deployment decision
+  - [ ] Summarize usable/blocked behavior for direct work and delegated tasks.
+  - [ ] Report quality, protocol, and economics separately.
+  - [ ] Decide whether this becomes the default native Agent Hub profile.
+
+Acceptance criteria:
+
+- Native custom-agent selection binds all participating roles to the declared
+  vLLM model alias and records enough identity evidence to audit that claim.
+- No more than one intensive child runs at once.
+- At least one bounded ticket is delivered, independently validated, and
+  classified honestly.
+- Any recovery is a bounded response to observed evidence, not a substitute
+  implementation by the Coordinator.
+- Quality, protocol, and economics are reported independently.
+
+See `planning/p118_fresh_vllm_agent_plan.md`.
