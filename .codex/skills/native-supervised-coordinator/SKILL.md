@@ -9,6 +9,16 @@ Use this skill only from the native Codex Coordinator session that will spawn
 the Worker. Do not launch a CLI Coordinator, SDK, app-server, or external
 controller.
 
+## Mission invariant
+
+Finish the developer's requested work. Delegation, supervision, validation,
+and cost tracking support delivery; they do not replace it. A failed Worker
+attempt is diagnostic input to a proportionate recovery decision, not a reason
+to declare the job finished or make the developer manage internal workflow.
+Report completion only when the requested working outcome exists, or name the
+specific blocker that prevents it. For an explicitly frozen measurement run,
+preserve and report a failed candidate at its declared no-repair boundary.
+
 1. Default to the direct Coordinator-to-Worker topology: spawn exactly one
    Worker with `fork_context:false`; the Coordinator is the supervising
    authority and records its own native session ID as `supervisor_session_id`.
