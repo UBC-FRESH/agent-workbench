@@ -3,6 +3,26 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-21 - P118.1: Provider and role-profile contract — implementation
+
+- Rewrote `AGENTS.md` from ~450 lines to ~70, removing over-prescribed rituals
+  that had accumulated from prior sessions. Moved detailed trust levels, file
+  handoff, GitHub formatting, and heartbeat protocol references to their
+  existing homes (`delegation_policy.md`, `playbooks/`, `CONTRIBUTING.md`).
+- Updated all 7 agent profiles in `.github/agents/` to pin the single
+  configured vLLM model (`Fresh vLLM Agent (Qwen 3.6 27B)`) instead of
+  referencing stale Ollama or paid-Copilot models.
+- Rewrote coordinator, advisor, and supervisor directives to reflect single-
+  model reality: role separation by authority and instructions, not architecture.
+- Added GPU constraint to `planning/p118_fresh_vllm_agent_plan.md` —
+  one model, one GPU, serial inference is a hardware requirement.
+- Updated `planning/authority_hierarchy_and_subagent_direction.md` and
+  `planning/coordinator_advisor_paid_boost_strategy.md` to replace paid/free
+  dichotomy with single-model deployment language.
+- Updated `planning/delegation_policy.md` with P118 single-model context.
+- Backed up pre-P118 `AGENTS.md` to `tmp/AGENTS.md.pre-p118.backup.md`.
+- Branch: `feature/p118-fresh-vllm-agent`. Parent issue: TBD.
+
 ## 2026-07-12 - P100: Public Alpha Readiness Review — artifacts produced
 
 - Created `planning/public_alpha_readiness_checklist.md` — pass/fail checklist

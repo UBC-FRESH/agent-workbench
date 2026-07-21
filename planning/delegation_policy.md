@@ -1,8 +1,12 @@
 # Delegation Policy And Trust Levels
 
 This policy defines how Agent Workbench supervisors may delegate work to worker
-agents. It is based on evidence from P8-P18 and should stay conservative until
-future phases produce stronger verification and rollback evidence.
+agents. All roles (Coordinator, Supervisor, Worker, and Advisor) now share one
+configured vLLM model (P118 update, 2026-07-21). Role separation comes from
+bounded instructions and authority, not from deploying different models.
+
+The GPU constraint means serial inference is mandatory: at most one intensive
+child agent may be actively reasoning at a time.
 
 ## Trust Levels
 

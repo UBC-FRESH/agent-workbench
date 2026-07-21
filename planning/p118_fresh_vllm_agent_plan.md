@@ -15,6 +15,14 @@ model. Role separation comes from bounded authority, instructions, tool
 permissions, and session topology—not from pretending the underlying model is
 deterministic or that role labels create different models.
 
+**GPU Constraint (2026-07-21):** The single configured model is consuming
+near-maximum GPU VRAM on the host (by design). No additional models should be
+loaded or attempted on that GPU. P118 is strictly a single-model deployment:
+every role—Coordinator, Supervisor, Worker, and Advisor—uses the one installed
+model. Serial inference is not a preference; it is a hardware requirement.
+Do not schedule parallel reasoning children, and do not attempt to load
+alternate models until the host capacity changes.
+
 P118 keeps intense inference serial: at most one implementation or review child
 may be actively reasoning at a time. A Coordinator may wait, inspect a
 completed result, or send one concise follow-up; it must not start parallel
