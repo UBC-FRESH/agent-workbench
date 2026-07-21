@@ -61,6 +61,33 @@ issues, pull requests, and closeout comments.
   pre-existing debt outside P119. No P118-owned agent-profile or planning files
   were changed.
 
+
+## 2026-07-21 - P118.3: Productive bounded ticket
+
+- Selected an ordinary bounded task: update the severely stale
+  `docs/roadmap_and_release/roadmap_overview.md` (claimed active phase was P101,
+  actual phase is now P118).
+- Ran Coordinator-to-Worker delivery under the serial contract: Supervisor
+  read `ROADMAP.md` and `planning/p118_fresh_vllm_agent_plan.md`, rewrote the
+  doc with accurate phase tranche summaries (P0-P100, P101-P117), P118 task
+  table, design principles, and upcoming-phases section.
+- Independently verified: diff shows clean +39/-12 change to the target file
+  only; content sourced from `ROADMAP.md` issue tracker map; P118.2 status
+  corrected to "Complete" in the doc by Coordinator.
+- Committed `ca80d25` on `feature/p118-fresh-vllm-agent`.
+
+## 2026-07-21 - P118.2: Serial single-model operating contract
+
+- Updated 4 agent profiles with `## Serial Operating Contract` sections
+  (one active child, operator sequence, no doer-mode).
+- Updated 1 agent profile with `## Delivery and Verification Contract`.
+- Created `playbooks/p118_single_model_operator_checklist.md` with 8-step
+  launch checklist.
+- Updated `ROADMAP.md` P118 section and issue tracker table row (issue #716).
+- Committed `9bfae74`, pushed to `feature/p118-fresh-vllm-agent`.
+
+ complete in ROADMAP and CHANGE_LOG)
+
 ## 2026-07-21 - P118.1: Provider and role-profile contract — closeout
 
 - P118.1 merged via PR #714; parent issue TBD (table row updated).

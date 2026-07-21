@@ -6292,18 +6292,25 @@ Completed tasks:
         directives, retaining one model alias.
   - [x] De-bloat `AGENTS.md` with single-model contract.
 
-Planned tasks:
+Completed tasks:
 
-- [ ] P118.2 Serial single-model operating contract
-  - [ ] Encode one-active-intense-child limits in the Coordinator and Worker
+
+- [x] P118.2 Serial single-model operating contract
+  - [x] Encode one-active-intense-child limits in the Coordinator and Worker
+ complete in ROADMAP and CHANGE_LOG)
         directives.
   - [ ] Define Worker delivery, Coordinator verification, and one bounded
         repair handoff.
-  - [ ] Add a concise operator launch/checklist for the VS Code UI.
-- [ ] P118.3 Productive bounded ticket
-  - [ ] Select one ordinary repository task with objective acceptance.
-  - [ ] Run Coordinator-to-Worker delivery under the serial contract.
-  - [ ] Independently inspect the diff and validation result.
+
+  - [x] Add a concise operator launch/checklist for the VS Code UI.
+
+Planned tasks:
+
+- [x] P118.3 Productive bounded ticket
+  - [x] Select one ordinary repository task with objective acceptance.
+  - [x] Run Coordinator-to-Worker delivery under the serial contract.
+  - [x] Independently inspect the diff and validation result.
+ complete in ROADMAP and CHANGE_LOG)
 - [ ] P118.4 Selective Advisor and recovery behavior
   - [ ] Exercise a real ambiguity or failed recovery only if one naturally
         occurs.
