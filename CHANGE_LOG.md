@@ -3,6 +3,12 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-21 - P118.1: Provider and role-profile contract — closeout
+
+- P118.1 merged via PR #714; parent issue TBD (table row updated).
+- Added `## Phase 118` section to `ROADMAP.md` with P118.1 checked off and
+  P118.2–P118.5 planned.
+
 ## 2026-07-21 - P118.1: Provider and role-profile contract — implementation
 
 - Rewrote `AGENTS.md` from ~450 lines to ~70, removing over-prescribed rituals
