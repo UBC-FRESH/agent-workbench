@@ -122,7 +122,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
 | P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 / PR #653 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PRs #652 and #653 merged; parent issue #648 closed; P107 remains parked pending a separate resume decision |
 | P114 Codex-Ollama C4 capability parity and viability | #661 / PR #667 | `feature/p114-c4-ollama-capability-parity` | Complete - PR #667 merged; baseline P107 route admitted |
-| P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientific-artifact-inspection` | Planned - starts after P114 merges/closes and P107 finishes, unless parallel activation is authorized |
+| P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientific-artifact-inspection` | Deferred — retained future capability lane; P118 is the selected next deployment phase |
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
 | P118 FRESH vLLM Agent | TBD | `feature/p118-fresh-vllm-agent` | Draft — one configured vLLM model across Coordinator, Worker, and Advisor roles |
@@ -6072,9 +6072,10 @@ Parent issue: #666
 
 Branch: `feature/p115-scientific-artifact-inspection`
 
-Status: planned. Do not activate a branch or child tasks until P114 has merged
-and closed and P107 has finished, unless the maintainer explicitly authorizes a
-parallel phase.
+Status: deferred. Its scientific-inspection scope remains valid, but P118 is
+the explicitly selected next deployment phase. Do not activate a branch or
+child tasks until P118 has produced its deployment decision or the maintainer
+explicitly reprioritizes this pilot.
 
 Goal: build the first useful scientific-workbench expansion on the accepted
 bridge: grant-bound, read-only inspection of one frozen, public-safe FRESH
