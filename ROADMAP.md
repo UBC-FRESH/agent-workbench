@@ -125,7 +125,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientific-artifact-inspection` | Deferred — retained future capability lane; P118 is the selected next deployment phase |
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
-| P118 FRESH vLLM Agent | TBD | `feature/p118-fresh-vllm-agent` | Active — P118.1: agent profiles and planning notes updated for single-model deployment |
+| P118 FRESH vLLM Agent | #716 | `feature/p118-fresh-vllm-agent` | Active — P118.1 merged via PR #714; P118.2-P118.5 planned |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6260,7 +6260,7 @@ See `planning/p117_run_scoped_supervision_daemon_plan.md`.
 
 ## Phase 118: FRESH vLLM Agent
 
-Parent issue: TBD
+Parent issue: #716
 
 Branch: `feature/p118-fresh-vllm-agent`
 
