@@ -1,7 +1,7 @@
 ---
 name: agent-workbench-result-auditor
-description: Internal read-only auditor for Agent Workbench supervisor spike outputs.
-model: ollama-models/qwen3.6:35b-a3b-bf16
+description: Internal read-only auditor for Agent Workbench supervisor spike outputs. Uses the same vLLM model as all other roles.
+model: Fresh vLLM Agent (Qwen 3.6 27B) (copilotcustommodelsendpoint)
 tools: ['read', 'search']
 user-invocable: false
 target: vscode

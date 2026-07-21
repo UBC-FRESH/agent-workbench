@@ -1,53 +1,69 @@
 # Coordinator Advisor Paid-Boost Strategy
 
-This note records the Agent Workbench strategy pivot in which the coordinator
-lane moves from a paid GPT-5.x agent (run in a separate Codex chat surface) to a
-free local Ollama model running inside the VS Code GitHub Copilot chat UI, with
-a new paid **Advisor** role available on demand.
+This note records the Agent Workbench strategy for the coordinator and advisor
+lanes. P118 supersedes the earlier "paid boost" framing: all roles now share one
+configured vLLM model, and the advisor is same-model advisory-only, not a paid
+model invocation. The title is retained for historical reference.
 
-## Strategy Pivot
+## P118 Deployment (2026-07-21)
 
-Previous arrangement:
+**Current arrangement (supersedes previous):**
+
+- All agentic UI workflow for Agent Workbench runs in the built-in VS Code
+  GitHub Copilot chat UI.
+- Coordinator, supervisor, worker, and advisor roles all run the same configured
+  remote vLLM model (`Fresh vLLM Agent (Qwen 3.6 27B)`).
+- Role separation comes from bounded instructions, tool permissions, and session
+  topology — not from different models.
+- Paid high-capability intelligence has been replaced by the same-model advisory
+  lane. The advisor is not paid; it is the same model with read-only constraints.
+- GPU constraint: the model consumes near-maximum VRAM; no additional models
+  should be loaded. Serial inference (one child at a time) is a hardware
+  requirement.
+
+**Previous arrangement (archived for reference):**
 
 - Coordinator: paid GPT-5.x agent in a Codex chat interface.
 - Supervisor and workers: free local Ollama models.
-
-New arrangement (committed for the foreseeable future):
-
-- All agentic UI workflow for Agent Workbench development runs in the built-in
-  VS Code GitHub Copilot chat UI.
-- Coordinator, supervisor, and worker roles all run as free-token open models
-  on the configured GPU/Ollama worker host.
-- Paid high-capability intelligence is no longer a persistent lane. It is an
-  on-demand, budgeted **Advisor** the coordinator can invoke for hard subsets.
+- Advisor: paid Claude Opus on demand.
 
 Tradeoff being accepted:
 
 - Pro: large paid-token cash savings, since the always-on coordinator lane
-  becomes free.
-- Con: the local coordinator model (default `qwen3.6:35b-a3b-bf16`) is a capable
-  process worker but weaker than GPT-5.x at open-ended big-picture reasoning.
+  becomes the same provider-side model. No paid API calls required.
+- Con: all roles share the same model, so the coordinator is not inherently
+  stronger or weaker than the supervisor — it is the same model. The advisor
+  lane provides additional reasoning effort through isolation and read-only
+  constraints, not through a different model.
 
-Mitigation: the Advisor lets the coordinator "buy" bursts of strong reasoning
-only where they add value, instead of paying for strong reasoning continuously.
+Mitigation: the advisor lets the coordinator "buy" advisory reasoning where it
+adds value, using the same model with bounded authority. The ROI ledger tracks
+whether the advisor lane produces better judgments than the coordinator working
+independently.
 
 ## Custom Agent Profiles
 
-Three profiles implement the hierarchy in `.github/agents/`:
+Multiple profiles implement the hierarchy in `.github/agents/`. All roles now
+share one configured remote vLLM model (`Fresh vLLM Agent (Qwen 3.6 27B)`).
+Role separation comes from bounded instructions and authority, not from
+deploying different models (P118 update, 2026-07-21):
 
-- `agent-workbench-coordinator.agent.md` — free local coordinator; owns process
-  discipline, ticketing, verification, and the paid budget.
-- `agent-workbench-local-supervisor.agent.md` — free local supervisor; runs
-  bounded job tickets and returns compact evidence with an explicit job-end
-  signal.
-- `agent-workbench-advisor.agent.md` — paid, read-only, advisory-only node
-  (default Claude Opus 4.8) invoked by the coordinator for hard reasoning.
+- `agent-workbench-coordinator.agent.md` — thin coordinator; owns process
+  discipline, ticketing, verification, and serial inference enforcement.
+- `agent-workbench-local-supervisor.agent.md` — supervisor; runs bounded job
+  tickets and returns compact evidence with an explicit job-end signal.
+- `agent-workbench-advisor.agent.md` — same-model, read-only, advisory-only
+  node invoked by the coordinator for hard reasoning.
+- `qwen3-coder-strict-worker.agent.md` — strict bounded worker.
+- `qwen3-coder-next-strict-worker.agent.md` — strict bounded worker.
+- `agent-workbench-result-auditor.agent.md` — internal read-only auditor.
+- `document-metadata-extraction-supervisor.agent.md` — domain-specific supervisor
+  for document metadata extraction pilots.
 
 The Advisor reuses the existing subagent delegation plumbing (the coordinator
-invokes it as a named subagent, the same way it would delegate to a supervisor).
-The difference is only the skin: the Advisor's frontmatter pins a paid Copilot
-model, which — unlike Ollama model frontmatter — is honored reliably by the
-native Copilot path.
+invokes it as a named subagent). The only difference is the skin: the Advisor's
+tools are restricted to read-only and the instructions enforce advisory-only
+output. All profiles use the same vLLM model alias.
 
 ## Advisor Delegation Candidates
 

@@ -33,12 +33,18 @@ delegate that work.
 
 ### Deputy Developer / Coordinator
 
-The coordinator is now a **free, local** lane. The committed direction is to run
-the coordinator as a self-hosted Ollama model (default `qwen3.6:35b-a3b-bf16`)
-inside the VS Code GitHub Copilot chat UI, rather than as a persistent paid
-GPT-5.x agent in a separate Codex surface. This trades some open-ended reasoning
-strength for large paid-token cash savings, with the gap covered on demand by
-the Advisor lane below.
+P118 Update (2026-07-21): The coordinator is now a **single-model** lane running
+the same configured remote vLLM model (`Fresh vLLM Agent (Qwen 3.6 27B)`) that
+serves all other roles. The committed direction is to run the coordinator,
+supervisor, worker, and advisor roles through one shared model, with role
+separation enforced by bounded instructions and authority — not by deploying
+different models.
+
+The coordinator is no longer a paid or free lane; all roles share the same
+locally controlled vLLM model. This removes paid-token cash entirely from the
+coordinator lane, with the tradeoff that the model is the same across all roles.
+The gap in reasoning capability is mitigated by the Advisor lane below, which
+uses the same model with read-only advisory-only constraints.
 
 Responsibilities:
 
@@ -60,12 +66,11 @@ The coordinator profile is `agent-workbench-coordinator.agent.md`.
 
 ### Advisor
 
-The advisor is a **paid, on-demand, advisory-only** lane. It is not a persistent
-authority level; it is a consultant the coordinator invokes through the existing
-subagent delegation plumbing for hard reasoning subsets where a wrong call is
-expensive and the local coordinator's confidence is low. The advisor runs an
-expensive paid Copilot model (default Claude Opus 4.8, optionally at high or
-very-high thinking effort).
+The advisor is a **same-model, on-demand, advisory-only** lane (P118 update).
+It is not a persistent authority level; it is a consultant the coordinator
+invokes for hard reasoning subsets. The advisor uses the same configured vLLM
+model as the coordinator — the difference is that the advisor is constrained to
+read-only tools and advisory-only output.
 
 Responsibilities:
 
@@ -77,16 +82,15 @@ Responsibilities:
 
 The advisor is read-only. It must not mutate repository or GitHub state, invoke
 subagents, or make final decisions. The coordinator remains the authority that
-acts on the advice, records the outcome in its ROI ledger, and manages the paid
-budget. See `coordinator_advisor_paid_boost_strategy.md` for the budget model
-and ROI-gradient learning loop. The advisor profile is
+acts on the advice, records the outcome in its ledger, and manages the invocation
+frequency. See `coordinator_advisor_paid_boost_strategy.md` for the budget model
+and gradient learning loop. The advisor profile is
 `agent-workbench-advisor.agent.md`.
 
 ### Supervisor
 
-The supervisor is a free local Copilot Chat agent using a local Ollama model,
-currently most promising with Qwen3.6-style models. Its profile is
-`agent-workbench-local-supervisor.agent.md`.
+The supervisor is a same-model Copilot Chat agent using the configured vLLM
+model (P118 update). Its profile is `agent-workbench-local-supervisor.agent.md`.
 
 Responsibilities:
 
