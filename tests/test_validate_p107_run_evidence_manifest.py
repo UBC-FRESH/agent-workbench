@@ -15,13 +15,13 @@ def make_manifest(tmp_path: Path, config: str) -> Path:
     (repo / "tracked").write_text("fixture\n", encoding="utf-8")
     subprocess.run(["git", "add", "tracked"], cwd=repo, check=True); subprocess.run(["git", "commit", "-qm", "fixture"], cwd=repo, check=True)
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
-    roles = {"C0": ["coordinator", "advisor"], "C2": ["coordinator", "supervisor", "worker", "advisor"], "C3": ["coordinator", "supervisor", "worker", "advisor"], "C4": ["coordinator", "supervisor", "worker", "advisor"]}[config]
-    parent = {"coordinator": None, "supervisor": "coordinator", "worker": ("coordinator" if config == "C2" else "supervisor"), "advisor": "coordinator"}
+    roles = {"C0": ["coordinator"], "C1": ["coordinator", "worker"], "C2": ["coordinator", "worker"], "C3": ["coordinator"], "C4": ["coordinator", "worker"]}[config]
+    parent = {"coordinator": None, "worker": "coordinator"}
     sessions = []
     for role in roles:
         name = f"{role}.json"; record = {"schema_version": "p107_raw_session_v1", "session_id": f"{role}-1", "parent_session_id": (None if parent[role] is None else f"{parent[role]}-1"), "role": role, "provider": "fixture", "model_class": "fixture", "terminal_event": "completed"}; (tmp_path / name).write_text(json.dumps(record), encoding="utf-8")
         sessions.append({**record, "raw_session_path": name, "sha256": hashlib.sha256((tmp_path / name).read_bytes()).hexdigest()})
-    pairs = {"C0": [("coordinator", "advisor")], "C2": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")], "C3": [("coordinator", "supervisor"), ("coordinator", "advisor"), ("supervisor", "worker")], "C4": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")]}[config]
+    pairs = {"C0": [], "C1": [("coordinator", "worker")], "C2": [("coordinator", "worker")], "C3": [], "C4": [("coordinator", "worker")]}[config]
     edges = []
     for p, c in pairs:
         source = tmp_path / f"edge-{p}-{c}.json"; record = {"schema_version": "p107_spawn_receipt_v1", "parent_session_id": f"{p}-1", "child_session_id": f"{c}-1", "parent_role": p, "child_role": c, "fork_context": False, "terminal_event": "completed"}; source.write_text(json.dumps(record), encoding="utf-8")
@@ -29,7 +29,7 @@ def make_manifest(tmp_path: Path, config: str) -> Path:
     path = tmp_path / "manifest.json"; path.write_text(json.dumps({"schema_version": "p107_run_evidence_manifest_v1", "run_id": "run-1", "configuration_id": config, "repository_path": str(repo), "starting_commit": commit, "terminal_event": "completed", "raw_sessions": sessions, "spawn_edges": edges}), encoding="utf-8")
     return path
 
-@pytest.mark.parametrize("config", ["C0", "C2", "C3"])
+@pytest.mark.parametrize("config", ["C0", "C1", "C2", "C3", "C4"])
 def test_valid_configurations(tmp_path: Path, config: str):
     assert validate_manifest(make_manifest(tmp_path, config)) == []
 
@@ -43,17 +43,17 @@ def test_rejects_adversarial_manifest(tmp_path: Path, mutation, expected):
     path = make_manifest(tmp_path, "C2"); doc = json.loads(path.read_text()); mutation(doc); path.write_text(json.dumps(doc))
     assert any(expected in error for error in validate_manifest(path))
 
-def test_rejects_forbidden_nested_worker_and_dirty_repo(tmp_path: Path):
+def test_rejects_forbidden_nested_worker_but_allows_normal_implementation_diff(tmp_path: Path):
     for config in ("C2", "C4"):
-        path = make_manifest(tmp_path / config, config); doc = json.loads(path.read_text()); doc["spawn_edges"].append({**doc["spawn_edges"][1], "parent_session_id": "supervisor-1", "parent_role": "supervisor"}); path.write_text(json.dumps(doc))
+        path = make_manifest(tmp_path / config, config); doc = json.loads(path.read_text()); doc["spawn_edges"].append({**doc["spawn_edges"][0], "parent_session_id": "worker-1", "parent_role": "worker"}); path.write_text(json.dumps(doc))
         assert "spawn topology is undeclared or forbidden" in validate_manifest(path)
     path = make_manifest(tmp_path / "dirty", "C2"); doc = json.loads(path.read_text())
     repo = Path(doc["repository_path"]); (repo / "dirty").write_text("x", encoding="utf-8")
-    assert "repository worktree is dirty" in validate_manifest(path)
+    assert validate_manifest(path) == []
 
 @pytest.mark.parametrize("mutation, expected", [
-    (lambda d: d["raw_sessions"][2].update(parent_session_id="advisor-1"), "session parent does not match spawn edge"),
-    (lambda d: d["spawn_edges"][1].update(child_session_id="advisor-1"), "spawn topology is undeclared or forbidden"),
+    (lambda d: d["raw_sessions"][1].update(parent_session_id="forged-1"), "session parent does not match spawn edge"),
+    (lambda d: d["spawn_edges"][0].update(child_session_id="coordinator-1"), "spawn topology is undeclared or forbidden"),
     (lambda d: d["spawn_edges"].append(dict(d["spawn_edges"][0])), "duplicate spawn edge"),
     (lambda d: d.update(undeclared=True), "manifest contains undeclared properties"),
 ])

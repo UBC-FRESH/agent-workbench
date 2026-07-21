@@ -11,8 +11,8 @@ from pathlib import Path
 ROLES = {
     "gpt_luna_supervisor": ("gpt_luna_supervisor.toml", "gpt-5.6-luna", "medium"),
     "gpt_luna_worker": ("gpt_luna_worker.toml", "gpt-5.6-luna", "low"),
-    "gpt_sol_advisor": ("gpt_sol_advisor.toml", "gpt-5.6-sol", "high"),
-    "ollama_worker": ("ollama_worker.toml", "qwen3.6:35b-a3b-bf16", "high"),
+    "gpt_sol_advisor": ("gpt_sol_advisor.toml", "gpt-5.6-sol", "medium"),
+    "ollama_worker": ("ollama_worker.toml", "qwen3.6:35b-a3b-bf16", "medium"),
 }
 
 
@@ -91,7 +91,15 @@ def validate(codex_home: Path, project_config: Path | None = None) -> list[str]:
     project_role_root = project_config.parent / "agents" if project_config is not None else None
     for name, (filename, model, effort) in ROLES.items():
         registration = agents.get(name)
-        if isinstance(registration, dict) and registration.get("config_file") == f"agents/{filename}":
+        project_registration = project_agents.get(name)
+        if (
+            isinstance(project_registration, dict)
+            and project_registration.get("config_file") == f"agents/{filename}"
+            and project_role_root is not None
+            and (project_role_root / filename).is_file()
+        ):
+            profile = read_toml(project_role_root / filename, errors)
+        elif isinstance(registration, dict) and registration.get("config_file") == f"agents/{filename}":
             profile = read_toml(codex_home / "agents" / filename, errors)
         elif project_role_root is not None and (project_role_root / filename).is_file():
             profile = read_toml(project_role_root / filename, errors)

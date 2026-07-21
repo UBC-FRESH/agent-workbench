@@ -101,7 +101,7 @@ def prepare_review_delta(*, manifest_path: Path) -> tuple[dict[str, Any], int]:
     maximum = int(events[-1]["sequence"]) if events else 0
     last = _load_cursor(_artifact(manifest, root, "cursor_path"), maximum)
     delta = [event for event in events if int(event["sequence"]) > last]
-    safe = [{key: event[key] for key in ("sequence", "event_id", "timestamp", "kind", "stage", "outcome", "run_id", "hook_event", "tool_name", "root_match") if key in event} for event in delta]
+    safe = [{key: event[key] for key in ("sequence", "event_id", "timestamp", "kind", "stage", "outcome", "run_id", "hook_event", "tool_name", "policy_id", "operation_class", "scope_status", "check_id", "exit_code", "failure_class", "root_match") if key in event} for event in delta]
     return {"schema_version": SCHEMA_VERSION, "run_id": manifest["run_id"], "cursor_start_sequence": last, "cursor_end_sequence": int(delta[-1]["sequence"]) if delta else last, "event_count": len(safe), "events": safe, "signals": {kind: sum(e["kind"] == kind for e in safe) for kind in ("workspace_mismatch", "tool_failed", "terminal")}}, maximum
 
 

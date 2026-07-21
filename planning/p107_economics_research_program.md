@@ -9,10 +9,11 @@ paid cost and less maintainer steering than BAU.
 
 ## Comparator and units
 
-BAU C0 is one fresh GPT Luna/High Coordinator plus a fresh Sol/Medium Advisor.
-The Advisor persists within that run across reviews. The Coordinator implements,
-validates, and repairs itself. The Advisor is a
-non-mutating Developer pro tem; its cost is included in C0 and every treatment.
+BAU C0 is one fresh GPT Terra/Medium Coordinator working alone. The Coordinator
+implements, validates, and repairs within its ordinary task loop. Sol is a
+selective, non-mutating Advisor: consult it only for a concrete ambiguity or
+failed verification whose decision value justifies the paid cost. It is not a
+routine execution gate or a required member of every configuration.
 
 An evaluation block freezes workload, starting commit, ticket, acceptance
 fixture, rubric, prompt/configuration hashes, runtime version, environment
@@ -20,28 +21,58 @@ epoch, pricing catalog, native model catalog, and effective configuration
 snapshot. It records SHA-256 values for each frozen copy and requires ambient
 memories to be disabled. Any change opens a new block and requires a new C0.
 
-A treatment is comparable only when deterministic acceptance passes, the
-Advisor accepts it, contamination is false, accounting is complete, and an
+Model identity comes from the authoritative native launch binding: either an
+explicit raw-session model field, or the hash-bound pre-launch native
+configuration/role binding linked to the session creation time and identity.
+The latter is sufficient when the host omits the model from an individual raw
+transcript. Exclude unrelated host UI metadata such as automatic conversation
+title generation from development-task economics.
+
+A treatment is comparable only when frozen acceptance passes, native protocol
+evidence is accepted, contamination is false, accounting is complete, and an
 eligible C0 exists in the same block. Otherwise record the observation and
-spend as not comparable.
+spend as not comparable. A selective Sol consultation may inform a Coordinator
+decision but is not a mandatory comparison gate.
+
+## Mission guardrail: artifact checks are measurement, not behavior control
+
+The deterministic acceptance fixture measures the repository artifact produced
+by a native Agent Hub team. It does not require the LLM roles to behave like
+deterministic software, and a non-passing implementation is not an invitation
+for the outer coordinator to change the workload or repair the candidate until
+it passes. Preserve that result as quality evidence for the configuration.
+
+Self-validation and self-repair are valid only when performed by the evaluated
+team within its ordinary frozen task loop, and their time and cost are part of
+the observation. The outer controller may repair only a demonstrated native
+route, authority-boundary, observation, or accounting failure. Such a repair
+is a separate protocol/instrumentation result; if it changes the comparison
+conditions, freeze a new block and obtain a new C0 reference.
 
 ## Initial configuration ladder
 
 | ID | Topology | Delta under study |
 | --- | --- | --- |
-| C0 | Luna/High Coordinator plus Sol/Medium Advisor | BAU control: Coordinator does the job. |
-| C1 | Coordinator to Luna Light Worker plus Advisor | Flat paid Worker delegation. |
-| C2 | Coordinator to Luna Supervisor and Coordinator to Luna Light Worker plus Advisor | Flat supervisory assistance; Supervisor cannot spawn. |
-| C3 | Coordinator to Luna Supervisor to Luna Light Worker plus Advisor | Nested delegation. |
-| C4 | Coordinator to Luna Supervisor and Coordinator to Ollama Worker, plus Advisor | Flat depth-1 supervision with a local Worker: the C2 topology with only the Worker provider/model changed. |
+| C0 | Terra/Medium Coordinator alone | Direct paid lifecycle baseline. |
+| C1 | Terra/Medium Coordinator to one Luna Worker, using Coordinator-owned P116 supervision | Does Luna displace Terra implementation work in the usable native route? |
+| C2 | Terra/Medium Coordinator to one configured Ollama Worker, using Coordinator-owned P116 supervision | Can zero-marginal-cost execution displace Terra work in the usable native route? |
+| C3 | Luna/Medium agent alone | Is cheap direct execution sufficient for this task class? |
+| C4 | Luna/Medium Coordinator to one configured Ollama Worker | Can a mostly-free team complete work autonomously? |
 | C4+ | C4 model lanes | One-variable Ollama Worker-model sequence on the fixed C4 topology. |
 
 The Coordinator retains git, GitHub, PR, lifecycle, validation, and final
-authority in every configuration. C2 isolates lower-cost supervisory
-planning/review from nested delegation. C4 preserves that flat depth-1 shape:
-the Supervisor and Ollama Worker are direct Coordinator children, and the
-Supervisor never spawns. P107.1 remains prerequisite evidence only; it does
-not choose a winner.
+authority in every delegated configuration. C4 varies the paid Coordinator
+model as well as using a configured Ollama Worker; it is not a disguised
+Supervisor experiment. P107.1 remains prerequisite evidence only; it does not
+choose a winner.
+
+For C1, C2, and C4, the Coordinator must start and close the P116 run around
+the exact Worker session, review meaningful deltas, and itself decide and send
+any cue or interruption. This is not a separate Supervisor role and does not
+make LLM behavior deterministic. It makes the native control route available
+to the Coordinator that owns the task. Earlier C1 and C2 observations without
+that route remain unsupervised diagnostics, not observations of this canonical
+delegated configuration.
 
 ## C4 Ollama Worker sequence
 
@@ -57,7 +88,7 @@ model change at a time, in this order when the live inventory confirms each:
 
 The last two have prior same-family quality evidence but are not substitutes for
 the first C4 lane. Do not add an unobserved `gpt-oss` lane without a fresh live
-inventory record and separate authorization.
+inventory record and a separately declared configuration lane.
 
 Every configuration includes a proportionate self-validation expectation at
 each active role. Before reporting upward, a Worker, Supervisor, and
@@ -69,57 +100,51 @@ iterations and cost. They are intended to prevent the Advisor from repeatedly
 catching cheap, obvious defects, while retaining the Advisor as the independent
 quality boundary.
 
+This is an observed agent behavior, not a mechanism for imposing deterministic
+equivalence. Once a role has submitted its terminal result, no external
+Coordinator repair may convert that result into a quality pass for the same
+configuration observation.
+
 ## Current comparison epoch
 
 The self-validation and convergent-local-repair contract starts a new P107.2
 comparison epoch. Earlier C0/C1/C2 observations remain useful behavioral and
-cost evidence, but are not the baseline for this epoch. The rerun begins with a
-fresh C0 on the frozen provenance-audit bundle workload, then progresses through C1-C4
-only after the preceding configuration has a recorded outcome. The current C2
-self-validation observation is pre-epoch evidence and cannot support a
-comparative ROI claim.
+cost evidence, but are not the baseline for this epoch. The first attempted C0
+on `p107-provenance-audit-bundle-v1` is invalid because that workload was
+already implemented at its starting commit. The later
+`p107-source-audit-output-projection-v1` C0 runs are retained as instrumentation
+evidence for root binding, immutable review, and token-ledger capture only; the
+feature is too small to support the capability comparison. The first substantial
+review-pack v1 observation is also instrumentation, not an eligible baseline:
+its implementation payload remained too small relative to session overhead and
+its installed Advisor role ran at high rather than the declared medium reasoning.
+The actual P107 capability block is now
+`p107-run-evidence-dossier-v3`, defined in
+`planning/p107_substantial_workload_capability_plan.md`, then progresses through
+C1-C4 only after the preceding configuration has a recorded outcome. The
+fresh C0 r2 observation is retained as configuration evidence but is not yet an
+eligible baseline; it cannot support a comparative ROI claim without its
+separate quality, protocol, and accounting verdicts.
 
 ## Advisor gate
 
-Each implementation role starts fresh; the root Coordinator and one
-Sol/Medium Advisor stay alive across their own run's repairs and Advisor
-gates. All initial delegate spawns use `fork_context:false`; later Advisor
-reviews use `send_input` to that same Advisor session.
+Each implementation role starts fresh. All initial delegate spawns use
+`fork_context:false`. Sol consultation is exceptional rather than a standing
+review state machine. When used, Sol receives a compact immutable packet,
+does not edit or delegate, and returns advice about a concrete ambiguity or
+verification failure.
 
-The state machine is implement, Coordinator precheck, compact immutable initial
-packet, one fresh Advisor, then Advisor hard wait. Later reviews send compact
-immutable repair deltas to the same Advisor. Advisor output is accept, defect
-packet, or verified blocker.
+There is no automatic numerical review, retry, or stop cap. The Coordinator
+uses the recorded evidence to decide whether a further in-loop repair is
+converging, whether the terminal result is an honest blocker, or whether the
+configuration outcome should be recorded. A Sol consultation cannot authorize
+an external repair of a terminal configuration result.
 
-Advisor review depth is a measured control parameter. The current block has an
-exact three-review cap: initial review plus up to two repair-and-rereview
-cycles. Only schema-valid Advisor output counts. The Coordinator may end earlier
-only for acceptance or a verified blocker; an extension needs recorded
-maintainer authorization and starts a new declared cap epoch.
-
-For C1-C4, a schema-valid `defect_packet` is a command to the Coordinator to
-coordinate recovery, not merely a rejection record: the Coordinator issues a
-bounded evidence-based repair ticket to the responsible delegated role, verifies
-the repaired artifact, and returns a compact immutable repair delta to the
-persistent Advisor.
-The Coordinator may correct only its own review/evidence metadata directly; it
-must never make a Worker-owned implementation repair. A terminal Advisor
-transport failure is not a defect packet and therefore neither consumes nor
-opens a repair cycle.
-
-While awaiting an Advisor verdict, the Coordinator may only wait and record
-non-mutating metadata. It must not nudge, time out, infer a verdict from
-silence, repair, spawn implementation roles, accept, reject, or end the lane.
-Repeated waits are allowed. A terminal review-transport failure pauses the gate;
-the same immutable bundle may be relaunched without consuming a review.
-
-The Advisor reviews a compact Coordinator-produced packet containing only the
-ticket identity/hash, diff or changed-path hash, focused frozen acceptance
-output, scope/contamination status, and prior defect id when applicable. The
-initial packet is capped at 16,000 estimated input tokens; repair deltas at
-4,000. It does not inspect a mutable lane, edit, delegate, or repair.
-Acceptance requires deterministic success, no critical defect, correctness at
-least 3/4, and total rubric score at least 8/10.
+The active P107 run-evidence, accounting, and comparison validators mirror this
+ladder. They require only the roles and direct spawn edges declared above, do
+not require Advisor artifacts, and allow the normal uncommitted implementation
+diff at the frozen starting commit. Historical P107.2 replay contracts remain
+historical evidence rather than authority for the active C0-C4 sequence.
 
 ## Isolation, accounting, and ROI
 
@@ -159,10 +184,12 @@ better or worse.
   quality regression.
 - G6: default-policy promotion requires replication in two independent blocks.
 
-C0 establishes the reference. Two failures from the same mechanism stop that branch.
-If C1-C4 yield no accepted positive ROI, pivot workload/ticket/delegation
-boundary and obtain a new C0 rather than sweeping models. C5+ needs tranche
-synthesis authorization.
+C0 establishes the reference only after separate quality, protocol, and
+economics verdicts are accepted. If C1-C4 yield no accepted positive ROI,
+pivot the workload, ticket, or delegation boundary on a stated decision and
+obtain a new C0 rather than sweeping models. C5+ starts only as a separately
+declared configuration sequence. No automatic failure count determines that
+decision.
 
 ## Required implementation tranche
 
@@ -177,3 +204,16 @@ ROI without eligible C0, and cheap-but-unaccepted wins.
 P107.3 through P107.7 execute C0 through C4 one configuration per authorized
 child issue. P107.8 synthesizes the tranche and decides whether C5+ is worth
 authorizing.
+
+## Tranche closeout — 2026-07-21
+
+P107 closes as an exploration tranche, not as a final one-number ranking. The
+accepted C0, C1, supervised C2, and C4+ observations retain their independent
+quality, protocol, and economics evidence. They cannot be collapsed into a
+single comparative result because the frozen workload, topology, and provider
+conditions evolved between the observations.
+
+The next decision is not another P107 model sweep. P118 starts a fresh
+single-provider vLLM deployment boundary: one declared model across custom
+Coordinator, Worker, and selective Advisor roles, serial intense execution, and
+fresh task-level quality/protocol/economics records.

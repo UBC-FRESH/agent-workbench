@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import sys
 import uuid
+import hashlib
 from pathlib import Path
 from typing import Any, Callable
 
@@ -20,6 +22,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from agent_workbench.native_session_events import initialize_session_cursor
 from agent_workbench.supervision import SCHEMA_VERSION, validate_manifest
+from agent_workbench.supervision_controller import acknowledge_cursor
 from agent_workbench.supervision_event_broker import SupervisionEventBroker
 
 
@@ -43,12 +46,22 @@ WAIT = {
     "description": "Wait for one meaningful sanitized delta from the Worker bound by supervision_start_run.",
     "inputSchema": {"type": "object", "properties": {"timeout_ms": {"type": "integer", "minimum": 1}}, "required": ["timeout_ms"], "additionalProperties": False},
 }
+ACKNOWLEDGE = {
+    "name": "supervision_acknowledge_delta",
+    "description": "Record the Coordinator's reviewed decision for the pending delta and advance its cursor.",
+    "inputSchema": {"type": "object", "properties": {
+        "classification": {"type": "string", "enum": ["productive_repair", "material_repeat", "directive_deviation", "blocked", "terminal"]},
+        "recommended_action": {"type": "string", "enum": ["continue", "nudge", "escalate", "terminal"]},
+        "decision": {"type": "string", "enum": ["continue", "nudge", "escalate", "terminal"]},
+        "evidence_summary": {"type": "string", "minLength": 1, "maxLength": 512},
+    }, "required": ["classification", "recommended_action", "decision", "evidence_summary"], "additionalProperties": False},
+}
 CLOSE = {
     "name": "supervision_close_run",
     "description": "Deactivate the current in-session P116 run after the Coordinator finishes the Worker job.",
     "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
 }
-TOOLS = (START, WAIT, CLOSE)
+TOOLS = (START, WAIT, ACKNOWLEDGE, CLOSE)
 
 
 class InSessionP116Mcp:
@@ -57,11 +70,14 @@ class InSessionP116Mcp:
         *,
         broker_factory: Callable[[Path], Any] = SupervisionEventBroker,
         cursor_initializer: Callable[..., Path] = initialize_session_cursor,
+        acknowledger: Callable[..., None] = acknowledge_cursor,
     ) -> None:
         self._broker_factory = broker_factory
         self._cursor_initializer = cursor_initializer
+        self._acknowledger = acknowledger
         self.manifest_path: Path | None = None
         self.broker: Any | None = None
+        self._pending_delta: dict[str, Any] | None = None
 
     def handle(self, request: dict[str, Any]) -> dict[str, Any] | None:
         method, request_id = request.get("method"), request.get("id")
@@ -86,12 +102,14 @@ class InSessionP116Mcp:
                 return _result(request_id, self._start(arguments))
             if name == WAIT["name"]:
                 return _result(request_id, self._wait(arguments))
+            if name == ACKNOWLEDGE["name"]:
+                return _result(request_id, self._acknowledge(arguments))
             if name == CLOSE["name"]:
                 return _result(request_id, self._close(arguments))
         except TimeoutError:
             return _error(request_id, "BROKER_TIMEOUT")
-        except (OSError, TypeError, ValueError):
-            return _error(request_id, "BROKER_VALIDATION")
+        except (OSError, TypeError, ValueError) as exc:
+            return _error(request_id, f"BROKER_VALIDATION: {exc}")
         return _error(request_id, "INVALID_TOOL")
 
     def _start(self, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -112,27 +130,33 @@ class InSessionP116Mcp:
             raise ValueError("run_id must be safe")
         supervision = root / "runtime" / "agent_jobs" / run_id / "supervision"
         supervision.mkdir(parents=True, exist_ok=False)
-        manifest_path = supervision / "manifest.json"
-        manifest = {
-            "schema_version": SCHEMA_VERSION,
-            "run_id": run_id,
-            "worker_session_id": worker,
-            "supervisor_session_id": supervisor,
-            "assigned_root": str(root),
-            "supervision_dir": str(supervision),
-            "events_path": f"runtime/agent_jobs/{run_id}/supervision/events.jsonl",
-            "cursor_path": f"runtime/agent_jobs/{run_id}/supervision/cursor.json",
-            "packets_path": f"runtime/agent_jobs/{run_id}/supervision/supervisor_packets.jsonl",
-            "actions_path": f"runtime/agent_jobs/{run_id}/supervision/coordinator_actions.jsonl",
-        }
-        validation = validate_manifest(manifest)
-        if not validation.ok:
-            raise ValueError("manifest is invalid")
-        _write_json(manifest_path, manifest)
-        self._cursor_initializer(manifest=manifest, root=root)
-        _write_json(supervision / "activation.json", {"active": True, "run_id": run_id, "assigned_root": str(root), "supervision_dir": str(supervision), "worker_session_id": worker})
+        try:
+            manifest_path = supervision / "manifest.json"
+            manifest = {
+                "schema_version": SCHEMA_VERSION,
+                "run_id": run_id,
+                "worker_session_id": worker,
+                "supervisor_session_id": supervisor,
+                "assigned_root": str(root),
+                "supervision_dir": str(supervision),
+                "events_path": f"runtime/agent_jobs/{run_id}/supervision/events.jsonl",
+                "cursor_path": f"runtime/agent_jobs/{run_id}/supervision/cursor.json",
+                "packets_path": f"runtime/agent_jobs/{run_id}/supervision/supervisor_packets.jsonl",
+                "actions_path": f"runtime/agent_jobs/{run_id}/supervision/coordinator_actions.jsonl",
+            }
+            validation = validate_manifest(manifest)
+            if not validation.ok:
+                raise ValueError("manifest is invalid")
+            _write_json(manifest_path, manifest)
+            self._cursor_initializer(manifest=manifest, root=root)
+            _write_json(supervision / "activation.json", {"active": True, "run_id": run_id, "assigned_root": str(root), "supervision_dir": str(supervision), "worker_session_id": worker})
+            broker = self._broker_factory(manifest_path)
+        except Exception:
+            shutil.rmtree(supervision)
+            raise
         self.manifest_path = manifest_path
-        self.broker = self._broker_factory(manifest_path)
+        self.broker = broker
+        self._pending_delta = None
         return _content({"run_id": run_id, "worker_session_id": worker, "supervisor_session_id": supervisor, "status": "active"})
 
     def _wait(self, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -140,7 +164,33 @@ class InSessionP116Mcp:
             raise ValueError("invalid wait arguments")
         if self.broker is None:
             raise ValueError("no active supervision run")
-        return _content(self.broker.wait_for_trigger(timeout=arguments["timeout_ms"] / 1000))
+        if self._pending_delta is not None:
+            raise ValueError("pending delta must be acknowledged before another wait")
+        delta = self.broker.wait_for_trigger(timeout=arguments["timeout_ms"] / 1000)
+        self._pending_delta = delta
+        return _content(delta)
+
+    def _acknowledge(self, arguments: dict[str, Any]) -> dict[str, Any]:
+        if self.manifest_path is None or self._pending_delta is None:
+            raise ValueError("no pending delta to acknowledge")
+        if set(arguments) != {"classification", "recommended_action", "decision", "evidence_summary"}:
+            raise ValueError("invalid acknowledgement arguments")
+        if not all(isinstance(arguments[key], str) and arguments[key] for key in arguments):
+            raise ValueError("invalid acknowledgement values")
+        delta = self._pending_delta
+        start, end = delta.get("cursor_start_sequence"), delta.get("cursor_end_sequence")
+        if not isinstance(start, int) or not isinstance(end, int) or end < 1:
+            raise ValueError("pending delta has invalid cursor range")
+        packet = {"schema_version": SCHEMA_VERSION, "run_id": delta.get("run_id"),
+                  "classification": arguments["classification"], "recommended_action": arguments["recommended_action"],
+                  "evidence_summary": arguments["evidence_summary"], "event_start_sequence": start + 1,
+                  "event_end_sequence": end}
+        digest = hashlib.sha256(json.dumps(packet, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        action = {"schema_version": SCHEMA_VERSION, "run_id": delta.get("run_id"), "packet_sha256": digest,
+                  "decision": arguments["decision"]}
+        self._acknowledger(manifest_path=self.manifest_path, last_sequence=end, packet=packet, action=action)
+        self._pending_delta = None
+        return _content({"run_id": packet["run_id"], "status": "acknowledged", "last_sequence": end})
 
     def _close(self, arguments: dict[str, Any]) -> dict[str, Any]:
         if arguments:
@@ -153,6 +203,7 @@ class InSessionP116Mcp:
         run_id = json.loads(self.manifest_path.read_text(encoding="utf-8"))["run_id"]
         self.manifest_path = None
         self.broker = None
+        self._pending_delta = None
         return _content({"run_id": run_id, "status": "closed"})
 
 

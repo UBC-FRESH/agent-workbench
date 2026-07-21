@@ -17,13 +17,13 @@ from typing import Any
 
 EXPECTED_PROVIDER = "agent_workbench_ollama"
 EXPECTED_AGENTS = {
-    "ollama_supervisor": "ollama_supervisor.toml",
-    "ollama_worker": "ollama_worker.toml",
+    "ollama_supervisor": ("ollama_supervisor.toml", "agent_workbench_ollama_readonly"),
+    "ollama_worker": ("ollama_worker.toml", ":workspace"),
 }
 EXPECTED_HONEYCOMB_AGENTS = {
     "gpt_luna_supervisor": ("gpt_luna_supervisor.toml", "gpt-5.6-luna", "medium"),
     "gpt_luna_worker": ("gpt_luna_worker.toml", "gpt-5.6-luna", "low"),
-    "gpt_sol_advisor": ("gpt_sol_advisor.toml", "gpt-5.6-sol", "high"),
+    "gpt_sol_advisor": ("gpt_sol_advisor.toml", "gpt-5.6-sol", "medium"),
 }
 EXPECTED_EDGES = {
     ("coordinator", "ollama_supervisor"),
@@ -51,7 +51,7 @@ def validate_profiles(config_root: Path) -> list[str]:
     if not isinstance(agents, dict) or agents.get("max_depth") != 2:
         errors.append("config.toml must set agents.max_depth to 2 for recursive delegation")
 
-    for name, filename in EXPECTED_AGENTS.items():
+    for name, (filename, permission_profile) in EXPECTED_AGENTS.items():
         profile = read_toml(config_root / "agents" / filename, errors)
         for required in ("name", "description", "developer_instructions"):
             if not isinstance(profile.get(required), str) or not profile[required].strip():
@@ -62,9 +62,9 @@ def validate_profiles(config_root: Path) -> list[str]:
             errors.append(f"{filename} must use provider {EXPECTED_PROVIDER}")
         if not isinstance(profile.get("model"), str) or not profile["model"].strip():
             errors.append(f"{filename} must declare a model")
-        if profile.get("default_permissions") != "agent_workbench_ollama_readonly":
+        if profile.get("default_permissions") != permission_profile:
             errors.append(
-                f"{filename} must use the agent_workbench_ollama_readonly permission profile"
+                f"{filename} must use the {permission_profile} permission profile"
             )
     for name, (filename, model, effort) in EXPECTED_HONEYCOMB_AGENTS.items():
         profile = read_toml(config_root / "agents" / filename, errors)

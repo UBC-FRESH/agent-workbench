@@ -4421,3 +4421,212 @@ exact staged lines, then restored the temp config hash byte-for-byte.
 - The bounded Worker ticket added workflow-package CLI coverage and passed 20
   focused tests. P116 control-layer quality and native protocol remain
   supported; economics remains unassessed and no P107 economics claim is made.
+## 2026-07-20 - Reopened P116 for diagnostic-envelope refinement
+
+- Reopened parent issue #669 and created active child issue #710, P116.8,
+  after live VS Code run `p116_ui_870087267e6f48e1` showed that the repaired
+  in-session loop can observe incremental Worker events, acknowledge review
+  cursors, re-invoke the same Supervisor, and record Coordinator decisions,
+  while still lacking enough safe failure context for targeted repair advice.
+- A native `gpt_sol_advisor` review required a narrower, versioned v2 event
+  contract: immutable pre-tool policy binding; safe operation/scope classes;
+  optional exact declared check ID; bounded failure class; and exit code.
+  It rejected observed paths and failure fingerprints for this slice because
+  their disclosure/correlation risk is unnecessary for the immediate decision.
+- P116.8 excludes raw commands, arguments, stderr, source, credentials,
+  arbitrary paths, raw-output digests, and parser captures; ambiguous policy or
+  `call_id` correlation fails closed. Existing v1 evidence remains readable.
+- Quality and protocol for P116.8 remain pending deterministic and fresh native
+  evidence. Economics remains unassessed; this does not start a P107 economics
+  measurement.
+
+## 2026-07-20 - Completed bounded P116.8 diagnostic-envelope proof
+
+- Implemented the Advisor-reviewed `p116_supervision_event_v2` policy envelope:
+  immutable pre-tool policy binding, safe `call_id` correlation, declared-check
+  recognition, bounded failure classes, and explicit v1 compatibility.
+- Focused P116/P114 validation passed with 72 tests. Deterministic negatives
+  reject/reduce undeclared agent calls and out-of-scope patches without leaking
+  their inputs or paths.
+- Fresh native run `p116_v2_diagnostic_native_20260720` emitted a root-matched
+  v2 declared-check failure (`test`, `within_ticket`,
+  `controlled-missing-test`, exit `1`, `missing_file`), received same-Supervisor
+  terminal advice, recorded the acknowledged Coordinator terminal decision, and
+  closed cleanly. No raw command, output, path, source, credential, or failure
+  fingerprint entered the event/packet/action artifacts.
+- P116.8 quality and bounded protocol are supported; economics remains
+  unassessed. Phase integration remains open and this is not a P107 economics
+  result.
+
+## 2026-07-20 - Built P107 V3 dossier-workload current-root candidate
+
+- Added the five-slice `p107-run-evidence-dossier-v3` candidate: typed,
+  hash-bound artifact validation; cross-artifact reconciliation; lifecycle
+  timeline/anomaly analysis; and deterministic JSON/Markdown CLI reporting.
+- Added a public-safe fixture binding heartbeat, token-ledger, Advisor verdict,
+  archive, and Worker result artifacts by SHA-256. The focused dossier suites
+  pass `100` cases with one platform-dependent symlink skip.
+- This is local quality evidence only. The remaining C0 ticket, prompts,
+  model/pricing catalogs, effective configuration, and Advisor rubric have not
+  been frozen against the fixture; no P107 protocol or economics observation
+  is claimed.
+
+## 2026-07-20 - Prepared P107 V3 C0 preflight freeze
+
+- Materialized the ignored `p107_v3_c0_freeze_20260720` block against clean
+  baseline `50a8a185556aeb81bf1142f7992c026871426920`, which lacks the dossier
+  implementation. The block binds the V3 ticket, fixture, reset-consistent
+  C0-C4 prompts, Terra/medium effective-session snapshot, model/pricing
+  catalogs, and Advisor rubric by SHA-256.
+- Repaired the evaluation-block validator with an explicit preflight checkout
+  override so a runtime freeze can be verified before a C0 worktree exists;
+  ordinary contained-root validation remains unchanged.
+- This is preparation only: no worktree, C0 execution, P107 quality/protocol
+  observation, or economics measurement occurred.
+
+## 2026-07-20 - Recorded P107 mission guardrail and first V3 C0 observation
+
+- Recorded the controlling P107 rule in the reset, substantial-workload plan,
+  and roadmap: fixed deterministic acceptance checks evaluate the resulting
+  artifact; they do not turn native Agent Hub LLMs into deterministic
+  functions.
+- A configuration's incomplete, divergent, invalid, accepted, or honestly
+  blocked task result is quality evidence. The coordinator must not alter the
+  frozen workload or externally repair a submitted candidate merely to
+  manufacture a pass.
+- Only a defect that prevented native topology, boundary observation, or
+  accounting capture is a control-layer repair candidate; it is recorded as a
+  separate protocol/instrumentation result and requires a new frozen block if
+  comparison conditions change.
+- Fresh native C0 r2 session `019f80d5-7ae1-7493-92f0-90e6af754ba4` completed
+  the frozen V3 ticket in the clean baseline checkout. Its candidate and task
+  result are retained for evaluation; no external implementation repair is
+  authorized by P107. Economics remains unassessed without a valid run-boundary
+  ledger.
+
+## 2026-07-20 - Reconciled P107 configuration ladder and review authority
+
+- Made the reset-consistent frozen C0-C4 prompts authoritative: Terra alone;
+  Terra-to-Luna Worker; Terra-to-configured-Ollama Worker; Luna alone; and
+  Luna-to-configured-Ollama Worker.
+- Removed the contradictory Supervisor topologies, mandatory routine Advisor
+  gate, automatic two-failure stop rule, and standing three-review cap from the
+  active P107 research program. Sol remains a selective non-mutating Advisor,
+  not a recurring execution role.
+- C0 r2 must now be evaluated as submitted before any accounting-only repair
+  decision. No C1 execution is authorized until an eligible C0 exists in a
+  frozen block.
+
+## 2026-07-20 - Simplified active P107 accounting and comparison validation
+
+- Aligned the active P107 run-evidence, accounting, and comparison validators
+  with the reset-consistent ladder. C0/C3 now have only a Coordinator;
+  C1/C2/C4 have a Coordinator and one Worker; no active configuration requires
+  an Advisor or Supervisor.
+- Removed the obsolete mandatory Advisor verdict/binding comparison gate and
+  allowed a normal uncommitted implementation diff at the frozen starting
+  commit. The validators still require declared topology, provenance, and
+  complete accounting before economics comparison.
+- Focused validator coverage passed: `70 passed`. This implementation repair
+  does not alter C0 r2's submitted code or make an economics claim.
+
+## 2026-07-20 - Accepted P107 V3 C0 r3 baseline
+
+- Fresh native C0 r3 session `019f80f3-03ae-7cd3-83a6-9feaae4efb5c` used the
+  pre-launch Terra/medium, memories-disabled native configuration in a clean
+  frozen-baseline worktree. The normal native default was restored byte-for-byte
+  after the run.
+- Quality: accepted candidate. The submitted implementation passed its exact
+  frozen acceptance command (`4 passed`); its intact dossier fixture validated,
+  a tampered manifest was rejected, and `git diff --check` passed.
+- Protocol: accepted. The raw native record, clean root, bounded authority, and
+  pre-launch configuration were observed; no child agents, GitHub mutations,
+  commits, pushes, or in-run configuration changes occurred.
+- Economics: usable. The raw cumulative Terra Coordinator development span
+  priced at `$2.0937575` under the frozen catalog. Automatic UI title
+  generation is unrelated host metadata and excluded from task economics.
+- C0 r3 is the eligible baseline for the next authorized C1 configuration. No
+  comparative ROI claim has yet been made.
+
+## 2026-07-20 - Clarified native P107 model identity evidence
+
+- Corrected the evidence rule: a missing model field in an individual native
+  transcript does not make the implementation model unknowable when the
+  hash-bound pre-launch native configuration or role binding is linked to the
+  fresh session. That binding is sufficient for model pricing.
+- A native title-generation call may use a different model; exclude it as
+  unrelated UI metadata and do not use it to reclassify the implementation
+  session's model or task cost.
+
+## 2026-07-20 - Accepted comparable P107 C1 observation
+
+- Fresh C1 Terra Coordinator session
+  `019f80fb-4baa-7752-9e56-cffa883088b5` spawned exactly one native Luna Worker
+  with `fork_context:false`; the Worker made the scoped implementation edits
+  and the Coordinator independently inspected and validated them.
+- Quality: accepted candidate (`4 passed`; intact fixture CLI validation passed;
+  tampered manifest rejected).
+- Protocol: accepted. One Worker only, no Coordinator implementation fallback,
+  no routine Advisor, and no commit, push, GitHub, or in-run configuration
+  mutation.
+- Economics: usable. Terra Coordinator `$0.7909664` plus Luna Worker
+  `$0.4235984` equals `$1.2145648`, `$0.8791927` (42.0%) below C0 with no
+  observed quality regression.
+- C2 Terra-to-configured-Ollama Worker is the next authorized configuration.
+
+## 2026-07-20 - Recorded failed unsupervised P107 C2 Ollama-Worker observation
+
+- Fresh C2 Terra Coordinator session
+  `019f8101-8dcd-7783-9f85-23cc5713d959` spawned one configured native Ollama
+  Worker with `fork_context:false`.
+- The Worker created only incomplete source files, omitted the required tests,
+  fixture, and CLI change, and did not return its required final result. The
+  Coordinator shut it down, did not implement a fallback, and independently
+  confirmed that the frozen test command could not collect missing tests.
+- Quality: rejected. Protocol: not accepted because the Worker failed its
+  terminal handoff. Economics: not usable for comparison because the output was
+  unaccepted and local Worker cost was not measured. The candidate remains
+  unrepaired C2 evidence.
+
+## 2026-07-20 - Corrected P107 delegated-route ownership
+
+- The C1 and C2 observations were launched without the P116 control layer, so
+  they measured bare Coordinator-to-Worker delegation rather than the usable
+  native Agent Hub workflow requested for P107.
+- Canonical C1, C2, and C4 now require Coordinator-owned P116 supervision:
+  bind the exact Worker before tools, review meaningful deltas, decide and send
+  any intervention as Coordinator, and close the control run at task end. This
+  adds no routine Supervisor role and does not prescribe LLM behavior.
+- C2 remains active for a fresh supervised rerun on the same frozen workload;
+  C3 is not next. The existing C1/C2 records remain useful unsupervised
+  diagnostics. A supervised C1 rerun is required before a corrected-epoch
+  C1-versus-C2 comparative claim.
+
+## 2026-07-21 - C2 native integration accepted; C3 authorized
+
+- C2 r7 delivered the frozen P107 dossier candidate through the native direct
+  Terra-Coordinator-to-medium-Qwen-Worker route. The Coordinator-owned P116
+  binding succeeded before Worker tools; focused quality validation passed and
+  the accepted scoped P107 change was committed by the Coordinator.
+- The outer controller, rather than the Agent Hub team, captured the raw
+  Coordinator token span and rendered the existing economics ledger: paid
+  Coordinator estimate `$0.413974`; local Qwen usage is separate and unpriced.
+- The developer authorized the canonical C3 Luna-alone slice next. C3 has no
+  Worker, P116, Advisor, accounting, or Git authority inside its common mission.
+  The C1 supervised rerun remains necessary only for a corrected-epoch
+  C1-versus-C2 comparison.
+
+## 2026-07-21 - Closed P107/P116 tranche and drafted P118 FRESH vLLM Agent
+
+- Closed P116 after its bounded native in-session control layer and v2 safe
+  diagnostic-envelope refinement were independently covered by focused tests.
+  It remains a control layer, not an unattended daemon or a P107 economics
+  result.
+- Closed P107 as a bounded exploration tranche. Accepted C0, C1, supervised
+  C2, and C4+ observations remain recorded with their own quality, protocol,
+  and economics verdicts; the changing workload/topology/provider epochs do
+  not support one final cross-epoch ROI ranking.
+- Added the draft P118 plan for a native FRESH vLLM Agent deployment: one
+  configured custom Qwen coding model across Coordinator, Worker, and
+  selective Advisor profiles, with serial intensive execution and no automatic
+  paid fallback.

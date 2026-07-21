@@ -305,6 +305,71 @@ for that later measurement only after P116's own native proof.
 P115 stays planned and independent. It begins only under its stated gates; P116
 does not authorize scientific artifact inspection.
 
+## P116.8 diagnostic-envelope refinement — active
+
+The live VS Code run `p116_ui_870087267e6f48e1` proved that the in-session
+control loop can deliver incremental acknowledged deltas, re-invoke the same
+Supervisor, record Coordinator decisions, and send a bounded same-Worker cue.
+It also exposed a productive-control limit: a failed declared test was visible
+only as `shell_command`, exit code `1`, and `nonzero_exit`. That is enough to
+stop blind retries, but not enough to distinguish a syntax error from a failed
+assertion or missing input without disclosing raw command/output material.
+
+An independent native Sol Advisor reviewed the proposed remedy and returned
+`REVISE`: retain the narrow direction but exclude raw-output fingerprints and
+observed paths. P116.8 therefore introduces a new event v2 under an immutable
+pre-tool policy, rather than silently widening v1.
+
+The v2 event may contain only:
+
+- `policy_id`: opaque identifier for the frozen run policy;
+- `operation_class`: `inspect`, `edit`, `test`, `agent_manage`, or `unknown`;
+- `scope_status`: `within_ticket`, `outside_ticket`, or `unclassified`;
+- optional declared `check_id`, only after an exact versioned normalized-command
+  digest match;
+- bounded `failure_class`, defaulting to `unknown`; and
+- optional correlated `exit_code`.
+
+It must never emit command text/arguments, stderr, matched substrings, raw
+output digests, source text, credentials, undeclared paths, or parser captures.
+Missing, duplicate, reordered, or ambiguous `call_id` correlation, policy
+binding, command matching, or patch-path containment fails closed to
+`unknown`/`unclassified`; it grants no authority to retry, edit, message, or
+accept a result. Existing v1 events remain readable through an explicit
+compatibility path.
+
+P116.8 acceptance requires deterministic policy/correlation/redaction tests
+and one fresh native run with exactly one Worker and the same Supervisor,
+`fork_context:false`, policy bound before Worker tool use, a recognized declared
+check failure, an unclassified undeclared command and patch, exactly-once
+acknowledgement, and no excluded raw material in the event/packet/action
+artifacts. Quality and protocol remain unaccepted until that evidence exists;
+economics is not assessed.
+
+### P116.8 result — 2026-07-20
+
+Implementation added immutable v2 policy binding at native in-session run
+start, `call_id` correlation across incremental tails, v1 compatibility, and
+safe event projection. Focused P116/P114 validation passed with 72 tests.
+
+Fresh native run `p116_v2_diagnostic_native_20260720` bound Worker
+`019f8072-d0b5-7750-9c42-d6af5e1bd9d9` and same Supervisor
+`019f8072-e6f0-7c61-b5c3-87acae05d46d` before Worker tool use. Its immutable
+policy declared only one normalized missing-test command. The resulting v2
+event contained `check_id: controlled-missing-test`, `operation_class: test`,
+`scope_status: within_ticket`, `exit_code: 1`, and
+`failure_class: missing_file`, with no command/output/path leakage. The same
+Supervisor recommended terminal closure; the Coordinator recorded/acknowledged
+that terminal decision and closed the run. The Worker's initial no-tool status
+response was corrected once by the Coordinator, then the declared check ran.
+
+- Quality: supported for the bounded v2 classification, compatibility, and
+  redaction contract.
+- Protocol: supported for the bounded native declared-failure detection and
+  same-Supervisor terminal-review cycle. This is not a demonstrated automatic
+  repair of an arbitrary implementation failure.
+- Economics: unassessed. No P107 accounting boundary was used.
+
 ## Advisor review incorporated
 
 The independent Advisor review identified three concrete seams reflected in
@@ -313,3 +378,22 @@ not persistent after it returns, and evidence/authority were split between the
 Coordinator and Supervisor. The plan assigns a cursor-based evidence feed and
 re-invocation loop to the Coordinator rather than asking the Worker to become
 deterministic or the Supervisor to monitor without data.
+
+## Closeout — 2026-07-21
+
+P116 is complete as a bounded native control layer. The accepted implementation
+supports run binding, safe event reduction, same-Supervisor review, and a
+Coordinator-approved same-Worker cue when observed evidence warrants one.
+P116.8 added the final versioned diagnostic envelope without raw command,
+output, source, credential, or arbitrary-path leakage.
+
+- Quality: supported for the bounded control-layer implementation and focused
+  regression suite.
+- Protocol: supported for the native fresh-controller and VS Code in-session
+  routes evidenced in this plan.
+- Economics: intentionally not a P116 result; P107/P118 runs must capture
+  their own role-bound ledgers.
+
+This does not claim an unattended daemon, automatic intervention for all Worker
+failures, or deterministic model behavior. P118 may use the layer as an
+optional Coordinator-owned cue path.

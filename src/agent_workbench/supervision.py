@@ -13,6 +13,7 @@ from .evidence import find_private_values
 
 
 SCHEMA_VERSION = "p116_supervision_v1"
+EVENT_SCHEMA_VERSION_V2 = "p116_supervision_event_v2"
 SUPPORTED_SCHEMA_VERSIONS = frozenset({SCHEMA_VERSION})
 # A migration entry is required before a new version can be accepted.  Keeping
 # this explicit makes version changes auditable instead of silently coercing
@@ -227,7 +228,8 @@ def validate_events(
             errors,
             prefix=prefix,
         )
-        errors.extend(f"{prefix}: {error}" for error in validate_schema_version(event.get("schema_version")).errors)
+        if event.get("schema_version") not in {SCHEMA_VERSION, EVENT_SCHEMA_VERSION_V2}:
+            errors.append(f"{prefix}: unsupported event schema_version")
         event_id = event.get("event_id")
         if isinstance(event_id, str):
             if event_id in event_ids:
@@ -250,6 +252,19 @@ def validate_events(
             errors.append(f"{prefix}: invalid outcome")
         if event.get("redaction_applied") is not True:
             errors.append(f"{prefix}: redaction_applied must be true")
+        if event.get("schema_version") == EVENT_SCHEMA_VERSION_V2:
+            if not isinstance(event.get("policy_id"), str) or not SAFE_ID.match(event["policy_id"]):
+                errors.append(f"{prefix}: v2 policy_id must be safe")
+            if event.get("operation_class") not in {"inspect", "edit", "test", "agent_manage", "unknown"}:
+                errors.append(f"{prefix}: v2 operation_class is invalid")
+            if event.get("scope_status") not in {"within_ticket", "outside_ticket", "unclassified"}:
+                errors.append(f"{prefix}: v2 scope_status is invalid")
+            if "check_id" in event and (not isinstance(event["check_id"], str) or not SAFE_ID.match(event["check_id"])):
+                errors.append(f"{prefix}: v2 check_id must be safe")
+            if "failure_class" in event and event["failure_class"] not in {"syntax_error", "assertion_failure", "missing_file", "permission_denied", "tool_unavailable", "nonzero_exit", "unknown"}:
+                errors.append(f"{prefix}: v2 failure_class is invalid")
+            if "exit_code" in event and (not isinstance(event["exit_code"], int) or isinstance(event["exit_code"], bool)):
+                errors.append(f"{prefix}: v2 exit_code must be an integer")
         _reject_forbidden_payload(event, errors, prefix)
         _validate_observed_path(event, assigned_root, errors, prefix)
         _validate_bounded_text(event, errors, prefix)

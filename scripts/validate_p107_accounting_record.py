@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-CONFIG_ROLES = {"C0": {"coordinator", "advisor"}, "C1": {"coordinator", "worker", "advisor"}, "C2": {"coordinator", "supervisor", "worker", "advisor"}, "C3": {"coordinator", "supervisor", "worker", "advisor"}, "C4": {"coordinator", "supervisor", "worker", "advisor"}}
+CONFIG_ROLES = {"C0": {"coordinator"}, "C1": {"coordinator", "worker"}, "C2": {"coordinator", "worker"}, "C3": {"coordinator"}, "C4": {"coordinator", "worker"}}
 TOKEN_CLASSES = ("uncached_input", "cached_input", "output", "reasoning")
 
 

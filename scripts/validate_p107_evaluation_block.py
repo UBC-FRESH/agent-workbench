@@ -6,6 +6,7 @@ import json
 import hashlib
 import re
 import subprocess
+import argparse
 import sys
 from pathlib import Path
 
@@ -40,7 +41,9 @@ def _safe_path(root: Path, value: object, label: str, *, file: bool) -> tuple[Pa
         return None, f"{label} is missing or inaccessible"
 
 
-def validate(path: str | Path) -> list[str]:
+def validate(
+    path: str | Path, *, repository_root: str | Path | None = None
+) -> list[str]:
     try:
         block = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -67,12 +70,21 @@ def validate(path: str | Path) -> list[str]:
     by_name = {}
     paths = set()
     block_path = Path(path).resolve()
-    root, root_error = _safe_path(block_path.parent, block.get("repository_root"), "repository_root", file=False)
-    if root_error:
-        errors.append(root_error)
+    root: Path | None = None
+    if repository_root is None:
+        root, root_error = _safe_path(
+            block_path.parent, block.get("repository_root"), "repository_root", file=False
+        )
+        if root_error:
+            errors.append(root_error)
     elif not COMMIT.fullmatch(block["starting_commit"]):
         pass
     else:
+        root = Path(repository_root).resolve()
+        if not root.is_dir():
+            errors.append("repository_root override must name an existing directory")
+            root = None
+    if root is not None and COMMIT.fullmatch(str(block.get("starting_commit", ""))):
         try:
             result = subprocess.run(["git", "-C", str(root), "cat-file", "-e", f"{block['starting_commit']}^{{commit}}"], capture_output=True, text=True, check=False)
             if result.returncode != 0:
@@ -144,9 +156,14 @@ def validate(path: str | Path) -> list[str]:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        raise SystemExit("usage: validate_p107_evaluation_block.py <evaluation-block.json>")
-    errors = validate(sys.argv[1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("evaluation_block")
+    parser.add_argument(
+        "--repository-root",
+        help="Explicit checkout root for pre-C0 freeze validation. Normal validation uses the block-relative root.",
+    )
+    args = parser.parse_args()
+    errors = validate(args.evaluation_block, repository_root=args.repository_root)
     if errors:
         print("\n".join(errors))
         raise SystemExit(1)

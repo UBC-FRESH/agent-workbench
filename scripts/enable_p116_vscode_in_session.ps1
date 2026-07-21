@@ -58,7 +58,7 @@ $serverBlock = @(
     "cwd = `"$($repoRoot.Replace('\', '/'))`"",
     'enabled = true',
     'required = true',
-    'enabled_tools = ["supervision_start_run", "supervision_wait_delta", "supervision_close_run"]',
+    'enabled_tools = ["supervision_start_run", "supervision_wait_delta", "supervision_acknowledge_delta", "supervision_close_run"]',
     'default_tools_approval_mode = "auto"',
     'startup_timeout_sec = 10',
     'tool_timeout_sec = 120',
@@ -82,5 +82,5 @@ $hooksStaged = Join-Path $stateDir 'hooks.staged.json'
 
 & $python -m agent_workbench.agent_bridge.transaction_cli commit --run-id $InstallId --journal $journal --lock $lock --target "config|$configPath|$configBackup|$configStaged" --target "hooks|$hooksPath|$hooksBackup|$hooksStaged"
 if ($LASTEXITCODE -ne 0) { throw 'P116 VS Code installation transaction failed.' }
-[IO.File]::WriteAllText((Join-Path $stateDir 'p116_vscode_install.json'), (@{ install_id = $InstallId; mcp_server = $serverName; tools = @('supervision_start_run', 'supervision_wait_delta', 'supervision_close_run') } | ConvertTo-Json), [Text.UTF8Encoding]::new($false))
+[IO.File]::WriteAllText((Join-Path $stateDir 'p116_vscode_install.json'), (@{ install_id = $InstallId; mcp_server = $serverName; tools = @('supervision_start_run', 'supervision_wait_delta', 'supervision_acknowledge_delta', 'supervision_close_run') } | ConvertTo-Json), [Text.UTF8Encoding]::new($false))
 Write-Output 'P116 in-session supervision installed. Restart VS Code, then invoke $native-supervised-coordinator from the native Codex Coordinator chat.'

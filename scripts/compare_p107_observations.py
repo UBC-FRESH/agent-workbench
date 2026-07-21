@@ -3,14 +3,13 @@ from __future__ import annotations
 import hashlib, json, math, sys
 from pathlib import Path
 from typing import Any
-from validate_p107_advisor_review import validate_review
 from validate_p107_accounting_record import validate_accounting_record
 from validate_p107_evaluation_block import validate
 from validate_p107_run_evidence_manifest import validate_manifest, EXPECTED
 
 _CONFIGURATIONS = {"C0", "C1", "C2", "C3", "C4"}
-_BOOLEAN_FLAGS = ("evaluation_block_valid", "deterministic_acceptance", "advisor_binding_valid",
-                  "contaminated", "accounting_complete", "accounting_provenance_valid",
+_BOOLEAN_FLAGS = ("evaluation_block_valid", "deterministic_acceptance", "contaminated",
+                  "accounting_complete", "accounting_provenance_valid",
                   "configuration_topology_valid", "model_identity_valid")
 
 def _cost_valid(value: Any) -> bool:
@@ -25,33 +24,6 @@ def _artifact_valid(row: dict[str, Any], field: str, validator: Any) -> bool:
         return False
     try:
         return not validator(path)
-    except (OSError, TypeError, ValueError, json.JSONDecodeError):
-        return False
-
-def _advisor_artifacts_valid(row: dict[str, Any]) -> bool:
-    bundle, verdict = row.get("advisor_bundle_path"), row.get("advisor_verdict_path")
-    if not isinstance(bundle, str) or not isinstance(verdict, str):
-        return False
-    try:
-        if validate_review(bundle, verdict, history_path=row.get("advisor_history_path")):
-            return False
-        bundle_data = json.loads(Path(bundle).read_text(encoding="utf-8"))
-        verdict_data = json.loads(Path(verdict).read_text(encoding="utf-8"))
-        manifest_data = json.loads(Path(row["evidence_manifest_path"]).read_text(encoding="utf-8"))
-        advisor_sessions = [s.get("session_id") for s in manifest_data.get("raw_sessions", [])
-                            if isinstance(s, dict) and s.get("role") == "advisor"]
-        advisor_session = advisor_sessions[0] if len(advisor_sessions) == 1 else None
-        return (
-            verdict_data.get("verdict") == "accepted"
-            and verdict_data.get("deterministic_acceptance") is True
-            and bundle_data.get("run_id") == row.get("run_id")
-            and verdict_data.get("run_id") == row.get("run_id")
-            and bundle_data.get("advisor_session_id") == advisor_session
-            and verdict_data.get("advisor_session_id") == advisor_session
-            and bundle_data.get("advisor_lineage_id") == verdict_data.get("advisor_lineage_id")
-            and (row.get("advisor_session_id") is None or row.get("advisor_session_id") == advisor_session)
-            and (row.get("advisor_lineage_id") is None or row.get("advisor_lineage_id") == bundle_data.get("advisor_lineage_id"))
-        )
     except (OSError, TypeError, ValueError, json.JSONDecodeError):
         return False
 
@@ -95,12 +67,11 @@ def _reasons(row: dict[str, Any], *, baseline: bool = False, duplicate_ids: bool
     for field in _BOOLEAN_FLAGS:
         if not isinstance(row.get(field), bool):
             if field == "evaluation_block_valid": reasons.append("invalid_evaluation_block")
-            else: reasons.append({"deterministic_acceptance": "deterministic_acceptance_failed", "advisor_binding_valid": "advisor_binding_invalid", "contaminated": "contaminated", "accounting_complete": "accounting_ineligible", "accounting_provenance_valid": "accounting_provenance_invalid", "configuration_topology_valid": "configuration_topology_mismatch", "model_identity_valid": "model_identity_mismatch"}[field])
+            else: reasons.append({"deterministic_acceptance": "deterministic_acceptance_failed", "contaminated": "contaminated", "accounting_complete": "accounting_ineligible", "accounting_provenance_valid": "accounting_provenance_invalid", "configuration_topology_valid": "configuration_topology_mismatch", "model_identity_valid": "model_identity_mismatch"}[field])
     if duplicate_ids: reasons.append("duplicate_run_id")
     if not isinstance(row.get("evaluation_block_id"), str) or not row["evaluation_block_id"].strip(): reasons.append("missing_evaluation_block")
     elif row.get("evaluation_block_valid") is not True and "invalid_evaluation_block" not in reasons: reasons.append("invalid_evaluation_block")
     if row.get("deterministic_acceptance") is not True: reasons.append("deterministic_acceptance_failed")
-    if row.get("advisor_verdict") != "accepted" or not _advisor_artifacts_valid(row): reasons.append("advisor_hard_wait_failure")
     if row.get("contaminated") is not False: reasons.append("contaminated")
     accounting, accounting_errors = _accounting(row)
     reasons.extend(accounting_errors)
