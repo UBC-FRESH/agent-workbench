@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import hashlib
 import pytest
+import shutil
 import sys
 import subprocess
 from pathlib import Path
@@ -145,3 +146,27 @@ def test_rejects_worktree_checked_out_at_different_commit(tmp_path: Path) -> Non
     path = tmp_path / "block.json"
     path.write_text(json.dumps(block), encoding="utf-8")
     assert "repository_root must be checked out at starting_commit" in validate(path)
+
+
+def test_preflight_override_validates_runtime_block_against_external_checkout(tmp_path: Path) -> None:
+    block = materialized(tmp_path)
+    freeze = tmp_path / "runtime" / "p107-freeze"
+    freeze.mkdir(parents=True)
+    for name in (
+        "ticket.md",
+        "fixture-manifest.json",
+        "pricing_catalog.json",
+        "model_catalog.json",
+        "effective_config.toml",
+        "c0.txt",
+        "c1.txt",
+        "c2.txt",
+        "c3.txt",
+        "c4.txt",
+        "rubric.txt",
+    ):
+        shutil.copy2(tmp_path / name, freeze / name)
+    block["repository_root"] = "."
+    path = freeze / "block.json"
+    path.write_text(json.dumps(block), encoding="utf-8")
+    assert validate(path, repository_root=tmp_path / "repo") == []

@@ -90,6 +90,11 @@ from .evidence import (
     synthesize_markdown,
     validate_summary,
 )
+from .evidence_dossier_validate import (
+    build_dossier_report,
+    render_dossier_json,
+    render_dossier_markdown,
+)
 from .eval_batch import BatchEvalConfig, run_eval_batch
 from .experiments import (
     load_experiment_record,
@@ -175,6 +180,11 @@ from .workflow import (
     load_workflow_step,
     render_workflow_markdown,
     validate_workflow_step,
+)
+from .workflow_package import (
+    load_workflow_package,
+    render_workflow_package_markdown,
+    validate_workflow_package,
 )
 
 
@@ -971,6 +981,14 @@ def build_parser() -> argparse.ArgumentParser:
     workflow_render_parser.add_argument("--output", type=Path, required=True)
     workflow_render_parser.set_defaults(func=run_workflow_render)
 
+    workflow_package_parser = workflow_subparsers.add_parser(
+        "package",
+        help="Validate and render a multi-step workflow package.",
+    )
+    workflow_package_parser.add_argument("--input", type=Path, required=True, help="Package manifest path.")
+    workflow_package_parser.add_argument("--output-dir", type=Path, required=True, help="Output directory for results.")
+    workflow_package_parser.set_defaults(func=run_workflow_package)
+
     roles_parser = subparsers.add_parser(
         "roles",
         help="Validate or render role/capability/implementation records.",
@@ -1545,6 +1563,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional JSON result path.",
     )
     decide_task_parser.set_defaults(func=run_decide_task)
+
+    dossier_parser = subparsers.add_parser(
+        "dossier",
+        help="Validate and render P107 run evidence dossiers.",
+    )
+    dossier_subparsers = dossier_parser.add_subparsers(
+        dest="dossier_command", required=True
+    )
+    dossier_validate_parser = dossier_subparsers.add_parser(
+        "validate",
+        help="Fail closed unless a dossier has no validation, reconciliation, or lifecycle defects.",
+    )
+    dossier_validate_parser.add_argument("--manifest", type=Path, required=True)
+    dossier_validate_parser.set_defaults(func=run_dossier_validate)
+    dossier_render_parser = dossier_subparsers.add_parser(
+        "render",
+        help="Render a P107 dossier as deterministic JSON or Markdown.",
+    )
+    dossier_render_parser.add_argument("--manifest", type=Path, required=True)
+    dossier_render_parser.add_argument("--output", type=Path, required=True)
+    dossier_render_parser.add_argument("--format", choices=("json", "markdown"), default="markdown")
+    dossier_render_parser.set_defaults(func=run_dossier_render)
 
     evidence_parser = subparsers.add_parser(
         "evidence",
@@ -2714,6 +2754,43 @@ def run_workflow_render(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_workflow_package(args: argparse.Namespace) -> int:
+    try:
+        package = load_workflow_package(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    result = validate_workflow_package(package, args.input)
+    output_dir = args.output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
+    result_json = dict(
+        ok=result.ok,
+        step_order=result.step_order,
+        steps=[
+            dict(
+                step_id=sr.step_id,
+                valid=sr.valid,
+                errors=sr.errors,
+                input_artifacts=sr.input_artifacts,
+                output_artifacts=sr.output_artifacts,
+            )
+            for sr in result.steps
+        ],
+        errors=result.errors,
+    )
+    pkg_json_path = output_dir / "package.json"
+    pkg_json_path.write_text(json.dumps(result_json, indent=2), encoding="utf-8")
+    md = render_workflow_package_markdown(result)
+    pkg_md_path = output_dir / "package.md"
+    pkg_md_path.write_text(md, encoding="utf-8")
+    if result.ok:
+        print("valid workflow package: " + str(args.input))
+    else:
+        for error in result.errors:
+            print("error: " + error, file=sys.stderr)
+    return 0
+
+
 def run_roles_validate(args: argparse.Namespace) -> int:
     try:
         data = load_role_record(args.input)
@@ -3291,6 +3368,32 @@ def resolve_manifest_path(manifest: Path, project_root: Path) -> Path:
     if manifest.is_absolute():
         return manifest
     return project_root / manifest
+
+
+def run_dossier_validate(args: argparse.Namespace) -> int:
+    report = build_dossier_report(args.manifest)
+    if report["valid"]:
+        print(f"valid dossier: {args.manifest}")
+        return 0
+    for error in report["artifact_validation"]["errors"]:
+        print(f"error: {error}", file=sys.stderr)
+    for conflict in report["reconciliation"]["conflicts"]:
+        print(f"error: {conflict['code']}:{conflict.get('artifact', '')}:{conflict.get('field', '')}", file=sys.stderr)
+    for anomaly in report["anomalies"]:
+        print(f"error: {anomaly['code']}:{anomaly.get('artifact', '')}:{anomaly.get('field', '')}", file=sys.stderr)
+    return 1
+
+
+def run_dossier_render(args: argparse.Namespace) -> int:
+    rendered = (
+        render_dossier_json(args.manifest)
+        if args.format == "json"
+        else render_dossier_markdown(args.manifest)
+    )
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(rendered, encoding="utf-8")
+    print(f"wrote {args.output}")
+    return 0
 
 
 def run_evidence_validate(args: argparse.Namespace) -> int:

@@ -59,6 +59,7 @@ agent-workbench accounting validate --input runtime/agent_jobs/example.accountin
 agent-workbench accounting synthesize --input-dir runtime/agent_jobs --output runtime/agent_jobs/accounting_synthesis.md
 agent-workbench policy tune --input-dir runtime/agent_jobs --output runtime/agent_jobs/policy_tuning.md
 agent-workbench workflow validate --input templates/workflow_step_record.json
+agent-workbench workflow package --input runtime/agent_jobs/example_package.json --output-dir runtime/agent_jobs/render
 agent-workbench roles validate --input templates/role_capability_implementation.json
 agent-workbench tokens validate --input templates/token_cost_record.json
 agent-workbench tokens graph-synthesize --input-dir templates/token_examples --output runtime/token_graph/example_graph_synthesis.md

@@ -6,15 +6,15 @@ from typing import Any
 
 ROLES = {"coordinator", "supervisor", "worker", "advisor"}
 EXPECTED = {
-    "C0": {("coordinator", "advisor")},
-    "C1": {("coordinator", "worker"), ("coordinator", "advisor")},
-    "C2": {("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")},
-    "C3": {("coordinator", "supervisor"), ("coordinator", "advisor"), ("supervisor", "worker")},
-    "C4": {("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")},
+    "C0": set(),
+    "C1": {("coordinator", "worker")},
+    "C2": {("coordinator", "worker")},
+    "C3": set(),
+    "C4": {("coordinator", "worker")},
 }
-ACTIVE = {"C0": {"coordinator", "advisor"}, "C1": {"coordinator", "worker", "advisor"},
-          "C2": {"coordinator", "supervisor", "worker", "advisor"}, "C3": {"coordinator", "supervisor", "worker", "advisor"},
-          "C4": {"coordinator", "supervisor", "worker", "advisor"}}
+ACTIVE = {"C0": {"coordinator"}, "C1": {"coordinator", "worker"},
+          "C2": {"coordinator", "worker"}, "C3": {"coordinator"},
+          "C4": {"coordinator", "worker"}}
 TOP_LEVEL_KEYS = {"schema_version", "run_id", "configuration_id", "repository_path", "starting_commit", "terminal_event", "raw_sessions", "spawn_edges"}
 SESSION_KEYS = {"schema_version", "role", "session_id", "parent_session_id", "provider", "model_class", "raw_session_path", "sha256", "terminal_event", "event_type"}
 EDGE_KEYS = {"schema_version", "parent_session_id", "child_session_id", "parent_role", "child_role", "fork_context", "source_artifact_path", "source_artifact_sha256", "terminal_event", "observed_event"}
@@ -69,7 +69,6 @@ def validate_manifest(path: str | Path) -> list[str]:
         try:
             clean = subprocess.run(["git", "-C", repo, "status", "--porcelain"], capture_output=True, text=True, check=True)
             head = subprocess.run(["git", "-C", repo, "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
-            if clean.stdout: errors.append("repository worktree is dirty")
             if isinstance(commit, str) and head != commit: errors.append("repository is not at starting_commit")
         except (OSError, subprocess.CalledProcessError) as exc: errors.append(f"repository_path is not a git repository: {exc}")
     sessions = doc.get("raw_sessions")

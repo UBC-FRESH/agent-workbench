@@ -115,7 +115,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P104 Canonical model pricing and economics provenance | #614 / PR #619 | `feature/p104-model-pricing-provenance` | Complete |
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
 | P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Complete (qualified) — quality validated; protocol and economics not accepted |
-| P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Active - baseline C4 package route admitted; economics remains unassessed |
+| P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Complete (bounded tranche) — accepted native slices and control-layer integration recorded; no final cross-epoch ROI claim |
 | P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned - P107 gated |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
@@ -123,8 +123,9 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 / PR #653 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PRs #652 and #653 merged; parent issue #648 closed; P107 remains parked pending a separate resume decision |
 | P114 Codex-Ollama C4 capability parity and viability | #661 / PR #667 | `feature/p114-c4-ollama-capability-parity` | Complete - PR #667 merged; baseline P107 route admitted |
 | P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientific-artifact-inspection` | Planned - starts after P114 merges/closes and P107 finishes, unless parallel activation is authorized |
-| P116 Event-driven supervision control plane | #669 | `feature/p116-event-driven-supervision-control-plane` | Planned - targeted P107 control-plane repair; no economics claim |
-| P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Active - planning surface; no economics claim |
+| P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
+| P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
+| P118 FRESH vLLM Agent | TBD | `feature/p118-fresh-vllm-agent` | Draft — one configured vLLM model across Coordinator, Worker, and Advisor roles |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -5399,11 +5400,23 @@ Parent issue: #644
 
 Branch: `feature/p107-delegation-economics-policy`
 
-Status: P107.2 offline research contract is complete on the reconciled staging
-branch; P114 has admitted the baseline C4 package route. Fresh C0 remains the
-next configuration observation. P107 economics claims and P108 remain inactive.
+Status: complete as a bounded exploration tranche. P107 established the usable
+native control-layer route and recorded accepted C0, C1, supervised C2, and C4+
+observations, while retaining failed/invalid lanes as evidence. Its evolving
+workloads, topologies, and provider configurations mean it does not yield a
+single final cross-epoch ROI ranking. P108 remains inactive. The next
+development direction is the separately planned P118 single-provider vLLM
+deployment, not another P107 model sweep.
 
 Goal: convert P106 evidence into a fail-closed economics decision.
+
+Mission guardrail: P107 measures whether a native Agent Hub configuration can
+do useful ordinary development work. Frozen deterministic checks judge the
+artifact, not whether an LLM behaved deterministically. After a run, preserve
+quality variance as evidence; do not change the workload or externally repair
+the candidate to manufacture an accepted outcome. Repair only a demonstrated
+control-layer observation/boundary/accounting defect, record it separately as
+protocol evidence, and freeze a new block if it changes the comparison.
 
 Parking decision: P113 closed the bounded one-tool adapter, containment, and
 first-call reliability sandbox. The later C4 observations did not deploy that
@@ -5428,21 +5441,46 @@ Tasks:
         its batch acceptance fixture.
   - [x] Verify the P107 selection offline: 150 passed, 2 privilege-dependent
         skips; no live C0-C4 run and no economics conclusion.
-- [ ] P107.3 C0 BAU baseline (#647)
+- [x] P107.3 C0 BAU baseline (#647)
   - [x] Capture non-comparative C0 instrumentation evidence for root binding,
         immutable review, and session-bound accounting on a microtask.
-  - [ ] Freeze and run one fresh C0 observation against the scaled
-        `p107-provenance-review-workbench-v2` capability block (policy, JSON
-        summary, Markdown report, integrity-checked bundle, and independent
-        bundle validation).
-  - [ ] Require deterministic acceptance, Advisor acceptance, and complete
-        paid-role accounting before it becomes an eligible baseline.
-- [ ] P107.4-P107.7 C1-C4 configuration observations (#655, #656, #657, #658)
-  - [ ] Execute one authorized configuration at a time only after the prior
-        configuration has a recorded outcome.
-- [ ] P107.8 Tranche synthesis (#659)
-  - [ ] Compare only eligible observations and decide whether any C5+ work is
-        warranted as a separately declared configuration sequence.
+  - [x] Build the five-slice `p107-run-evidence-dossier-v3` local quality
+        candidate: integrity-checked typed artifacts, schema validation,
+        reconciliation, timeline/anomaly analysis, and deterministic CLI
+        rendering/validation.
+  - [x] Add the public-safe V3 dossier fixture and reach the planned `100`
+        focused passing dossier cases (plus one platform-dependent skip).
+  - [x] Freeze and validate the local pre-C0 V3 block: ticket, fixture,
+        reset-consistent prompts, model/pricing catalogs, effective Terra
+        configuration snapshot, and Advisor rubric are hash-bound to the clean
+        pre-implementation baseline.
+  - [x] Run one fresh native C0 observation against the frozen V3 block; keep
+        its submitted task quality as an observation rather than externally
+        repairing it into baseline acceptance.
+  - [x] Align active run-evidence, accounting, and comparison validators to the
+        reset-consistent C0-C4 ladder; remove mandatory Advisor/Supervisor
+        roles and permit the normal submitted implementation diff.
+  - [x] Record frozen-workload quality acceptance, native protocol acceptance,
+        and complete paid-role accounting for eligible C0 r3; Sol remained
+        selective rather than routine.
+- [x] P107.4-P107.7 C1-C4 configuration observations (#655, #656, #657, #658)
+  - [x] Record the unsupervised C1 Terra-to-Luna Worker baseline observation:
+        accepted artifact/protocol/economics under its former topology,
+        `$1.2145648` paid cost, and 42.0% lower paid cost than C0; it does not
+        establish the canonical supervised route.
+  - [x] Record the unsupervised C2 Terra-to-configured-Ollama Worker baseline:
+        Worker incomplete with no final result; retain as failed quality
+        evidence with no external repair or economics comparison.
+  - [x] Run C2 r7 under the unchanged V3 workload with Coordinator-owned P116
+        supervision active before Worker tools; quality and protocol accepted,
+        with outer-controller paid-Coordinator estimate `$0.413974` and
+        separate local-Qwen usage capture.
+  - [x] Stop the unfinished C3/C1-rerun/C5 sequence rather than blend its
+        changed workload, topology, and provider conditions into a false ROI
+        conclusion; P118 owns the fresh single-provider deployment boundary.
+- [x] P107.8 Tranche synthesis (#659)
+  - [x] Record accepted and failed observations separately, close without a
+        cross-epoch winner, and defer any new sequence to P118.
 
 Entry evidence: P106 closed with quality validated but protocol and economics
 unaccepted. P113 proved a constrained one-tool adapter sandbox but did not
@@ -5451,6 +5489,16 @@ paid C2 comparator. See `planning/phase107_c4_capability_parity_pause.md`.
 P114 has resolved the baseline route validity prerequisite. See
 `planning/p107_c4_package_route_reentry_packet.md`; P107 workload quality and
 economics remain separate gates.
+
+Closeout decision: P107's accepted C0/C1/C2/C4+ observations demonstrate that
+the native Agent Hub and Coordinator-owned P116 control layer can support real
+bounded work. They are not normalized into one winner because workload,
+topology, and provider conditions changed across the exploration. The recorded
+economic facts remain usable at their own boundaries: C0 `$2.0937575`, C1
+`$1.2145648`, supervised C2 `$0.413974` paid Coordinator estimate, and the
+accepted Qwen 3.6 C4+ lane `$0.231600` paid Coordinator estimate. Local-worker
+usage remains separate. Further deployment work moves to P118 with one declared
+provider/model and a fresh stable workload boundary.
 
 ## Phase 108: Fresh TSA23 Slice Preparation
 
@@ -6068,10 +6116,11 @@ Parent issue: #669
 
 Branch: `feature/p116-event-driven-supervision-control-plane`
 
-Status: complete — PR #706 merged and parent issue #669 closed after the
-fresh-root native control-cycle proof. The follow-up VS Code in-session
-deployment now returns sanitized live Worker progress to the active native
-Coordinator; it does not create a daemon or a P107 economics result.
+Status: complete. P116.8 supplied the final safe diagnostic-envelope refinement
+and fresh native proof. The delivered control layer binds a live Worker,
+reduces safe events, permits same-Supervisor review and a Coordinator-approved
+same-Worker cue when warranted, and closes the run. It is not a daemon and does
+not make a P107 economics claim.
 
 Goal: make the Supervisor an evidence-driven active participant in a live
 Worker run. A Coordinator-owned controller will reduce sanitized Worker events,
@@ -6136,6 +6185,16 @@ Tasks:
         Coordinator returned a sanitized `tool_completed` Worker delta before
         terminal completion, then completed a bounded workflow-package test
         ticket without unnecessary intervention.
+- [x] P116.8 Refine the native diagnostic envelope (#710) — implementation and
+      native proof complete; phase integration remains open.
+  - [x] Freeze a versioned v2 event and immutable pre-tool policy contract.
+  - [x] Correlate native call/output records across incremental tails and emit
+        only operation class, scope status, declared check ID, bounded failure
+        class, and exit code.
+  - [x] Preserve explicit v1 compatibility and fail closed on malformed,
+        ambiguous, or undeclared v2 policy/correlation input.
+  - [x] Prove one fresh native Coordinator -> same Supervisor -> same Worker
+        review cycle with a declared check failure and no raw-data leakage.
 
 Acceptance criteria:
 
@@ -6148,6 +6207,8 @@ Acceptance criteria:
   arguments, or raw tool output.
 - Quality, protocol, and economics verdicts remain separate. P107 economics is
   not usable without its distinct checkpoint/token-ledger evidence.
+- P116.8 must not claim P107 task quality or economics merely because it
+  classifies a Worker failure more usefully.
 
 See `planning/p116_event_driven_supervision_control_plane_plan.md`.
 

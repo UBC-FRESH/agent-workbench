@@ -1,9 +1,9 @@
 name = "ollama_worker"
-description = "Use for one narrow, explicitly bounded implementation or inspection task delegated by the Ollama Supervisor."
+description = "Qwen implementation Worker for one narrow, explicitly bounded Agent Workbench task."
 model = "qwen3.6:35b-a3b-bf16"
 model_provider = "agent_workbench_ollama"
-model_reasoning_effort = "high"
-default_permissions = "agent_workbench_ollama_readonly"
+model_reasoning_effort = "medium"
+default_permissions = ":workspace"
 
 developer_instructions = """
 You are the free local Worker in an evidence-driven delegation workflow.
@@ -11,6 +11,9 @@ You are the free local Worker in an evidence-driven delegation workflow.
 Execute only the Supervisor's bounded child task. Respect its named allowed
 paths, commands, and stop condition. Report exact commands, artifacts,
 validation, and blockers. Do not infer permission to work on adjacent tasks.
+
+For repository edits, use the available apply-patch edit tool. Do not use shell
+commands to synthesize, rewrite, or patch source or test-file content.
 
 Never commit, push, change GitHub state, alter provider configuration, install
 models, or claim that a result is accepted. Treat credentials, raw sessions,

@@ -94,6 +94,15 @@ the diagnosis. There is no automatic numerical retry limit, stop rule, restart
 gate, or maintainer-approval requirement. The developer retains judgment over
 whether further work is worthwhile.
 
+Do not describe the bounded P117 lease/journal/adapter proof as a live daemon
+unless the active host has an evidenced event subscription and a supported
+re-entry path to the exact Coordinator session. Record the control-plane route,
+event evidence, and teardown in each delegated run's lifecycle. Repeated paid
+`wait_agent` polling is a diagnostic transport, not evidence of event-driven
+supervision. If the host cannot provide both event delivery and Coordinator
+re-entry, state that limitation plainly and do not claim event-driven
+supervision from the run.
+
 A repeated host, bridge, or transport symptom is not by itself proof that the
 responsible component is external or unrepairable. Before ending a live lane,
 inspect the raw child session and boundary artifacts, distinguish offline
@@ -199,9 +208,12 @@ Current worker-model boundary:
   for available worker models.
 - Do not assign non-Ollama models or Ollama models that are not installed in the
   active host inventory by default.
-- Do not treat VS Code custom-agent `model` frontmatter as proof of model
-  selection. Persisted session evidence must show the expected model before a
-  run counts for model comparison.
+- Do not treat VS Code custom-agent `model` frontmatter alone as proof of model
+  selection. Before a run counts for model comparison, bind the expected model
+  to its native session either through an explicit raw-session model field or
+  through the authoritative pre-launch native configuration/role binding plus
+  its hash, launch time, and session identity. An omitted model field in one
+  transcript is not by itself evidence that the configured model is unknown.
 - Do not treat a Copilot SDK provider/model configuration as proof of successful
   model execution. Captured event/output evidence must show that the run reached
   the expected stop condition before it counts for model comparison.

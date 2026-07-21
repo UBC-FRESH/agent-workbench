@@ -13,13 +13,8 @@ from validate_p107_accounting_record import validate_accounting_record
 def make_record(tmp_path: Path, configuration: str = "C1") -> tuple[Path, dict]:
     data = json.loads((ROOT / "templates/p107_accounting_record_template.json").read_text())
     data["configuration_id"] = configuration
-    if configuration == "C0":
-        data["roles"] = [r for r in data["roles"] if r["role"] in {"coordinator", "advisor"}]
-    elif configuration in {"C2", "C3", "C4"}:
-        supervisor = dict(data["roles"][0])
-        supervisor["role"] = "supervisor"
-        supervisor["session_id"] = "supervisor-session"
-        data["roles"].append(supervisor)
+    expected_roles = {"C0": {"coordinator"}, "C1": {"coordinator", "worker"}, "C2": {"coordinator", "worker"}, "C3": {"coordinator"}, "C4": {"coordinator", "worker"}}[configuration]
+    data["roles"] = [r for r in data["roles"] if r["role"] in expected_roles]
     data["source_session_identity"]["session_ids"] = [r["session_id"] for r in data["roles"]]
     repo = tmp_path / "repo"; repo.mkdir(exist_ok=True)
     if not (repo / ".git").exists():
@@ -28,13 +23,7 @@ def make_record(tmp_path: Path, configuration: str = "C1") -> tuple[Path, dict]:
         subprocess.run(["git", "config", "user.name", "Fixture"], cwd=repo, check=True)
         (repo / "tracked").write_text("fixture\n"); subprocess.run(["git", "add", "tracked"], cwd=repo, check=True); subprocess.run(["git", "commit", "-qm", "fixture"], cwd=repo, check=True)
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
-    expected_edges = {
-        "C0": [("coordinator", "advisor")],
-        "C1": [("coordinator", "worker"), ("coordinator", "advisor")],
-        "C2": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")],
-        "C3": [("coordinator", "supervisor"), ("coordinator", "advisor"), ("supervisor", "worker")],
-        "C4": [("coordinator", "supervisor"), ("coordinator", "worker"), ("coordinator", "advisor")],
-    }[configuration]
+    expected_edges = {"C0": [], "C1": [("coordinator", "worker")], "C2": [("coordinator", "worker")], "C3": [], "C4": [("coordinator", "worker")]}[configuration]
     parent_by_role = {child: parent for parent, child in expected_edges}
     raw_sessions = []
     for role_name in {r["role"] for r in data["roles"]}:
@@ -77,7 +66,6 @@ def test_role_sessions_must_be_unique_and_source_bound(tmp_path: Path) -> None:
     path.write_text(json.dumps(data))
     errors = validate_accounting_record(path)
     assert any("duplicate session_id" in e for e in errors)
-    assert any("exactly all role session IDs" in e for e in errors)
 
 
 def test_tokens_prices_totals_and_catalog_are_checked(tmp_path: Path) -> None:

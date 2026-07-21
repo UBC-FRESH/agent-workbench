@@ -1,0 +1,31 @@
+{
+  "schema_version": "p107_run_evidence_dossier_v1",
+  "run_id": "p107-dossier-fixture-001",
+  "artifacts": [
+    {
+      "kind": "advisor_verdict",
+      "path": "advisor_verdict.json",
+      "sha256": "d76d7ced87631ed3694d809607d715f2eefdbb65b4eda2a2eb7b8e98b3a4ccc5"
+    },
+    {
+      "kind": "archive_manifest",
+      "path": "archive_manifest.json",
+      "sha256": "7ef0ca847cfe4dc314b5988e7f2f53a63d274fd4909a33bfd13b240a5e4fd7cf"
+    },
+    {
+      "kind": "heartbeat",
+      "path": "heartbeat.jsonl",
+      "sha256": "1380f71fd9968b78d7746db38b0fa82a1855b2e82e20792ff790253fb5c5854e"
+    },
+    {
+      "kind": "token_ledger",
+      "path": "token_ledger.json",
+      "sha256": "657f532eefcf5442b230cb1a11747d49bed486b7b1e345943f2eed178ddf7d19"
+    },
+    {
+      "kind": "worker_result",
+      "path": "worker_result.md",
+      "sha256": "b8230cb9886e3a28e728a7a0b74c57fe1854d3522d952d982c7f9b2ecd467100"
+    }
+  ]
+}

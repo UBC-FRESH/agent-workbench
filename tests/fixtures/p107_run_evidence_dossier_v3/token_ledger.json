@@ -1,0 +1,1 @@
+{"run_id":"p107-dossier-fixture-001","roles":[{"role":"worker","session_id":"worker-fixture-001","closed":true,"span_start":"2026-07-20T11:59:00Z","span_end":"2026-07-20T12:02:00Z"},{"role":"advisor","session_id":"advisor-fixture-001","lineage_id":"advisor-lineage-fixture-001","closed":true,"span_start":"2026-07-20T12:00:30Z","span_end":"2026-07-20T12:02:30Z"}]}
