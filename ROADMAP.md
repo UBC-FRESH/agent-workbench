@@ -125,9 +125,13 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientifact_inspection` | Complete (qualified) — profile + fixtures + validation delivered; P115.4 delegation transport blocked; self-inspection proof passes oracle |
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
+<<<<<<< HEAD
 
 | P118 FRESH vLLM Agent | #718 | `feature/p118-fresh-vllm-agent` | Complete —— P118.1 merged via PR #714; P118.2-P118.6 complete; concurrency validated with 3 parallel probes; single-model profiles are the default native Agent Hub profile |
 urrency-ticket validation complete)
+=======
+| P118 FRESH vLLM Agent | #718 | `feature/p118-fresh-vllm-agent` | Complete —— P118.1 merged via PR #714; P118.2-P118.6 complete; read-only concurrency validated (3 probes, no failures); mutating-work concurrency deferred; single-model profiles are the default native Agent Hub profile |
+>>>>>>> d70b8f6 (P118: Advisor-qualified closeout)
 
 ## Phase 0: Governance And Workflow Scaffold
 

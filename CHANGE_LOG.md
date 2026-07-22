@@ -83,6 +83,9 @@ issues, pull requests, and closeout comments.
   test runs, code generation) remain unstressed.
 - **Limitation:** this was a lightweight read-only workload. Further stress-testing
   with mutating work will validate the serial-only constraint for coupled tasks.
+- **Advisor qualification (P118 closeout):** concurrency claim is qualified to
+  "read-only parallel validated; mutating-work concurrency constraints and
+  load-degradation thresholds deferred to future phases."
 
 urrency-ticket validation complete)
 
