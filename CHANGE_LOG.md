@@ -3,6 +3,19 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-22 - P109.2: 2012 Cycle Audit Complete (204 accepted, 46 rejected)
+
+- P109.2 ran `scripts/p109_2_batch_audit.py` against 250 candidates from P109.1.
+- **Accepted: 204** records with substantive content, navigation value, or section headings.
+- **Rejected: 46** records: empty documents, duplicate TOC entries, no provenance.
+- **Overall yield: 81.6%** (below 90% gate — P109.3/4 will evaluate).
+- Per document:
+  - `tsa23_2012_23tsdp12` (Data Package): 111 accepted / 28 rejected (79.9%)
+  - `tsa23_2012_23ts13ra` (Rationale): 64 accepted / 10 rejected (86.7%)
+  - `tsa23_2012_23ts13pdp` (Discussion Paper): 34 accepted / 2 rejected (94.4%)
+- Audit artifacts: `batch_audit_records.jsonl` per document, `tsa23_2012_batch_audit_run_002.json`
+- Document-type metadata preserved in all accepted records.
+
 ## 2026-07-22 - P109 Workflow Compliance — GitHub issues and planning note created
 
 - Brought P109 into UBC-FRESH dev workflow compliance.
