@@ -200,6 +200,11 @@ Keep context small and turns few. Non-negotiable rules:
   to chat. Context accretion is the top GPU-cost driver.
 - **Waiting is free.** Blocking on a subagent (`agent`) or a CLI command costs
   nothing. Prefer delegating and waiting over doing work yourself.
+- **Raw markdown format for handoff prompts.** When the developer asks for a
+  clarifying prompt, handoff text, or context to paste into another session,
+  always return it as raw markdown — no escaping, no nested formatting, ready
+  to copy-paste directly. Do not wrap in code blocks or add introductory prose
+  unless asked.
 
 ## Supervisor Delegation
 
