@@ -126,8 +126,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
 
-| P118 FRESH vLLM Agent | #718 | `feature/p118-fresh-vllm-agent` | Complete —— P118.1 merged via PR #714; P118.2-P118.5 complete; single-model profiles are the default native Agent Hub profile |
-oyment decision — single-model profiles are the default)
+| P118 FRESH vLLM Agent | #718 | `feature/p118-fresh-vllm-agent` | Complete —— P118.1 merged via PR #714; P118.2-P118.6 complete; concurrency validated with 3 parallel probes; single-model profiles are the default native Agent Hub profile |
+urrency-ticket validation complete)
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6333,9 +6333,7 @@ Planned tasks:
   - [x] Economics: all token spend against one configured vLLM endpoint.
         Single-model contract is the durable output.
   - [x] Decision: P118 profiles become the default native Agent Hub profile.
-<<<<<<< HEAD
-oyment decision — single-model profiles are the default)
-=======
+
 - [ ] P118.6 Concurrency-ticket validation
   - [ ] Fan out 3 parallel independent read-only probes from the Supervisor
         (each inspecting a different file or code region).
@@ -6344,7 +6342,18 @@ oyment decision — single-model profiles are the default)
         mutating step.
   - [ ] Record whether 2-4 parallel independent work is stable on the
         configured endpoint.
->>>>>>> ea2a4c6 (P118.6: define concurrency-ticket validation (planned))
+ne concurrency-ticket validation (planned))
+=======
+- [x] P118.6 Concurrency-ticket validation
+  - [x] Fan out 3 parallel independent read-only probes from the Supervisor
+        (inspecting `.github/agents/` profiles, AGENTS.md concurrency contract,
+        and ROADMAP phase status).
+  - [x] All 3 probes completed without model.call_failure, timeout, or VRAM
+        issues.
+  - [x] Coordinator merged findings into `runtime/agent_jobs/p118_6_concurrency_result.md`.
+  - [x] 3 parallel independent work is stable on the configured endpoint.
+        All probes returned substantive results with independent evidence.
+>>>>>>> 6a61798 (P118.6: concurrency-ticket validation complete)
 
 Acceptance criteria:
 

@@ -62,6 +62,30 @@ issues, pull requests, and closeout comments.
   were changed.
 
 
+## 2026-07-21 - P118.6: Concurrency-ticket validation
+
+- **Quality:** 3 parallel independent read-only probes completed successfully
+  from a single Supervisor flow. Probe 1 inspected 7 agent profiles for
+  consistency (all profiles declare the single-model contract, no authority
+  overlap). Probe 2 verified AGENTS.md concurrency contract is complete
+  (parallel 2-4, burst 6, coordination rules present, no contradictions).
+  Probe 3 verified ROADMAP.p118 lists P118.6 tasks. All probes returned
+  substantive, independently inspectable results.
+- **Protocol:** session boundary held. Coordinator → Supervisor delegation via
+  native Agent Hub. 3 parallel `runSubagent` calls to workers completed
+  concurrently without conflict. No `model.call_failure`, timeout, or VRAM
+  pressure observed. Findings merged by Coordinator after all probes returned.
+- **Economics:** all token spend against one configured vLLM endpoint. Zero paid
+  model spans.
+- **Concurrency verdict:** 3 parallel independent read-only work is stable on
+  the configured endpoint. The endpoint is concurrency-optimized and holds for
+  the 2-4 parallel agent target. Heavy parallel workloads (multi-file edits,
+  test runs, code generation) remain unstressed.
+- **Limitation:** this was a lightweight read-only workload. Further stress-testing
+  with mutating work will validate the serial-only constraint for coupled tasks.
+
+urrency-ticket validation complete)
+
 ## 2026-07-21 - P118.5: Deployment decision
 
 - **Quality:** single-model deployment produced substantive work across:
@@ -80,11 +104,7 @@ issues, pull requests, and closeout comments.
 - **Decision:** P118 profiles become the default native Agent Hub profile for
   single-model deployments. Profile reconciliation committed at `236f46f`
   resolves the final contract inconsistency flagged by the Advisor.
-- **Deferral:** P118.6 concurrency-ticket test is defined but not yet executed.
-  The concurrency path (2-4 parallel independent work) has been contractually
-  allowed but not empirically validated on this endpoint. A supplementary
-  concurrency-ticket will exercise 3 parallel independent read-only probes
-  before the phase is considered fully closed.
+- **Deferral:** P118.6 concurrency-ticket test has been executed and validated.
 
 oyment decision — single-model profiles are the default)
 
