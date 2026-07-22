@@ -1,0 +1,25 @@
+Evidence Report: P115-ANOMALY-002
+==================================
+Generated: 2026-07-21T00:00:00Z
+Pipeline: automated_rebuild_pipeline_v2
+Model: v3.2
+
+Parameters:
+  target_regions: R001, R002, R003
+  time_horizon: 2025-2050
+  baseline_year: 2025
+  random_seed: -17
+
+Quality Gate Results:
+  schema_compliance: PASS (6/6 fields present)
+  cross_reference_integrity: WARN (R003 has orphan entries)
+  structural_invariants: FAIL (negative area_ha, negative random_seed)
+
+Anomalies:
+  1. Region R003 area_ha is negative: -50.0
+  2. Random seed is negative: -17
+  3. Model version lacks patch number
+Warnings:
+  1. Catalog entry S001 references R003 but region status is unknown
+
+Overall: FAIL

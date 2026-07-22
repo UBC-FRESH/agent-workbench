@@ -122,7 +122,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
 | P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 / PR #653 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PRs #652 and #653 merged; parent issue #648 closed; P107 remains parked pending a separate resume decision |
 | P114 Codex-Ollama C4 capability parity and viability | #661 / PR #667 | `feature/p114-c4-ollama-capability-parity` | Complete - PR #667 merged; baseline P107 route admitted |
-| P115 | Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientifactifact-inspection` | Active — rescoped to P118 native Agent Hub (Qwen3-coder profile, `runSubagent`) |
+| P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientifact_inspection` | Complete (qualified) — profile + fixtures + validation delivered; P115.4 delegation transport blocked; self-inspection proof passes oracle |
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
 | P118 FRESH vLLM Agent | #716 | `feature/p118-fresh-vllm-agent` | Active — P118.1 merged via PR #714; P118.2-P118.5 planned |
@@ -6073,9 +6073,9 @@ Parent issue: #666
 
 Branch: `feature/p115-scientific-artifact-inspection`
 
-Status: active. P118 completed, maintainer explicitly reprioritized P115.
+Status: complete. P118 completed, maintainer explicitly reprioritized P115.
 Branch `feature/p115-scientific-artifact-inspection` activated.
-Parent issue #666, child issues #722-#729 created.
+Parent issue #666, child issues #722-#726 created.
 
 Rescope note (2026-07-21): P115 was originally scoped for the Codex SDK / P114
 adapter / CLI-parent route. That entire route is parked. P115 now uses the P118

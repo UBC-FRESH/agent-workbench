@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run P115 validation fixtures",
+			"type": "shell",
+			"command": "python -m pytest tests/fixtures/p115/validate_fixtures.py -v",
+			"problemMatcher": []
+		}
+	]
+}

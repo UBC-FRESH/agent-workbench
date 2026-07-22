@@ -1,0 +1,23 @@
+{
+  "bundle_id": "p115-clean-001",
+  "version": "1.0.0",
+  "generated": "2026-07-21T00:00:00Z",
+  "source_bundle": "tsa23_instance_v3",
+  "generation_method": "automated_rebuild_pipeline_v2",
+  "files": [
+    "rebuild_config.yaml",
+    "data_catalog.csv",
+    "evidence_report.txt",
+    "manifest.json"
+  ],
+  "integrity": {
+    "yaml_valid": true,
+    "csv_row_count": 3,
+    "report_gates_passed": 3
+  },
+  "fixtures": {
+    "type": "clean",
+    "expected_anomalies": 0,
+    "description": "Well-formed FEMIC rebuild bundle with no anomalies"
+  }
+}

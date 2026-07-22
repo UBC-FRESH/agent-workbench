@@ -1,0 +1,28 @@
+Evidence Report: P115-PROVGPAP-003
+====================================
+Generated: UNKNOWN (timestamp not recorded)
+Pipeline: UNKNOWN (generation method not recorded)
+Model: v3.2.1
+
+Parameters:
+  target_regions: R001, R002
+  time_horizon: 2025-2050
+  baseline_year: 2025
+  random_seed: 42
+
+Quality Gate Results:
+  schema_compliance: WARN (missing required provenance fields)
+  cross_reference_integrity: PASS (2/2 catalog entries valid)
+  structural_invariants: PASS (all constraints satisfied)
+
+Anomalies:
+  1. No generation timestamp in config
+  2. Source bundle not declared
+  3. Generation method not declared
+  4. No manifest.json in bundle
+
+Warnings:
+  1. Bundle provenance is incomplete
+  2. Cannot verify generation pipeline without metadata
+
+Overall: WARN (provenance gap)
