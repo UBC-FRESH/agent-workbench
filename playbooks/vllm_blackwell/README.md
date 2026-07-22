@@ -26,6 +26,12 @@ operator aids only.
   OpenAI-compatible endpoint smoke and concurrency benchmarks.
 - `scripts/watch-vllm.sh` — compact operator dashboard for server/GPU/load
   monitoring.
+- `scripts/watchdog-vllm-progress.py` — progress watchdog for alive-but-wedged
+  vLLM EngineCore states.
+- `systemd/vllm-blackwell.service.example` — host-service template with
+  bounded auto-restart on failure.
+- `systemd/vllm-blackwell-watchdog.service.example` — host-service template for
+  the progress watchdog.
 
 ## Recommended Multi-Agent Profile
 
@@ -131,6 +137,89 @@ SHOW_RECENT=0 ./scripts/watch-vllm.sh
 HEALTH_CHECK=1 ./scripts/watch-vllm.sh
 VERBOSE=1 ./scripts/watch-vllm.sh
 ```
+
+## Host Service
+
+For routine use, run the endpoint under `systemd` rather than an interactive
+shell. The template in `systemd/vllm-blackwell.service.example` preserves the
+same profile and adds bounded recovery:
+
+- `Restart=on-failure` revives the API after an engine process crash.
+- `RestartSec=15s` avoids a tight restart loop.
+- `StartLimitIntervalSec=900` and `StartLimitBurst=3` stop repeated crashes
+  from hiding a persistent kernel or configuration fault.
+- stdout/stderr go to journald, and CUDA coredumps remain in the configured
+  external shared-data directory.
+
+Adapt the template before installing:
+
+- Set `User` and `Group` to the local runtime account.
+- Set `WorkingDirectory` to the copied vLLM lab checkout.
+- Set `ExecStart` to that checkout's `scripts/serve-native.sh`.
+- Point `VLLM_ENV_FILE` at a local, untracked profile with real cache and
+  secret-file paths.
+
+Example install flow:
+
+```bash
+sudo install -m 0644 systemd/vllm-blackwell.service.example \
+  /etc/systemd/system/vllm-blackwell.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now vllm-blackwell.service
+systemctl status vllm-blackwell.service
+./scripts/wait-ready.sh 127.0.0.1 18000
+```
+
+Common operations:
+
+```bash
+systemctl status vllm-blackwell.service
+journalctl -u vllm-blackwell.service -f
+sudo systemctl restart vllm-blackwell.service
+sudo systemctl stop vllm-blackwell.service
+```
+
+### Progress Watchdog
+
+`systemd` catches a dead vLLM process. It does not catch an alive HTTP server
+whose EngineCore is wedged. The progress watchdog covers that second case.
+
+The watchdog polls:
+
+- `/health` and `/metrics`;
+- `vllm:num_requests_running` and `vllm:num_requests_waiting`;
+- prompt, generation, and accepted-speculative token counters;
+- GPU SM utilization from `nvidia-smi`.
+
+It restarts vLLM only when the service is alive, requests are running, GPU SM is
+high, and token counters stay frozen for the configured stall window. By
+default, that means 240 seconds of stalled progress with GPU utilization at or
+above 80 percent.
+
+Install flow:
+
+```bash
+sudo install -m 0755 scripts/watchdog-vllm-progress.py \
+  /usr/local/sbin/vllm-progress-watchdog.py
+sudo install -m 0644 systemd/vllm-blackwell-watchdog.service.example \
+  /etc/systemd/system/vllm-blackwell-watchdog.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now vllm-blackwell-watchdog.service
+sudo systemctl status vllm-blackwell-watchdog.service
+```
+
+Useful checks:
+
+```bash
+python3 scripts/watchdog-vllm-progress.py --once
+sudo journalctl -u vllm-blackwell-watchdog.service -f
+sudo systemctl restart vllm-blackwell-watchdog.service
+```
+
+Evidence bundles are written under the configured watchdog evidence directory,
+by default `/srv/shared-data/vllm/watchdog`. The bundle includes current
+metrics, `nvidia-smi`, recent service journal output, and service status before
+the watchdog restart.
 
 ## Observed Operating Guidance
 

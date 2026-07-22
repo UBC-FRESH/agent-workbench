@@ -1,0 +1,14 @@
+[Unit]
+Description=Blackwell vLLM progress watchdog
+Documentation=https://docs.vllm.ai/
+After=vllm-blackwell.service
+Wants=vllm-blackwell.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/vllm-progress-watchdog.py
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
