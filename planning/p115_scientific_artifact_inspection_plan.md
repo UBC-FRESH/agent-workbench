@@ -2,18 +2,16 @@
 
 ## Decision
 
-P115 is a retained future extension after P114. It is deferred, not active:
-P118 is the explicitly selected next deployment phase. Do not start P115 until
-P118 has produced its deployment decision or the maintainer explicitly
-reprioritizes this pilot.
-Its purpose is to turn the proven minimal Worker data plane into a useful
-scientific-workbench capability without attempting to build a generic agent
-platform.
+P115 is an active capability pilot after P118 completion. It is _not_ the
+Codex SDK / CLI-parent / adapter route — those lanes are parked. P115 uses the
+P118 **native Copilot Chat Agent Hub** with a single vLLM remote provider
+(Qwen 3.6 27B) and custom agent profiles. Delegation is via `runSubagent` with
+bounded profile instructions.
 
-The initial capability is **grant-bound, read-only inspection of one frozen
-public-safe FRESH model-instance artifact bundle**. The pilot must derive its
-surface from a real task family, rather than from the historical Copilot SDK/UI
-custom-tool catalog or a speculative catalog of MCP tools.
+Its purpose is to answer a transport-independent question: *can a bounded
+Qwen agent profile successfully inspect a frozen public-safe FRESH artifact
+bundle and produce a provenance-bearing evidence report?* The pilot must derive
+its surface from a real task family, not from a speculative catalog of tools.
 
 ## Why artifact inspection first
 
@@ -30,7 +28,7 @@ before they can safely propose code or run models:
   metadata.
 
 Read-only inspection is common to those workflows and can produce a durable,
-reviewable evidence artifact before P115 considers model execution, data
+reviewable evidence artifact before considering model execution, data
 materialization, research browsing, notebooks, geospatial commands, or
 platform-specific build tools.
 
@@ -38,17 +36,18 @@ platform-specific build tools.
 
 P115 will:
 
-1. select one task family and a public-safe fixture bundle from a current FRESH
+1. Select one task family and a public-safe fixture bundle from a current FRESH
    project; the selection record must name the human task, source artifacts,
-   expected evidence, verifier, and explicit exclusions;
-2. derive the necessary Worker capability delta from the frozen task;
-3. specify a package-level inspection grant with root containment, path allow
-   lists, parser/type allow lists, output-size limits, content hashing,
-   parser-version provenance, and stable denials;
-4. implement only the required inspection handlers and deterministic fixtures;
-   and
-5. prove the frozen role-bound Ollama Worker can discover and use the tool in a
-   fresh native session without shell or fallback-tool substitution.
+   expected evidence, verifier, and explicit exclusions.
+2. Derive the necessary agent-profile instruction boundary from the frozen task.
+3. Create a bounded inspection agent profile with explicit instructions on what
+   to read, what to report (provenance, structural invariants, anomalies), and
+   what to refuse (speculation, mutation).
+4. Create deterministic validation fixtures (clean bundle, bundle with
+   structural anomaly, bundle with provenance gap) so the pilot is observable.
+5. Prove a delegated Qwen3-coder inspection agent (via `runSubagent`) can
+   successfully inspect the fixture bundle and produce a provenance-bearing
+   evidence artifact.
 
 ## Candidate task families
 
@@ -63,8 +62,7 @@ The phase selection task must compare these candidates before choosing one:
 
 The selected pilot must be reproducible from public-safe inputs and have a
 small deterministic oracle. If no candidate satisfies those conditions, P115
-stops with a documented negative selection decision rather than granting a
-broader filesystem or shell capability.
+stops with a documented negative selection decision.
 
 ## Tasks
 
@@ -74,28 +72,34 @@ broader filesystem or shell capability.
   decision, fixture hashes, expected output, validator, and non-go conditions.
 - Define the exact human/model-worker question the inspection must answer.
 
-### P115.2 — inspection grant and evidence contract
+### P115.2 — inspection agent profile
 
-- Define the tool schema and grant record for declared artifacts only.
-- Require path containment, type/parser allow lists, byte/row/page limits,
-  hashes, parser identity, policy decision, and bounded result envelope.
-- Add refusals for missing files, symlinks/outside-root paths, undeclared
-  formats, oversized output, and unsupported parser failures.
+- Create a bounded agent profile (`.agent.md`) that declares:
+  - What artifact types it can inspect (scoped to the P115.1 fixture family)
+  - What it must report (provenance fields, structural invariants, anomalies)
+  - What it must refuse (speculation beyond the artifact, modifying the artifact)
+  - A canonical output format (structured markdown with provenance)
+- The profile uses native Copilot Chat tools only (read_file, grep_search,
+  file_search). No custom SDK tools, no MCP, no adapter.
 
-### P115.3 — package implementation and deterministic tests
+### P115.3 — deterministic validation fixtures
 
-- Add the minimal package handler(s), policy checks, fixtures, and stable error
-  behavior needed by the selected bundle.
-- Keep compatibility translation in the P114 adapter and execution policy in
-  package code; scripts only stage the run-scoped grant/configuration.
+- Create 2-3 validation fixtures with known properties:
+  - A "clean" bundle (should pass all checks)
+  - A bundle with a deliberate structural anomaly (should be detected)
+  - A bundle with a subtle provenance gap (should be flagged)
+- Add deterministic validation checks that can compare agent output against
+  expected findings for each fixture.
 
-### P115.4 — fresh Worker inspection proof
+### P115.4 — delegated inspection proof
 
-- Use the accepted P114 fresh CLI-parent package route with exactly one
-  `ollama_qwen_coder_worker`, `fork_context:false`, and a verbatim generated
-  ticket.
-- Require deferred discovery, one or more declared inspection calls, a
-  provenance-bearing result, no fallback tool, and byte-for-byte restoration.
+- Use the P118 native Agent Hub route: `runSubagent` with the P115.2 inspection
+  agent profile.
+- Delegate the inspection ticket to the Qwen3-coder agent.
+- Require: deferred discovery, one or more declared inspection calls, a
+  provenance-bearing result, no shell or fallback-tool substitution.
+- Compare agent output against the P115.3 fixtures and record where the agent
+  succeeds, over-reports, or misses.
 
 ### P115.5 — decision and next capability gate
 
@@ -110,5 +114,6 @@ broader filesystem or shell capability.
 P115 does not authorize unrestricted shell, arbitrary recursive reads, source
 materialization through DataLad/git-annex, model execution, network/browser
 access, notebook kernels, geospatial mutation, GitHub mutation, provider or
-configuration changes, or a Copilot SDK/UI revival. Those are future,
-task-derived tranches requiring their own grants and acceptance evidence.
+configuration changes, Copilot SDK, CLI-parent routes, adapter scaffolding, or
+custom MCP tools. Those are future, task-derived tranches requiring their own
+grants and acceptance evidence.

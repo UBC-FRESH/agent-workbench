@@ -122,7 +122,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
 | P113 Codex-Ollama function-tool adapter sandbox | #648 / PR #652 / PR #653 | `feature/p113-codex-ollama-function-tool-adapter` | Complete - PRs #652 and #653 merged; parent issue #648 closed; P107 remains parked pending a separate resume decision |
 | P114 Codex-Ollama C4 capability parity and viability | #661 / PR #667 | `feature/p114-c4-ollama-capability-parity` | Complete - PR #667 merged; baseline P107 route admitted |
-| P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientific-artifact-inspection` | Deferred — retained future capability lane; P118 is the selected next deployment phase |
+| P115 | Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientifactifact-inspection` | Active — rescoped to P118 native Agent Hub (Qwen3-coder profile, `runSubagent`) |
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
 | P118 FRESH vLLM Agent | #716 | `feature/p118-fresh-vllm-agent` | Active — P118.1 merged via PR #714; P118.2-P118.5 planned |
@@ -6075,37 +6075,42 @@ Branch: `feature/p115-scientific-artifact-inspection`
 
 Status: active. P118 completed, maintainer explicitly reprioritized P115.
 Branch `feature/p115-scientific-artifact-inspection` activated.
-Parent issue #666, child issues #722-#726 created.
+Parent issue #666, child issues #722-#729 created.
 
-Goal: build the first useful scientific-workbench expansion on the accepted
-bridge: grant-bound, read-only inspection of one frozen, public-safe FRESH
-model-instance artifact family.
+Rescope note (2026-07-21): P115 was originally scoped for the Codex SDK / P114
+adapter / CLI-parent route. That entire route is parked. P115 now uses the P118
+native Agent Hub with a single vLLM remote provider (Qwen 3.6 27B). Delegation
+via `runSubagent` with bounded profile instructions. No SDK, no adapter, no MCP.
 
-Boundary: P115 derives its capability delta from a real FRESH task family. It
-does not revive the Copilot SDK/UI lane, grant arbitrary shell or filesystem
-access, run models, materialize external data, mutate GitHub, or make P107
-economics claims.
+Goal: prove that a bounded Qwen agent profile, delegated through native Agent
+Hub, can successfully inspect a frozen public-safe FRESH artifact bundle and
+produce a provenance-bearing evidence report — without custom SDK tools, adapter
+scaffolding, or MCP.
+
+Boundary: P115 derives its capability boundary from a real FRESH task family.
+It uses Copilot Chat native tools only (read_file, grep_search, file_search).
+No Copilot SDK, no Codex adapter, no CLI-parent route, no MCP, no arbitrary
+shell, no model execution, no GitHub mutation, no P107 economics claims.
 
 Tasks:
 
-- [ ] P115.1 Freeze a real task family, public-safe artifact bundle, expected
-      evidence, verifier, and capability delta. (#722)
-- [ ] P115.2 Specify the read-only inspection grant, schema, provenance,
-      containment, output limits, and refusal behavior. (#723)
-- [ ] P115.3 Implement the minimum package inspection handler(s), fixtures,
-      policy checks, and deterministic tests. (#727)
-- [ ] P115.4 Prove the frozen role-bound Worker can discover and use the
-      inspection capability in a fresh native session without fallback tools. (#728)
-- [ ] P115.5 Record separate quality/protocol/economics verdicts and decide
-      whether one further task-derived capability is justified. (#729)
+- [ ] P115.1 Select a FRESH artifact family, create public-safe fixture bundle,
+      and define deterministic oracle. (#722)
+- [ ] P115.2 Create a bounded inspection agent profile (`.agent.md`) with
+      explicit instructions on what to read, report, and refuse. (#723)
+- [ ] P115.3 Create 2-3 validation fixtures (clean, anomaly, provenance-gap)
+      and deterministic validation checks. (#724)
+- [ ] P115.4 Prove one delegated Qwen3-coder inspection agent (via `runSubagent`)
+      can inspect the fixture bundle and produce a provenance-bearing result. (#725)
+- [ ] P115.5 Record quality/protocol/economics verdicts and decide whether
+      inspection works as a bounded profile or needs scaffolding. (#726)
 
 Acceptance criteria:
 
 - The pilot represents a real FRESH software/model-instance workflow and uses
   reproducible public-safe inputs.
-- The Worker receives only declared inspection authority inside a declared
-  root, and returns provenance-bearing bounded results.
-- Deterministic tests and fresh native Worker evidence agree.
+- The agent profile uses bounded instruction authority (not custom tool grants).
+- Deterministic fixture validation and delegated inspection evidence agree.
 - The phase produces an evidence-based next capability decision, not a generic
   agent-runtime expansion.
 
