@@ -3,6 +3,36 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-22 - P109 Workflow Compliance — GitHub issues and planning note created
+
+- Brought P109 into UBC-FRESH dev workflow compliance.
+- **Parent issue**: [#741](https://github.com/UBC-FRESH/agent-workbench/issues/741) — P109 phase issue with child task checklist.
+- **Child issues**:
+  - [#742](https://github.com/UBC-FRESH/agent-workbench/issues/742) — P109.1 (closed, 250 records extracted)
+  - [#744](https://github.com/UBC-FRESH/agent-workbench/issues/744) — P109.2 (open, audit)
+  - [#745](https://github.com/UBC-FRESH/agent-workbench/issues/745) — P109.3 (open, 90% yield gate)
+  - [#746](https://github.com/UBC-FRESH/agent-workbench/issues/746) — P109.4 (open, stop on gate failure)
+- **ROADMAP.md**: Updated with parent issue #741, child issue links (#742-#746), and child issues summary section.
+- **Planning note**: `planning/p109_2012_cycle_extraction.md` created with phase context, corpus details, GitHub structure, status, and key decisions.
+- **Cleanup**: Closed duplicate P109.2 issues (#743, #747, #748).
+
+## 2026-07-22 - P109.1: 2012 Cycle Batch JSONL Extraction — complete
+
+- P109.1 ran `scripts/p109_1_batch_extract.py` against all 3 documents of the
+  2012 TSA23 cycle (20 chunks, 106 pages) using `qwen3.6-27b-nvfp4` on the local
+  vLLM provider.
+- **tsa23_2012_23tsdp12** (Data Package): 139 candidate records from 11 chunks, 41 pages
+- **tsa23_2012_23ts13ra** (Rationale): 75 candidate records from 6 chunks, 48 pages
+- **tsa23_2012_23ts13pdp** (Discussion Paper): 36 candidate records from 3 chunks, 17 pages
+- **Total: 250 candidate records from 20 chunks across 3 documents**
+- All 15 required P89 schema fields present in every record. 0 dropped non-JSON lines.
+- Record files under `benchmarks/document_library/tsa23_tsr/{doc_id}/{doc_id}_candidates.jsonl`
+- Result artifact: `runtime/agent_jobs/p109_1_result.json`
+- Validation note: P89 chunk-ID enum contract uses old naming convention
+  (`tsa23_2012_23tsdp12::pages_001_008`), extraction uses new convention
+  (`tsa23_2012_23tsdp12_c01`). Records are valid; contract needs update later.
+- P109.2-P109.4 (audit, yield gate, stop rule) remain pending.
+
 ## 2026-07-22 - P108: Fresh TSA23 Slice Preparation — full corpus complete (P108.1-P108.3)
 
 - **P108.1**: 18 provenance JSONs with SHA-256 hashes, FEMIC-sourced URLs, cycle years,
