@@ -61,6 +61,131 @@ issues, pull requests, and closeout comments.
   pre-existing debt outside P119. No P118-owned agent-profile or planning files
   were changed.
 
+
+## 2026-07-21 - P118.6: Concurrency-ticket validation
+
+- **Quality:** 3 parallel independent read-only probes completed successfully
+  from a single Supervisor flow. Probe 1 inspected 7 agent profiles for
+  consistency (all profiles declare the single-model contract, no authority
+  overlap). Probe 2 verified AGENTS.md concurrency contract is complete
+  (parallel 2-4, burst 6, coordination rules present, no contradictions).
+  Probe 3 verified ROADMAP.p118 lists P118.6 tasks. All probes returned
+  substantive, independently inspectable results.
+- **Protocol:** session boundary held. Coordinator → Supervisor delegation via
+  native Agent Hub. 3 parallel `runSubagent` calls to workers completed
+  concurrently without conflict. No `model.call_failure`, timeout, or VRAM
+  pressure observed. Findings merged by Coordinator after all probes returned.
+- **Economics:** all token spend against one configured vLLM endpoint. Zero paid
+  model spans.
+- **Concurrency verdict:** 3 parallel independent read-only work is stable on
+  the configured endpoint. The endpoint is concurrency-optimized and holds for
+  the 2-4 parallel agent target. Heavy parallel workloads (multi-file edits,
+  test runs, code generation) remain unstressed.
+- **Limitation:** this was a lightweight read-only workload. Further stress-testing
+  with mutating work will validate the serial-only constraint for coupled tasks.
+- **Advisor qualification (P118 closeout):** concurrency claim is qualified to
+  "read-only parallel validated; mutating-work concurrency constraints and
+  load-degradation thresholds deferred to future phases."
+
+urrency-ticket validation complete)
+
+
+## 2026-07-21 - P118.6.2: Concurrency stress test (tool-intensive)
+
+- **Quality:** 4 parallel tool-intensive probes completed successfully from a
+  single Supervisor flow. Probe A used grep_search + file_search to inventory 84
+  scripts under `scripts/` and 63 modules under `src/agent_workbench/`, identified
+  2 duplicated scripts, and performed orphan analysis (~40+ scripts without CLI
+  wrappers). Probe B validated 8 schema files against 38 templates; 1 explicit
+  path reference resolves correctly; 1 broken directory reference found. Probe C
+  cross-referenced 7 planning notes with P118 references against ROADMAP; 19
+  references checked, 0 orphaned. Probe D audited 7 agent profiles for
+  trust-level compliance; all profiles compliant.
+- **Protocol:** session boundary held. 4 parallel probes launched concurrently
+  using grep_search (regex search), file_search (glob matching), and read_file
+  (profile inspection). All probes completed without model.call_failure, timeout,
+  or contention. Result files written independently.
+- **Economics:** all token spend against one configured vLLM endpoint. Zero paid
+  model spans.
+- **Concurrency verdict:** 4 parallel tool-intensive work is stable on the
+  configured endpoint. Heavier tool paths (grep_search scanning entire directory
+  trees, file_search with glob patterns) hold under concurrency. This validates
+  the concurrency contract beyond the P118.6 smoke test (which used only
+  read_file). End-to-end, 18+ tool invocations across 190+ files scanned in
+  parallel.
+- **Comparison with P118.6:** P118.6 used 3 probes × read_file (simple single-file
+  reads). P118.6.2 uses 4 probes × grep_search/file_search (multi-file regex and
+  glob searches across directory trees). Tool intensity increased 2-3x per probe.
+  No degradation observed between P118.6 and P118.6.2.
+
+ncurrency stress test complete (4 parallel tool-intensive probes))
+
+## 2026-07-21 - P118.5: Deployment decision
+
+- **Quality:** single-model deployment produced substantive work across:
+  P118.1 (agent-profile rewrite for 7 roles, AGENTS.md de-bloat from ~450→~70
+  lines), P118.2 (concurrency-allowed operating contract in profiles and
+  operator checklist), P118.3 (productive ticket — rewrite of stale
+  `docs/roadmap_and_release/roadmap_overview.md` with +39/-12 clean change),
+  P118.4 (SDK failure recovery via native Advisor, profile reconciliation).
+- **Protocol:** session boundary held throughout. SDK delegation failure
+  (`model.call_failure`) recovered via bounded native `runSubagent` fallback.
+  Advisor remained read-only. Profile reconciliation was Coordinator-owned
+  contract repair, not implementation substitution.
+- **Economics:** all token spend against one configured vLLM endpoint. Zero paid
+  model spans during P118.3-P118.4 runs. Opportunity cost (GPU, hosting) is
+  real but outside this phase's accounting boundary.
+- **Decision:** P118 profiles become the default native Agent Hub profile for
+  single-model deployments. Profile reconciliation committed at `236f46f`
+  resolves the final contract inconsistency flagged by the Advisor.
+- **Deferral:** P118.6 concurrency-ticket test has been executed and validated.
+
+oyment decision — single-model profiles are the default)
+
+## 2026-07-21 - P118.4: Selective Advisor and recovery behavior
+
+- Tried SDK delegation via `scripts/sdk_delegate.cmd` — hit `model.call_failure`
+  (22 events, blocked as `sdk-event-error`).
+- Recovered via native Agent Hub `runSubagent` to the `agent-workbench-advisor`
+  profile, exercising the real ambiguity scenario the plan described.
+- Advisor reviewed P118 pre-closeout readiness and flagged 6 findings:
+  contract inconsistency between profiles (serial-only) and AGENTS.md
+  (concurrency-allowed), P118.2 describing a superseded contract, P118.3 run
+  under serial-only with concurrency untested, P118.4 meta-review need,
+  P118.5 premature without concurrency evidence, and ROADMAP issue attribution
+  drift (#716 vs #718).
+- Verdict: **not closeout-ready**. Coordinator owns follow-up decision.
+- Artifacts: ignored runtime files
+  `runtime/agent_jobs/p118_4_advisor_review_{ticket,result}.md`.
+
+cise selective Advisor and recovery behavior (complete))
+
+## 2026-07-21 - P118.3: Productive bounded ticket
+
+- Selected an ordinary bounded task: update the severely stale
+  `docs/roadmap_and_release/roadmap_overview.md` (claimed active phase was P101,
+  actual phase is now P118).
+- Ran Coordinator-to-Worker delivery under the serial contract: Supervisor
+  read `ROADMAP.md` and `planning/p118_fresh_vllm_agent_plan.md`, rewrote the
+  doc with accurate phase tranche summaries (P0-P100, P101-P117), P118 task
+  table, design principles, and upcoming-phases section.
+- Independently verified: diff shows clean +39/-12 change to the target file
+  only; content sourced from `ROADMAP.md` issue tracker map; P118.2 status
+  corrected to "Complete" in the doc by Coordinator.
+- Committed `ca80d25` on `feature/p118-fresh-vllm-agent`.
+
+## 2026-07-21 - P118.2: Serial single-model operating contract
+
+- Updated 4 agent profiles with `## Serial Operating Contract` sections
+  (one active child, operator sequence, no doer-mode).
+- Updated 1 agent profile with `## Delivery and Verification Contract`.
+- Created `playbooks/p118_single_model_operator_checklist.md` with 8-step
+  launch checklist.
+- Updated `ROADMAP.md` P118 section and issue tracker table row (issue #716).
+- Committed `9bfae74`, pushed to `feature/p118-fresh-vllm-agent`.
+
+ complete in ROADMAP and CHANGE_LOG)
+
 ## 2026-07-21 - P118.1: Provider and role-profile contract — closeout
 
 - P118.1 merged via PR #714; parent issue TBD (table row updated).

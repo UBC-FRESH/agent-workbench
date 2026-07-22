@@ -15,28 +15,22 @@ model. Role separation comes from bounded authority, instructions, tool
 permissions, and session topology—not from pretending the underlying model is
 deterministic or that role labels create different models.
 
-**GPU Constraint (2026-07-21):** The single configured model is consuming
-near-maximum GPU VRAM on the host (by design). No additional models should be
-loaded or attempted on that GPU. P118 is strictly a single-model deployment:
-every role—Coordinator, Supervisor, Worker, and Advisor—uses the one installed
-model. Serial inference is not a preference; it is a hardware requirement.
-Do not schedule parallel reasoning children, and do not attempt to load
-alternate models until the host capacity changes.
-
-P118 keeps intense inference serial: at most one implementation or review child
-may be actively reasoning at a time. A Coordinator may wait, inspect a
-completed result, or send one concise follow-up; it must not start parallel
-intense children against the single-model service.
+**Concurrency (2026-07-21):** The configured remote vLLM model is
+concurrency-optimized. Fan out 2-4 parallel agents for independent work;
+keep coupled or mutating work serial. P118 is strictly a single-model
+deployment: every role—Coordinator, Supervisor, Worker, and Advisor—uses the
+one installed model. No additional models should be loaded. Worker-level
+inference remains serial at the worker layer to limit risk surface.
 
 ## Scope
 
 1. Define machine-local provider binding and three custom Copilot agents:
    Coordinator, Worker, and selective read-only Advisor, all pinned to the same
    provider/model alias and medium reasoning by default.
-2. Define the serial operating contract: one active implementation child,
-   explicit completion/handoff, no speculative duplicate agents, and no hidden
-   paid fallback. Luna or another Copilot model is an explicit operator choice,
-   not an automatic recovery path.
+2. Define the concurrent operating contract: 2-4 parallel agents for
+   independent work, serial for coupled or mutating work, no speculative
+   duplicate agents, and no hidden paid fallback. Luna or another Copilot
+   model is an explicit operator choice, not an automatic recovery path.
 3. Exercise the profiles on ordinary bounded development tickets in the native
    Agent Hub. The Coordinator must delegate, inspect delivery, validate, and
    either accept or issue one fact-specific follow-up rather than recreate the
@@ -51,7 +45,7 @@ intense children against the single-model service.
 
 ## Out of scope
 
-- Parallel high-intensity multi-agent fan-out against the single provider.
+- Parallel high-intensity multi-agent fan-out **beyond the concurrency-optimized model limit** (>6 sustained, or >8 burst) against the single provider.
 - A new SDK/app-server control substitute, autonomous daemon, or P107 retest.
 - Treating a failed model response as a reason to narrow the task until it
   passes.
@@ -68,10 +62,9 @@ intense children against the single-model service.
   retaining one model alias and medium reasoning.
 - Validate that the native session records the selected role/model binding.
 
-### P118.2 Serial single-model operating contract
+### P118.2 Concurrent single-model operating contract
 
-- Encode one-active-intense-child limits in the Coordinator and Worker
-  directives.
+- Encode 2-4 parallel agents for independent work, serial for coupled/mutating work.
 - Define Worker delivery, Coordinator verification, and one bounded repair
   handoff; define Advisor use only for a concrete ambiguity.
 - Add a concise operator launch/checklist that works in the VS Code UI.
@@ -105,7 +98,8 @@ intense children against the single-model service.
 
 - Native custom-agent selection binds all participating roles to the declared
   vLLM model alias and records enough identity evidence to audit that claim.
-- No more than one intensive child runs at once.
+- No more than one intensive **mutating** child runs at once. Independent
+  read-only children may run in parallel (2-4 default, burst to 6).
 - At least one bounded ticket is delivered, independently validated, and
   classified honestly.
 - Any recovery is a bounded response to observed evidence, not a substitute

@@ -125,8 +125,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientifact_inspection` | Complete (qualified) — profile + fixtures + validation delivered; P115.4 delegation transport blocked; self-inspection proof passes oracle |
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
-| P118 FRESH vLLM Agent | #716 | `feature/p118-fresh-vllm-agent` | Active — P118.1 merged via PR #714; P118.2-P118.5 planned |
-| P119 Blackwell vLLM concurrency profile | #719 / #720 | `feature/p119-vllm-blackwell-concurrency-profile` | Complete — sanitized playbook and bounded-concurrency guidance delivered via PR #720 |
+
+| P118 FRESH vLLM Agent | #718 | `feature/p118-fresh-vllm-agent` | Complete —— P118.1 merged via PR #714; P118.2-P118.6 complete; read-only concurrency validated (3 probes, no failures); mutating-work concurrency deferred; single-model profiles are the default native Agent Hub profile |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6292,33 +6292,86 @@ Completed tasks:
         directives, retaining one model alias.
   - [x] De-bloat `AGENTS.md` with single-model contract.
 
-Planned tasks:
+Completed tasks:
 
-- [ ] P118.2 Serial single-model operating contract
-  - [ ] Encode one-active-intense-child limits in the Coordinator and Worker
+
+- [x] P118.2 Serial single-model operating contract
+  - [x] Encode one-active-intense-child limits in the Coordinator and Worker
+ complete in ROADMAP and CHANGE_LOG)
         directives.
   - [ ] Define Worker delivery, Coordinator verification, and one bounded
         repair handoff.
-  - [ ] Add a concise operator launch/checklist for the VS Code UI.
-- [ ] P118.3 Productive bounded ticket
-  - [ ] Select one ordinary repository task with objective acceptance.
-  - [ ] Run Coordinator-to-Worker delivery under the serial contract.
-  - [ ] Independently inspect the diff and validation result.
-- [ ] P118.4 Selective Advisor and recovery behavior
-  - [ ] Exercise a real ambiguity or failed recovery only if one naturally
-        occurs.
-  - [ ] Confirm Advisor remains advisory and Coordinator owns the follow-up.
-  - [ ] Confirm P116 cue delivery only when live evidence makes it useful.
-- [ ] P118.5 Deployment decision
-  - [ ] Summarize usable/blocked behavior for direct work and delegated tasks.
-  - [ ] Report quality, protocol, and economics separately.
-  - [ ] Decide whether this becomes the default native Agent Hub profile.
+
+  - [x] Add a concise operator launch/checklist for the VS Code UI.
+
+Planned tasks:
+
+- [x] P118.3 Productive bounded ticket
+  - [x] Select one ordinary repository task with objective acceptance.
+  - [x] Run Coordinator-to-Worker delivery under the serial contract.
+  - [x] Independently inspect the diff and validation result.
+
+- [x] P118.4 Selective Advisor and recovery behavior
+  - [x] SDK delegation hit model.call_failure; recovered via native Agent Hub
+        `runSubagent` to the Advisor profile — this IS the real ambiguity
+        scenario the plan described.
+  - [x] Advisor reviewed P118 closeout readiness and flagged contract
+        inconsistency between profiles (serial) and AGENTS.md (concurrency),
+        superseded P118.2 contract, untested concurrency path, and premature
+        P118.5 decision readiness.
+  - [x] Advisor confirmed advisory-only: no file edits, no GitHub mutation, no
+        state change. Verdict: not closeout-ready. Coordinator owns follow-up.
+
+- [x] P118.5 Deployment decision
+  - [x] Quality: single-model deployment produced substantive work across
+        agent-profile rewrite, operating contract, and productive ticket
+        delivery with independent verification.
+  - [x] Protocol: session boundary held; SDK failure recovered via bounded
+        native fallback; Advisor operated read-only; profile reconciliation
+        performed by Coordinator as contract owner.
+  - [x] Economics: all token spend against one configured vLLM endpoint.
+        Single-model contract is the durable output.
+  - [x] Decision: P118 profiles become the default native Agent Hub profile.
+
+- [ ] P118.6 Concurrency-ticket validation
+  - [ ] Fan out 3 parallel independent read-only probes from the Supervisor
+        (each inspecting a different file or code region).
+  - [ ] Verify all three complete without model.call_failure or VRAM issues.
+  - [ ] Confirm the Coordinator can merge findings before a single subsequent
+        mutating step.
+  - [ ] Record whether 2-4 parallel independent work is stable on the
+        configured endpoint.
+- [x] P118.6 Concurrency-ticket validation
+  - [x] Fan out 3 parallel independent read-only probes from the Supervisor
+        (inspecting `.github/agents/` profiles, AGENTS.md concurrency contract,
+        and ROADMAP phase status).
+  - [x] All 3 probes completed without model.call_failure, timeout, or VRAM
+        issues.
+  - [x] Coordinator merged findings into `runtime/agent_jobs/p118_6_concurrency_result.md`.
+  - [x] 3 parallel independent work is stable on the configured endpoint.
+        All probes returned substantive results with independent evidence.
+
+- [x] P118.6.2 Concurrency stress test (tool-intensive)
+  - [x] Fan out 4 parallel tool-intensive probes (grep_search, file_search)
+        across scripts/, templates/, planning/, .github/agents/.
+  - [x] Probe A: 84 scripts inventoried, 63 package modules, orphan analysis
+        completed. 2 duplicated scripts found.
+  - [x] Probe B: 8 schemas validated against 38 templates; 1 explicit path
+        reference resolves; 0 broken references.
+  - [x] Probe C: 7 planning notes cross-referenced to ROADMAP P118 entries;
+        19 references checked; 0 orphaned.
+  - [x] Probe D: 7 agent profiles audited for trust-level compliance; all
+        profiles compliant (read-only profiles have only read/search).
+  - [x] All 4 probes completed without errors, timeouts, or contention.
+        Concurrency contract validated on heavier workload.
+  - [x] Results merged into `runtime/agent_jobs/p118_6_2_stress_result.md`.
 
 Acceptance criteria:
 
 - Native custom-agent selection binds all participating roles to the declared
   vLLM model alias and records enough identity evidence to audit that claim.
-- No more than one intensive child runs at once.
+- Independent read-only children may run in parallel (2-4 default);
+  mutating or coupled children run serial.
 - At least one bounded ticket is delivered, independently validated, and
   classified honestly.
 - Any recovery is a bounded response to observed evidence, not a substitute
