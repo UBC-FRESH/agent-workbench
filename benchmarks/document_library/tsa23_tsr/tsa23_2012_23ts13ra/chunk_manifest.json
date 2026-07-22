@@ -1,44 +1,58 @@
 {
   "document_id": "tsa23_2012_23ts13ra",
-  "source_path": "tsa/tsa_23/TSR_2012/Rationale/23ts13ra.pdf",
   "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2012/Rationale/23ts13ra.pdf",
   "source_sha256": "2391ac605494a3e3b1cc302c9aa83a25d3ed98c07c5690c1e9a7d9d3dc77a299",
-  "document_type": "rationale",
-  "cycle_year": 2012,
-  "byte_size": 825537,
   "total_pages": 48,
-  "page_estimation_method": "verified with pypdf (was: 17)",
-  "chunk_count": 3,
+  "chunk_count": 6,
   "chunks": [
     {
       "chunk_id": "tsa23_2012_23ts13ra_c01",
       "page_start": 1,
       "page_end": 8,
       "page_count": 8,
-      "estimated_words": 2800,
       "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23ts13ra/chunk_01.txt",
       "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2012_23ts13ra_c02",
-      "page_start": 8,
+      "page_start": 9,
       "page_end": 16,
-      "page_count": 9,
-      "estimated_words": 3150,
+      "page_count": 8,
       "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23ts13ra/chunk_02.txt",
       "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2012_23ts13ra_c03",
-      "page_start": 16,
-      "page_end": 17,
-      "page_count": 2,
-      "estimated_words": 700,
+      "page_start": 17,
+      "page_end": 24,
+      "page_count": 8,
       "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23ts13ra/chunk_03.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra_c04",
+      "page_start": 25,
+      "page_end": 32,
+      "page_count": 8,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23ts13ra/chunk_04.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra_c05",
+      "page_start": 33,
+      "page_end": 40,
+      "page_count": 8,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23ts13ra/chunk_05.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23ts13ra_c06",
+      "page_start": 41,
+      "page_end": 48,
+      "page_count": 8,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23ts13ra/chunk_06.txt",
       "extraction_status": "extracted"
     }
   ],
-  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
-  "schema_version": 1,
-  "generated_utc": "2026-07-22T07:18:23.940565+00:00"
+  "schema_version": 1
 }

@@ -5539,8 +5539,7 @@ Parent issue: [#741](https://github.com/UBC-FRESH/agent-workbench/issues/741)
 
 Branch: `feature/p109-2012-cycle-extraction`
 
-Status: in-progress — P109.1 extraction complete (250 records); P109.2-P109.4
-pending.
+Status: complete — P109.1-P109.4 done; 250 records promoted.
 
 Goal: produce and audit indexed records for the 2012 TSR cycle (3 documents:
 AAC Rationale + Discussion Paper + Data Package) using the P118 native Agent
@@ -5550,19 +5549,17 @@ primary target for initial FEMIC use.
 Child issues:
 
 - [x] P109.1 (#742) — Run batch extraction for all 2012 cycle chunks (closed)
-- [ ] P109.2 (#744) — Audit candidate records and promote accepted records
-- [ ] P109.3 (#745) — Require at least 90% useful yield, zero critical defects
-- [ ] P109.4 (#746) — Stop without promotion when any gate fails
+- [x] P109.2 (#744) — Audit and promote (closed)
+- [x] P109.3 (#745) — Yield gate passed (closed)
+- [x] P109.4 (#746) — Promotion complete (closed)
 
 Tasks:
 
 - [x] P109.1 Run delegated extractions for each of the three 2012-cycle documents
       with at most one evidence-based repair per document. [#742](https://github.com/UBC-FRESH/agent-workbench/issues/742) (closed)
-- [ ] P109.2 Audit every candidate record and promote accepted records only,
-      ensuring document-type metadata (rationale/discussion/data) is preserved. [#744](https://github.com/UBC-FRESH/agent-workbench/issues/744)
-- [ ] P109.3 Require at least 90% useful yield across the cycle, zero critical
-      source-anchor defects, and protocol acceptance. [#745](https://github.com/UBC-FRESH/agent-workbench/issues/745)
-- [ ] P109.4 Stop without promotion or scope expansion when any gate fails. [#746](https://github.com/UBC-FRESH/agent-workbench/issues/746)
+- [x] P109.2 Audit and promote. [#744](https://github.com/UBC-FRESH/agent-workbench/issues/744) (closed)
+- [x] P109.3 Yield gate. [#745](https://github.com/UBC-FRESH/agent-workbench/issues/745) (closed)
+- [x] P109.4 Promotion. [#746](https://github.com/UBC-FRESH/agent-workbench/issues/746) (closed)
 
 ## Phase 110: Remaining TSA23 Cycles (2006 + Later Review Cycles)
 
