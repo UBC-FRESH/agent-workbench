@@ -6333,13 +6333,25 @@ Planned tasks:
   - [x] Economics: all token spend against one configured vLLM endpoint.
         Single-model contract is the durable output.
   - [x] Decision: P118 profiles become the default native Agent Hub profile.
+<<<<<<< HEAD
 oyment decision — single-model profiles are the default)
+=======
+- [ ] P118.6 Concurrency-ticket validation
+  - [ ] Fan out 3 parallel independent read-only probes from the Supervisor
+        (each inspecting a different file or code region).
+  - [ ] Verify all three complete without model.call_failure or VRAM issues.
+  - [ ] Confirm the Coordinator can merge findings before a single subsequent
+        mutating step.
+  - [ ] Record whether 2-4 parallel independent work is stable on the
+        configured endpoint.
+>>>>>>> ea2a4c6 (P118.6: define concurrency-ticket validation (planned))
 
 Acceptance criteria:
 
 - Native custom-agent selection binds all participating roles to the declared
   vLLM model alias and records enough identity evidence to audit that claim.
-- No more than one intensive child runs at once.
+- Independent read-only children may run in parallel (2-4 default);
+  mutating or coupled children run serial.
 - At least one bounded ticket is delivered, independently validated, and
   classified honestly.
 - Any recovery is a bounded response to observed evidence, not a substitute

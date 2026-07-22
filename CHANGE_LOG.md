@@ -80,6 +80,11 @@ issues, pull requests, and closeout comments.
 - **Decision:** P118 profiles become the default native Agent Hub profile for
   single-model deployments. Profile reconciliation committed at `236f46f`
   resolves the final contract inconsistency flagged by the Advisor.
+- **Deferral:** P118.6 concurrency-ticket test is defined but not yet executed.
+  The concurrency path (2-4 parallel independent work) has been contractually
+  allowed but not empirically validated on this endpoint. A supplementary
+  concurrency-ticket will exercise 3 parallel independent read-only probes
+  before the phase is considered fully closed.
 
 oyment decision — single-model profiles are the default)
 
