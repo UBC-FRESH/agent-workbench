@@ -5501,71 +5501,83 @@ accepted Qwen 3.6 C4+ lane `$0.231600` paid Coordinator estimate. Local-worker
 usage remains separate. Further deployment work moves to P118 with one declared
 provider/model and a fresh stable workload boundary.
 
-## Phase 108: TSA23 2006 Cycle Slice Preparation
+## Phase 108: Full TSA23 Corpus Slice Preparation
 
 Parent issue: TBD
 
 Branch: `feature/p108-fresh-tsa23-slice-prep`
 
-Status: in-progress — piloting the full 2006 TSR cycle (3 documents) rather than
-a single document. Tasks are child GitHub issues; subtasks are `[ ]` checklist
-items in child issue bodies.
+Status: in-progress — preparing the entire ~18-document TSA23 corpus across all
+TSR cycles rather than a single cycle. Tasks are child GitHub issues; subtasks
+are `[ ]` checklist items in child issue bodies.
 
-Goal: prepare the full 2006 TSR cycle (AAC Rationale `tsa23_2006_23ts06ra`,
-Discussion Paper, and Data Package) as a bounded, public-corpus slice without
-live inference. This replaces the original single-document pilot scope.
+Goal: prepare the full TSA23 corpus (4 TSR cycles × 3 documents per cycle =
+~12-18 documents) as bounded, public-corpus slices without live inference.
+
+Corpus structure per TSR cycle:
+
+- AAC Rationale (`tsa23_<year>_23ts<year>ra`) — analysis and recommendations
+- Discussion Paper (`tsa23_<year>_23ts<year>rp`) — technical discussion
+- Data/Information Package (`tsa23_<year>_23tsdp<year>`) — supporting data
+
+The four cycles are 2006, 2012, and two additional review cycles. Each document
+type serves a different purpose: rationale provides analysis/recommendations,
+discussion provides technical context, data package provides supporting data.
+FEMIC will query across all document types and cycles.
 
 Tasks:
 
-- [ ] P108.1 Record source URLs, hashes, and provenance for all three 2006-cycle documents.
-- [ ] P108.2 Materialize ignored raw-text slices and tracked chunk manifests for each document.
-- [ ] P108.3 Reuse P89 validation and P91 audit contracts across the three-document cycle.
+- [ ] P108.1 Record source URLs, hashes, and provenance for all corpus documents.
+- [ ] P108.2 Materialize ignored raw-text slices and tracked chunk manifests for
+      each document.
+- [ ] P108.3 Reuse P89 validation and P91 audit contracts across the corpus.
 - [ ] P108.4 Reconcile P107 economics contracts — retained as historical reference
       only; budget gates are moot post-P118 (zero marginal token cost on lab GPU).
 
-## Phase 109: Productive Delegated TSA23 2006 Cycle Pilot
+## Phase 109: 2012 Cycle Extraction And Audit (Most Recent Cycle)
 
 Parent issue: TBD
 
-Branch: `feature/p109-productive-tsa23-pilot`
+Branch: `feature/p109-2012-cycle-extraction`
 
-Status: planned — requires explicit live-run activation after P108 closeout.
+Status: planned — requires P108 corpus materialization and vLLM provider readiness.
 
-Goal: produce and audit a useful fresh-corpus result for the full 3-document
-2006 TSR cycle (AAC Rationale + Discussion Paper + Data Package), replacing the
-single-document pilot scope. Subsequent phases (P110+) cover remaining cycles.
+Goal: produce and audit indexed records for the 2012 TSR cycle (3 documents:
+AAC Rationale + Discussion Paper + Data Package) using the P118 native Agent
+Hub with vLLM provider. The 2012 cycle is the most recent and therefore the
+primary target for initial FEMIC use.
 
 Tasks:
 
-- [ ] P109.1 Run one delegated extraction across the 2006 cycle with at most one evidence-based repair per document.
-- [ ] P109.2 Audit every candidate and promote accepted records only.
-- [ ] P109.3 Require at least 90% useful yield, zero critical defects, protocol
-      acceptance, and cost within the P107 threshold.
+- [ ] P109.1 Run delegated extractions for each of the three 2012-cycle documents
+      with at most one evidence-based repair per document.
+- [ ] P109.2 Audit every candidate record and promote accepted records only,
+      ensuring document-type metadata (rationale/discussion/data) is preserved.
+- [ ] P109.3 Require at least 90% useful yield across the cycle, zero critical
+      source-anchor defects, and protocol acceptance.
 - [ ] P109.4 Stop without promotion or scope expansion when any gate fails.
 
-## Phase 110: Remaining TSA23 Cycle Expansion (2012 + Later Cycles)
+## Phase 110: Remaining TSA23 Cycles (2006 + Later Review Cycles)
 
 Parent issue: TBD
 
-Branch: `feature/p110-tsa23-remaining-cycles`
+Branch: `feature/p110-remaining-tsa23-cycles`
 
-Status: planned — requires passing P109 cycle-pilot evidence before activation.
+Status: planned — requires passing P109 2012-cycle evidence before activation.
 
-Goal: expand the document-indexing workflow from the 2006 pilot cycle to the
-remaining TSA23 cycles. Each cycle contains three documents: AAC Rationale,
-Discussion Paper, and Data/Information Package. The 2012 cycle is the first
-target, followed by later review cycles as available.
+Goal: expand the document-indexing workflow from the 2012 cycle to the remaining
+TSA23 cycles (2006 and later review cycles). Each cycle contains three documents:
+AAC Rationale, Discussion Paper, and Data/Information Package.
 
 Tasks:
 
-- [ ] P110.1 Prepare the 2012 TSR cycle (AAC Rationale, Discussion Paper,
-      Data Package) using the P108 slice-preparation contract.
-- [ ] P110.2 Run delegated extractions across the 2012 cycle using the P109
-      pilot recipe.
-- [ ] P110.3 Audit and promote accepted 2012-cycle records into the project-owned
+- [ ] P110.1 Run delegated extractions for the 2006 cycle (3 documents) using the
+      P109 recipe.
+- [ ] P110.2 Run delegated extractions for remaining review cycles (if available)
+      using the P109 recipe.
+- [ ] P110.3 Audit and promote accepted cross-cycle records into the project-owned
       index.
-- [ ] P110.4 Evaluate whether to expand to later TSR cycles or pause for
-      integration/release work.
+- [ ] P110.4 Evaluate corpus completeness and readiness for FEMIC integration.
 
 ## Phase 111 (reserved): Alpha Readiness Refresh And GitHub Pre-Release
 
