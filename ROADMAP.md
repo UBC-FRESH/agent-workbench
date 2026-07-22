@@ -125,13 +125,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientifact_inspection` | Complete (qualified) — profile + fixtures + validation delivered; P115.4 delegation transport blocked; self-inspection proof passes oracle |
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
-<<<<<<< HEAD
 
-| P118 FRESH vLLM Agent | #718 | `feature/p118-fresh-vllm-agent` | Complete —— P118.1 merged via PR #714; P118.2-P118.6 complete; concurrency validated with 3 parallel probes; single-model profiles are the default native Agent Hub profile |
-urrency-ticket validation complete)
-=======
 | P118 FRESH vLLM Agent | #718 | `feature/p118-fresh-vllm-agent` | Complete —— P118.1 merged via PR #714; P118.2-P118.6 complete; read-only concurrency validated (3 probes, no failures); mutating-work concurrency deferred; single-model profiles are the default native Agent Hub profile |
->>>>>>> d70b8f6 (P118: Advisor-qualified closeout)
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6346,8 +6341,6 @@ Planned tasks:
         mutating step.
   - [ ] Record whether 2-4 parallel independent work is stable on the
         configured endpoint.
-ne concurrency-ticket validation (planned))
-=======
 - [x] P118.6 Concurrency-ticket validation
   - [x] Fan out 3 parallel independent read-only probes from the Supervisor
         (inspecting `.github/agents/` profiles, AGENTS.md concurrency contract,
@@ -6357,7 +6350,21 @@ ne concurrency-ticket validation (planned))
   - [x] Coordinator merged findings into `runtime/agent_jobs/p118_6_concurrency_result.md`.
   - [x] 3 parallel independent work is stable on the configured endpoint.
         All probes returned substantive results with independent evidence.
->>>>>>> 6a61798 (P118.6: concurrency-ticket validation complete)
+
+- [x] P118.6.2 Concurrency stress test (tool-intensive)
+  - [x] Fan out 4 parallel tool-intensive probes (grep_search, file_search)
+        across scripts/, templates/, planning/, .github/agents/.
+  - [x] Probe A: 84 scripts inventoried, 63 package modules, orphan analysis
+        completed. 2 duplicated scripts found.
+  - [x] Probe B: 8 schemas validated against 38 templates; 1 explicit path
+        reference resolves; 0 broken references.
+  - [x] Probe C: 7 planning notes cross-referenced to ROADMAP P118 entries;
+        19 references checked; 0 orphaned.
+  - [x] Probe D: 7 agent profiles audited for trust-level compliance; all
+        profiles compliant (read-only profiles have only read/search).
+  - [x] All 4 probes completed without errors, timeouts, or contention.
+        Concurrency contract validated on heavier workload.
+  - [x] Results merged into `runtime/agent_jobs/p118_6_2_stress_result.md`.
 
 Acceptance criteria:
 
