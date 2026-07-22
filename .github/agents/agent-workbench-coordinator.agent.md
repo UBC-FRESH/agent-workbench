@@ -202,9 +202,11 @@ Keep context small and turns few. Non-negotiable rules:
   nothing. Prefer delegating and waiting over doing work yourself.
 - **Raw markdown format for handoff prompts.** When the developer asks for a
   clarifying prompt, handoff text, or context to paste into another session,
-  always return it as raw markdown — no escaping, no nested formatting, ready
-  to copy-paste directly. Do not wrap in code blocks or add introductory prose
-  unless asked.
+  always return it inside a markdown code fence with the language tag
+  `markdown` - this ensures the content appears as unrendered source text
+  that can be directly copy-pasted into the target session. Do not wrap in
+  additional code blocks, do not render the markdown, and do not add
+  introductory prose unless asked.
 
 ## Supervisor Delegation
 
