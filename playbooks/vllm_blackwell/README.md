@@ -26,6 +26,8 @@ operator aids only.
   OpenAI-compatible endpoint smoke and concurrency benchmarks.
 - `scripts/watch-vllm.sh` — compact operator dashboard for server/GPU/load
   monitoring.
+- `systemd/vllm-blackwell.service.example` — host-service template with
+  bounded auto-restart on failure.
 
 ## Recommended Multi-Agent Profile
 
@@ -130,6 +132,47 @@ Watch the live service:
 SHOW_RECENT=0 ./scripts/watch-vllm.sh
 HEALTH_CHECK=1 ./scripts/watch-vllm.sh
 VERBOSE=1 ./scripts/watch-vllm.sh
+```
+
+## Host Service
+
+For routine use, run the endpoint under `systemd` rather than an interactive
+shell. The template in `systemd/vllm-blackwell.service.example` preserves the
+same profile and adds bounded recovery:
+
+- `Restart=on-failure` revives the API after an engine process crash.
+- `RestartSec=15s` avoids a tight restart loop.
+- `StartLimitIntervalSec=900` and `StartLimitBurst=3` stop repeated crashes
+  from hiding a persistent kernel or configuration fault.
+- stdout/stderr go to journald, and CUDA coredumps remain in the configured
+  external shared-data directory.
+
+Adapt the template before installing:
+
+- Set `User` and `Group` to the local runtime account.
+- Set `WorkingDirectory` to the copied vLLM lab checkout.
+- Set `ExecStart` to that checkout's `scripts/serve-native.sh`.
+- Point `VLLM_ENV_FILE` at a local, untracked profile with real cache and
+  secret-file paths.
+
+Example install flow:
+
+```bash
+sudo install -m 0644 systemd/vllm-blackwell.service.example \
+  /etc/systemd/system/vllm-blackwell.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now vllm-blackwell.service
+systemctl status vllm-blackwell.service
+./scripts/wait-ready.sh 127.0.0.1 18000
+```
+
+Common operations:
+
+```bash
+systemctl status vllm-blackwell.service
+journalctl -u vllm-blackwell.service -f
+sudo systemctl restart vllm-blackwell.service
+sudo systemctl stop vllm-blackwell.service
 ```
 
 ## Observed Operating Guidance
