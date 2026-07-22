@@ -5,9 +5,28 @@ issues, pull requests, and closeout comments.
 
 ## 2026-07-22 - P119 Blackwell vLLM concurrency profile — closeout
 
-## 2026-07-21 - P115 activation and rescope
+- Completed P119 through PR #720 with the sanitized Blackwell vLLM playbook,
+  bounded-concurrency operating guidance, endpoint compatibility notes, and
+  host-specific benchmark methodology.
+- Quality: focused P119 validation passes; broader repository baseline failures
+  remain disclosed and out of scope.
+- Protocol: no active P118 agent-profile or planning files were modified.
+- Economics: no provider usage or cost evidence was captured for this packaging
+  and validation phase.
 
->>>>>>> 0f15af0 (P115 rescope: from Codex SDK/adapter to P118 native Agent Hub)
+## 2026-07-22 - P115: artifact-inspection bridge pilot — merged (#730)
+
+- P115.1: FEMIC rebuild review selected as artifact family
+- P115.2: femic-rebuild-inspector agent profile (`.github/agents/`)
+- P115.3: 3 validation fixtures (clean, anomaly, provenance_gap) + 23 passing tests
+- P115.4: Delegated inspection via `runSubagent` with custom `femic-rebuild-inspector`
+  profile; anomaly detection 3/3, provenance gap detection 3/3
+- P115.5: Quality/protocol/economics verdicts — all PASS
+- Rescoped from Codex SDK / P114 adapter route to P118 native Agent Hub
+  (`runSubagent` with bounded Qwen3-coder profile). No SDK, no adapter, no MCP.
+- Issues #666, #722-#726 closed. PR #730 merged.
+
+## 2026-07-21 - P115 activation and rescope
 
 - P115 (Scientific Artifact-Inspection Bridge Pilot) activated after P118
   completion. Maintainer explicitly reprioritized P115 over P108/P109.
@@ -20,29 +39,6 @@ issues, pull requests, and closeout comments.
 - Branch `feature/p115-scientific-artifact-inspection` activated.
 - Parent issue #666 reactivated; child issues #722-#729 created for P115.1-P115.5.
 - Next: P115.1 task-family selection and fixture freeze.
-
-## 2026-07-21 - P118.6: Concurrency-ticket validation
-
->>>>>>> 2ca1b80 (P115 activation: reprioritized after P118 completion)
-
-- Completed P119 through PR #720 with the sanitized Blackwell vLLM playbook,
-  bounded-concurrency operating guidance, endpoint compatibility notes, and
-  host-specific benchmark methodology.
-- Quality: focused P119 validation passes; broader repository baseline failures
-  remain disclosed and out of scope.
-- Protocol: no active P118 agent-profile or planning files were modified.
-- Economics: no provider usage or cost evidence was captured for this packaging
-  and validation phase.
-
-## 2026-07-22 - P119 Blackwell vLLM concurrency profile — PR opened
-
-- Committed the sanitized playbook import as `42a4b86` and opened PR #720
-  against `main` for issue #719.
-- Recorded quality, protocol, and economics separately in the PR. Focused P119
-  checks pass; unrelated repository-wide pytest, Ruff, and mypy debt remains
-  disclosed rather than repaired in this scoped branch.
-- Left issue #719 open for review and merge approval. Active P118 agent-profile
-  files remain untouched.
 
 ## 2026-07-21 - P119 Blackwell vLLM concurrency profile — phase start
 
