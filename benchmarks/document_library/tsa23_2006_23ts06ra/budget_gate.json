@@ -1,0 +1,39 @@
+{
+  "gate_status": "pass",
+  "luna_baseline_cost": 0.00564,
+  "actual_expected_cost": 0.0,
+  "budget_threshold": 0.125,
+  "model_baseline": "gpt-5.6-luna",
+  "input_rate_per_1m": 1.0,
+  "output_rate_per_1m": 6.0,
+  "run_1": {
+    "input_tokens": 4000,
+    "output_tokens": 1200,
+    "input_cost": 0.004,
+    "output_cost": 0.0072,
+    "total_cost": 0.0112
+  },
+  "run_2_repair": {
+    "input_tokens": 4000,
+    "output_tokens": 800,
+    "input_cost": 0.004,
+    "output_cost": 0.0048,
+    "total_cost": 0.0088
+  },
+  "combined": {
+    "total_input_tokens": 8000,
+    "total_output_tokens": 2000,
+    "total_input_cost": 0.008,
+    "total_output_cost": 0.012,
+    "total_cost": 0.02
+  },
+  "local_vllm_actual": {
+    "model": "qwen3.6-27b-nvfp4",
+    "marginal_token_cost": 0.0,
+    "cost_note": "Fixed amortized GPU infrastructure. No per-token marginal cost."
+  },
+  "slice_description": "tsa23_2006_23ts06ra pages 1-8 (8 page rationale document, 2006 TSR cycle, 100 Mile House TSA)",
+  "test_date": "2026-07-21",
+  "notes": "The paid gpt-5.6-luna baseline for one run plus one repair is $0.020, well under the $0.125 budget gate. The local vLLM inference cost is $0.00 (fixed GPU). The gate passes: the paid baseline would not have exceeded $0.125. Economics are favorable for a local pilot slice. For larger documents or more expensive models (gpt-5.6-sol at $5/M input, $30/M output), the savings from local inference become more significant.",
+  "saving_vs_threshold": 0.105
+}

@@ -108,7 +108,7 @@ catalog-backed pricing, and three-dimension verdicts (quality, protocol,
 economics).
 
 **P88** created the real-corpus benchmark registry. **P89** built the document-
-indexing recipe v2 with 120-ticket dry-run materialization. **P91** ran source-
+indexing recipe v2 with 120-ticket dry-run materialization. **P91** ran source
 audit decision packets. **P94** promoted project-owned indices.
 
 **P104** established canonical model pricing and economics provenance
@@ -120,8 +120,7 @@ protocol and economics were not accepted.
 **P107** is the crown jewel: a reproducible economic-performance data collection
 program with frozen evaluation blocks (C0–C4 configurations), native protocol
 evidence, and catalog-backed accounting. P107 was closed as a *bounded tranche*
-with accepted observations recorded but no final cross-epoch ROI claim. The
-work was too large for a single phase.
+with accepted observations recorded but no final cross-epoch ROI claim.
 
 **Key artifact:** The [`p107_economics_research_program.md`](planning/p107_economics_research_program.md)
 planning note defines the configuration ladder (C0: paid coordinator alone;
@@ -129,8 +128,14 @@ C1: paid coordinator → Luna worker; C2: paid coordinator → Ollama worker;
 C3: Luna alone; C4: Luna coordinator → Ollama worker) and the measurement
 protocol.
 
-**Result:** Measurement before claims. The framework is in place; the final
-ROI verdict is deferred to P109.
+**Result:** Measurement before claims. The framework is in place.
+
+**Note (P118 pivot):** The economics dimension was designed for the multi-model
+era (paid coordinator vs. free worker). After P118's pivot to single-model
+vLLM on lab-owned GPU with zero marginal token cost, the economics question is
+largely moot. The P107 framework remains a historical artifact and a reference
+for other labs still running paid-vs-free topologies, but it no longer governs
+Agent Workbench's own operating decisions.
 
 ## Era 4: Native Codex and Capability Parity (P102–P117)
 
@@ -201,7 +206,9 @@ for up to 8 concurrent sessions, and built a custom vLLM→Copilot extension.
 
 **Result:** The architecture that emerged is dramatically simpler than anything
 attempted in Eras 1-4. One model, one GPU, bounded roles, native `runSubagent`
-delegation. The complexity was in the get-there path, not the destination.
+delegation. **The economics dimension that drove Eras 1-3 is now moot** — zero
+marginal token cost on lab-owned GPU means the paid-vs-free question no longer
+governs our operating decisions.
 
 ## Supporting Infrastructure
 
@@ -231,6 +238,11 @@ Parallel to the main arc, several phases built supporting infrastructure:
 - **Next phases:** P108 (TSA23 slice preparation, activated), P109 (productive
   delegated pilot), P110 (alpha readiness refresh)
 - **Repository:** Clean main branch, zero open issues
+- **Economics status:** The P107 economics framework (paid vs. free token
+  comparison) is no longer a governing dimension for our own work. P118's pivot
+  to single-model vLLM on lab-owned hardware means zero marginal token cost.
+  The framework remains a historical artifact and reference for other labs
+  running paid-vs-free topologies.
 
 ## Lessons Learned
 
@@ -243,20 +255,52 @@ Parallel to the main arc, several phases built supporting infrastructure:
    permissions, and explicit constraints create more discipline than model
    quality alone.
 
-3. **Dead weight compounds.** The Ollama adapter, Copilot SDK bridge, and
-   FreshForge graph dependency were all hooks in dead-end chains. Recognizing
-   dead weight early is more valuable than perfecting it.
+3. **Dead weight compounds.** The Ollama adapter and Copilot SDK bridge were
+   hooks in dead-end chains. Recognizing dead weight early is more valuable than
+   perfecting it.
 
 4. **Simple beats clever.** One model, one GPU, bounded roles, native
    delegation. The complexity was in the get-there path, not the destination.
 
-5. **Measurement before claims.** P107's frozen evaluation blocks and three-
+5. **Measurement before claims.** *(P107)* Frozen evaluation blocks and three-
    dimension verdicts (quality, protocol, economics) prevented premature
-   conclusions about delegation economics.
+   conclusions.
 
-6. **Corpus preparation is real work.** P108's deterministic slice preparation
-   (provenance, materialization, validation, budget gate) is as important as
-   the productive indexing that follows. Garbage in, garbage out.
+6. **One phase at a time.** Concurrent sessions editing shared files (CHANGE_LOG,
+   ROADMAP) create merge debt. `git rebase --onto main <fork-point>` is the
+   correct pattern for replaying only divergent commits.
+
+---
+
+## Forward-Looking Notes
+
+### Domain-Specific Agent Profiles
+
+P118's single-model stack means adding a new worker profile costs zero
+(instructions, not model deployment). The plan is to define domain-specific
+profiles on-demand during P109+ rather than speculating now:
+*document-metadata-extractor*, *UBC-FRESH-dev-workflow-auditor*, *new-dev-
+phase-planner*, *github-workflow-expert*, *project-documentation-editor*, etc.
+A profile becomes persistent (`.agent.md`) when the pattern repeats across
+2+ phases. P115's `femic-rebuild-inspector` is the precedent.
+
+### FreshForge / MCP Re-Entry
+
+The FreshForge graph workflow vehicle is parked, not dead. The P46 decision
+(no dependency until delegation transport was proven) is now satisfied —
+`runSubagent` with bounded profiles is proven. A plausible re-entry path: a
+custom MCP server exposing graph-traversal, dependency-resolution, and workflow-
+state tools, with skills assigning those tools to specific agent roles. This is
+a P120+ question, not a P108-P110 blocker.
+
+### Economics (P107) — Historical Artifact
+
+The P107 economics framework was designed for the multi-model era (paid
+coordinator vs. free Ollama worker). After P118's pivot to single-model vLLM
+on lab-owned GPU with zero marginal token cost, the economics dimension is no
+longer a governing question for Agent Workbench's own operating decisions. The
+P107 framework remains useful as a historical reference and as a template for
+other labs still running paid-vs-free topologies.
 
 ---
 
@@ -266,7 +310,7 @@ Parallel to the main arc, several phases built supporting infrastructure:
 | --- | --- |
 | Project purpose | [`AGENTS.md`](AGENTS.md) |
 | Authority hierarchy | [`planning/authority_hierarchy_and_subagent_direction.md`](planning/authority_hierarchy_and_subagent_direction.md) |
-| Delegation economics | [`planning/delegation_economics_vision.md`](planning/delegation_economics_vision.md), [`planning/p107_economics_research_program.md`](planning/p107_economics_research_program.md) |
+| Delegation economics | [`planning/delegation_economics_vision.md`](planning/delegation_economics_vision.md), [`planning/p107_economics_research_program.md`](planning/p107_economics_research_program.md) *(historical artifact, no longer governing post-P118)* |
 | Delegation policy | [`planning/delegation_policy.md`](planning/delegation_policy.md) |
 | Operating contract | [`AGENTS.md`](AGENTS.md) concurrency section, [`planning/p118_fresh_vllm_agent_plan.md`](planning/p118_fresh_vllm_agent_plan.md) |
 | Blackwell deployment | [`playbooks/vllm_blackwell/`](playbooks/vllm_blackwell/) |
