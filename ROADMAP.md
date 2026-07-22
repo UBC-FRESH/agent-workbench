@@ -116,7 +116,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
 | P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Complete (qualified) — quality validated; protocol and economics not accepted |
 | P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Complete (bounded tranche) — accepted native slices and control-layer integration recorded; no final cross-epoch ROI claim |
-| P108 Fresh TSA23 slice preparation | #737 | `feature/p108-fresh-tsa23-slice-prep` | Complete — provenance, manifest, reuse notes, and budget gate committed on branch; stale artifact repair applied |
+| P108 Fresh TSA23 slice preparation | #737 | `feature/p108-fresh-tsa23-slice-prep` | Complete (P108.1-P108.3) — provenance, manifests, raw text, and validation contracts committed |euse notes, and budget gate committed on branch; stale artifact repair applied |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
@@ -5527,8 +5527,8 @@ FEMIC will query across all document types and cycles.
 
 Tasks:
 
-- [ ] P108.1 Record source URLs, hashes, and provenance for all corpus documents.
-- [ ] P108.2 Materialize ignored raw-text slices and tracked chunk manifests for
+- [x] P108.1 Record source URLs, hashes, and provenance for all corpus documents.
+- [x] P108.2 Materialize ignored raw-text slices and tracked chunk manifests for
       each document.
 - [ ] P108.3 Reuse P89 validation and P91 audit contracts across the corpus.
 - [ ] P108.4 Reconcile P107 economics contracts — retained as historical reference
