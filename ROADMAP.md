@@ -5503,13 +5503,12 @@ provider/model and a fresh stable workload boundary.
 
 ## Phase 108: Full TSA23 Corpus Slice Preparation
 
-Parent issue: TBD
+Parent issue: [#737](https://github.com/UBC-FRESH/agent-workbench/issues/737)
 
 Branch: `feature/p108-fresh-tsa23-slice-prep`
 
-Status: in-progress — preparing the entire ~18-document TSA23 corpus across all
-TSR cycles rather than a single cycle. Tasks are child GitHub issues; subtasks
-are `[ ]` checklist items in child issue bodies.
+Status: complete — all 18 documents across 4 TSR cycles materialized with
+provenance, chunk manifests, and raw-text slices under ignored runtime paths.
 
 Goal: prepare the full TSA23 corpus (4 TSR cycles × 3 documents per cycle =
 ~12-18 documents) as bounded, public-corpus slices without live inference.
@@ -5536,26 +5535,34 @@ Tasks:
 
 ## Phase 109: 2012 Cycle Extraction And Audit (Most Recent Cycle)
 
-Parent issue: TBD
+Parent issue: [#741](https://github.com/UBC-FRESH/agent-workbench/issues/741)
 
 Branch: `feature/p109-2012-cycle-extraction`
 
-Status: planned — requires P108 corpus materialization and vLLM provider readiness.
+Status: in-progress — P109.1 extraction complete (250 records); P109.2-P109.4
+pending.
 
 Goal: produce and audit indexed records for the 2012 TSR cycle (3 documents:
 AAC Rationale + Discussion Paper + Data Package) using the P118 native Agent
 Hub with vLLM provider. The 2012 cycle is the most recent and therefore the
 primary target for initial FEMIC use.
 
+Child issues:
+
+- [x] P109.1 (#742) — Run batch extraction for all 2012 cycle chunks (closed)
+- [ ] P109.2 (#744) — Audit candidate records and promote accepted records
+- [ ] P109.3 (#745) — Require at least 90% useful yield, zero critical defects
+- [ ] P109.4 (#746) — Stop without promotion when any gate fails
+
 Tasks:
 
-- [ ] P109.1 Run delegated extractions for each of the three 2012-cycle documents
-      with at most one evidence-based repair per document.
+- [x] P109.1 Run delegated extractions for each of the three 2012-cycle documents
+      with at most one evidence-based repair per document. [#742](https://github.com/UBC-FRESH/agent-workbench/issues/742) (closed)
 - [ ] P109.2 Audit every candidate record and promote accepted records only,
-      ensuring document-type metadata (rationale/discussion/data) is preserved.
+      ensuring document-type metadata (rationale/discussion/data) is preserved. [#744](https://github.com/UBC-FRESH/agent-workbench/issues/744)
 - [ ] P109.3 Require at least 90% useful yield across the cycle, zero critical
-      source-anchor defects, and protocol acceptance.
-- [ ] P109.4 Stop without promotion or scope expansion when any gate fails.
+      source-anchor defects, and protocol acceptance. [#745](https://github.com/UBC-FRESH/agent-workbench/issues/745)
+- [ ] P109.4 Stop without promotion or scope expansion when any gate fails. [#746](https://github.com/UBC-FRESH/agent-workbench/issues/746)
 
 ## Phase 110: Remaining TSA23 Cycles (2006 + Later Review Cycles)
 
