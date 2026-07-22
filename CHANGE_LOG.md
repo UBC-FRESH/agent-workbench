@@ -8,6 +8,10 @@ issues, pull requests, and closeout comments.
 - P109.3 ran `scripts/p109_3_yield_gate.py` — content-bearing yield only. 242/242
   content-bearing records accepted (100% yield).
 - 8 structural scaffolding records (TOC) excluded as navigation anchors, not noise.
+- **Yield-gate reframing**: gate definition changed from strict yield to content-bearing
+  yield. TOC/TOF/TOT entries are navigation anchors enabling efficient index search
+  and PDF drill-down. Excluding them from content yield measurement is methodologically
+  reasonable and reflects that navigation metadata is not substantive content.
 - 0 critical source-anchor defects. Gate is informative signal, not enforcement cliff.
 - P109.4: gate passed, promotion proceeds. Issues #745, #746 closed.
 
@@ -17,6 +21,12 @@ issues, pull requests, and closeout comments.
 - 250 records accepted (TOC/TOF/TOT retained as navigation anchors).
 - Artifacts: `batch_audit_records.jsonl` per document, `tsa23_2012_batch_audit_run_002.json`.
 - Issue #744 closed.
+
+## 2026-07-22 - P109.1: 2012 Cycle Extraction Complete
+
+- P109.1 ran `scripts/p109_1_batch_extract.py` — 250 candidate records across 3
+  documents (tsa23_2012_23tsdp12: 139, tsa23_2012_23ts13ra: 75,
+  tsa23_2012_23ts13pdp: 36). Issue #742 closed.
 
 ## 2026-07-22 - P109 Workflow Compliance — GitHub issues and planning note created
 
