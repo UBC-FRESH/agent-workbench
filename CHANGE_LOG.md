@@ -3,6 +3,24 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-21 - P108: Fresh TSA23 Slice Preparation — closeout
+
+- P108.1: `provenance.json` — source URL, PDF hash from corpus_registry, license
+  class (public), origin (FEMIC/BC Ministry of Forests)
+- P108.2: `chunk_manifest.json` — 1 chunk (pages 1-8), text SHA-256 verified
+  against actual raw file `runtime/corpora/tsa23_2006_23ts06ra/pages_001_008.txt`
+  (22,129 chars, 2,601 words, token estimate 3,900)
+- P108.3: `reuse_notes.md` — P89 manifest, P91 audit schema, and P107 economics
+  contracts verified compatible; no schema changes needed
+- P108.4: `budget_gate.json` — paid gpt-5.6-luna baseline for one run plus one
+  repair is $0.020, well under the $0.125 budget gate. Gate PASSES. (Post-P118
+  note: actual vLLM marginal cost is $0.00)
+- Stale artifact repair: `provenance.json` and `chunk_manifest.json` updated to
+  match current raw text file (hash was stale from prior session generation)
+- Branch: `feature/p108-fresh-tsa23-slice-prep` (commits: 76a03df, 97baca1,
+  277335a, 1c077a0)
+- Parent issue #737; child issues #733-#736. PR pending.
+
 ## 2026-07-22 - P108 Fresh TSA23 Slice Preparation — activation
 
 - P108 activated after P107, P113, P118, and P119 gates cleared.
