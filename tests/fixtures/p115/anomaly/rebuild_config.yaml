@@ -1,0 +1,51 @@
+# Rebuild Configuration — Structural Anomaly Fixture
+
+# This config has deliberate structural anomalies:
+# 1. Region R003 in target_regions is not referenced in catalog
+# 2. random_seed is negative (violates structural invariant)
+# 3. model_version is missing the patch number
+bundle_id: p115-anomaly-002
+version: "1.0.0"
+generated: "2026-07-21T00:00:00Z"
+source_bundle: tsa23_instance_v3
+generation_method: automated_rebuild_pipeline_v2
+instance_name: test_instance_beta
+
+# Reconstruction parameters
+reconstruction:
+  target_regions:
+    - id: R001
+      name: Northern Block
+      area_ha: 1250.5
+    - id: R002
+      name: Southern Block
+      area_ha: 870.2
+      reconstruction_method: quantum_tunnel
+    - id: R003
+      name: Eastern Block
+      area_ha: -50.0
+  time_horizon: 2025-2050
+  baseline_year: 2025
+  model_version: "3.2"
+  random_seed: -17
+
+# Catalog cross-references
+catalog:
+  file: data_catalog.csv
+  entity_column: entity_id
+  status_column: status
+  reference_columns:
+    - parent_id
+
+# Evidence artifacts
+evidence:
+  report: evidence_report.txt
+  manifest: manifest.json
+
+# Quality gates
+quality:
+  checks_required:
+    - schema_compliance
+    - cross_reference_integrity
+    - structural_invariants
+  min_pass_rate: 0.95

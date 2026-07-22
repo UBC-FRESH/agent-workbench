@@ -1,0 +1,45 @@
+# Rebuild Configuration — Provenance Gap Fixture
+
+# This config has deliberate provenance gaps:
+# 1. The `generated` timestamp is missing (provenance gap)
+# 2. The `source_bundle` references a non-existent bundle
+# 3. The `generation_method` field is absent
+bundle_id: p115-provgap-003
+version: "1.0.0"
+# NOTE: 'generated' timestamp is deliberately missing
+instance_name: test_instance_gamma
+
+# Reconstruction parameters
+reconstruction:
+  target_regions:
+    - id: R001
+      name: Northern Block
+      area_ha: 1250.5
+    - id: R002
+      name: Southern Block
+      area_ha: 870.2
+  time_horizon: 2025-2050
+  baseline_year: 2025
+  model_version: "3.2.1"
+  random_seed: 42
+
+# Catalog cross-references
+catalog:
+  file: data_catalog.csv
+  entity_column: entity_id
+  status_column: status
+  reference_columns:
+    - parent_id
+
+# Evidence artifacts
+evidence:
+  report: evidence_report.txt
+  # NOTE: manifest is not present in this bundle
+
+# Quality gates
+quality:
+  checks_required:
+    - schema_compliance
+    - cross_reference_integrity
+    - structural_invariants
+  min_pass_rate: 0.95

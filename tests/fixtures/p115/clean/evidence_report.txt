@@ -1,0 +1,21 @@
+Evidence Report: P115-CLEAN-001
+================================
+Generated: 2026-07-21T00:00:00Z
+Pipeline: automated_rebuild_pipeline_v2
+Model: v3.2.1
+
+Parameters:
+  target_regions: R001, R002
+  time_horizon: 2025-2050
+  baseline_year: 2025
+  random_seed: 42
+
+Quality Gate Results:
+  schema_compliance: PASS (6/6 fields present)
+  cross_reference_integrity: PASS (3/3 catalog entries valid)
+  structural_invariants: PASS (all constraints satisfied)
+
+Anomalies: NONE
+Warnings: NONE
+
+Overall: PASS

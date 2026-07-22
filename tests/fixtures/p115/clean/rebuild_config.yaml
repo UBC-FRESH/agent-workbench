@@ -1,0 +1,44 @@
+# Rebuild Configuration — Clean Fixture
+
+# This is a well-formed FEMIC instance rebuild configuration with no anomalies.
+bundle_id: p115-clean-001
+version: "1.0.0"
+generated: "2026-07-21T00:00:00Z"
+source_bundle: tsa23_instance_v3
+generation_method: automated_rebuild_pipeline_v2
+instance_name: test_instance_alpha
+
+# Reconstruction parameters
+reconstruction:
+  target_regions:
+    - id: R001
+      name: Northern Block
+      area_ha: 1250.5
+    - id: R002
+      name: Southern Block
+      area_ha: 870.2
+  time_horizon: 2025-2050
+  baseline_year: 2025
+  model_version: "3.2.1"
+  random_seed: 42
+
+# Catalog cross-references
+catalog:
+  file: data_catalog.csv
+  entity_column: entity_id
+  status_column: status
+  reference_columns:
+    - parent_id
+
+# Evidence artifacts
+evidence:
+  report: evidence_report.txt
+  manifest: manifest.json
+
+# Quality gates
+quality:
+  checks_required:
+    - schema_compliance
+    - cross_reference_integrity
+    - structural_invariants
+  min_pass_rate: 0.95

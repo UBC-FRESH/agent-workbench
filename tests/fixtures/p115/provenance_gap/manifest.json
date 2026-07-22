@@ -1,0 +1,14 @@
+{
+  "bundle_id": "p115-provgap-003",
+  "version": "1.0.0",
+  "fixtures": {
+    "type": "provenance_gap",
+    "expected_gaps": [
+      "missing_generated_timestamp",
+      "missing_source_bundle",
+      "missing_generation_method",
+      "absent_manifest"
+    ],
+    "description": "FEMIC rebuild bundle with deliberate provenance gaps"
+  }
+}

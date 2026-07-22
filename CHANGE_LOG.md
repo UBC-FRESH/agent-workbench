@@ -5,6 +5,26 @@ issues, pull requests, and closeout comments.
 
 ## 2026-07-22 - P119 Blackwell vLLM concurrency profile — closeout
 
+## 2026-07-21 - P115 activation and rescope
+
+>>>>>>> 0f15af0 (P115 rescope: from Codex SDK/adapter to P118 native Agent Hub)
+
+- P115 (Scientific Artifact-Inspection Bridge Pilot) activated after P118
+  completion. Maintainer explicitly reprioritized P115 over P108/P109.
+- Rescoped from Codex SDK / P114 adapter / CLI-parent route to P118 native
+  Agent Hub route. Codex-specific lanes are parked.
+- P115 now uses `runSubagent` delegation with a bounded Qwen3-coder inspection
+  agent profile. No SDK, no adapter, no MCP, no custom tool grants.
+- The "grant" is profile instructions (what to read, report, refuse). The
+  "proof" is one delegated run, not a package handler.
+- Branch `feature/p115-scientific-artifact-inspection` activated.
+- Parent issue #666 reactivated; child issues #722-#729 created for P115.1-P115.5.
+- Next: P115.1 task-family selection and fixture freeze.
+
+## 2026-07-21 - P118.6: Concurrency-ticket validation
+
+>>>>>>> 2ca1b80 (P115 activation: reprioritized after P118 completion)
+
 - Completed P119 through PR #720 with the sanitized Blackwell vLLM playbook,
   bounded-concurrency operating guidance, endpoint compatibility notes, and
   host-specific benchmark methodology.
