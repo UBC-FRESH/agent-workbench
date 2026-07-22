@@ -12,9 +12,9 @@ issues, pull requests, and closeout comments.
   (22,129 chars, 2,601 words, token estimate 3,900)
 - P108.3: `reuse_notes.md` — P89 manifest, P91 audit schema, and P107 economics
   contracts verified compatible; no schema changes needed
-- P108.4: `budget_gate.json` — paid gpt-5.6-luna baseline for one run plus one
-  repair is $0.020, well under the $0.125 budget gate. Gate PASSES. (Post-P118
-  note: actual vLLM marginal cost is $0.00)
+- P108.4: `budget_gate.json` — retained as historical reference only.
+  Paid gpt-5.6-luna baseline was $0.020 vs. $0.125 threshold. Post-P118, this
+  gate is moot (zero marginal token cost on lab GPU).
 - Stale artifact repair: `provenance.json` and `chunk_manifest.json` updated to
   match current raw text file (hash was stale from prior session generation)
 - Branch: `feature/p108-fresh-tsa23-slice-prep` (commits: 76a03df, 97baca1,

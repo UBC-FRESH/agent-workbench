@@ -298,9 +298,10 @@ a P120+ question, not a P108-P110 blocker.
 The P107 economics framework was designed for the multi-model era (paid
 coordinator vs. free Ollama worker). After P118's pivot to single-model vLLM
 on lab-owned GPU with zero marginal token cost, the economics dimension is no
-longer a governing question for Agent Workbench's own operating decisions. The
-P107 framework remains useful as a historical reference and as a template for
-other labs still running paid-vs-free topologies.
+longer a governing question for Agent Workbench's own operating decisions. Budget
+gates, per-token accounting, and paid-vs-free comparisons are archival references,
+not active controls. The P107 framework remains useful as a historical template
+for other labs still running paid-vs-free topologies.
 
 ---
 
