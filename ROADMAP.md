@@ -116,7 +116,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P105 Matched public-corpus benchmark contract | #621 / PR #626 / PR #628 | `feature/p105-matched-public-corpus-contract` | Complete |
 | P106 Matched direct-vs-delegated execution | #629 | `feature/p106-matched-roi-benchmark` | Complete (qualified) — quality validated; protocol and economics not accepted |
 | P107 Economics decision and delegation policy | #644 | `feature/p107-delegation-economics-policy` | Complete (bounded tranche) — accepted native slices and control-layer integration recorded; no final cross-epoch ROI claim |
-| P108 Fresh TSA23 slice preparation | TBD | `feature/p108-fresh-tsa23-slice-prep` | Planned - P107 gated |
+| P108 Fresh TSA23 slice preparation | #737 | `feature/p108-fresh-tsa23-slice-prep` | Complete (P108.1-P108.3) — 18 documents, 63 chunks, 126 validation candidates. Provenance, manifests, raw text, and validation contracts committed |
 | P109 Productive delegated TSA23 pilot | TBD | `feature/p109-productive-tsa23-pilot` | Planned — live-run gated |
 | P110 Alpha readiness refresh and GitHub pre-release | TBD | `feature/p110-public-alpha-prerelease` | Planned — release gated |
 | P111 Native recursive Codex UI delegation | #634 / PR #639 | `feature/p111-native-recursive-ui-delegation` | Complete — merged via PR #639; parent issue #634 closed |
@@ -5501,64 +5501,104 @@ accepted Qwen 3.6 C4+ lane `$0.231600` paid Coordinator estimate. Local-worker
 usage remains separate. Further deployment work moves to P118 with one declared
 provider/model and a fresh stable workload boundary.
 
-## Phase 108: Fresh TSA23 Slice Preparation
+## Phase 108: Full TSA23 Corpus Slice Preparation
 
 Parent issue: TBD
 
 Branch: `feature/p108-fresh-tsa23-slice-prep`
 
-Status: planned - activate only after a passing P107 decision and an accepted
-P113 Worker-editability decision.
+Status: in-progress — preparing the entire ~18-document TSA23 corpus across all
+TSR cycles rather than a single cycle. Tasks are child GitHub issues; subtasks
+are `[ ]` checklist items in child issue bodies.
 
-Goal: prepare pages 1-8 of `tsa23_2006_23ts06ra` as a fresh, bounded,
-public-corpus slice without live inference.
+Goal: prepare the full TSA23 corpus (4 TSR cycles × 3 documents per cycle =
+~12-18 documents) as bounded, public-corpus slices without live inference.
+
+Corpus structure per TSR cycle:
+
+- AAC Rationale (`tsa23_<year>_23ts<year>ra`) — analysis and recommendations
+- Discussion Paper (`tsa23_<year>_23ts<year>rp`) — technical discussion
+- Data/Information Package (`tsa23_<year>_23tsdp<year>`) — supporting data
+
+The four cycles are 2006, 2012, and two additional review cycles. Each document
+type serves a different purpose: rationale provides analysis/recommendations,
+discussion provides technical context, data package provides supporting data.
+FEMIC will query across all document types and cycles.
 
 Tasks:
 
-- [ ] P108.1 Record source URL, hash, and provenance.
-- [ ] P108.2 Materialize an ignored raw-text slice and tracked chunk manifest.
-- [ ] P108.3 Reuse P89 validation, P91 audit, and P107 economics contracts.
-- [ ] P108.4 Validate a one-run/one-repair `$0.125` P109 budget gate.
+- [x] P108.1 Record source URLs, hashes, and provenance for all corpus documents.
+- [x] P108.2 Materialize ignored raw-text slices and tracked chunk manifests for
+      each document.
+- [x] P108.3 Reuse P89 validation and P91 audit contracts across the corpus.
+- [~] P108.4 Reconcile P107 economics contracts — deferred. Historical reference
+      only; budget gates are moot post-P118 (zero marginal token cost on lab GPU).
 
-## Phase 109: Productive Delegated TSA23 Pilot
+## Phase 109: 2012 Cycle Extraction And Audit (Most Recent Cycle)
 
 Parent issue: TBD
 
-Branch: `feature/p109-productive-tsa23-pilot`
+Branch: `feature/p109-2012-cycle-extraction`
 
-Status: planned — requires explicit live-run activation after P108 closeout.
+Status: planned — requires P108 corpus materialization and vLLM provider readiness.
 
-Goal: produce and audit one useful fresh-corpus result under the measured P107
-policy.
+Goal: produce and audit indexed records for the 2012 TSR cycle (3 documents:
+AAC Rationale + Discussion Paper + Data Package) using the P118 native Agent
+Hub with vLLM provider. The 2012 cycle is the most recent and therefore the
+primary target for initial FEMIC use.
 
 Tasks:
 
-- [ ] P109.1 Run one delegated extraction with at most one evidence-based repair.
-- [ ] P109.2 Audit every candidate and promote accepted records only.
-- [ ] P109.3 Require at least 90% useful yield, zero critical defects, protocol
-      acceptance, catalog-backed economics, and cost within the P107 threshold.
+- [ ] P109.1 Run delegated extractions for each of the three 2012-cycle documents
+      with at most one evidence-based repair per document.
+- [ ] P109.2 Audit every candidate record and promote accepted records only,
+      ensuring document-type metadata (rationale/discussion/data) is preserved.
+- [ ] P109.3 Require at least 90% useful yield across the cycle, zero critical
+      source-anchor defects, and protocol acceptance.
 - [ ] P109.4 Stop without promotion or scope expansion when any gate fails.
 
-## Phase 110: Alpha Readiness Refresh And GitHub Pre-Release
+## Phase 110: Remaining TSA23 Cycles (2006 + Later Review Cycles)
 
 Parent issue: TBD
 
-Branch: `feature/p110-public-alpha-prerelease`
+Branch: `feature/p110-remaining-tsa23-cycles`
 
-Status: planned — release action requires passing P107 and P109 decisions.
+Status: planned — requires passing P109 2012-cycle evidence before activation.
+
+Goal: expand the document-indexing workflow from the 2012 cycle to the remaining
+TSA23 cycles (2006 and later review cycles). Each cycle contains three documents:
+AAC Rationale, Discussion Paper, and Data/Information Package.
+
+Tasks:
+
+- [ ] P110.1 Run delegated extractions for the 2006 cycle (3 documents) using the
+      P109 recipe.
+- [ ] P110.2 Run delegated extractions for remaining review cycles (if available)
+      using the P109 recipe.
+- [ ] P110.3 Audit and promote accepted cross-cycle records into the project-owned
+      index.
+- [ ] P110.4 Evaluate corpus completeness and readiness for FEMIC integration.
+
+## Phase 111 (reserved): Alpha Readiness Refresh And GitHub Pre-Release
+
+Parent issue: TBD
+
+Branch: `feature/p111-public-alpha-prerelease`
+
+Status: planned — release action requires passing P110 cycle-expansion evidence.
 
 Goal: make one explicit release/no-go decision and, only on passing evidence,
 publish the first GitHub public-alpha pre-release.
 
 Tasks:
 
-- [ ] P110.1 Refresh stale roadmap, docs, and economics claims.
-- [ ] P110.2 Run public-safety, CLI, package, docs, and full validation gates.
-- [ ] P110.3 Produce separate quality, protocol, and economics release verdicts.
-- [ ] P110.4 If all gates pass, merge normally and publish GitHub pre-release
+- [ ] P111.1 Refresh stale roadmap, docs, and economics claims.
+- [ ] P111.2 Run public-safety, CLI, package, docs, and full validation gates.
+- [ ] P111.3 Produce separate quality, protocol, and economics release verdicts.
+- [ ] P111.4 If all gates pass, merge normally and publish GitHub pre-release
       `v0.1.0a1`; otherwise publish a no-go packet.
 
-P110 does not publish to PyPI.
+P111 does not publish to PyPI.
 
 ## Phase 111: Native Recursive Codex UI Delegation
 

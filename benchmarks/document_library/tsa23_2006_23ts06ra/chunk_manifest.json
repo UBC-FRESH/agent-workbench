@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "document_id": "tsa23_2006_23ts06ra",
+  "corpus_id": "bc_tsr_tsa23_public_1995_present",
+  "document_type": "rationale",
+  "cycle_year": 2006,
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2006/AAC_Rationale/23ts06ra.pdf",
+  "source_sha256": "e9012d3639b9cf0dd53c405fbd9e256ebb5a81b119ee214cff0dcb07e2bf269c",
+  "chunk_count": 1,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_2006_23ts06ra::pages_001_008",
+      "page_start": 1,
+      "page_end": 8,
+      "runtime_text_path": "runtime/corpora/tsa23_2006_23ts06ra/pages_001_008.txt",
+      "text_char_count": 22129,
+      "text_word_count": 2601,
+      "text_token_estimate": 3900,
+      "text_sha256": "fe9e0d8450df795ffdead2ea988bed548378f52d2b11b79d1a5b0b95135faf9c",
+      "empty_pages": []
+    }
+  ],
+  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
+  "provenance_file": "benchmarks/document_library/tsa23_2006_23ts06ra/provenance.json",
+  "generated_utc": "2026-07-21T00:00:00Z"
+}

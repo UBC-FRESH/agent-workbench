@@ -1,0 +1,13 @@
+{
+  "document_id": "tsa23_2001_23ts98dp",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2001/DPKG_FIN/23ts98dp.pdf",
+  "source_sha256": "ebb5f2ef76fefb85a794b795c502ef0674871da9bf8b391758debaf1f8414592",
+  "byte_size": 247471,
+  "document_type": "supporting_document",
+  "cycle_year": 2001,
+  "license_class": "public",
+  "origin": "FEMIC/BC Ministry of Forests",
+  "corpus_relative_path": "tsa/tsa_23/TSR_2001/DPKG_FIN/23ts98dp.pdf",
+  "provenance_notes": "Source PDF hash computed locally via SHA-256. FEMIC inventory record: cycle=TSR_2001, type=supporting_document, file=23ts98dp.pdf.",
+  "generated_utc": "2026-07-22T07:14:45Z"
+}

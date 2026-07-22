@@ -3,6 +3,50 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-22 - P108: Fresh TSA23 Slice Preparation — full corpus complete (P108.1-P108.3)
+
+- **P108.1**: 18 provenance JSONs with SHA-256 hashes, FEMIC-sourced URLs, cycle years,
+  document types across 4 TSR cycles (1995: 6 docs, 2001: 6 docs, 2006: 3 docs, 2012: 3 docs)
+- **P108.2**: 18 chunk manifests (63 total chunks, ~444 estimated pages) with global index.
+  63 raw text slices extracted under `runtime/extracts/tsa23/` (360 pages, 49 with text,
+  14 empty from scanned 1995 PDFs)
+- **P108.3**: 3 tracked validation/audit contract artifacts:
+  - `p108_3_chunk_id_enum.json`: 63 chunk IDs, 49 with text, per-chunk char count + SHA-256
+  - `p108_3_validation_input_manifest.json`: 126 validation candidates (63 chunks × 2 passes: structure + content_metadata)
+  - `p108_3_audit_sample_manifest.json`: 126 pre-registered audit samples
+  - Reuses P89, P91, P92 artifact schemas, generalized from 1 document to 18
+- P108.4: deferred — P107 economics reconciliation retained as historical reference
+- Branch: `feature/p108-fresh-tsa23-slice-prep` (commits: 73fc15b, ab54dc5, c61ee8d)
+- Parent issue #737. PR pending.
+
+## 2026-07-21 - P108: Fresh TSA23 Slice Preparation — pilot slice closeout (original scope)
+
+- P108.1: `provenance.json` — source URL, PDF hash from corpus_registry, license
+  class (public), origin (FEMIC/BC Ministry of Forests)
+- P108.2: `chunk_manifest.json` — 1 chunk (pages 1-8), text SHA-256 verified
+  against actual raw file `runtime/corpora/tsa23_2006_23ts06ra/pages_001_008.txt`
+  (22,129 chars, 2,601 words, token estimate 3,900)
+- P108.3: `reuse_notes.md` — P89 manifest, P91 audit schema, and P107 economics
+  contracts verified compatible; no schema changes needed
+- P108.4: `budget_gate.json` — retained as historical reference only.
+  Paid gpt-5.6-luna baseline was $0.020 vs. $0.125 threshold. Post-P118, this
+  gate is moot (zero marginal token cost on lab GPU).
+- Stale artifact repair: `provenance.json` and `chunk_manifest.json` updated to
+  match current raw text file (hash was stale from prior session generation)
+- Branch: `feature/p108-fresh-tsa23-slice-prep` (commits: 76a03df, 97baca1,
+  277335a, 1c077a0)
+- Parent issue #737; child issues #733-#736. PR pending.
+
+## 2026-07-22 - P108 Fresh TSA23 Slice Preparation — activation
+
+- P108 activated after P107, P113, P118, and P119 gates cleared.
+- Parent issue #737; child issues #733-#736 for P108.1-P108.4.
+- Branch `feature/p108-fresh-tsa23-slice-prep` created from main at `89ae965`.
+- Goal: prepare pages 1-8 of `tsa23_2006_23ts06ra` as a fresh, bounded,
+  public-corpus slice (provenance, raw-text materialization, validation
+  contracts, P109 budget gate) without live inference.
+- Prerequisite for P109 activation: passing P108.4 budget gate.
+
 ## 2026-07-21 - P115 and P118 tail issue cleanup
 
 - Closed remaining orphaned P115 child issues (#727, #728, #729) that were missed during P115 phase closeout. P115 completed via PR #730.

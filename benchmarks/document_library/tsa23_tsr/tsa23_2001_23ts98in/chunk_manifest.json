@@ -1,0 +1,26 @@
+{
+  "document_id": "tsa23_2001_23ts98in",
+  "source_path": "tsa/tsa_23/TSR_2001/INFO_FIN/23ts98in.pdf",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2001/INFO_FIN/23ts98in.pdf",
+  "source_sha256": "ad8e949852e4bf6fd30329884fdfe6e514cc6453ac6d1fa44892b8ce31acaca8",
+  "document_type": "supporting_document",
+  "cycle_year": 2001,
+  "byte_size": 374339,
+  "total_pages": 16,
+  "page_estimation_method": "verified with pypdf (was: 8)",
+  "chunk_count": 1,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_2001_23ts98in_c01",
+      "page_start": 1,
+      "page_end": 8,
+      "page_count": 8,
+      "estimated_words": 2800,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2001_23ts98in/chunk_01.txt",
+      "extraction_status": "extracted"
+    }
+  ],
+  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
+  "schema_version": 1,
+  "generated_utc": "2026-07-22T07:18:23.925607+00:00"
+}

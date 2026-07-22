@@ -1,0 +1,13 @@
+{
+  "document_id": "tsa23_1995_23ts95ar_addendum",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_1995/TSAR_FIN/23ts95ar_addendum.pdf",
+  "source_sha256": "a354dceaa7e70a52f6c2d696aebbda920e79e57965b76e43589312e7ff0b9efd",
+  "byte_size": 227683,
+  "document_type": "supporting_document",
+  "cycle_year": 1995,
+  "license_class": "public",
+  "origin": "FEMIC/BC Ministry of Forests",
+  "corpus_relative_path": "tsa/tsa_23/TSR_1995/TSAR_FIN/23ts95ar_addendum.pdf",
+  "provenance_notes": "Source PDF hash computed locally via SHA-256. FEMIC inventory record: cycle=TSR_1995, type=supporting_document, file=23ts95ar_addendum.pdf.",
+  "generated_utc": "2026-07-22T07:14:45Z"
+}
