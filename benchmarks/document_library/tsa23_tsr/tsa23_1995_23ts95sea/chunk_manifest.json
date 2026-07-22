@@ -1,0 +1,145 @@
+{
+  "document_id": "tsa23_1995_23ts95sea",
+  "source_path": "tsa/tsa_23/TSR_1995/SEA_FIN/23ts95sea.pdf",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_1995/SEA_FIN/23ts95sea.pdf",
+  "source_sha256": "6a5a868129bf7298f5a7fffdd272bda0260a6b6525c32c656a426bf0f8b425c6",
+  "document_type": "supporting_document",
+  "cycle_year": 1995,
+  "byte_size": 5624827,
+  "total_pages": 125,
+  "page_estimation_method": "inferred from byte_size (5624827) / BPP_supporting_document(45000)",
+  "chunk_count": 16,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c01",
+      "page_start": 1,
+      "page_end": 8,
+      "page_count": 8,
+      "estimated_words": 2800,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_01.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c02",
+      "page_start": 8,
+      "page_end": 16,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_02.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c03",
+      "page_start": 16,
+      "page_end": 24,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_03.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c04",
+      "page_start": 24,
+      "page_end": 32,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_04.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c05",
+      "page_start": 32,
+      "page_end": 40,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_05.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c06",
+      "page_start": 40,
+      "page_end": 48,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_06.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c07",
+      "page_start": 48,
+      "page_end": 56,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_07.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c08",
+      "page_start": 56,
+      "page_end": 64,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_08.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c09",
+      "page_start": 64,
+      "page_end": 72,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_09.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c10",
+      "page_start": 72,
+      "page_end": 80,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_10.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c11",
+      "page_start": 80,
+      "page_end": 88,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_11.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c12",
+      "page_start": 88,
+      "page_end": 96,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_12.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c13",
+      "page_start": 96,
+      "page_end": 104,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_13.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c14",
+      "page_start": 104,
+      "page_end": 112,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_14.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c15",
+      "page_start": 112,
+      "page_end": 120,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_15.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95sea_c16",
+      "page_start": 120,
+      "page_end": 125,
+      "page_count": 6,
+      "estimated_words": 2100,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sea/chunk_16.txt"
+    }
+  ],
+  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
+  "schema_version": 1,
+  "generated_utc": "2026-07-22T07:18:23.902790+00:00"
+}

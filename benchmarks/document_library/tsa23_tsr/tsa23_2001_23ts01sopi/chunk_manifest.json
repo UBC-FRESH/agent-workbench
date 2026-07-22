@@ -1,0 +1,25 @@
+{
+  "document_id": "tsa23_2001_23ts01sopi",
+  "source_path": "tsa/tsa_23/TSR_2001/SOPI_FIN/23ts01sopi.pdf",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2001/SOPI_FIN/23ts01sopi.pdf",
+  "source_sha256": "8bb92f06ed96d75b7bb2f999c9f6ad6eb208bb43eb7888c2e0c684ee24778df5",
+  "document_type": "supporting_document",
+  "cycle_year": 2001,
+  "byte_size": 163512,
+  "total_pages": 4,
+  "page_estimation_method": "inferred from byte_size (163512) / BPP_supporting_document(45000)",
+  "chunk_count": 1,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_2001_23ts01sopi_c01",
+      "page_start": 1,
+      "page_end": 4,
+      "page_count": 4,
+      "estimated_words": 1400,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2001_23ts01sopi/chunk_01.txt"
+    }
+  ],
+  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
+  "schema_version": 1,
+  "generated_utc": "2026-07-22T07:18:23.916644+00:00"
+}

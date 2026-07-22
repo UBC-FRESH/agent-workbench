@@ -1,0 +1,25 @@
+{
+  "document_id": "tsa23_1995_23ts94ar",
+  "source_path": "tsa/tsa_23/TSR_1995/TSAR_FIN/23ts94ar.pdf",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_1995/TSAR_FIN/23ts94ar.pdf",
+  "source_sha256": "4678cc6694056408901bd695c1f3cf4c54cfbd322d35e3ce45382527a14a1670",
+  "document_type": "supporting_document",
+  "cycle_year": 1995,
+  "byte_size": 250578,
+  "total_pages": 6,
+  "page_estimation_method": "inferred from byte_size (250578) / BPP_supporting_document(45000)",
+  "chunk_count": 1,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_1995_23ts94ar_c01",
+      "page_start": 1,
+      "page_end": 6,
+      "page_count": 6,
+      "estimated_words": 2100,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts94ar/chunk_01.txt"
+    }
+  ],
+  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
+  "schema_version": 1,
+  "generated_utc": "2026-07-22T07:18:23.892017+00:00"
+}

@@ -1,0 +1,57 @@
+{
+  "document_id": "tsa23_1995_23ts95pdp",
+  "source_path": "tsa/tsa_23/TSR_1995/PDP_FIN/23ts95pdp.pdf",
+  "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_1995/PDP_FIN/23ts95pdp.pdf",
+  "source_sha256": "f236cbbd6575372855a0e8b443bbd2a56727f15957aa2466d3c35ad4d4f9b9e1",
+  "document_type": "supporting_document",
+  "cycle_year": 1995,
+  "byte_size": 1500089,
+  "total_pages": 33,
+  "page_estimation_method": "inferred from byte_size (1500089) / BPP_supporting_document(45000)",
+  "chunk_count": 5,
+  "chunks": [
+    {
+      "chunk_id": "tsa23_1995_23ts95pdp_c01",
+      "page_start": 1,
+      "page_end": 8,
+      "page_count": 8,
+      "estimated_words": 2800,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95pdp/chunk_01.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95pdp_c02",
+      "page_start": 8,
+      "page_end": 16,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95pdp/chunk_02.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95pdp_c03",
+      "page_start": 16,
+      "page_end": 24,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95pdp/chunk_03.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95pdp_c04",
+      "page_start": 24,
+      "page_end": 32,
+      "page_count": 9,
+      "estimated_words": 3150,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95pdp/chunk_04.txt"
+    },
+    {
+      "chunk_id": "tsa23_1995_23ts95pdp_c05",
+      "page_start": 32,
+      "page_end": 33,
+      "page_count": 2,
+      "estimated_words": 700,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95pdp/chunk_05.txt"
+    }
+  ],
+  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
+  "schema_version": 1,
+  "generated_utc": "2026-07-22T07:18:23.897791+00:00"
+}
