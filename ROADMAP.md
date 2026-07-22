@@ -5531,7 +5531,7 @@ Tasks:
 - [x] P108.2 Materialize ignored raw-text slices and tracked chunk manifests for
       each document.
 - [x] P108.3 Reuse P89 validation and P91 audit contracts across the corpus.
-- [x] P108.4 Reconcile P107 economics contracts — retained as historical reference
+- [~] P108.4 Reconcile P107 economics contracts — deferred. Historical reference
       only; budget gates are moot post-P118 (zero marginal token cost on lab GPU).
 
 ## Phase 109: 2012 Cycle Extraction And Audit (Most Recent Cycle)

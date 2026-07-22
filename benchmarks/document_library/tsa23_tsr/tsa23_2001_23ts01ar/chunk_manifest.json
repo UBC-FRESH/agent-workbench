@@ -6,8 +6,8 @@
   "document_type": "supporting_document",
   "cycle_year": 2001,
   "byte_size": 918559,
-  "total_pages": 20,
-  "page_estimation_method": "inferred from byte_size (918559) / BPP_supporting_document(45000)",
+  "total_pages": 122,
+  "page_estimation_method": "verified with pypdf (was: 20)",
   "chunk_count": 3,
   "chunks": [
     {
@@ -16,7 +16,8 @@
       "page_end": 8,
       "page_count": 8,
       "estimated_words": 2800,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2001_23ts01ar/chunk_01.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2001_23ts01ar/chunk_01.txt",
+      "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2001_23ts01ar_c02",
@@ -24,7 +25,8 @@
       "page_end": 16,
       "page_count": 9,
       "estimated_words": 3150,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2001_23ts01ar/chunk_02.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2001_23ts01ar/chunk_02.txt",
+      "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2001_23ts01ar_c03",
@@ -32,7 +34,8 @@
       "page_end": 20,
       "page_count": 5,
       "estimated_words": 1750,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2001_23ts01ar/chunk_03.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2001_23ts01ar/chunk_03.txt",
+      "extraction_status": "extracted"
     }
   ],
   "raw_text_policy": "Raw chunk text is ignored under runtime/.",

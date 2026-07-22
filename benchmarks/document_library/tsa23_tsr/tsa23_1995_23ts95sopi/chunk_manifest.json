@@ -6,25 +6,27 @@
   "document_type": "supporting_document",
   "cycle_year": 1995,
   "byte_size": 411094,
-  "total_pages": 9,
-  "page_estimation_method": "inferred from byte_size (411094) / BPP_supporting_document(45000)",
+  "total_pages": 7,
+  "page_estimation_method": "verified with pypdf (was: 9)",
   "chunk_count": 2,
   "chunks": [
     {
       "chunk_id": "tsa23_1995_23ts95sopi_c01",
       "page_start": 1,
-      "page_end": 8,
-      "page_count": 8,
+      "page_end": 7,
+      "page_count": 7,
       "estimated_words": 2800,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sopi/chunk_01.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sopi/chunk_01.txt",
+      "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_1995_23ts95sopi_c02",
-      "page_start": 8,
-      "page_end": 9,
-      "page_count": 2,
+      "page_start": 7,
+      "page_end": 7,
+      "page_count": 1,
       "estimated_words": 700,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sopi/chunk_02.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_1995_23ts95sopi/chunk_02.txt",
+      "extraction_status": "extraction_failed"
     }
   ],
   "raw_text_policy": "Raw chunk text is ignored under runtime/.",

@@ -6,17 +6,18 @@
   "document_type": "discussion_paper",
   "cycle_year": 2006,
   "byte_size": 16410,
-  "total_pages": 3,
-  "page_estimation_method": "inferred from byte_size (16410) / BPP_discussion_paper(30000)",
+  "total_pages": 1,
+  "page_estimation_method": "verified with pypdf (was: 3)",
   "chunk_count": 1,
   "chunks": [
     {
       "chunk_id": "tsa23_2006_23ts06pdp_Errata_c01",
       "page_start": 1,
-      "page_end": 3,
-      "page_count": 3,
+      "page_end": 1,
+      "page_count": 1,
       "estimated_words": 1050,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp_Errata/chunk_01.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp_Errata/chunk_01.txt",
+      "extraction_status": "extracted"
     }
   ],
   "raw_text_policy": "Raw chunk text is ignored under runtime/.",

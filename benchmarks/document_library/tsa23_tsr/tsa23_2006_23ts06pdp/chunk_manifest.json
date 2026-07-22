@@ -6,8 +6,8 @@
   "document_type": "discussion_paper",
   "cycle_year": 2006,
   "byte_size": 1342958,
-  "total_pages": 45,
-  "page_estimation_method": "inferred from byte_size (1342958) / BPP_discussion_paper(30000)",
+  "total_pages": 26,
+  "page_estimation_method": "verified with pypdf (was: 45)",
   "chunk_count": 6,
   "chunks": [
     {
@@ -16,7 +16,8 @@
       "page_end": 8,
       "page_count": 8,
       "estimated_words": 2800,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_01.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_01.txt",
+      "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2006_23ts06pdp_c02",
@@ -24,7 +25,8 @@
       "page_end": 16,
       "page_count": 9,
       "estimated_words": 3150,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_02.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_02.txt",
+      "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2006_23ts06pdp_c03",
@@ -32,31 +34,35 @@
       "page_end": 24,
       "page_count": 9,
       "estimated_words": 3150,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_03.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_03.txt",
+      "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2006_23ts06pdp_c04",
       "page_start": 24,
-      "page_end": 32,
-      "page_count": 9,
+      "page_end": 26,
+      "page_count": 3,
       "estimated_words": 3150,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_04.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_04.txt",
+      "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2006_23ts06pdp_c05",
-      "page_start": 32,
-      "page_end": 40,
-      "page_count": 9,
+      "page_start": 26,
+      "page_end": 26,
+      "page_count": 1,
       "estimated_words": 3150,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_05.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_05.txt",
+      "extraction_status": "extraction_failed"
     },
     {
       "chunk_id": "tsa23_2006_23ts06pdp_c06",
-      "page_start": 40,
-      "page_end": 45,
-      "page_count": 6,
+      "page_start": 26,
+      "page_end": 26,
+      "page_count": 1,
       "estimated_words": 2100,
-      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_06.txt"
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2006_23ts06pdp/chunk_06.txt",
+      "extraction_status": "extraction_failed"
     }
   ],
   "raw_text_policy": "Raw chunk text is ignored under runtime/.",
