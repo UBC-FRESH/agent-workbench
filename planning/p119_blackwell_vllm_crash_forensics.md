@@ -136,6 +136,24 @@ endpoint can revive automatically when the GPU and driver remain healthy, while
 still preserving coredumps and logs for root-cause analysis if the failure
 becomes repeatable.
 
+## Service Hardening Follow-Up
+
+A bounded `systemd` service template was added to the P119 Blackwell playbook at
+`playbooks/vllm_blackwell/systemd/vllm-blackwell.service.example`.
+
+The intended operator posture is:
+
+- keep the high-performance vLLM profile unchanged;
+- enable CUDA exception coredumps in the launcher;
+- let `systemd` restart the service after isolated engine failures;
+- cap restart attempts so repeat kernel faults fail closed and preserve
+  evidence;
+- verify readiness with the OpenAI-compatible `/v1/models` endpoint after
+  service start or restart.
+
+This records the operational insight without tracking a host-specific unit file,
+live endpoint, credential path, raw log, or private transcript.
+
 ## Open Questions
 
 - Which backend emitted the invalid-register kernel: FlashInfer attention,

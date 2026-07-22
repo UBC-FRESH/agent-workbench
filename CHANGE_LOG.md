@@ -8,6 +8,16 @@ issues, pull requests, and closeout comments.
 - Closed remaining orphaned P115 child issues (#727, #728, #729) that were missed during P115 phase closeout. P115 completed via PR #730.
 - Repository now has zero open issues. All phase child tasks are either closed or parked by design.
 
+## 2026-07-22 - P119 Blackwell vLLM crash forensics and service hardening
+
+- Added `planning/p119_blackwell_vllm_crash_forensics.md` to preserve the
+  sanitized post-crash finding: hours of useful concurrent work followed by a
+  likely Blackwell GPU-kernel edge case on a long cached-prefix request shape.
+- Recorded the low-overhead CUDA coredump mitigation and diagnostic replay
+  sequence without tracking raw logs, endpoints, credentials, or private paths.
+- Added `playbooks/vllm_blackwell/systemd/vllm-blackwell.service.example` and
+  README guidance for bounded `systemd` restart-on-failure service packaging.
+
 ## 2026-07-22 - P119 Blackwell vLLM concurrency profile — closeout
 
 - Completed P119 through PR #720 with the sanitized Blackwell vLLM playbook,
