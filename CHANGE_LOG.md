@@ -5,6 +5,20 @@ issues, pull requests, and closeout comments.
 
 ## 2026-07-22 - P119 Blackwell vLLM concurrency profile — closeout
 
+## 2026-07-21 - P115 activation
+
+- P115 (Scientific Artifact-Inspection Bridge Pilot) activated after P118
+  completion. Maintainer explicitly reprioritized P115 over P108/P109.
+- Branch `feature/p115-scientific-artifact-inspection` activated.
+- Parent issue #666 reactivated; child issues #722-#729 created for P115.1-P115.5.
+- Goal: grant-bound, read-only inspection of one frozen public-safe FRESH
+  model-instance artifact bundle, derived from a real task family.
+- Next: P115.1 task-family selection and fixture freeze.
+
+## 2026-07-21 - P118.6: Concurrency-ticket validation
+
+>>>>>>> 2ca1b80 (P115 activation: reprioritized after P118 completion)
+
 - Completed P119 through PR #720 with the sanitized Blackwell vLLM playbook,
   bounded-concurrency operating guidance, endpoint compatibility notes, and
   host-specific benchmark methodology.

@@ -6073,10 +6073,9 @@ Parent issue: #666
 
 Branch: `feature/p115-scientific-artifact-inspection`
 
-Status: deferred. Its scientific-inspection scope remains valid, but P118 is
-the explicitly selected next deployment phase. Do not activate a branch or
-child tasks until P118 has produced its deployment decision or the maintainer
-explicitly reprioritizes this pilot.
+Status: active. P118 completed, maintainer explicitly reprioritized P115.
+Branch `feature/p115-scientific-artifact-inspection` activated.
+Parent issue #666, child issues #722-#726 created.
 
 Goal: build the first useful scientific-workbench expansion on the accepted
 bridge: grant-bound, read-only inspection of one frozen, public-safe FRESH
@@ -6090,15 +6089,15 @@ economics claims.
 Tasks:
 
 - [ ] P115.1 Freeze a real task family, public-safe artifact bundle, expected
-      evidence, verifier, and capability delta.
+      evidence, verifier, and capability delta. (#722)
 - [ ] P115.2 Specify the read-only inspection grant, schema, provenance,
-      containment, output limits, and refusal behavior.
+      containment, output limits, and refusal behavior. (#723)
 - [ ] P115.3 Implement the minimum package inspection handler(s), fixtures,
-      policy checks, and deterministic tests.
+      policy checks, and deterministic tests. (#727)
 - [ ] P115.4 Prove the frozen role-bound Worker can discover and use the
-      inspection capability in a fresh native session without fallback tools.
+      inspection capability in a fresh native session without fallback tools. (#728)
 - [ ] P115.5 Record separate quality/protocol/economics verdicts and decide
-      whether one further task-derived capability is justified.
+      whether one further task-derived capability is justified. (#729)
 
 Acceptance criteria:
 
