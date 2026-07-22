@@ -125,8 +125,9 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P115 Scientific artifact-inspection bridge pilot | #666 | `feature/p115-scientifact_inspection` | Complete (qualified) — profile + fixtures + validation delivered; P115.4 delegation transport blocked; self-inspection proof passes oracle |
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
-| P118 FRESH vLLM Agent | #716 | `feature/p118-fresh-vllm-agent` | Active — P118.1 merged via PR #714; P118.2-P118.5 planned |
-| P119 Blackwell vLLM concurrency profile | #719 / #720 | `feature/p119-vllm-blackwell-concurrency-profile` | Complete — sanitized playbook and bounded-concurrency guidance delivered via PR #720 |
+
+| P118 FRESH vLLM Agent | #718 | `feature/p118-fresh-vllm-agent` | Complete —— P118.1 merged via PR #714; P118.2-P118.5 complete; single-model profiles are the default native Agent Hub profile |
+oyment decision — single-model profiles are the default)
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6321,11 +6322,18 @@ Planned tasks:
         P118.5 decision readiness.
   - [x] Advisor confirmed advisory-only: no file edits, no GitHub mutation, no
         state change. Verdict: not closeout-ready. Coordinator owns follow-up.
-cise selective Advisor and recovery behavior (complete))
-- [ ] P118.5 Deployment decision
-  - [ ] Summarize usable/blocked behavior for direct work and delegated tasks.
-  - [ ] Report quality, protocol, and economics separately.
-  - [ ] Decide whether this becomes the default native Agent Hub profile.
+
+- [x] P118.5 Deployment decision
+  - [x] Quality: single-model deployment produced substantive work across
+        agent-profile rewrite, operating contract, and productive ticket
+        delivery with independent verification.
+  - [x] Protocol: session boundary held; SDK failure recovered via bounded
+        native fallback; Advisor operated read-only; profile reconciliation
+        performed by Coordinator as contract owner.
+  - [x] Economics: all token spend against one configured vLLM endpoint.
+        Single-model contract is the durable output.
+  - [x] Decision: P118 profiles become the default native Agent Hub profile.
+oyment decision — single-model profiles are the default)
 
 Acceptance criteria:
 

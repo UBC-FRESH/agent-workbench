@@ -62,6 +62,27 @@ issues, pull requests, and closeout comments.
   were changed.
 
 
+## 2026-07-21 - P118.5: Deployment decision
+
+- **Quality:** single-model deployment produced substantive work across:
+  P118.1 (agent-profile rewrite for 7 roles, AGENTS.md de-bloat from ~450→~70
+  lines), P118.2 (concurrency-allowed operating contract in profiles and
+  operator checklist), P118.3 (productive ticket — rewrite of stale
+  `docs/roadmap_and_release/roadmap_overview.md` with +39/-12 clean change),
+  P118.4 (SDK failure recovery via native Advisor, profile reconciliation).
+- **Protocol:** session boundary held throughout. SDK delegation failure
+  (`model.call_failure`) recovered via bounded native `runSubagent` fallback.
+  Advisor remained read-only. Profile reconciliation was Coordinator-owned
+  contract repair, not implementation substitution.
+- **Economics:** all token spend against one configured vLLM endpoint. Zero paid
+  model spans during P118.3-P118.4 runs. Opportunity cost (GPU, hosting) is
+  real but outside this phase's accounting boundary.
+- **Decision:** P118 profiles become the default native Agent Hub profile for
+  single-model deployments. Profile reconciliation committed at `236f46f`
+  resolves the final contract inconsistency flagged by the Advisor.
+
+oyment decision — single-model profiles are the default)
+
 ## 2026-07-21 - P118.4: Selective Advisor and recovery behavior
 
 - Tried SDK delegation via `scripts/sdk_delegate.cmd` — hit `model.call_failure`
