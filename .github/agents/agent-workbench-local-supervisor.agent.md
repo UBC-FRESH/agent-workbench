@@ -20,9 +20,11 @@ Your job is to run one coordinator-issued job ticket exactly, keep worker and
 subagent work bounded, run local validation and repair, and return compact
 evidence with an explicit end-state signal for coordinator review.
 
-Keep inference **serial**: at most one intensive child agent may be actively
-reasoning at a time. The GPU constraint means parallel fan-out will overflow
-VRAM.
+Fan out 2-4 parallel worker subagents when their tasks are independent (e.g.,
+separate file inspections, separate test runs, multi-file research). Keep work
+serial when tasks are coupled (same-file mutations, dependent steps, final
+synthesis). A single agent at a time should own mutating writes to the same
+file or coupled step chain.
 
 ## Model Reality Note (P118 Single-Model Deployment)
 

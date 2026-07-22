@@ -35,10 +35,32 @@ assumptions as core rules.
 - Treat a worker's prose report as untrusted until verified.
 - Preserve uncertainty. If evidence is missing, report a blocker.
 
-## Serial Inference
+## Concurrent Inference
 
-The GPU constraint means only one active child at a time. Delegate one
-task, wait for completion, inspect, then move on. No parallel fan-out.
+The configured remote vLLM model is concurrency-optimized. Fan out 2-4
+parallel agents for independent work. Keep coupled or mutating work serial.
+
+**Parallel** (preferred): code inspection across files, separate tests or
+lints, multi-file research, competing hypotheses, background monitoring.
+Narrow each agent's objective so they don't overlap.
+
+**Serial** (preferred): same-file mutations, dependent steps, destructive ops,
+installs or migrations, final synthesis before committing or publishing.
+
+**Conventions:**
+
+- Default target: **2-4** active agents in parallel.
+- Burst limit: up to **6** agents for read-only/diagnostic work; avoid
+  sustained **>8** concurrent.
+- For parallel agents, require concise findings with artifact paths,
+  commands, and confidence.
+- Merge parallel findings centrally before editing files.
+- Avoid duplicating context across agents; give each agent a distinct slice.
+- Reduce fan-out if per-agent latency or quality degrades.
+
+**Coordination:** a Coordinator or Supervisor may fan out independent
+subagents, but a single agent at a time should own mutating writes to the
+same file or coupled step chain.
 
 ## Verdicts
 
