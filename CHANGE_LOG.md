@@ -3,6 +3,11 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-21 - P115 and P118 tail issue cleanup
+
+- Closed remaining orphaned P115 child issues (#727, #728, #729) that were missed during P115 phase closeout. P115 completed via PR #730.
+- Repository now has zero open issues. All phase child tasks are either closed or parked by design.
+
 ## 2026-07-22 - P119 Blackwell vLLM concurrency profile — closeout
 
 - Completed P119 through PR #720 with the sanitized Blackwell vLLM playbook,
