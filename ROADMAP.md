@@ -5501,28 +5501,29 @@ accepted Qwen 3.6 C4+ lane `$0.231600` paid Coordinator estimate. Local-worker
 usage remains separate. Further deployment work moves to P118 with one declared
 provider/model and a fresh stable workload boundary.
 
-## Phase 108: Fresh TSA23 Slice Preparation
+## Phase 108: TSA23 2006 Cycle Slice Preparation
 
 Parent issue: TBD
 
 Branch: `feature/p108-fresh-tsa23-slice-prep`
 
-Status: planned - activate only after a passing P107 decision and an accepted
-P113 Worker-editability decision.
+Status: in-progress — piloting the full 2006 TSR cycle (3 documents) rather than
+a single document. Tasks are child GitHub issues; subtasks are `[ ]` checklist
+items in child issue bodies.
 
-Goal: prepare pages 1-8 of `tsa23_2006_23ts06ra` as a fresh, bounded,
-public-corpus slice without live inference.
+Goal: prepare the full 2006 TSR cycle (AAC Rationale `tsa23_2006_23ts06ra`,
+Discussion Paper, and Data Package) as a bounded, public-corpus slice without
+live inference. This replaces the original single-document pilot scope.
 
 Tasks:
 
-- [ ] P108.1 Record source URL, hash, and provenance.
-- [ ] P108.2 Materialize an ignored raw-text slice and tracked chunk manifest.
-- [ ] P108.3 Reuse P89 validation and P91 audit contracts.
-- [ ] P108.4 (optional) Reconcile P107 economics contracts — retained as
-      historical reference only; budget gates are moot post-P118 (zero marginal
-      token cost on lab GPU).
+- [ ] P108.1 Record source URLs, hashes, and provenance for all three 2006-cycle documents.
+- [ ] P108.2 Materialize ignored raw-text slices and tracked chunk manifests for each document.
+- [ ] P108.3 Reuse P89 validation and P91 audit contracts across the three-document cycle.
+- [ ] P108.4 Reconcile P107 economics contracts — retained as historical reference
+      only; budget gates are moot post-P118 (zero marginal token cost on lab GPU).
 
-## Phase 109: Productive Delegated TSA23 Pilot
+## Phase 109: Productive Delegated TSA23 2006 Cycle Pilot
 
 Parent issue: TBD
 
@@ -5530,37 +5531,62 @@ Branch: `feature/p109-productive-tsa23-pilot`
 
 Status: planned — requires explicit live-run activation after P108 closeout.
 
-Goal: produce and audit one useful fresh-corpus result under the measured P107
-policy.
+Goal: produce and audit a useful fresh-corpus result for the full 3-document
+2006 TSR cycle (AAC Rationale + Discussion Paper + Data Package), replacing the
+single-document pilot scope. Subsequent phases (P110+) cover remaining cycles.
 
 Tasks:
 
-- [ ] P109.1 Run one delegated extraction with at most one evidence-based repair.
+- [ ] P109.1 Run one delegated extraction across the 2006 cycle with at most one evidence-based repair per document.
 - [ ] P109.2 Audit every candidate and promote accepted records only.
 - [ ] P109.3 Require at least 90% useful yield, zero critical defects, protocol
-      acceptance, catalog-backed economics, and cost within the P107 threshold.
+      acceptance, and cost within the P107 threshold.
 - [ ] P109.4 Stop without promotion or scope expansion when any gate fails.
 
-## Phase 110: Alpha Readiness Refresh And GitHub Pre-Release
+## Phase 110: Remaining TSA23 Cycle Expansion (2012 + Later Cycles)
 
 Parent issue: TBD
 
-Branch: `feature/p110-public-alpha-prerelease`
+Branch: `feature/p110-tsa23-remaining-cycles`
 
-Status: planned — release action requires passing P107 and P109 decisions.
+Status: planned — requires passing P109 cycle-pilot evidence before activation.
+
+Goal: expand the document-indexing workflow from the 2006 pilot cycle to the
+remaining TSA23 cycles. Each cycle contains three documents: AAC Rationale,
+Discussion Paper, and Data/Information Package. The 2012 cycle is the first
+target, followed by later review cycles as available.
+
+Tasks:
+
+- [ ] P110.1 Prepare the 2012 TSR cycle (AAC Rationale, Discussion Paper,
+      Data Package) using the P108 slice-preparation contract.
+- [ ] P110.2 Run delegated extractions across the 2012 cycle using the P109
+      pilot recipe.
+- [ ] P110.3 Audit and promote accepted 2012-cycle records into the project-owned
+      index.
+- [ ] P110.4 Evaluate whether to expand to later TSR cycles or pause for
+      integration/release work.
+
+## Phase 111 (reserved): Alpha Readiness Refresh And GitHub Pre-Release
+
+Parent issue: TBD
+
+Branch: `feature/p111-public-alpha-prerelease`
+
+Status: planned — release action requires passing P110 cycle-expansion evidence.
 
 Goal: make one explicit release/no-go decision and, only on passing evidence,
 publish the first GitHub public-alpha pre-release.
 
 Tasks:
 
-- [ ] P110.1 Refresh stale roadmap, docs, and economics claims.
-- [ ] P110.2 Run public-safety, CLI, package, docs, and full validation gates.
-- [ ] P110.3 Produce separate quality, protocol, and economics release verdicts.
-- [ ] P110.4 If all gates pass, merge normally and publish GitHub pre-release
+- [ ] P111.1 Refresh stale roadmap, docs, and economics claims.
+- [ ] P111.2 Run public-safety, CLI, package, docs, and full validation gates.
+- [ ] P111.3 Produce separate quality, protocol, and economics release verdicts.
+- [ ] P111.4 If all gates pass, merge normally and publish GitHub pre-release
       `v0.1.0a1`; otherwise publish a no-go packet.
 
-P110 does not publish to PyPI.
+P111 does not publish to PyPI.
 
 ## Phase 111: Native Recursive Codex UI Delegation
 
