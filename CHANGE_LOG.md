@@ -3,6 +3,16 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-22 - P119 Blackwell vLLM concurrency profile — PR opened
+
+- Committed the sanitized playbook import as `42a4b86` and opened PR #720
+  against `main` for issue #719.
+- Recorded quality, protocol, and economics separately in the PR. Focused P119
+  checks pass; unrelated repository-wide pytest, Ruff, and mypy debt remains
+  disclosed rather than repaired in this scoped branch.
+- Left issue #719 open for review and merge approval. Active P118 agent-profile
+  files remain untouched.
+
 ## 2026-07-21 - P119 Blackwell vLLM concurrency profile — phase start
 
 - Created parent issue #719 and branch

@@ -126,7 +126,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
 | P118 FRESH vLLM Agent | #716 | `feature/p118-fresh-vllm-agent` | Active — P118.1 merged via PR #714; P118.2-P118.5 planned |
-| P119 Blackwell vLLM concurrency profile | #719 | `feature/p119-vllm-blackwell-concurrency-profile` | Active — sanitized local lab packaging and bounded-concurrency operating guidance |
+| P119 Blackwell vLLM concurrency profile | #719 / #720 | `feature/p119-vllm-blackwell-concurrency-profile` | Active — sanitized playbook and bounded-concurrency guidance under review in PR #720 |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6265,7 +6265,7 @@ Parent issue: #716
 
 Branch: `feature/p118-fresh-vllm-agent`
 
-Status: active
+Status: active — implementation under review in PR #720
 
 Goal: establish a usable native VS Code Copilot Agent Hub deployment in which
 one configured remote vLLM coding model serves the Coordinator, Supervisor,
