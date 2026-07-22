@@ -63,4 +63,8 @@ uses the same token-rate model and $0.125 threshold from P107.
 
 All three existing contracts (P89, P91, P107) can accommodate the new document without
 schema modification. The document just needs new entries meeting the same schema patterns.
-No changes to theregistry, P89 manifest, P91 schema, or P107 contracts are required.
+No changes to the registry, P89 manifest, P91 schema, or P107 contracts are required.
+
+**Note:** The manifest is currently single-chunk for P108's scope. P109 or later may
+refine chunk granularity. The raw text slice remains under `runtime/` (ignored);
+the tracked `chunk_manifest.json` references it via `runtime_text_path`.
