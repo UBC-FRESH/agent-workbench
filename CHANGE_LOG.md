@@ -62,6 +62,24 @@ issues, pull requests, and closeout comments.
   were changed.
 
 
+## 2026-07-21 - P118.4: Selective Advisor and recovery behavior
+
+- Tried SDK delegation via `scripts/sdk_delegate.cmd` — hit `model.call_failure`
+  (22 events, blocked as `sdk-event-error`).
+- Recovered via native Agent Hub `runSubagent` to the `agent-workbench-advisor`
+  profile, exercising the real ambiguity scenario the plan described.
+- Advisor reviewed P118 pre-closeout readiness and flagged 6 findings:
+  contract inconsistency between profiles (serial-only) and AGENTS.md
+  (concurrency-allowed), P118.2 describing a superseded contract, P118.3 run
+  under serial-only with concurrency untested, P118.4 meta-review need,
+  P118.5 premature without concurrency evidence, and ROADMAP issue attribution
+  drift (#716 vs #718).
+- Verdict: **not closeout-ready**. Coordinator owns follow-up decision.
+- Artifacts: ignored runtime files
+  `runtime/agent_jobs/p118_4_advisor_review_{ticket,result}.md`.
+
+cise selective Advisor and recovery behavior (complete))
+
 ## 2026-07-21 - P118.3: Productive bounded ticket
 
 - Selected an ordinary bounded task: update the severely stale

@@ -6310,12 +6310,18 @@ Planned tasks:
   - [x] Select one ordinary repository task with objective acceptance.
   - [x] Run Coordinator-to-Worker delivery under the serial contract.
   - [x] Independently inspect the diff and validation result.
- complete in ROADMAP and CHANGE_LOG)
-- [ ] P118.4 Selective Advisor and recovery behavior
-  - [ ] Exercise a real ambiguity or failed recovery only if one naturally
-        occurs.
-  - [ ] Confirm Advisor remains advisory and Coordinator owns the follow-up.
-  - [ ] Confirm P116 cue delivery only when live evidence makes it useful.
+
+- [x] P118.4 Selective Advisor and recovery behavior
+  - [x] SDK delegation hit model.call_failure; recovered via native Agent Hub
+        `runSubagent` to the Advisor profile — this IS the real ambiguity
+        scenario the plan described.
+  - [x] Advisor reviewed P118 closeout readiness and flagged contract
+        inconsistency between profiles (serial) and AGENTS.md (concurrency),
+        superseded P118.2 contract, untested concurrency path, and premature
+        P118.5 decision readiness.
+  - [x] Advisor confirmed advisory-only: no file edits, no GitHub mutation, no
+        state change. Verdict: not closeout-ready. Coordinator owns follow-up.
+cise selective Advisor and recovery behavior (complete))
 - [ ] P118.5 Deployment decision
   - [ ] Summarize usable/blocked behavior for direct work and delegated tasks.
   - [ ] Report quality, protocol, and economics separately.
