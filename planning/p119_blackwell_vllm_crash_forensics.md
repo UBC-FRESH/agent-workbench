@@ -146,6 +146,8 @@ The intended operator posture is:
 - keep the high-performance vLLM profile unchanged;
 - enable CUDA exception coredumps in the launcher;
 - let `systemd` restart the service after isolated engine failures;
+- let a progress watchdog restart the service when EngineCore is alive but
+  running requests stop advancing token counters while GPU SM remains high;
 - cap restart attempts so repeat kernel faults fail closed and preserve
   evidence;
 - verify readiness with the OpenAI-compatible `/v1/models` endpoint after
@@ -153,6 +155,21 @@ The intended operator posture is:
 
 This records the operational insight without tracking a host-specific unit file,
 live endpoint, credential path, raw log, or private transcript.
+
+## Alive-But-Wedged Follow-Up
+
+A later sequential extraction run produced a different failure mode from the
+Xid crash. The process stayed alive, `/health` and `/v1/models` still responded,
+and no NVIDIA Xid appeared, but vLLM metrics showed two running requests with
+no waiting requests while prompt, generation, and accepted speculative token
+counters stopped advancing. GPU SM stayed pinned at 100 percent with no useful
+token progress. Restarting `vllm-blackwell.service` cleared the stuck requests
+and restored the endpoint.
+
+That observation motivates `scripts/watchdog-vllm-progress.py` and
+`systemd/vllm-blackwell-watchdog.service.example`. The watchdog detects the
+specific alive-but-wedged state by combining service health, running request
+count, frozen token counters, and high GPU utilization before restarting.
 
 ## Open Questions
 

@@ -17,6 +17,10 @@ issues, pull requests, and closeout comments.
   sequence without tracking raw logs, endpoints, credentials, or private paths.
 - Added `playbooks/vllm_blackwell/systemd/vllm-blackwell.service.example` and
   README guidance for bounded `systemd` restart-on-failure service packaging.
+- Added `scripts/watchdog-vllm-progress.py` and
+  `systemd/vllm-blackwell-watchdog.service.example` to detect and recover from
+  alive-but-wedged EngineCore states where health checks pass but token
+  counters stop advancing while GPU SM remains high.
 
 ## 2026-07-22 - P119 Blackwell vLLM concurrency profile — closeout
 
