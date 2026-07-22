@@ -126,6 +126,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 | P116 Event-driven supervision control plane | #669 / #710 | `feature/p116-event-driven-supervision-control-plane` | Complete — bounded native in-session control layer; no daemon or P107 economics claim |
 | P117 Run-scoped supervision daemon | #686 | `feature/p117-run-scoped-supervision-daemon` | Complete — bounded run-scoped proof only; no unattended runtime claim |
 | P118 FRESH vLLM Agent | #716 | `feature/p118-fresh-vllm-agent` | Active — P118.1 merged via PR #714; P118.2-P118.5 planned |
+| P119 Blackwell vLLM concurrency profile | #719 | `feature/p119-vllm-blackwell-concurrency-profile` | Active — sanitized local lab packaging and bounded-concurrency operating guidance |
 
 ## Phase 0: Governance And Workflow Scaffold
 
@@ -6321,3 +6322,63 @@ Acceptance criteria:
 - Quality, protocol, and economics are reported independently.
 
 See `planning/p118_fresh_vllm_agent_plan.md`.
+
+## Phase 119: Blackwell vLLM Concurrency Profile
+
+Parent issue: #719
+
+Branch: `feature/p119-vllm-blackwell-concurrency-profile`
+
+Status: active
+
+Goal: promote the reusable, public-safe parts of the local Blackwell vLLM lab
+into Agent Workbench as a packaged deployment playbook for concurrency-capable
+VS Code Copilot custom-agent workflows.
+
+P119 is a packaging and operating-contract phase. It records the observed
+FlashInfer/FP8-KV/MTP deployment shape, imports sanitized helper scripts and
+profiles, and defines bounded concurrency guidance for independent agent work.
+It does not publish live endpoint URLs, credentials, raw logs, Cloudflare
+configuration, or model/cache artifacts.
+
+Planned tasks:
+
+- [x] P119.1 Sanitized vLLM playbook import
+  - [x] Add public-safe launch profiles for stable rollback and FlashInfer
+        Copilot-compatible multi-agent operation.
+  - [x] Add launch, benchmark, readiness, token, and watcher helper scripts
+        without local secrets or raw logs.
+  - [x] Document cache/storage assumptions and public-safety boundaries.
+- [x] P119.2 Bounded concurrency operating guidance
+  - [x] Record normal and burst fan-out guidance for independent read,
+        diagnostic, and planning tasks.
+  - [x] Preserve central Coordinator ownership for edits, final synthesis,
+        service restarts, destructive commands, and conflict resolution.
+  - [x] Reconcile with any active P118 role-profile edits without overwriting
+        parallel-session work.
+- [x] P119.3 Endpoint compatibility and benchmark evidence
+  - [x] Document OpenAI Chat Completions / VS Code custom endpoint response
+        shape requirements.
+  - [x] Preserve local benchmark methodology for single-stream and concurrent
+        long-context smoke tests.
+  - [x] Record observed capacity as host-specific evidence, not a universal
+        model leaderboard claim.
+- [x] P119.4 Closeout and handoff
+  - [x] Run public-safety checks for secrets, endpoint URLs, logs, and raw
+        transcripts.
+  - [x] Run Markdown and script sanity checks.
+  - [x] Prepare closeout notes for issue #719 and any follow-on P118/P119
+        reconciliation.
+
+Acceptance criteria:
+
+- `playbooks/vllm_blackwell/` contains only sanitized templates, profiles, and
+  helper scripts.
+- `ROADMAP.md`, `CHANGE_LOG.md`, planning notes, and issue #719 agree on scope.
+- Bounded concurrency guidance is recorded without claiming unlimited fan-out.
+- Live provider details, credentials, raw logs, model blobs, and private paths
+  are absent from tracked content.
+- P118 agent-profile language changes are either reconciled intentionally or
+  left to the active P118 session rather than overwritten here.
+
+See `planning/p119_blackwell_vllm_concurrency_profile.md`.

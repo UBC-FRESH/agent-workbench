@@ -3,6 +3,27 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-21 - P119 Blackwell vLLM concurrency profile — phase start
+
+- Created parent issue #719 and branch
+  `feature/p119-vllm-blackwell-concurrency-profile` for packaging the sanitized
+  Blackwell vLLM lab as an Agent Workbench deployment playbook.
+- Added `playbooks/vllm_blackwell/` with public-safe launch profiles, helper
+  scripts, benchmark helpers, and an operator README. The import excludes live
+  endpoint URLs, credentials, raw logs, model blobs, caches, `.env` files, and
+  private transcripts.
+- Added `planning/p119_blackwell_vllm_concurrency_profile.md` and a P119
+  roadmap section. P119 records the FlashInfer/FP8-KV/MTP concurrency operating
+  envelope and intentionally avoids overwriting active P118 agent-profile edits
+  being handled in a separate session.
+- Validated the sanitized import with shell parsing, Python compilation, CLI
+  smoke checks, mocked OpenAI-compatible streaming responses, launch-profile
+  dry runs, public-safety scans, whitespace checks, and focused Ruff checks. A
+  clean-environment full-suite run produced 725 passes, 1 skip, and 21
+  unrelated existing failures; repository-wide Ruff and mypy checks also retain
+  pre-existing debt outside P119. No P118-owned agent-profile or planning files
+  were changed.
+
 ## 2026-07-21 - P118.1: Provider and role-profile contract — closeout
 
 - P118.1 merged via PR #714; parent issue TBD (table row updated).
