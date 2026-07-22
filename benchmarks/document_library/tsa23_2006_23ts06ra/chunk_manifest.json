@@ -13,10 +13,10 @@
       "page_start": 1,
       "page_end": 8,
       "runtime_text_path": "runtime/corpora/tsa23_2006_23ts06ra/pages_001_008.txt",
-      "text_char_count": 22414,
+      "text_char_count": 22129,
       "text_word_count": 2601,
-      "text_token_estimate": 4000,
-      "text_sha256": "34d35499af6ee05e9641c29363332ad0f8e76e58770a3291a7e6e0e50d57071e",
+      "text_token_estimate": 3900,
+      "text_sha256": "fe9e0d8450df795ffdead2ea988bed548378f52d2b11b79d1a5b0b95135faf9c",
       "empty_pages": []
     }
   ],
