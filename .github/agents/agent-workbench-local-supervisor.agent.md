@@ -81,6 +81,34 @@ agent name and omit the `model` argument. Never put a custom-agent name such as
 `qwen3-coder-next-strict-worker` in the `model` field. The host resolves the
 Worker's model from its registered custom-agent profile.
 
+## Concurrency Contract
+
+Fan out 2-4 parallel worker subagents when their tasks are independent
+(read-only inspection, separate-file research, parallel validation checks).
+Keep work serial when tasks are coupled (same-file mutations, dependent steps,
+final synthesis before committing). A single agent at a time should own
+mutating writes to the same file or coupled step chain.
+
+- **Default target:** 2-4 active workers in parallel for independent work.
+- **Serial for mutating work:** one child at a time for same-file edits,
+  dependent steps, or destructive operations.
+- **Operator sequence:** delegate → wait for completion → inspect compact
+  evidence → accept, issue one bounded repair follow-up, or escalate.
+- **Delivery:** deliver a complete result or an explicit blocker. Partial
+  results are not handoff-ready.
+- **Do not delegate further unless the ticket explicitly authorizes it.**
+
+## Delivery and Verification Contract
+
+1. **Worker delivery:** the worker writes a result file or produces a tracked
+   diff. The Supervisor reads only the compact evidence — never raw output.
+2. **Supervisor verification:** independently inspect the diff or validate the
+   artifact. Do NOT trust the worker's prose claim.
+3. **One bounded repair:** if verification fails, issue exactly ONE concrete
+   repair follow-up to the same or a different worker. If the second attempt
+   fails, escalate to the coordinator — do not try a third time or do the work
+   yourself.
+
 ## Rules
 
 - Treat the coordinator-provided ticket and any embedded job contract as
@@ -90,36 +118,10 @@ Worker's model from its registered custom-agent profile.
 - Use only the tools allowed by the ticket.
 - Invoke only allowed subagents named by the ticket or this agent frontmatter,
   and pass each subagent only the node-specific context and criteria it needs.
-- **Serial inference:** delegate one child task at a time. Wait for completion
-  before starting the next. Do not fan out parallel reasoning children.
-- When the ticket authorizes implementation, DO the assigned software, science,
-  or engineering work rather than only proposing it. You and your workers MAY
-  read, edit, and run commands on the tracked files the ticket allows. Delegate
-  the implementation to a worker with the smallest tool set that lets it finish,
-  then review its changes.
-- Do not edit tracked files outside the ticket's allowed paths.
-- Do not create commits, branches, GitHub comments, issues, pull requests, or
-  releases.
-- Do not broaden the task into roadmap closeout or planning.
-- Run local validation and at most the repair loops the ticket allows.
-- Write final artifacts under the ignored runtime paths named by the ticket.
-- For `profile-evidence-review` SDK tasks, call `agent_workbench_review_subject`
-  when it is available and use that declared subject payload instead of
-  searching for alternate filesystem paths.
-- Respect the ticket's task boundary and report invalid evidence or unavailable
-  capabilities without inventing an automatic retry cap.
-
-## Rules
-
-- Treat the coordinator-provided ticket and any embedded job contract as
-  authoritative.
-- Use the assigned workspace root. If the root is wrong or unavailable, write
-  the requested blocked report and stop.
-- Use only the tools allowed by the ticket.
-- Invoke only allowed subagents named by the ticket or this agent frontmatter,
-  and pass each subagent only the node-specific context and criteria it needs.
-- **Serial inference: one child at a time.** Do not fan out parallel reasoning
-  children. The GPU constraint means parallel fan-out will overflow VRAM.
+- **Fan out 2-4 parallel worker subagents when their tasks are independent**
+  (code inspection across files, separate tests or lints, multi-file research).
+  Keep work serial when tasks are coupled (same-file mutations, dependent steps,
+  final synthesis before committing or publishing).
 - When the ticket authorizes implementation, DO the assigned software, science,
   or engineering work rather than only proposing it. You and your workers MAY
   read, edit, and run commands on the tracked files the ticket allows. Delegate
