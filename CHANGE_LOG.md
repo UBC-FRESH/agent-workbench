@@ -3,6 +3,16 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-07-22 - P108 Fresh TSA23 Slice Preparation — activation
+
+- P108 activated after P107, P113, P118, and P119 gates cleared.
+- Parent issue #737; child issues #733-#736 for P108.1-P108.4.
+- Branch `feature/p108-fresh-tsa23-slice-prep` created from main at `89ae965`.
+- Goal: prepare pages 1-8 of `tsa23_2006_23ts06ra` as a fresh, bounded,
+  public-corpus slice (provenance, raw-text materialization, validation
+  contracts, P109 budget gate) without live inference.
+- Prerequisite for P109 activation: passing P108.4 budget gate.
+
 ## 2026-07-21 - P115 and P118 tail issue cleanup
 
 - Closed remaining orphaned P115 child issues (#727, #728, #729) that were missed during P115 phase closeout. P115 completed via PR #730.
