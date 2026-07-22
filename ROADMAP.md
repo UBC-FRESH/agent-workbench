@@ -5517,8 +5517,10 @@ Tasks:
 
 - [ ] P108.1 Record source URL, hash, and provenance.
 - [ ] P108.2 Materialize an ignored raw-text slice and tracked chunk manifest.
-- [ ] P108.3 Reuse P89 validation, P91 audit, and P107 economics contracts.
-- [ ] P108.4 Validate a one-run/one-repair `$0.125` P109 budget gate.
+- [ ] P108.3 Reuse P89 validation and P91 audit contracts.
+- [ ] P108.4 (optional) Reconcile P107 economics contracts — retained as
+      historical reference only; budget gates are moot post-P118 (zero marginal
+      token cost on lab GPU).
 
 ## Phase 109: Productive Delegated TSA23 Pilot
 
