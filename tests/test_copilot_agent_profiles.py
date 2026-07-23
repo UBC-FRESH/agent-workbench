@@ -532,7 +532,7 @@ def test_profile_catalog_cli_validate_writes_preview(
 
     captured = capsys.readouterr()
     assert exit_code == 0
-    assert "profiles=4 overlays=7" in captured.out
+    assert "profiles=6 overlays=7" in captured.out
     assert output.exists()
     assert "agent-workbench-result-auditor" in output.read_text(encoding="utf-8")
 

@@ -39,6 +39,12 @@ KNOWN_BUILTIN_PROFILE_TOOLS = {
     "run_commands",
     "terminal",
     "shell",
+    "vscode",
+    "execute",
+    "ms-python.python",
+    "web",
+    "browser",
+    "todo",
 }
 AGENT_WORKBENCH_PROFILE_TOOLS = {
     "agent_workbench_run_context",
@@ -66,6 +72,12 @@ STANDARD_TASK_OVERLAYS = {
 }
 STANDARD_AGENT_PROFILE_DIR = Path(".github/agents")
 STANDARD_AGENT_PROFILES = {
+    "agent-workbench-coordinator": (
+        STANDARD_AGENT_PROFILE_DIR / "agent-workbench-coordinator.agent.md"
+    ),
+    "agent-workbench-advisor": (
+        STANDARD_AGENT_PROFILE_DIR / "agent-workbench-advisor.agent.md"
+    ),
     "agent-workbench-local-supervisor": (
         STANDARD_AGENT_PROFILE_DIR / "agent-workbench-local-supervisor.agent.md"
     ),
@@ -199,6 +211,14 @@ def resolve_agent_profiles(
         errors.append(
             f"sdk.agent_profiles.selected does not match a loaded agent: {selected_agent}"
         )
+
+    model_override = block.get("model_override")
+    if model_override is not None and not isinstance(model_override, str):
+        errors.append("sdk.agent_profiles.model_override must be a string")
+    elif isinstance(model_override, str) and model_override.strip():
+        custom_agents = [
+            {**agent, "model": model_override.strip()} for agent in custom_agents
+        ]
 
     task_overlay = load_task_overlay(block, base=base, repo_root=root, errors=errors)
     custom_agents = apply_task_overlay(
