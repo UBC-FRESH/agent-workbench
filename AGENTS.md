@@ -24,16 +24,57 @@ assumptions as core rules.
 
 ## Working Principles
 
-- Read `AGENTS.md`, `ROADMAP.md`, and `CHANGE_LOG.md` before making
-  project-shaping changes.
-- Keep changes scoped to the active roadmap phase and issue.
-- Treat raw transcripts, credentials, and private paths as local working
-  material. Promote only sanitized, public-safe findings.
-- Prefer file-based handoffs and result files.
-- Require evidence for completion claims: diffs, command output, issue URLs,
-  or inspected artifacts.
-- Treat a worker's prose report as untrusted until verified.
-- Preserve uncertainty. If evidence is missing, report a blocker.
+**Evidence over trust.** Treat a worker's or supervisor's prose report as
+untrusted until you verify the underlying repo, filesystem, or GitHub state.
+Require evidence for completion claims: diffs, command output, issue URLs,
+or inspected artifacts. Never trust a "done" without the proof.
+
+**One termination artifact.** The Coordinator produces the final gate and
+writes (or synthesizes) the result that gets committed — workers produce
+intermediate output, but the Coordinator owns the deliverable. One bounded
+repair per worker task: if it fails, issue exactly one concrete repair
+follow-up naming the specific defect and exact files/lines to fix. If the
+second attempt fails, escalate to the developer — do not try a third time or
+do the work yourself.
+
+**Signal over enforcement.** Quantitative metrics (yield gates, budget
+caps, quality thresholds) are informative signals, not enforcement cliffs.
+The thin Coordinator lays them down as tripwires — not rails that the
+workflow must bend to. Gating is a mirror, not a hammer.
+
+**Single model, bounded authority.** All roles (Coordinator, Supervisor,
+Worker, Advisor) share one configured remote vLLM model. Role separation
+comes from bounded instructions and authority, not from pretending the
+underlying model is deterministic. Concurrency is free; serialization is
+policy.
+
+**Gates that measure the right thing.** Design metrics to isolate what you
+care about. A yield gate on content-bearing records measures extraction
+quality. A yield gate on all records (including structural scaffolding like
+TOC entries) measures document structure noise. The gate should measure the
+thing you're gating.
+
+**Workflow as scaffold, not retrofit.** Build the scaffolding (issues,
+branch, planning note) before the work, not after. The workflow exists so
+the scaffolding is the foundation, not the fire escape you retrofit when
+you realize you're in the air.
+
+**Structured handoff, not memory trace.** Issue bodies, planning notes, and
+CHANGE_LOG entries are the durable handoff surface. A new person (or agent)
+should pick up the thread from the artifacts, not from a conversation
+memory trace.
+
+**Preserve uncertainty.** If evidence is missing, report a blocker. A
+workflow result is only as strong as its declared inputs, and verification
+is only as strong as the evidence it inspects.
+
+**Sanitized output.** Treat raw transcripts, credentials, and private paths
+as local working material. Promote only sanitized, public-safe findings to
+the tracked repository.
+
+**Scope discipline.** Keep changes scoped to the active roadmap phase and
+issue. Do not drift into adjacent work without explicit maintainer
+approval.
 
 ## Concurrent Inference
 
