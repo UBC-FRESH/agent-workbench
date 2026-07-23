@@ -1,10 +1,10 @@
-# P119: SDK-Authoritative vLLM Agent-Hub Qualification
+# P120: SDK-Authoritative vLLM Agent-Hub Qualification
 
 Date: 2026-07-23
 
 Parent issue: [#755](https://github.com/UBC-FRESH/agent-workbench/issues/755)
 
-Branch: `feature/p119-sdk-authoritative-agent-hub`
+Branch: `feature/p120-sdk-authoritative-agent-hub`
 
 Status: active
 
