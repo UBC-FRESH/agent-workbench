@@ -1,35 +1,98 @@
 {
   "document_id": "tsa23_2012_23tsdp12",
-  "source_path": "tsa/tsa_23/TSR_2012/Data_Package/23tsdp12.pdf",
   "source_url": "https://www.for.gov.bc.ca/ftp/HTS/external/!publish/Timber_Supply_Review/TSA/100_Mile_House_23/TSR_2012/Data_Package/23tsdp12.pdf",
   "source_sha256": "b334d15b71824c91460ad59bc0cc1ed5a7bed7efea4dd4d22eba0279e26cfedf",
-  "document_type": "data_package",
-  "cycle_year": 2012,
-  "byte_size": 657000,
   "total_pages": 41,
-  "page_estimation_method": "verified with pypdf (was: 16)",
-  "chunk_count": 2,
+  "chunk_count": 11,
   "chunks": [
     {
       "chunk_id": "tsa23_2012_23tsdp12_c01",
       "page_start": 1,
-      "page_end": 8,
-      "page_count": 8,
-      "estimated_words": 2800,
+      "page_end": 4,
+      "page_count": 4,
       "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_01.txt",
       "extraction_status": "extracted"
     },
     {
       "chunk_id": "tsa23_2012_23tsdp12_c02",
-      "page_start": 8,
-      "page_end": 16,
-      "page_count": 9,
-      "estimated_words": 3150,
+      "page_start": 5,
+      "page_end": 8,
+      "page_count": 4,
       "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_02.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c03",
+      "page_start": 9,
+      "page_end": 12,
+      "page_count": 4,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_03.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c04",
+      "page_start": 13,
+      "page_end": 16,
+      "page_count": 4,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_04.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c05",
+      "page_start": 17,
+      "page_end": 20,
+      "page_count": 4,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_05.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c06",
+      "page_start": 21,
+      "page_end": 24,
+      "page_count": 4,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_06.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c07",
+      "page_start": 25,
+      "page_end": 28,
+      "page_count": 4,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_07.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c08",
+      "page_start": 29,
+      "page_end": 32,
+      "page_count": 4,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_08.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c09",
+      "page_start": 33,
+      "page_end": 36,
+      "page_count": 4,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_09.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c10",
+      "page_start": 37,
+      "page_end": 40,
+      "page_count": 4,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_10.txt",
+      "extraction_status": "extracted"
+    },
+    {
+      "chunk_id": "tsa23_2012_23tsdp12_c11",
+      "page_start": 41,
+      "page_end": 41,
+      "page_count": 1,
+      "raw_text_path": "runtime/extracts/tsa23/tsa23_2012_23tsdp12/chunk_11.txt",
       "extraction_status": "extracted"
     }
   ],
-  "raw_text_policy": "Raw chunk text is ignored under runtime/.",
-  "schema_version": 1,
-  "generated_utc": "2026-07-22T07:18:23.943561+00:00"
+  "schema_version": 1
 }
