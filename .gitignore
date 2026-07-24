@@ -16,6 +16,12 @@ __pycache__/
 /outputs/
 /data/private/
 
+# Generated benchmark runs, scratch material, and nested worktrees. Keep the
+# benchmark definitions and curated document library tracked.
+/benchmarks/benchmarks/
+/benchmarks/runtime/
+/benchmarks/tmp/
+
 *.log
 *.tmp
 *.bak

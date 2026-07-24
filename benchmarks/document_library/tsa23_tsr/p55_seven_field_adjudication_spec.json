@@ -1,9 +1,0 @@
-{
-  "aac_value": "list",
-  "base_case_harvest_forecast": "dict",
-  "decision_rationale": "str",
-  "document_title": "str",
-  "inventory_reference_year": "int",
-  "major_land_base_constraints": "list",
-  "major_management_assumptions": "list"
-}
