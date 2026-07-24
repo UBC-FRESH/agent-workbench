@@ -22,8 +22,8 @@ from urllib.parse import unquote
 
 
 DEFAULT_PROMPT = (
-    "Execute the worker ticket provided on stdin exactly. "
-    "Treat stdin as the authoritative ticket."
+    "Execute the attached worker ticket exactly. "
+    "Treat the attached ticket as the authoritative instruction."
 )
 
 
@@ -87,6 +87,14 @@ def parse_args() -> argparse.Namespace:
         help="Do not open --workspace-root in VS Code before launching chat.",
     )
     parser.add_argument(
+        "--fresh-window",
+        action="store_true",
+        help=(
+            "Open --workspace-root in a new VS Code window before launching chat. "
+            "Use for isolated benchmark sessions; incompatible with --skip-open-workspace."
+        ),
+    )
+    parser.add_argument(
         "--no-launch",
         action="store_true",
         help="Skip launch and only parse existing sessions.",
@@ -104,11 +112,14 @@ def appdata_workspace_storage() -> Path:
 
 
 def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
+    if args.fresh_window and args.skip_open_workspace:
+        raise RuntimeError("--fresh-window cannot be combined with --skip-open-workspace")
     code_command = resolve_code_command(args.code_command)
     workspace_root = str(Path(args.workspace_root).resolve())
     if not args.skip_open_workspace:
+        window_flag = "--new-window" if args.fresh_window else "--reuse-window"
         workspace_completed = subprocess.run(
-            [code_command, "--reuse-window", workspace_root],
+            [code_command, window_flag, workspace_root],
             text=True,
             encoding="utf-8",
             check=False,
@@ -125,19 +136,13 @@ def launch_code_chat(args: argparse.Namespace, ticket_text: str) -> None:
         "--reuse-window",
         "--mode",
         args.mode,
+        "--add-file",
+        str(Path(args.ticket).resolve()),
         args.prompt,
-        "-",
     ]
     if args.maximize:
         command.insert(3, "--maximize")
-    completed = subprocess.run(
-        command,
-        input=ticket_text,
-        text=True,
-        encoding="utf-8",
-        cwd=args.workspace_root,
-        check=False,
-    )
+    completed = subprocess.run(command, cwd=args.workspace_root, check=False)
     if completed.returncode != 0:
         raise RuntimeError(f"code chat failed with exit code {completed.returncode}")
 
@@ -196,7 +201,11 @@ def find_session_files(
                 transcript_path = path
         if session_path:
             text = session_path.read_text(encoding="utf-8", errors="replace")
-            if '"modelState":{"value":1' in text or f"{marker} done" in text:
+            if session_is_terminal(text, marker):
+                return session_path, transcript_path
+        if transcript_path:
+            text = transcript_path.read_text(encoding="utf-8", errors="replace")
+            if session_is_terminal(text, marker):
                 return session_path, transcript_path
         time.sleep(poll)
     return session_path, transcript_path
@@ -212,15 +221,47 @@ def unique(values: list[str]) -> list[str]:
     return result
 
 
+def final_marker_in_response(text: str, marker: str) -> bool:
+    """Return true only when a persisted assistant response contains *marker*.
+
+    The ticket attachment also contains the marker, so a plain substring search
+    cannot distinguish a completed worker response from an in-progress session.
+    VS Code persists assistant turn output under a JSON ``response`` field.
+    Match that field rather than the whole session blob, while accepting escaped
+    JSON characters around the response text.
+    """
+
+    escaped_marker = re.escape(marker)
+    response_pattern = r'"response"\s*:\s*"(?:\\.|[^"\\])*' + escaped_marker
+    ui_text_pattern = (
+        r'"value"\s*:\s*"(?:\\.|[^"\\])*'
+        + escaped_marker
+        + r'(?:\\.|[^"\\])*"\s*,\s*"supportThemeIcons"'
+    )
+    return (
+        re.search(response_pattern, text) is not None
+        or re.search(ui_text_pattern, text) is not None
+    )
+
+
+def session_is_terminal(text: str, marker: str) -> bool:
+    """Recognize either VS Code completion state or the ticket's final marker."""
+
+    return '"modelState":{"value":1' in text or final_marker_in_response(
+        text, marker
+    )
+
+
 def load_evidence(
     marker: str, session_path: Path | None, transcript_path: Path | None
 ) -> SessionEvidence:
     evidence = SessionEvidence(
         session_path=session_path, transcript_path=transcript_path
     )
-    if not session_path:
+    text_path = session_path or transcript_path
+    if not text_path:
         return evidence
-    text = session_path.read_text(encoding="utf-8", errors="replace")
+    text = text_path.read_text(encoding="utf-8", errors="replace")
     evidence.raw_excerpt = text[:2000]
     resolved = re.findall(r'"resolvedModel":"([^"]+)"', text)
     model_ids = re.findall(r'"modelId":"([^"]+)"', text)
@@ -231,8 +272,8 @@ def load_evidence(
     evidence.permission_levels = sorted(
         set(re.findall(r'"permissionLevel":"([^"]+)"', text))
     )
-    evidence.completed = '"modelState":{"value":1' in text or f"{marker} done" in text
-    evidence.final_marker_present = f"{marker} done" in text
+    evidence.final_marker_present = final_marker_in_response(text, marker)
+    evidence.completed = '"modelState":{"value":1' in text or evidence.final_marker_present
     evidence.terminal_commands = re.findall(r'"original":"((?:\\.|[^"])*)"', text)
     evidence.file_paths = unique(extract_file_edit_paths(text))
     evidence.tool_names = unique(

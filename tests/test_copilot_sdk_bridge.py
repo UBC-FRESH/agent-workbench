@@ -153,6 +153,8 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
             run_id="p100-bootstrap",
             timeout_seconds=45,
             tool_mode="isolated",
+            base_url=None,
+            model="qwen3.6:35b-a3b-bf16",
         )
     )
 
@@ -202,8 +204,8 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
     ]
     assert [agent["model"] for agent in resolved.custom_agents] == [
         "qwen3.6:35b-a3b-bf16",
-        "qwen3-coder:latest",
-        "qwen3-coder-next:latest",
+        "qwen3.6:35b-a3b-bf16",
+        "qwen3.6:35b-a3b-bf16",
         "qwen3.6:35b-a3b-bf16",
     ]
     adapter = LiveCopilotSdkAdapter()
@@ -257,6 +259,40 @@ def test_new_manifest_cli_workspace_mode_enables_host_tools(
     kwargs = adapter._session_kwargs(manifest)
     assert "available_tools" not in kwargs
     assert kwargs["working_directory"] == str(repo_root.resolve())
+
+
+def test_new_manifest_cli_accepts_generic_openai_overrides(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    monkeypatch.chdir(Path(__file__).parents[1])
+    ticket = tmp_path / "vllm_ticket.md"
+    ticket.write_text("Run the bounded vLLM task.\n", encoding="utf-8")
+
+    exit_code = run_copilot_sdk_new_manifest(
+        Namespace(
+            ticket=ticket,
+            profile="qwen3-coder-strict-worker",
+            run_id="vllm-tools",
+            timeout_seconds=60,
+            tool_mode="workspace",
+            base_url="https://vllm.example.test/v1",
+            model="qwen3.6-27b-nvfp4",
+        )
+    )
+
+    manifest = load_sdk_session_manifest(tmp_path / "vllm-tools_manifest.json")
+    assert exit_code == 0
+    assert manifest["sdk"]["model"] == "qwen3.6-27b-nvfp4"
+    assert manifest["sdk"]["provider_config"] == {
+        "type": "openai",
+        "base_url": "https://vllm.example.test/v1",
+        "wire_api": "completions",
+    }
+    resolved = resolve_agent_profiles(manifest, manifest_path=tmp_path / "vllm-tools_manifest.json")
+    assert resolved.ok, resolved.errors
+    assert [agent["model"] for agent in resolved.custom_agents] == [
+        "qwen3.6-27b-nvfp4"
+    ]
 
 
 def test_live_adapter_injects_provider_headers_from_local_file(

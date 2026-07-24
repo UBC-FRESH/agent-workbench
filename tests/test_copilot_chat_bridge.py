@@ -263,6 +263,117 @@ def test_if_test_path_runtime_check_is_benign() -> None:
     )
 
 
+def test_final_marker_response_overrides_stale_model_state(tmp_path: Path) -> None:
+    bridge = load_bridge_module()
+    session = tmp_path / "session.jsonl"
+    marker = "ORNITH35_S02_DONE"
+    session.write_text(
+        '{"message":{"text":"ticket marker: ORNITH35_S02_DONE"},'
+        '"modelState":{"value":0},'
+        '"metadata":{"toolCallRounds":['
+        '{"response":"\\n\\nORNITH35_S02_DONE","toolCalls":[]}'
+        ']}}',
+        encoding="utf-8",
+    )
+
+    evidence = bridge.load_evidence(marker, session, None)
+
+    assert evidence.final_marker_present is True
+    assert evidence.completed is True
+
+
+def test_ticket_marker_without_assistant_response_is_not_terminal(tmp_path: Path) -> None:
+    bridge = load_bridge_module()
+    session = tmp_path / "session.jsonl"
+    marker = "ORNITH35_S02_DONE"
+    session.write_text(
+        '{"message":{"text":"ticket marker: ORNITH35_S02_DONE"},'
+        '"modelState":{"value":0}}',
+        encoding="utf-8",
+    )
+
+    evidence = bridge.load_evidence(marker, session, None)
+
+    assert evidence.final_marker_present is False
+    assert evidence.completed is False
+
+
+def test_ui_text_final_marker_overrides_stale_model_state(tmp_path: Path) -> None:
+    bridge = load_bridge_module()
+    session = tmp_path / "session.jsonl"
+    marker = "ORNITH35_S02_DONE"
+    session.write_text(
+        '{"message":{"text":"ticket marker: ORNITH35_S02_DONE"},'
+        '"modelState":{"value":0},'
+        '"response":[{"kind":"thinking","value":"done"},'
+        '{"value":"\\n\\nORNITH35_S02_DONE",'
+        '"supportThemeIcons":false}]}',
+        encoding="utf-8",
+    )
+
+    evidence = bridge.load_evidence(marker, session, None)
+
+    assert evidence.final_marker_present is True
+    assert evidence.completed is True
+
+
+def test_transcript_final_marker_with_no_chat_session(tmp_path: Path) -> None:
+    """A final marker in a transcript with no chat-session record must be terminal."""
+    bridge = load_bridge_module()
+    transcript = tmp_path / "transcript.jsonl"
+    marker = "ORNITH35_S11_DONE"
+    transcript.write_text(
+        '{"message":{"text":"ticket marker: ORNITH35_S11_DONE"},'
+        '"modelState":{"value":0},'
+        '"response":[{"value":"\\n\\nORNITH35_S11_DONE",'
+        '"supportThemeIcons":false}]}',
+        encoding="utf-8",
+    )
+
+    evidence = bridge.load_evidence(marker, None, transcript)
+
+    assert evidence.final_marker_present is True
+    assert evidence.completed is True
+    assert evidence.transcript_path == transcript
+    assert evidence.session_path is None
+
+
+def test_ticket_attachment_marker_only_is_not_terminal(tmp_path: Path) -> None:
+    """A marker appearing only in a ticket attachment must not count as terminal."""
+    bridge = load_bridge_module()
+    session = tmp_path / "session.jsonl"
+    marker = "ORNITH35_S11_DONE"
+    session.write_text(
+        '{"message":{"text":"ticket marker: ORNITH35_S11_DONE"},'
+        '"modelState":{"value":0}}',
+        encoding="utf-8",
+    )
+
+    evidence = bridge.load_evidence(marker, session, None)
+
+    assert evidence.final_marker_present is False
+    assert evidence.completed is False
+
+
+def test_transcript_stale_model_state_with_final_marker(tmp_path: Path) -> None:
+    """A transcript with stale modelState but a final marker must still be terminal."""
+    bridge = load_bridge_module()
+    transcript = tmp_path / "transcript.jsonl"
+    marker = "ORNITH35_S11_DONE"
+    transcript.write_text(
+        '{"message":{"text":"ticket marker: ORNITH35_S11_DONE"},'
+        '"modelState":{"value":0},'
+        '"response":[{"value":"\\n\\nORNITH35_S11_DONE",'
+        '"supportThemeIcons":false}]}',
+        encoding="utf-8",
+    )
+
+    evidence = bridge.load_evidence(marker, None, transcript)
+
+    assert evidence.final_marker_present is True
+    assert evidence.completed is True
+
+
 def test_bridge_report_accepts_expected_model_match(tmp_path: Path) -> None:
     bridge = load_bridge_module()
     ticket = tmp_path / "ticket.md"

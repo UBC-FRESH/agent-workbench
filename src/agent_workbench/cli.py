@@ -393,6 +393,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     copilot_sdk_new_manifest_parser.add_argument("--run-id", required=True)
     copilot_sdk_new_manifest_parser.add_argument(
+        "--base-url",
+        default=None,
+        help=(
+            "OpenAI-compatible provider base URL. Defaults to "
+            "AGENT_WORKBENCH_OPENAI_BASE_URL, then the legacy "
+            "AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL."
+        ),
+    )
+    copilot_sdk_new_manifest_parser.add_argument(
+        "--model",
+        default=None,
+        help=(
+            "Provider model identifier override. Use the serving alias for "
+            "custom OpenAI-compatible endpoints."
+        ),
+    )
+    copilot_sdk_new_manifest_parser.add_argument(
         "--timeout-seconds",
         type=int,
         default=300,
@@ -1965,7 +1982,10 @@ def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
     output = ticket.parent / f"{args.run_id}_manifest.json"
     profile_path = STANDARD_AGENT_PROFILES[args.profile].as_posix()
     profile = load_agent_profile_document(Path.cwd() / profile_path)
-    model = str(profile.frontmatter.get("model", "")).removeprefix("ollama-models/")
+    model = (
+        getattr(args, "model", None)
+        or str(profile.frontmatter.get("model", "")).removeprefix("ollama-models/")
+    )
     profile_names = [args.profile]
     raw_subagents = profile.frontmatter.get("agents", [])
     if isinstance(raw_subagents, list):
@@ -1978,10 +1998,14 @@ def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
         STANDARD_AGENT_PROFILES[name].as_posix()
         for name in dict.fromkeys(profile_names)
     ]
-    base_url = os.environ.get("AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL", "").strip()
+    base_url = (
+        getattr(args, "base_url", None)
+        or os.environ.get("AGENT_WORKBENCH_OPENAI_BASE_URL", "").strip()
+        or os.environ.get("AGENT_WORKBENCH_OLLAMA_OPENAI_BASE_URL", "").strip()
+    )
     if not model or not base_url:
         print(
-            "error: selected profile model and Ollama base URL are required",
+            "error: selected profile model and OpenAI-compatible base URL are required",
             file=sys.stderr,
         )
         return 1
@@ -2014,6 +2038,7 @@ def run_copilot_sdk_new_manifest(args: argparse.Namespace) -> int:
             "agent_profiles": {
                 "source_paths": profile_paths,
                 "selected": args.profile,
+                "model_override": model,
                 "default_agent": {"excluded_tools": []},
                 "custom_agents_local_only": True,
                 "include_sub_agent_streaming_events": True,

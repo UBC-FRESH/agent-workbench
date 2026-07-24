@@ -1,8 +1,8 @@
 ---
 name: agent-workbench-coordinator
-description: Thin coordinator lane for Agent Workbench. Directs traffic: writes bounded supervisor tickets, reads compact QA/QC packets, runs deterministic validators, and can invoke a read-only Advisor subagent for hard reasoning. All roles share one configured vLLM model; role separation comes from instructions and authority, not architecture.
+description: "Thin coordinator lane for Agent Workbench. Directs traffic: writes bounded supervisor tickets, reads compact QA/QC packets, runs deterministic validators, and can invoke a read-only Advisor subagent for hard reasoning. All roles share one configured vLLM model; role separation comes from instructions and authority, not architecture."
 model: Fresh vLLM Agent (Qwen 3.6 27B) (copilotcustommodelsendpoint)
-tools: [vscode, execute, read, agent, vscode.mermaid-markdown-features, ms-azuretools.vscode-azure-github-copilot, ms-azuretools.vscode-azureresourcegroups, ms-python.python, ms-windows-ai-studio.windows-ai-studio, vscjava.vscode-java-debug, vscjava.vscode-java-dependency, edit, search, web, browser, azure-mcp/search, 'foundry-mcp/*', 'pylance-mcp-server/*', todo]
+tools: [vscode, execute, read, agent, ms-python.python, edit, search, web, browser, todo]
 agents: ['agent-workbench-advisor']
 target: vscode
 ---

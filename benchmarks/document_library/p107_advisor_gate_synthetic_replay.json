@@ -1,5 +1,0 @@
-{"events":[
-  {"to":"COORDINATOR_PRECHECK"},{"to":"FREEZE_REVIEW_BUNDLE"},{"to":"ADVISOR_HARD_WAIT"},
-  {"action":"wait","to":"ADVISOR_HARD_WAIT"},{"to":"DEFECT_PACKET"},
-  {"to":"IMPLEMENT"},{"to":"COORDINATOR_PRECHECK"},{"to":"FREEZE_REVIEW_BUNDLE"},{"to":"ADVISOR_HARD_WAIT"},{"to":"ACCEPTED"}
-]}
