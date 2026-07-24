@@ -10,22 +10,13 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 ## Active phase
 
-| Phase | Parent issue | Branch | Status |
-| --- | --- | --- | --- |
-| P120 SDK-authoritative agent-hub qualification | #755 | `feature/p120-sdk-authoritative-agent-hub` | Active |
-
-## Active tasks
-
-- [x] P120.1 Coordinator-to-Worker implementation through SDK lane (#755 child)
-- [x] P120.2 Tighten Coordinator/Advisor tool boundaries (#755 child)
-- [x] P120.3 SDK result renderer (#755 child)
-- [x] P120.4 Resolve ROADMAP.md worktree change (#755 child)
-- [ ] P120.5 Roadmap/changelog architecture repair (#756 child)
+_No active phase._
 
 ## Recent completed phases
 
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
+| P120 SDK-authoritative agent-hub qualification | #755 | `feature/p120-sdk-authoritative-agent-hub` | Complete |
 | P119 Blackwell/vLLM phase | #749 | `feature/p119-blackwell-vllm` | Complete |
 | P118 Concurrency stress testing | #743 | `feature/p118-concurrency-stress` | Complete |
 | P115 Validation fixtures | #731 | `feature/p115-validation-fixtures` | Complete |
