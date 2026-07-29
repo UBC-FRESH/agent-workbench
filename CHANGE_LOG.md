@@ -91,6 +91,21 @@ issues, pull requests, and closeout comments.
   remain local.
 - Economics: not measured.
 
+## 2026-07-29 - P123 CPU scraper benchmark and route decision opened
+
+- Opened P123 parent issue #764 and child task #765 on branch
+  `feature/p123-cpu-scraper-benchmark-route-decision`.
+- Re-homed the unimplemented legacy benchmark and route-decision scope from
+  issue #752. P121 (#758/#759, PR #762) remains implementation-only; it does
+  not supply benchmark, quality, throughput, or economics evidence.
+- Reconciled the roadmap status for completed P119 follow-up, P121, and P122
+  work. Legacy issues #749–#751 are superseded by P121 and are being closed
+  with explicit references; #752 is superseded by P123.
+- Quality: no benchmark has run and no model/provider claim is made.
+- Protocol: P123 requires registered subsets, sanitized evidence, and no
+  public endpoint or remote-access topology changes.
+- Economics: not measured.
+
 ## Older entries
 
 See `planning/archives/changelog_archive.md` for entries older than the
