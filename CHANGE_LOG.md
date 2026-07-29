@@ -79,6 +79,18 @@ issues, pull requests, and closeout comments.
   local; live endpoint benchmarking is deferred to a later registered phase.
 - Economics: not measured.
 
+## 2026-07-29 - P122 HPC GPU capacity and provider workflow
+
+- Added a dry-run-first multi-cluster Slurm GPU capacity coordinator and
+  public-safe configuration template.
+- Added client-owned SSH forwarding guidance and an optional existing-tunnel
+  DNS helper that refuses connector creation or replacement.
+- Quality: focused unit tests cover capacity reconciliation and provider
+  safety guards; no live scheduler or Cloudflare mutation is claimed.
+- Protocol: real targets, credentials, job records, and raw cluster material
+  remain local.
+- Economics: not measured.
+
 ## Older entries
 
 See `planning/archives/changelog_archive.md` for entries older than the

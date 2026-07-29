@@ -1,0 +1,29 @@
+# Copy this file to a local, untracked path and replace all placeholders.
+# Do not commit real SSH targets, accounts, scripts, or project paths.
+clusters:
+  - name: cluster-a
+    ssh_target: user@cluster-a.example.edu
+    submission_script: /scratch/user/request_gpu.sh
+    partition: gpu
+    account: project-account
+    constraint: gpu_mem_32
+    gpus_per_job: 4
+    nodes: 1
+    cpus_per_task: 12
+    memory: 120G
+    time_limit: "24:00:00"
+    # Prevent one reconciliation pass from flooding a cluster.
+    max_pending_jobs: 1
+    # Optional scheduler-specific arguments, for example:
+    # sbatch_args: ["--qos=normal"]
+
+  - name: cluster-b
+    ssh_target: user@cluster-b.example.edu
+    submission_script: /scratch/user/request_gpu.sh
+    partition: gpu
+    gpus_per_job: 1
+    nodes: 1
+    cpus_per_task: 4
+    memory: 32G
+    time_limit: "12:00:00"
+    max_pending_jobs: 1
