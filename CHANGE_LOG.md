@@ -99,8 +99,8 @@ issues, pull requests, and closeout comments.
   issue #752. P121 (#758/#759, PR #762) remains implementation-only; it does
   not supply benchmark, quality, throughput, or economics evidence.
 - Reconciled the roadmap status for completed P119 follow-up, P121, and P122
-  work. Legacy issues #749–#751 are superseded by P121 and are being closed
-  with explicit references; #752 is superseded by P123.
+  work. Legacy issues #749–#751 were closed as superseded by P121 with
+  explicit references; #752 was closed as superseded by P123.
 - Quality: no benchmark has run and no model/provider claim is made.
 - Protocol: P123 requires registered subsets, sanitized evidence, and no
   public endpoint or remote-access topology changes.
