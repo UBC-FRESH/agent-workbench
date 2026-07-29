@@ -56,6 +56,18 @@ issues, pull requests, and closeout comments.
 - Brought P109 into UBC-FRESH dev workflow compliance.
 - Parent issue #741 created with child issues #742-#746.
 
+## 2026-07-29 - P119 follow-up service-hardening closeout
+
+- Added sanitized crash-forensics guidance, service/watchdog templates, and
+  runtime hardening helpers for the completed P119 vLLM phase.
+- Added a public-safe secrets-path resolver and the remote-access safety
+  contract; neither change performs a live service, connector, DNS, or
+  credential operation.
+- Quality: focused shell/Python checks and secret-resolution tests pass.
+- Protocol: this closes the documentation/template follow-up only; it does not
+  claim the underlying GPU-kernel root cause is solved.
+- Economics: not measured.
+
 ## Older entries
 
 See `planning/archives/changelog_archive.md` for entries older than the
