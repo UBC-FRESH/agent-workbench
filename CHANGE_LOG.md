@@ -68,6 +68,17 @@ issues, pull requests, and closeout comments.
   claim the underlying GPU-kernel root cause is solved.
 - Economics: not measured.
 
+## 2026-07-29 - P121 CPU document scraper implementation
+
+- Added a public-safe extraction contract, CPU and optional GPU-fallback
+  profiles, resumable JSONL coordinator, controlled endpoint tests, and a
+  decision-packet template for issue #758 / child #759.
+- Quality: controlled OpenAI-compatible endpoint tests pass; no corpus run,
+  benchmark, or production-readiness claim is made.
+- Protocol: raw document text, endpoint URLs, credentials, and host paths stay
+  local; live endpoint benchmarking is deferred to a later registered phase.
+- Economics: not measured.
+
 ## Older entries
 
 See `planning/archives/changelog_archive.md` for entries older than the
