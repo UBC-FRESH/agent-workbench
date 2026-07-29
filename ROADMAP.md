@@ -10,13 +10,16 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 ## Active phase
 
-_No active phase._
+## Active phase
+
+- P121 CPU document scraper implementation (#758), child task #759.
 
 ## Recent completed phases
 
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
 | P120 SDK-authoritative agent-hub qualification | #755 | `feature/p120-sdk-authoritative-agent-hub` | Complete |
+| P121 CPU document scraper implementation | #758 | `feature/p121-cpu-document-scraper` | Active — P121.1 #759 |
 | P119 Blackwell/vLLM phase | #749 | `feature/p119-blackwell-vllm` | Complete |
 | P118 Concurrency stress testing | #743 | `feature/p118-concurrency-stress` | Complete |
 | P115 Validation fixtures | #731 | `feature/p115-validation-fixtures` | Complete |
