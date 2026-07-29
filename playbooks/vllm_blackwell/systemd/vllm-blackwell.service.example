@@ -1,0 +1,26 @@
+[Unit]
+Description=Blackwell vLLM OpenAI-compatible server
+Documentation=https://docs.vllm.ai/
+After=network-online.target nvidia-persistenced.service
+Wants=network-online.target
+StartLimitIntervalSec=900
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=vllm
+Group=vllm
+WorkingDirectory=/opt/vllm-blackwell
+Environment=VLLM_ENV_FILE=profiles/qwen36-27b-nvfp4-flashinfer-copilot.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/vllm-blackwell/scripts/serve-native.sh
+Restart=on-failure
+RestartSec=15s
+KillMode=control-group
+KillSignal=SIGTERM
+TimeoutStopSec=120s
+LimitNOFILE=1048576
+TasksMax=infinity
+
+[Install]
+WantedBy=multi-user.target
