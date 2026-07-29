@@ -13,6 +13,12 @@ verbose="${VERBOSE:-0}"
 health_check="${HEALTH_CHECK:-0}"
 show_warnings="${SHOW_WARNINGS:-0}"
 show_recent="${SHOW_RECENT:-1}"
+metrics_state_file="$(mktemp)"
+
+cleanup() {
+  rm -f "$metrics_state_file"
+}
+trap cleanup EXIT
 
 if [[ -z "$log_path" && -f logs/vllm-active.logpath ]]; then
   log_path="$(cat logs/vllm-active.logpath)"
@@ -84,12 +90,14 @@ print_metrics() {
     return
   fi
 
-  python3 - "$metrics_file" "$verbose" <<'PY'
+  python3 - "$metrics_file" "$verbose" "$metrics_state_file" <<'PY'
 import math
 import sys
+import time
 
 metrics_path = sys.argv[1]
 verbose = sys.argv[2] == "1"
+state_path = sys.argv[3]
 wanted_names = {
     "vllm:spec_decode_num_draft_tokens_total",
     "vllm:spec_decode_num_accepted_tokens_total",
@@ -148,6 +156,36 @@ if gpu_cache is not None:
     print(f"kv cache  {gpu_cache:.1f}%")
 print(f"tokens    prompt {prompt_tokens:,.0f}  generated {generation_tokens:,.0f}")
 
+now = time.time()
+previous = None
+try:
+    with open(state_path, encoding="utf-8") as state:
+        candidate = [float(value) for value in state.read().split()]
+        if len(candidate) == 3:
+            previous = candidate
+except (FileNotFoundError, ValueError):
+    pass
+
+with open(state_path, "w", encoding="utf-8") as state:
+    state.write(f"{now} {prompt_tokens} {generation_tokens}\n")
+
+if previous is None:
+    print("throughput collecting baseline from /metrics")
+else:
+    previous_time, previous_prompt, previous_generation = previous
+    elapsed = now - previous_time
+    prompt_delta = prompt_tokens - previous_prompt
+    generation_delta = generation_tokens - previous_generation
+    if elapsed <= 0 or prompt_delta < 0 or generation_delta < 0:
+        print("throughput collecting baseline after counter reset")
+    else:
+        print(
+            "throughput "
+            f"prompt {prompt_delta / elapsed:.1f} tok/s  "
+            f"gen {generation_delta / elapsed:.1f} tok/s  "
+            f"sample {elapsed:.1f}s"
+        )
+
 prefix_queries = values.get("vllm:prefix_cache_queries_total", 0.0)
 prefix_hits = values.get("vllm:prefix_cache_hits_total", 0.0)
 if prefix_queries > 0 and math.isfinite(prefix_queries):
@@ -160,51 +198,6 @@ if draft_tokens > 0 and math.isfinite(draft_tokens):
 PY
 
   rm -f "$metrics_file"
-}
-
-print_throughput() {
-  if [[ -z "$log_path" || ! -f "$log_path" ]]; then
-    echo "throughput unavailable"
-    return
-  fi
-
-  local latest
-  latest="$(grep 'Avg prompt throughput:' "$log_path" | tail -1 || true)"
-  if [[ -z "$latest" ]]; then
-    echo "throughput unavailable"
-    return
-  fi
-
-  python3 - "$latest" <<'PY'
-import re
-import sys
-
-line = sys.argv[1]
-patterns = {
-    "prompt_tok_s": r"Avg prompt throughput: ([0-9.]+) tokens/s",
-    "gen_tok_s": r"Avg generation throughput: ([0-9.]+) tokens/s",
-    "running": r"Running: ([0-9]+) reqs",
-    "waiting": r"Waiting: ([0-9]+) reqs",
-    "kv": r"GPU KV cache usage: ([0-9.]+)%",
-    "prefix": r"Prefix cache hit rate: ([0-9.]+)%",
-}
-values = {}
-for key, pattern in patterns.items():
-    match = re.search(pattern, line)
-    if match:
-        values[key] = match.group(1)
-
-if values:
-    print(
-        "throughput "
-        f"prompt {values.get('prompt_tok_s', '?')} tok/s  "
-        f"gen {values.get('gen_tok_s', '?')} tok/s  "
-        f"run {values.get('running', '?')}  wait {values.get('waiting', '?')}  "
-        f"kv {values.get('kv', '?')}%  prefix {values.get('prefix', '?')}%"
-    )
-else:
-    print("throughput parse failed")
-PY
 }
 
 print_log_summary() {
@@ -259,7 +252,6 @@ render() {
   print_gpu
   echo
   echo "Load"
-  print_throughput
   print_metrics
   if [[ "$show_recent" == "1" || "$show_warnings" == "1" || "$verbose" == "1" ]]; then
     echo

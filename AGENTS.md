@@ -76,6 +76,23 @@ the tracked repository.
 issue. Do not drift into adjacent work without explicit maintainer
 approval.
 
+## Remote-access safety (non-negotiable)
+
+- Never create, copy, launch, migrate, replace, or "test" Cloudflare tunnels
+  or other remote-access connectors without first inspecting the live topology
+  and confirming the established architecture and tunnel ID.
+- Treat tunnel credentials and live connector configs as production-safety-
+  critical artifacts. Do not reuse production credentials on another host,
+  and never replace the established ingress path with a new tunnel name such
+  as `my-tunnel`.
+- Before any remote-access change, back up every live config, inspect the
+  current tunnel information for the established entry point before and after
+  the action, and verify access immediately.
+- Preserve the active access path you are currently using. Do not experiment
+  on the only door into the house.
+- If the required topology or authorization is unclear, stop and escalate
+  instead of proceeding.
+
 ## Concurrent Inference
 
 The configured remote vLLM model is concurrency-optimized. Fan out 2-4

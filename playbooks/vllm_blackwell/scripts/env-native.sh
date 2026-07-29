@@ -2,8 +2,34 @@
 set -euo pipefail
 
 VLLM_LAB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VLLM_CUDA_HOME="${VLLM_CUDA_HOME_OVERRIDE:-$VLLM_LAB_DIR/.venv/lib/python3.12/site-packages/nvidia/cu13}"
-VLLM_SHARED_CACHE="${VLLM_SHARED_CACHE:-/srv/shared-data/vllm}"
+
+if [[ -n "${VLLM_CUDA_HOME_OVERRIDE:-}" ]]; then
+  VLLM_CUDA_HOME="$VLLM_CUDA_HOME_OVERRIDE"
+elif [[ -n "${CUDA_HOME:-}" ]]; then
+  VLLM_CUDA_HOME="$CUDA_HOME"
+elif [[ -n "${CUDA_PATH:-}" ]]; then
+  VLLM_CUDA_HOME="$CUDA_PATH"
+else
+  if command -v nvcc >/dev/null 2>&1; then
+    NVCC_BIN="$(command -v nvcc)"
+    VLLM_CUDA_HOME="$(dirname "$(dirname "$NVCC_BIN")")"
+  elif command -v module >/dev/null 2>&1; then
+    if module avail cuda 2>/dev/null | grep -q 'cuda/'; then
+      module load cuda >/dev/null 2>&1 || true
+    fi
+    if command -v nvcc >/dev/null 2>&1; then
+      NVCC_BIN="$(command -v nvcc)"
+      VLLM_CUDA_HOME="$(dirname "$(dirname "$NVCC_BIN")")"
+    else
+      VLLM_CUDA_HOME="$VLLM_LAB_DIR/.venv/lib/python3.12/site-packages/nvidia/cu13"
+    fi
+  else
+    VLLM_CUDA_HOME="$VLLM_LAB_DIR/.venv/lib/python3.12/site-packages/nvidia/cu13"
+  fi
+fi
+
+DEFAULT_WORKDIR="${VLLM_REMOTE_WORKDIR:-${PWD}}"
+VLLM_SHARED_CACHE="${VLLM_SHARED_CACHE:-$DEFAULT_WORKDIR/.cache/vllm}"
 
 export HF_HOME="${HF_HOME:-$VLLM_SHARED_CACHE/huggingface}"
 export HUGGINGFACE_HUB_CACHE="${HUGGINGFACE_HUB_CACHE:-$HF_HOME/hub}"
