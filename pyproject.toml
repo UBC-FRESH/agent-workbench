@@ -44,12 +44,17 @@ docs = [
 
 [project.scripts]
 agent-workbench = "agent_workbench.cli:main"
+agent-workbench-gpu-capacity = "agent_workbench.gpu_capacity:main"
+agent-workbench-tunnel-provider = "agent_workbench.cloudflared_provider:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+  "smoke: lightweight regression tests suitable for routine verification",
+]
 
 [[tool.mypy.overrides]]
 module = ["freshforge.validation"]

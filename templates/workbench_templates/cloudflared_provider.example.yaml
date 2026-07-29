@@ -1,0 +1,17 @@
+# Copy to an untracked local path. Do not commit real hostnames, SSH targets,
+# provider origins, tunnel IDs, credential paths, or access details.
+tunnel:
+  # Existing tunnel only. This helper will never create or launch a connector.
+  tunnel_id: 00000000-0000-0000-0000-000000000000
+  # New public provider hostname, already manually added to the established
+  # connector's ingress rules before DNS is attached.
+  hostname: model-provider.example.edu
+  # Private origin that cloudflared reaches from the connector host.
+  origin_url: http://127.0.0.1:8000
+  credentials_file: /etc/cloudflared/00000000-0000-0000-0000-000000000000.json
+  # Omit for a local cloudflared installation.
+  ssh_target: user@provider-host.example.edu
+  # Required only for --apply-dns. It is read and backed up, never rewritten.
+  live_config_path: /etc/cloudflared/config.yml
+  # A non-authenticated, read-only public health endpoint checked after DNS.
+  verification_url: https://model-provider.example.edu/health
