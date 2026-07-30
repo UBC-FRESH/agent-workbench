@@ -99,6 +99,9 @@ issues, pull requests, and closeout comments.
   work is performed in this phase.
 - Scope is limited to a loopback-only vLLM provider in an existing approved
   Sockeye allocation and client-owned SSH forwarding.
+- Preflight stopped before launch: the staged launchers bind publicly and the
+  selected allocation lacks a compatible current-vLLM runtime. A future retry
+  requires a staged, version-pinned runtime and a loopback-only wrapper.
 - Quality: no provider readiness or model-capability claim is made until local
   discovery and a bounded request succeed.
 - Protocol: Cloudflare tunnels, DNS, connectors, public listeners, credentials,

@@ -37,6 +37,27 @@ benchmark claims, or decision packet.
    GPU architecture and memory shape.
 4. Stop with a sanitized blocker if any entry check fails.
 
+## Preflight Status — July 30, 2026
+
+**Blocked before launch.** The inspected staged vLLM launchers bind to all
+network interfaces, which violates P124's loopback-only boundary. The selected
+allocation's default environment also lacks a usable current-vLLM runtime: it
+does not expose `vllm`, a newer Python interpreter, a Python module, or an
+environment manager. The default Python has virtual-environment support but is
+not sufficient for the selected current-vLLM installation path.
+
+No installer ran, no launch script ran, no listener was created, and no access
+topology changed.
+
+### Required Retry Prerequisites
+
+1. Stage a version-pinned vLLM runtime that is validated for the selected GPU
+   architecture and provides a supported Python version.
+2. Create an ignored, allocation-local wrapper that binds only to provider-host
+   loopback; do not edit a public-binding launcher in place.
+3. Re-run the entry checks, local discovery, and one bounded request before
+   attempting client SSH forwarding.
+
 ## Bring-up Sequence
 
 1. Start the selected vLLM command only inside the existing allocation and
