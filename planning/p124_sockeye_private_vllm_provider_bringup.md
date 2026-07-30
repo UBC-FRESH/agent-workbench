@@ -37,26 +37,23 @@ benchmark claims, or decision packet.
    GPU architecture and memory shape.
 4. Stop with a sanitized blocker if any entry check fails.
 
-## Preflight Status — July 30, 2026
+## Implementation Decision — July 30, 2026
 
-**Blocked before launch.** The inspected staged vLLM launchers bind to all
-network interfaces, which violates P124's loopback-only boundary. The selected
-allocation's default environment also lacks a usable current-vLLM runtime: it
-does not expose `vllm`, a newer Python interpreter, a Python module, or an
-environment manager. The default Python has virtual-environment support but is
-not sufficient for the selected current-vLLM installation path.
+P124 remains **active** under parent issue #766 and child task #767. The
+preflight findings are ordinary bring-up work, not a phase blocker:
+
+- Existing staged launchers bind to all network interfaces. P124 will retain
+  them as references and create an ignored, allocation-local wrapper that
+  binds only to provider-host loopback.
+- The selected allocation's default environment does not expose the intended
+  vLLM command. P124 will first locate and reuse a suitable staged runtime; if
+  none exists, it will create an isolated, version-pinned runtime compatible
+  with the selected GPU architecture.
 
 No installer ran, no launch script ran, no listener was created, and no access
-topology changed.
-
-### Required Retry Prerequisites
-
-1. Stage a version-pinned vLLM runtime that is validated for the selected GPU
-   architecture and provides a supported Python version.
-2. Create an ignored, allocation-local wrapper that binds only to provider-host
-   loopback; do not edit a public-binding launcher in place.
-3. Re-run the entry checks, local discovery, and one bounded request before
-   attempting client SSH forwarding.
+topology changed during preflight. The next work is to implement the wrapper,
+validate local discovery and one bounded request, then verify client-owned SSH
+forwarding.
 
 ## Bring-up Sequence
 
