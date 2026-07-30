@@ -91,6 +91,20 @@ issues, pull requests, and closeout comments.
   remain local.
 - Economics: not measured.
 
+## 2026-07-30 - P124 Sockeye private vLLM provider bring-up opened
+
+- Opened P124 parent issue #766 and child task #767 on branch
+  `feature/p124-sockeye-vllm-provider-bringup`.
+- Parked P123 (#764/#765) pending P124 readiness; no CPU scraper benchmark
+  work is performed in this phase.
+- Scope is limited to a loopback-only vLLM provider in an existing approved
+  Sockeye allocation and client-owned SSH forwarding.
+- Quality: no provider readiness or model-capability claim is made until local
+  discovery and a bounded request succeed.
+- Protocol: Cloudflare tunnels, DNS, connectors, public listeners, credentials,
+  raw logs, endpoint values, and allocation changes remain out of scope.
+- Economics: not measured.
+
 ## Older entries
 
 See `planning/archives/changelog_archive.md` for entries older than the
