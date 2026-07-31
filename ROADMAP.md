@@ -10,7 +10,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 ## Active phase
 
-- P125 Popup remote LLM provider deployment framework (#TBD).
+- P125 Popup remote LLM provider deployment framework (#769).
 
 ## Parked phase
 

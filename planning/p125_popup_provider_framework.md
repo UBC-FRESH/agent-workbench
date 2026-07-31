@@ -1,6 +1,6 @@
 # P125 Popup Remote LLM Provider Deployment Framework
 
-Parent issue: TBD  
+Parent issue: #769  
 Child task: TBD  
 Branch: `feature/p125-popup-provider-framework`  
 Status: active
