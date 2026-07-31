@@ -1,0 +1,50 @@
+# Launch Profile Schema
+
+Each launch profile captures the model-and-server parameters, independent of
+cluster. The same profile works on any target whose VRAM fits the model.
+
+## Required Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `model_id` | string | Hugging Face repo ID (e.g. `"nvidia/Qwen3.6-27B-NVFP4"`) |
+| `served_model_name` | string | Value for `--served-model-name` |
+| `max_model_len` | int | Value for `--max-model-len` |
+| `gpu_memory_utilization` | float | Value for `--gpu-memory-utilization` |
+
+## Optional Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `tokenizer` | string\|null | Tokenizer override |
+| `quantization` | string\|null | `--quantization` value (empty = auto-detect) |
+| `load_format` | string\|null | `--load-format` value |
+| `dtype` | string\|null | `--dtype` value |
+| `kv_cache_dtype` | string\|null | `--kv-cache-dtype` value |
+| `max_num_seqs` | int | `--max-num-seqs` (default 8) |
+| `max_num_batched_tokens` | int | `--max-num-batched-tokens` (default 8192) |
+| `generation_config` | string\|null | `--generation-config` value |
+| `attention_backend` | string\|null | `--attention-backend` value |
+| `linear_backend` | string\|null | `--linear-backend` value |
+| `moe_backend` | string\|null | `--moe-backend` value |
+| `gdn_prefill_backend` | string\|null | `--gdn-prefill-backend` value |
+| `mm_encoder_attn_backend` | string\|null | `--mm-encoder-attn-backend` value |
+| `speculative_config` | string\|null | `--speculative-config` JSON value |
+| `trust_remote_code` | bool | `--trust-remote-code` (default true) |
+| `enable_prefix_caching` | bool | Enable prefix caching |
+| `enable_chunked_prefill` | bool | Enable chunked prefill |
+| `async_scheduling` | bool | Enable async scheduling |
+| `sleep_when_idle` | bool | `VLLM_SLEEP_WHEN_IDLE` (default false) |
+| `log_stats_interval` | int | `VLLM_LOG_STATS_INTERVAL` (default 10) |
+| `enable_auto_tool_choice` | bool | `--enable-auto-tool-choice` (default false) |
+| `tool_call_parser` | string\|null | `--tool-call-parser` value |
+| `reasoning_parser` | string\|null | `--reasoning-parser` value |
+| `language_model_only` | bool | `--language-model-only` (default false) |
+| `default_chat_template_kwargs` | string\|null | `--default-chat-template-kwargs` JSON |
+| `hf_token_env` | string\|null | Env var name holding HF token (e.g. `"HF_TOKEN"`) |
+
+## Tensor Parallelism
+
+Not a profile field — it is derived by the fit preflight from
+`model_id` + target's `gpus_per_job` + `vram_per_gpu_gb`. The preflight
+decides whether the model fits on N GPUs and sets TP=N accordingly.

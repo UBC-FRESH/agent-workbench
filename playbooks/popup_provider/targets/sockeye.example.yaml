@@ -1,0 +1,52 @@
+# Sockeye (UBC ARC) — example target descriptor
+#
+# Copy to an untracked local path, fill in real values, and reference from
+# bringup scripts. Do not commit real accounts, keys, or paths to tracked
+# content.
+#
+# Observed 2026-07-30. Verify before use — cluster config may change.
+
+name: sockeye
+ssh_target: "gep@sockeye.arc.ubc.ca"
+ssh_config_alias: sockeye
+scheduler_kind: slurm
+
+account: st-gep-1-gpu
+partition: gpu
+gres: null                    # null = partition default (V100 32GB)
+nodes: 1
+ntasks: 1
+cpus_per_task: 12
+mem: "120G"
+time_limit: "24:00:00"
+constraint: null
+
+gpus_per_job: 4
+vram_per_gpu_gb: 32
+
+auth_kind: multiplexed_ssh
+requires_initial_mfa: true
+proxy_jump: null
+
+bind_host: "127.0.0.1"
+service_port: 8000
+access_mode: loopback_bridge
+
+login_node: login02
+
+shared_cache: null            # ephemeral ($SLURM_TMPDIR)
+cuda_home: null               # auto-detect
+
+# Path to a submission script that exists on the cluster.
+# The script payload is "sleep infinity" to hold the allocation.
+# The bringup scripts use `srun --overlap` to launch vLLM inside it.
+submission_script: vllm-deployment/runtime/sockeye-gpu32-4gpu-24h.sh
+
+# Cloudflare fields not used for Sockeye (loopback bridge only).
+cloudflare_tunnel_id: null
+cloudflare_hostname: null
+
+# OpenStack fields not used for Sockeye.
+os_flavor: null
+os_keypair: null
+os_network: null

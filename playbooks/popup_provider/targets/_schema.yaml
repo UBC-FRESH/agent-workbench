@@ -1,0 +1,49 @@
+# Target Descriptor Schema
+
+Each target descriptor captures the cluster-specific parameters needed to
+bring up a popup vLLM provider. Fields are typed; null means optional or
+cluster-dependent.
+
+## Required Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `name` | string | Human-readable cluster name (e.g. `"sockeye"`) |
+| `ssh_target` | string | SSH target: `user@host` or alias |
+| `scheduler_kind` | enum | `"slurm"` or `"openstack"` |
+| `account` | string | Scheduler account (Slurm) or project (OpenStack) |
+| `partition` | string | Scheduler partition / queue name |
+| `gpus_per_job` | int | Number of GPUs to request |
+| `vram_per_gpu_gb` | int | Usable VRAM per GPU in GB (after MIG slices, etc.) |
+| `auth_kind` | enum | `"multiplexed_ssh"` \| `"duo_mfa"` \| `"keypair"` |
+| `bind_host` | string | Host vLLM binds to on the compute node |
+| `service_port` | int | Port vLLM listens on |
+| `access_mode` | enum | `"loopback_bridge"` \| `"ssh_forward"` \| `"cloudflare_tunnel"` |
+| `submission_script` | string | Path to the allocation request script on the cluster |
+
+## Optional Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `gres` | string\|null | Slurm GRES string (e.g. `"gpu:nvidia_h100_80gb_hbm3_3g.40gb:1"`). Null = partition default |
+| `nodes` | int | Number of nodes (default 1) |
+| `ntasks` | int | Number of tasks (default 1) |
+| `cpus_per_task` | int | CPUs per task |
+| `mem` | string | Memory request (e.g. `"120G"`) |
+| `time_limit` | string | Walltime (e.g. `"24:00:00"`) |
+| `constraint` | string\|null | Slurm constraint string |
+| `ssh_config_alias` | string\|null | `~/.ssh/config` Host alias for ControlMaster |
+| `requires_initial_mfa` | bool | First connection needs human MFA |
+| `proxy_jump` | string\|null | SSH ProxyJump chain |
+| `login_node` | string\|null | Login node hostname (for bridge scripts) |
+| `cloudflare_tunnel_id` | string\|null | UUID of existing Cloudflare tunnel connector |
+| `cloudflare_hostname` | string\|null | Public hostname for tunnel ingress |
+| `shared_cache` | string\|null | Persistent cache root. Null = ephemeral (`$SLURM_TMPDIR`) |
+| `cuda_home` | string\|null | CUDA toolkit override. Null = auto-detect |
+| `os_flavor` | string\|null | OpenStack flavor string (OpenStack only) |
+| `os_keypair` | string\|null | OpenStack keypair name |
+| `os_network` | string\|null | OpenStack network name |
+
+## Example: Sockeye
+
+See `targets/sockeye.example.yaml`.

@@ -10,7 +10,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 ## Active phase
 
-## Active phase
+- P125 Popup remote LLM provider deployment framework (#769), child task #770.
 
 - P121 CPU document scraper implementation (#758), child task #759.
 

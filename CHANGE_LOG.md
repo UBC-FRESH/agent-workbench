@@ -68,7 +68,29 @@ issues, pull requests, and closeout comments.
   claim the underlying GPU-kernel root cause is solved.
 - Economics: not measured.
 
-## 2026-07-29 - P121 CPU document scraper implementation
+## 2026-07-31 - P125 Popup provider framework: schema and preflight
+
+- Created `playbooks/popup_provider/` — portable framework for popup LLM
+  providers on shared HPC clusters.
+- Target descriptor schema (`targets/_schema.yaml`) and Sockeye example
+  (`targets/sockeye.example.yaml`).
+- Launch profile schema (`profiles/_schema.yaml`) with two example profiles:
+  Qwen2.5 Coder 7B (GGUF) and Qwen3.6 27B NVFP4 (ModelOpt).
+- VRAM catalog (`preflight/catalog.json`) with measured/estimated values for
+  five models across GGUF and ModelOpt runtimes.
+- Fit preflight checker (`preflight/check.py`) — refuses or downsizes requests
+  that cannot fit the target's VRAM, with alternative suggestions.
+- Unattended bring-up script (`bringup/autostart.sh`) — submit → wait → stage
+  → serve → bridge → verify, reusing P119 launch-profile and readiness-probe
+  assets.
+- Loopback bridge (`bringup/bridge.py`) — auto-discovers job ID, captures
+  srun stderr, refuses when no allocation exists, auto-reconnects on failure.
+- Bounded verification script (`bringup/verify.sh`) — /v1/models + single
+  chat completion, writes JSON evidence.
+- Quality: preflight passes for both example profiles on the Sockeye target.
+- Protocol: all new files are public-safe; no credentials, endpoints, or
+  private paths are committed.
+- Economics: not measured.
 
 - Added a public-safe extraction contract, CPU and optional GPU-fallback
   profiles, resumable JSONL coordinator, controlled endpoint tests, and a
