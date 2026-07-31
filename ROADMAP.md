@@ -10,20 +10,25 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 ## Active phase
 
-## Active phase
+- P125 Popup remote LLM provider deployment framework (#769).
 
-- P121 CPU document scraper implementation (#758), child task #759.
+## Parked phase
 
-- P122 HPC GPU capacity and provider workflow (#760), child task #761.
+- P123 CPU scraper benchmark and route decision (#764), child task #765.
+  Parked pending a private provider that satisfies P124 readiness checks.
+- P124 Sockeye private vLLM provider bring-up (#766), child task #767.
+  Bring-up is automated and the access path is proven; parked awaiting a
+  scheduled GPU allocation to serve the bounded client request required by its
+  acceptance boundary.
 
 ## Recent completed phases
 
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
 | P120 SDK-authoritative agent-hub qualification | #755 | `feature/p120-sdk-authoritative-agent-hub` | Complete |
-| P121 CPU document scraper implementation | #758 | `feature/p121-cpu-document-scraper` | Active — P121.1 #759 |
-| P122 HPC GPU capacity and provider workflow | #760 | `feature/p122-hpc-gpu-capacity-provider` | Active — P122.1 #761 |
-| P119 Blackwell/vLLM phase | #749 | `feature/p119-blackwell-vllm` | Complete |
+| P121 CPU document scraper implementation | #758 | `feature/p121-cpu-document-scraper` | Complete — child #759 and PR #762 |
+| P122 HPC GPU capacity and provider workflow | #760 | `feature/p122-hpc-gpu-capacity-provider` | Complete — child #761 and PR #763 |
+| P119 Blackwell/vLLM phase | #739 | `feature/p119-blackwell-vllm` | Complete |
 | P118 Concurrency stress testing | #743 | `feature/p118-concurrency-stress` | Complete |
 | P115 Validation fixtures | #731 | `feature/p115-validation-fixtures` | Complete |
 

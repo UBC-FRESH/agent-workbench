@@ -92,6 +92,11 @@ approval.
   on the only door into the house.
 - If the required topology or authorization is unclear, stop and escalate
   instead of proceeding.
+- Clusters that require MFA (for example Sockeye) cannot be authenticated by an
+  agent. Reuse the human-authenticated SSH master session, verify it with
+  `ssh -O check <alias>` before anything else, and add tunnels with
+  `ssh -O forward`. Never add `-o`/`-F` overrides or spawn `ssh -N -L`; both
+  force a new login that will be denied. See `notes/clusters/sockeye.md`.
 
 ## Concurrent Inference
 
