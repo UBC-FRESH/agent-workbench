@@ -32,6 +32,12 @@ sleep_when_idle: false
 log_stats_interval: 10
 enable_auto_tool_choice: true
 tool_call_parser: "hermes"
+# Checkpoint template is correct (emits <tool_call> tags); no override needed.
+chat_template: ""
+# Measured on Sockeye 2026-07-31, vLLM 0.10.0 sm70, --dtype half, TP=1:
+# model emitted markdown-fenced JSON instead of <tool_call> tags, so
+# tool_calls came back empty. Not usable as a tool-calling Worker as served.
+tool_calling_verified: false
 reasoning_parser: ""
 language_model_only: false
 default_chat_template_kwargs: ""

@@ -37,7 +37,9 @@ cluster. The same profile works on any target whose VRAM fits the model.
 | `sleep_when_idle` | bool | `VLLM_SLEEP_WHEN_IDLE` (default false) |
 | `log_stats_interval` | int | `VLLM_LOG_STATS_INTERVAL` (default 10) |
 | `enable_auto_tool_choice` | bool | `--enable-auto-tool-choice` (default false) |
-| `tool_call_parser` | string\|null | `--tool-call-parser` value |
+| `tool_call_parser` | string\|null | `--tool-call-parser` value. Must match the format the checkpoint's template emits |
+| `chat_template` | string\|null | `--chat-template` override. Leave null when the checkpoint ships a correct template — most Qwen checkpoints do |
+| `tool_calling_verified` | bool | Whether a live tool-definition request returned non-empty `tool_calls` on this target. Config alone does not establish this — see defect 9 |
 | `reasoning_parser` | string\|null | `--reasoning-parser` value |
 | `language_model_only` | bool | `--language-model-only` (default false) |
 | `default_chat_template_kwargs` | string\|null | `--default-chat-template-kwargs` JSON |

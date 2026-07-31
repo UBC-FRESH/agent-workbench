@@ -94,6 +94,37 @@ From the Sockeye PoC (see `notes/operations/sockeye-loopback-bridge.md`):
 6. Guard compat wheel surgery with a marker file.
 7. Client `context_length` must match server `--max-model-len`.
 8. Client model `id` must match server `--served-model-name`.
+9. A correct `--tool-call-parser` and a correct chat template are still not
+   sufficient. The model must actually emit the format its template asked
+   for. Verify tool calling with a live tool-definition request and assert
+   `tool_calls` is non-empty — never infer it from configuration.
+
+### Observed instance of defect 9
+
+Sockeye, 2026-07-31, `qwen2.5-coder-7b-instruct`, vLLM 0.10.0 (custom sm70
+build), served with `--enable-auto-tool-choice --tool-call-parser hermes`,
+`--dtype half`, TP=1.
+
+The checkpoint's embedded template is correct: it emits a `<tools>` block and
+instructs the model to reply within `<tool_call></tool_call>` XML tags, which
+is exactly what the `hermes` parser consumes. Configuration was sound.
+
+Given a `read_file` tool definition, the model returned:
+
+```
+finish_reason: stop
+tool_calls: []
+content: '```json\n{"name": "read_file", "arguments": {"path": "..."}}\n```'
+```
+
+Correct function, correct arguments, wrong wire format — markdown fence
+instead of `<tool_call>` tags. The parser had nothing to match, so a Worker
+bound to this endpoint reports `BLOCKED` while reasoning correctly.
+
+This is a **model capability limit at this size and precision**, not a
+misconfiguration. Do not attempt to fix it with `--chat-template`. Treat
+reliable tool-call emission as a per-model, per-quantization property that
+must be measured.
 
 ## Acceptance (P125)
 
