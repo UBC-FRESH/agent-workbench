@@ -3,7 +3,7 @@
 Parent issue: #766  
 Child task: #767  
 Branch: `feature/p124-sockeye-vllm-provider-bringup`  
-Status: active
+Status: parked — bring-up automated, awaiting scheduled allocation
 
 ## Purpose
 
@@ -61,8 +61,52 @@ forwarding.
    bind it to provider-host loopback.
 2. Verify local model discovery and one bounded request from the provider host.
 3. Open a client-owned loopback SSH forward.
+   - Sockeye requires MFA, so an agent cannot open a new SSH session. Verify the
+     human-authenticated master with `ssh -O check sockeye` first.
+   - Add the forward to that live master with
+     `ssh -O forward -L 18001:127.0.0.1:18125 sockeye`. Do not use `ssh -N -L`,
+     a `LocalForward` entry, or `-o`/`-F` overrides.
+   - Procedure and triage order: `notes/clusters/sockeye.md`.
 4. Verify the same discovery and bounded request from the actual client.
 5. Capture sanitized readiness, error, and resource evidence.
+
+## Bring-up Automation and Current State — July 30, 2026
+
+The first live bring-up reached a serving vLLM endpoint inside a Sockeye GPU
+allocation. That allocation then ran its full walltime and was reaped
+(`State=TIMEOUT`, a normal completion). The PoC stack could not recover
+unattended, so the bring-up path was rebuilt before parking the phase.
+
+What was proven:
+
+- The three-hop access path is sound: client loopback forward -> login-node
+  bridge -> `srun --overlap` into the allocation -> vLLM on compute-node
+  loopback. vLLM never binds a routable interface.
+- Client-owned SSH forwarding works without a new login by injecting the
+  forward into the human-authenticated multiplexed master
+  (`ssh -O forward`). MFA clusters cannot be authenticated by an agent.
+
+PoC defects found and corrected (details in the local operations note):
+
+- the bridge hardcoded a Slurm job id, so it broke silently when that
+  allocation ended;
+- bridge errors were discarded, making a dead allocation indistinguishable
+  from a dead model;
+- tensor parallelism was set to 4 for a 7B model that fits one 32 GB GPU,
+  adding collective-communication failure modes for no benefit;
+- model staging and server launch were manual steps, which is unworkable when
+  queue waits are measured in hours;
+- no tool-call parser was enabled, so agent-mode tool calls could not be
+  parsed even with a working transport;
+- the client declared a context window far larger than the server served.
+
+The rebuilt stack stages the model, serves it, and re-establishes the bridge
+unattended when an allocation lands, and discovers the job id at runtime.
+
+Remaining acceptance evidence is blocked only on scheduler queue time: the
+replacement allocation is queued and expected to start roughly nineteen hours
+after submission. Until a bounded client request is served end-to-end, P124
+must not be reported as complete.
 
 ## Acceptance Boundary
 

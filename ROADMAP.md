@@ -10,12 +10,16 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 ## Active phase
 
-- P124 Sockeye private vLLM provider bring-up (#766), child task #767.
+- P125 Popup remote LLM provider deployment framework (#TBD).
 
 ## Parked phase
 
 - P123 CPU scraper benchmark and route decision (#764), child task #765.
   Parked pending a private provider that satisfies P124 readiness checks.
+- P124 Sockeye private vLLM provider bring-up (#766), child task #767.
+  Bring-up is automated and the access path is proven; parked awaiting a
+  scheduled GPU allocation to serve the bounded client request required by its
+  acceptance boundary.
 
 ## Recent completed phases
 
