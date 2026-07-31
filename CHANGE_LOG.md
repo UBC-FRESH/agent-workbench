@@ -68,6 +68,33 @@ issues, pull requests, and closeout comments.
   claim the underlying GPU-kernel root cause is solved.
 - Economics: not measured.
 
+## 2026-07-31 - P125 Sockeye findings, contract fix, and 32B plan
+
+- Ruled out both MoE candidates on Sockeye. The sm70/Volta vLLM 0.10.0 build
+  has no MoE kernels: engine startup dies with `_moe_C` missing
+  `topk_softmax`. `qwen3-coder-next` is absent from the registry entirely.
+- Recorded the Sockeye billing model: `MAX_TRES` over
+  `CPU=1.0,Mem=5.00G,gres/gpu=6.0`. The 120G memory request bills 600 while 4
+  GPUs bill 24, so memory — not GPUs — is the cost lever. Measured vLLM host
+  RSS was 0.9 GB against that 120G request.
+- Recorded that tool calling fails on the 7B despite correct server flags and
+  a correct checkpoint template; the model emits markdown-fenced JSON. Logged
+  as a measured model property (`tool_calling_verified: false`), not a
+  misconfiguration.
+- Fixed a structural defect in the Coordinator contract: it declared a local
+  default model, forbade the frontmatter mechanism, and never mentioned
+  `runSubagent`'s `model` parameter, so every delegation silently inherited
+  the paid frontier chat model.
+- Corrected a fabricated issue reference (`#770`) in `ROADMAP.md`. No such
+  issue exists.
+- Planned the 32B dense upgrade in `planning/p125_sockeye_32b_upgrade.md`.
+- Quality: all cluster interaction was read-only; the provider was verified
+  serving and undisturbed throughout.
+- Protocol: the P125.3 child issue is drafted but unfiled — GitHub write
+  tools are disabled. Two delegations in this session ran on the frontier
+  chat model because `model` was omitted.
+- Economics: not measured.
+
 ## 2026-07-31 - P125 Popup provider framework: schema and preflight
 
 - Created `playbooks/popup_provider/` — portable framework for popup LLM

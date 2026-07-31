@@ -10,7 +10,13 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 ## Active phase
 
-- P125 Popup remote LLM provider deployment framework (#769), child task #770.
+- P125 Popup remote LLM provider deployment framework (#769).
+  Planning: `planning/p125_popup_provider_framework.md`.
+  Framework: `playbooks/popup_provider/`.
+  Target 1 (Sockeye) verified; target 2 outstanding.
+  Pending child issue — P125.3 Sockeye 32B upgrade, planned in
+  `planning/p125_sockeye_32b_upgrade.md`, not yet filed (GitHub write tools
+  disabled).
 
 - P121 CPU document scraper implementation (#758), child task #759.
 
