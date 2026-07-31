@@ -126,6 +126,33 @@ misconfiguration. Do not attempt to fix it with `--chat-template`. Treat
 reliable tool-call emission as a per-model, per-quantization property that
 must be measured.
 
+10. VRAM fit is necessary but not sufficient. A model can fit comfortably and
+    still be unloadable because the target's build lacks the kernels its
+    architecture needs. Model registry presence proves the architecture is
+    *recognized*, not that its kernels are *compiled*. Older GPUs on bespoke
+    builds (sm70/Volta) are where this bites.
+
+### Observed instance of defect 10
+
+Sockeye, 2026-07-31. `qwen3-coder-30b-a3b-instruct` passes VRAM fit easily
+(57GB over 4x32GB, TP=4 valid) and `Qwen3MoeForCausalLM` is present in the
+vLLM 0.10.0 registry. It still cannot load: the sm70 build has no MoE kernels,
+so engine startup dies with
+`AttributeError: '_OpNamespace' '_moe_C' object has no attribute 'topk_softmax'`
+during `determine_num_available_blocks`.
+
+The fit preflight in `preflight/check.py` models VRAM only and would have
+green-lit this swap. Kernel/architecture support is a separate gate that the
+preflight does not yet implement — see the note below.
+
+### Known gap: preflight does not check kernel support
+
+`preflight/check.py` answers "does it fit?" but not "can this build run it?"
+A complete preflight needs a second gate covering architecture registration
+and compiled-kernel availability for the target's runtime. Until that exists,
+verify MoE and novel architectures manually against the target build before
+committing to a stage-and-swap.
+
 ## Acceptance (P125)
 
 P125 concludes only that the framework brought a provider up unattended on at
