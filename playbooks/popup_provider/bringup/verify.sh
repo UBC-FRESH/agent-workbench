@@ -29,6 +29,7 @@ MODELS_OK=true
 
 # Step 2: /v1/chat/completions (bounded: 1 prompt token, 5 max tokens)
 log "Sending bounded chat completion request..."
+CHAT_OK=true
 CHAT_RESP=$(curl -sf -X POST "http://127.0.0.1:$PORT/v1/chat/completions" \
   -H "Content-Type: application/json" \
   -d "{
@@ -38,9 +39,9 @@ CHAT_RESP=$(curl -sf -X POST "http://127.0.0.1:$PORT/v1/chat/completions" \
   }" 2>&1) || {
   CHAT_OK=false
   CHAT_ERROR="$CHAT_RESP"
-} || CHAT_OK=false
+}
 
-if [[ "${CHAT_OK:-true}" == "true" ]]; then
+if [[ "$CHAT_OK" == "true" ]]; then
   # Extract usage if present
   USAGE=$(echo "$CHAT_RESP" | python3 -c "
 import sys, json
@@ -55,17 +56,19 @@ else
   USAGE="{}"
 fi
 
+export MODELS_OK CHAT_OK USAGE
+
 # Write evidence
 python3 -c "
-import json, sys
+import json, sys, os
 evidence = {
-    'status': 'pass' if ('$MODELS_OK' == 'true' and '${CHAT_OK:-true}' == 'true') else 'fail',
+    'status': 'pass' if (os.environ.get('MODELS_OK','true') == 'true' and os.environ.get('CHAT_OK','true') == 'true') else 'fail',
     'step': 'complete',
     'port': $PORT,
     'model': '$MODEL',
-    'models_ok': $MODELS_OK,
-    'chat_ok': ${CHAT_OK:-true},
-    'usage': json.loads('$USAGE'),
+    'models_ok': os.environ.get('MODELS_OK','true') == 'true',
+    'chat_ok': os.environ.get('CHAT_OK','true') == 'true',
+    'usage': json.loads(os.environ.get('USAGE', '{}')),
     'timestamp': '$(date -u +"%Y-%m-%dT%H:%M:%SZ")'
 }
 print(json.dumps(evidence, indent=2))
