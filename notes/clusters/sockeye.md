@@ -141,6 +141,56 @@ staging time on them.
 *is* in the 0.10.0 registry; the architecture is recognized, the kernels are
 not compiled. Check both before planning a swap.
 
+## Billing and right-sizing (observed 2026-07-31)
+
+`billing` is Slurm's normalized cost unit. It feeds fairshare: accumulated
+billing lowers your priority for subsequent jobs. On a contended queue it is
+the number that decides how long you wait next time.
+
+Sockeye computes it from the `gpu` partition weights:
+
+```
+TRESBillingWeights=CPU=1.0,Mem=5.00G,gres/gpu=6.0
+PriorityFlags=MAX_TRES
+```
+
+`MAX_TRES` means billing is the **maximum** of the weighted terms, not their
+sum. For job 12427107 (`cpu=12,mem=120G,gres/gpu=4`):
+
+| Resource | Calculation | Weighted |
+| --- | --- | --- |
+| CPU | 12 x 1.0 | 12 |
+| **Memory** | **120G x 5.0/G** | **600** |
+| GPU | 4 x 6.0 | 24 |
+
+`max(12, 600, 24)` = **600**. Memory dominates completely.
+
+### Memory is the cost driver here, not GPUs
+
+This is counter-intuitive on a GPU cluster and easy to get backwards.
+
+Measured on the live job serving Qwen2.5-Coder-7B: vLLM host RSS is **0.9 GB**
+against a **120G** request. The model's 15G lives in VRAM, not host RAM.
+
+Consequences:
+
+- Dropping 4 GPUs to 1 moves the GPU term from 24 to 6 and changes billing by
+  **nothing** — memory still maxes at 600.
+- Dropping memory to 32G moves that term to 160, making GPU the new max. That
+  is a real reduction.
+- Right-size **memory first** on this cluster. GPU right-sizing helps
+  scheduling and frees contended hardware, but does not reduce billing while
+  the memory term dominates.
+
+### Observed oversubscription
+
+Job 12427107 held `gres/gpu=4` while `--tensor-parallel-size 1` used exactly
+one. GPUs 1-3 sat at 4 MiB and 0% for the life of the job.
+
+TP=1 is the correct choice for a dense 7B (see `p124-serve-in-job.sh` header
+and the PoC flaws table). The waste is in the **allocation request**, not the
+serve command: a 4-GPU job was submitted for a workload needing one.
+
 ## P124 provider topology (observed 2026-07-30)
 
 The serving path has three independent layers. Diagnose them in this order.

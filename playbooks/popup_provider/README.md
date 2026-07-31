@@ -153,6 +153,36 @@ and compiled-kernel availability for the target's runtime. Until that exists,
 verify MoE and novel architectures manually against the target build before
 committing to a stage-and-swap.
 
+11. Right-size every **billed** dimension, not just GPUs. Which dimension
+    dominates is scheduler-specific: read the target's `TRESBillingWeights`
+    and `PriorityFlags` first. Under `MAX_TRES` the billing figure is the
+    maximum weighted term, so shrinking any other term changes nothing.
+
+### Observed instance of defect 11
+
+Sockeye, 2026-07-31, job 12427107. Partition weights
+`CPU=1.0,Mem=5.00G,gres/gpu=6.0` with `PriorityFlags=MAX_TRES`. Request was
+`cpu=12,mem=120G,gres/gpu=4`, giving weighted terms 12 / **600** / 24 and a
+billed value of `max(...)` = **600**.
+
+Memory dominated by 25x over GPU. Measured vLLM host RSS while serving
+Qwen2.5-Coder-7B was **0.9 GB** against the 120G request, because vLLM keeps
+weights in VRAM. Cutting 4 GPUs to 1 would have changed billing by zero.
+
+The job also held 4 GPUs while serving TP=1, leaving three V100s at 0% for its
+lifetime — real waste on a contended queue, but not a billing reduction.
+
+### Known gap: preflight does not model allocation cost
+
+`preflight/check.py` answers "does it fit?" It does not answer "is this
+request right-sized?" or "what will this bill?" It reads `gpus_per_job` and
+`vram_per_gpu_gb` and ignores `mem` entirely, so it would pass a request that
+is 130x oversized on the dimension that actually governs cost and queue
+priority.
+
+A complete preflight needs a third gate that reads the target's billing
+weights and flags dimensions requested far beyond measured need.
+
 ## Acceptance (P125)
 
 P125 concludes only that the framework brought a provider up unattended on at

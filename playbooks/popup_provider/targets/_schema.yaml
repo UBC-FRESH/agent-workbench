@@ -29,7 +29,7 @@ cluster-dependent.
 | `nodes` | int | Number of nodes (default 1) |
 | `ntasks` | int | Number of tasks (default 1) |
 | `cpus_per_task` | int | CPUs per task |
-| `mem` | string | Memory request (e.g. `"120G"`) |
+| `mem` | string | Memory request (e.g. `"120G"`). On schedulers where memory dominates the billing formula this is the primary cost lever — measure actual host RSS rather than guessing. vLLM keeps model weights in VRAM, so host RAM need is far smaller than model size |
 | `time_limit` | string | Walltime (e.g. `"24:00:00"`) |
 | `constraint` | string\|null | Slurm constraint string |
 | `ssh_config_alias` | string\|null | `~/.ssh/config` Host alias for ControlMaster |

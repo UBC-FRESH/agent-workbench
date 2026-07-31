@@ -17,10 +17,18 @@ gres: null                    # null = partition default (V100 32GB)
 nodes: 1
 ntasks: 1
 cpus_per_task: 12
+# Billing on this partition is MAX_TRES over
+# CPU=1.0, Mem=5.00G, gres/gpu=6.0.
+# 120G bills 600; 4 GPUs bill only 24. Memory is the cost driver.
+# Measured vLLM host RSS serving Qwen2.5-7B: 0.9 GB (weights live in VRAM).
+# 120G below matches the live job 12427107 as observed, and is heavily
+# oversized. See notes/clusters/sockeye.md before reusing.
 mem: "120G"
 time_limit: "24:00:00"
 constraint: null
 
+# Observed: job 12427107 requested 4 GPUs but served TP=1, leaving GPUs 1-3
+# idle at 4 MiB / 0% for the life of the job. A dense 7B needs one V100.
 gpus_per_job: 4
 vram_per_gpu_gb: 32
 
