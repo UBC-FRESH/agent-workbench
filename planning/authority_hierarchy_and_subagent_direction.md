@@ -40,11 +40,12 @@ supervisor, worker, and advisor roles through one shared model, with role
 separation enforced by bounded instructions and authority — not by deploying
 different models.
 
-The coordinator is no longer a paid or free lane; all roles share the same
-locally controlled vLLM model. This removes paid-token cash entirely from the
-coordinator lane, with the tradeoff that the model is the same across all roles.
-The gap in reasoning capability is mitigated by the Advisor lane below, which
-uses the same model with read-only advisory-only constraints.
+The coordinator is no longer a paid or free lane; the coordinator, supervisor,
+and worker roles share the same locally controlled vLLM model. This removes
+paid-token cash from those lanes, with the tradeoff that the model is the same
+across them. The gap in reasoning capability is mitigated by the Advisor lane
+below, which since 2026-08-01 runs on a paid frontier model (`claude-opus-5`)
+under read-only advisory-only constraints.
 
 Responsibilities:
 
@@ -54,8 +55,8 @@ Responsibilities:
 - prepare bounded job tickets for supervisor agents;
 - define acceptance gates and scoring rubrics;
 - inspect compact supervisor reports rather than raw worker transcripts;
-- decide when a hard reasoning subset is worth spending the finite paid Advisor
-  budget, and manage that budget along an observed benefit/cost gradient; and
+- decide when a hard reasoning subset is worth an Advisor invocation, judged on
+  question quality rather than against a fixed call budget; and
 - own final escalation to the developer when the workflow is ambiguous or
   risky.
 
@@ -66,11 +67,18 @@ The coordinator profile is `agent-workbench-coordinator.agent.md`.
 
 ### Advisor
 
-The advisor is a **same-model, on-demand, advisory-only** lane (P118 update).
-It is not a persistent authority level; it is a consultant the coordinator
-invokes for hard reasoning subsets. The advisor uses the same configured vLLM
-model as the coordinator — the difference is that the advisor is constrained to
-read-only tools and advisory-only output.
+The advisor is an **on-demand, advisory-only** lane. It is not a persistent
+authority level; it is a consultant the coordinator invokes for hard reasoning
+subsets. Since 2026-08-01 the advisor runs on a paid frontier model
+(`claude-opus-5`) rather than the local vLLM model used by the other roles — it
+is the one standing exception, justified because its role is precisely the
+large-context reasoning the local model is weakest at, and because read-only
+authority means a bad call costs advice rather than state.
+
+The advisor is also **stateless across invocations**: Copilot subagents cannot
+be resumed or messaged. Its continuity is file-based, in
+`planning/advisor_dossier.md`, which it reads at the start of each call and
+which the coordinator appends to afterwards.
 
 Responsibilities:
 
@@ -82,9 +90,12 @@ Responsibilities:
 
 The advisor is read-only. It must not mutate repository or GitHub state, invoke
 subagents, or make final decisions. The coordinator remains the authority that
-acts on the advice, records the outcome in its ledger, and manages the invocation
-frequency. See `coordinator_advisor_paid_boost_strategy.md` for the budget model
-and gradient learning loop. The advisor profile is
+acts on the advice and records the outcome in `planning/advisor_dossier.md`,
+including advice it rejected. There is **no cap** on invocation frequency and
+**no mandatory trigger** that forces a consultation — the coordinator invokes the
+advisor when doing so adds value. See
+`coordinator_advisor_paid_boost_strategy.md` for the model decision and
+invocation discipline. The advisor profile is
 `agent-workbench-advisor.agent.md`.
 
 ### Supervisor

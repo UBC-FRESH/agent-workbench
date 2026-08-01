@@ -236,7 +236,8 @@ that spends expensive reasoning only where it changes the outcome:
 ```text
 Coordinator: fast, low-cost paid GPT; owns orchestration and acceptance
   |
-  +-- Advisor: expensive deep-thinking GPT; mandatory at defined decision gates
+  +-- Advisor: expensive deep-thinking model; invoked where advice changes the
+  |            outcome, at the Coordinator's judgment
   |
   +-- Supervisor: free Ollama model; decomposes and verifies bounded work
         |
@@ -311,7 +312,7 @@ Minimum Coordinator promotion suite:
 - loose goal -> coherent Supervisor ticket without maintainer micromanagement;
 - successful native Supervisor delegation and evidence collection;
 - recognition of a deterministic Worker failure;
-- correct Advisor invocation at a mandatory trigger;
+- sound judgment about when an Advisor consultation is worth its cost;
 - correct paid-worker escalation after free-worker exhaustion;
 - refusal to escalate when the blocker is environmental rather than cognitive;
   and
@@ -321,85 +322,69 @@ The default should be the lowest-cost candidate that passes the suite at the
 required reliability threshold, not simply the model with the cheapest nominal
 tokens.
 
-## Advisor Role and Mandatory Invocation Policy
+## Advisor Role and Invocation Judgment
 
-The Advisor is a bounded, expensive second opinion. It should use a strong model
-and higher reasoning effort because it is invoked rarely and specifically when
+> **Revised 2026-08-01.** This section previously defined seven *mandatory*
+> Advisor triggers, a required consultation-packet schema, and a five-step
+> enforcement ladder ending in "make deterministic closeout validation fail when
+> a mandatory trigger is present but no Advisor evidence exists." That apparatus
+> is **removed**. It converted a judgment call into a ritual, and a workflow in
+> which agents perform invented ceremonies is worse than one in which they
+> think. The Developer's stated intent governs: **invoke the Advisor when asking
+> for advice adds value.** Nothing below is a floor.
+
+The Advisor is a bounded, expensive second opinion. It uses a strong model and
+higher reasoning effort because it is invoked selectively and specifically when
 better judgment is worth more than speed.
 
-Recommended starting configuration:
+Configuration (see `coordinator_advisor_paid_boost_strategy.md` for the current
+binding, which supersedes the `gpt-5.6-sol` recommendation this note originally
+carried):
 
-- model: `gpt-5.6-sol`;
-- reasoning effort: `high` for normal consultations;
-- reasoning effort: `xhigh` or `max` only for an explicitly bounded exceptional
-  audit when the selected model and product surface support it;
-- sandbox: read-only by default; and
+- model: `claude-opus-5`, invoked as `Claude Opus 5 (copilot)`;
+- reasoning effort: raise it for hard calls;
+- sandbox: read-only; and
 - authority: advise and audit, but do not mutate tracked files, GitHub state,
   provider configuration, or final acceptance state.
 
-Useful Advisor jobs include:
+### Where advice has tended to pay off
 
+This is **signal, not a checklist**. It describes situations where a
+consultation has historically changed an outcome. Read it as a prompt to think,
+not a set of conditions to satisfy:
+
+- reviewing planning before a phase launches, and auditing a phase at closeout —
+  the two workflow-critical milestones where a wrong call propagates furthest;
 - deciding between materially different architecture or workflow approaches;
+- a hard mid-phase design choice with lasting consequences;
+- finding the clue that gets past a hard blocker, especially when the current
+  theory has stopped producing new evidence;
 - checking a plan before a high-blast-radius or difficult-to-reverse change;
-- diagnosing a repeated failure when the Coordinator's current theory is not
-  producing new evidence;
-- reviewing a proposed exception to delegation or cost policy;
-- auditing whether a roadmap phase is genuinely ready for closeout;
 - challenging a public readiness, security, economics, or quality claim;
-- resolving conflicting Supervisor reports or ambiguous validation evidence;
-- deciding whether a task deserves a paid rescue Worker; and
-- performing postmortem analysis when a run consumed its retry budget.
+- resolving conflicting Supervisor reports or ambiguous validation evidence; and
+- postmortem analysis after a run consumed its retry budget.
 
-A vague instruction such as "use the Advisor when helpful" is not sufficient.
-Current Codex documentation says local Codex delegates after a direct request or
-when applicable project or skill instructions request it. Therefore Advisor use
-should be encoded as explicit mandatory gates in the Coordinator profile and
-durable repository instructions.
+Equally, do **not** spend Advisor time on mechanical checks, ticket templating,
+status polling, evidence-existence checks, or checklist reconciliation. Those
+are cheaper to verify than to ask about.
 
-The Coordinator **must consult the Advisor** before proceeding when any of these
-triggers occurs:
+### What makes a consultation useful
 
-- **stuck trigger:** two attempts, nudges, or hypotheses have failed to produce
-  materially new evidence;
-- **big-swing trigger:** the next action changes architecture, provider setup,
-  public API, data model, permission boundary, roadmap direction, or many files;
-- **closeout trigger:** a phase, release, public-readiness claim, or other
-  externally visible milestone is about to be declared complete;
-- **uncertainty trigger:** important evidence conflicts, the acceptance basis is
-  mostly judgment, or the Coordinator cannot state why its plan should work;
-- **policy-exception trigger:** the Coordinator proposes overriding a delegation,
-  security, cost, privacy, or governance default;
-- **paid-escalation trigger:** the Supervisor requests a paid rescue Worker; or
-- **budget trigger:** a live run is about to exceed its approved paid-token,
-  retry, or elapsed-time budget.
+A good Advisor ticket states the decision under review, the evidence already
+inspected, the options considered, the Coordinator's current recommendation, and
+what output is wanted. A good outcome record states the Advisor's verdict and
+confidence, the Coordinator's decision, and — when the advice was not followed —
+why.
 
-Advisor invocation should produce a small auditable consultation packet:
+That record lives in `planning/advisor_dossier.md`. It exists so advice is
+auditable and so a later Advisor is not flying blind, **not** as evidence that a
+required step was performed. There is no `advisor_consulted` field to populate,
+no validator that fails for its absence, and no invocation quota in either
+direction.
 
-- decision or question being reviewed;
-- evidence already inspected;
-- options considered;
-- Coordinator's current recommendation;
-- requested Advisor output;
-- Advisor verdict and confidence;
-- Coordinator decision after receiving the advice; and
-- explanation when the Coordinator does not follow the advice.
-
-The policy needs enforcement as well as prose. Candidate mechanisms, in order
-of increasing strength:
-
-1. Put the mandatory triggers directly in the Coordinator custom agent's
-   `developer_instructions`.
-2. Give the Advisor a precise `description` naming these trigger situations so
-   Codex can select it correctly.
-3. Repeat the gates in the applicable `AGENTS.md` or a required coordination
-   skill so they enter each relevant task context.
-4. Require an `advisor_consulted`, `advisor_not_required`, or
-   `advisor_required_but_blocked` field in decision and closeout artifacts.
-5. Make deterministic closeout validation fail when a mandatory trigger is
-   present but no Advisor evidence exists.
-
-This makes "why did you not invoke the Advisor?" answerable from evidence and
-reduces dependence on the maintainer noticing that the Coordinator is stuck.
+The honest constraint is narrow: if a report claims the Advisor was consulted,
+there should be a dossier entry showing it. That is a rule against false
+reporting, not a requirement to consult.
 
 ## Free Workers and Paid Rescue Workers
 
@@ -412,7 +397,8 @@ repeat a failing strategy indefinitely. The desired escalation ladder is:
    Ollama Worker only when the first failure identifies a concrete fix.
 4. If the result remains unacceptable, stop free-worker retries and write a
    paid-escalation request.
-5. Consult the Advisor when the escalation meets a mandatory trigger.
+5. Consult the Advisor if a second opinion on the escalation would add value \u2014
+   this is a judgment call, not a required step.
 6. Launch one low-cost paid rescue Worker under the approved scope and budget.
 7. Have the free Supervisor verify the paid Worker's artifact; the paid Worker
    does not become the acceptance authority.
@@ -485,7 +471,8 @@ Treat native Codex as the primary orchestration host:
 - configured Ollama Supervisor: serial/local analysis and proposal work only
   unless a future bounded proof restores child-spawning eligibility;
 - configured Ollama models: bounded Workers;
-- paid Advisor: selective but mandatory at explicit decision gates;
+- paid Advisor: selective, invoked at the Coordinator's judgment where advice
+  changes the outcome;
 - tiered paid GPT rescue Workers: economy first, stronger models only after
   evidence-gated escalation;
 - Codex custom-agent TOML: role definitions and provider/model overrides;

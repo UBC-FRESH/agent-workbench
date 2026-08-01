@@ -32,6 +32,8 @@ This tranche delivered Codex integration, a function-tool adapter, event-driven 
 
 Goal: establish a usable native VS Code Copilot Agent Hub deployment in which **one configured remote vLLM model** serves the Coordinator, Supervisor, Worker, and Advisor roles through distinct custom-agent instructions. Role separation comes from bounded authority and instructions, not from different underlying models.
 
+> **Superseded 2026-08-01 (Advisor lane only):** the Advisor no longer shares the local vLLM model. It runs on a paid frontier model (`claude-opus-5`) under read-only constraints, because its role is the large-context reasoning the local model is weakest at. Coordinator, Supervisor, and Worker remain on the shared local model.
+
 The GPU constraint means this is a **serial single-model deployment**: at most one intensive child may be actively reasoning at a time. Parallel fan-out will overflow VRAM.
 
 ### P118 Tasks
@@ -47,7 +49,7 @@ The GPU constraint means this is a **serial single-model deployment**: at most o
 ### Key Design Principles
 
 - **Single model, serial inference**: One Qwen 3.6 27B model on a single GPU. Zero marginal token price is not a claim of zero GPU, hosting, or opportunity cost.
-- **Role separation by authority**: Coordinator, Supervisor, Worker, and Advisor are instruction-bound roles sharing the same model.
+- **Role separation by authority**: Coordinator, Supervisor, and Worker are instruction-bound roles sharing the same model. The Advisor is the standing exception, running on a paid frontier model under read-only constraints.
 - **One bounded repair**: If verification fails, issue exactly one concrete repair follow-up. If that fails, escalate — do not retry indefinitely.
 - **Quality, protocol, economics reported separately**: Never collapse these into one vague verdict.
 

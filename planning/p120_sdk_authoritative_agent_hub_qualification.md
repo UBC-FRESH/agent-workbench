@@ -41,6 +41,9 @@ artifacts. Keep the Keklick Copilot UI route for manual visible smoke tests.
 - SDK manifests now accept a generic OpenAI-compatible base URL and model
   alias, with local-only request-header injection. A manifest model override
   ensures Coordinator, Advisor, and Worker profiles share the serving alias.
+  (**Superseded 2026-08-01** for the Advisor lane: the Advisor now pins
+  `claude-opus-5` in its own profile and no longer shares the serving alias.
+  See `planning/coordinator_advisor_paid_boost_strategy.md`.)
 - The SDK profile catalog now includes the Coordinator and Advisor profiles.
   The Coordinator profile description was quoted to make its YAML parseable.
 

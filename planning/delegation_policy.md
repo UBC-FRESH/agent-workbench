@@ -1,9 +1,11 @@
 # Delegation Policy And Trust Levels
 
 This policy defines how Agent Workbench supervisors may delegate work to worker
-agents. All roles (Coordinator, Supervisor, Worker, and Advisor) now share one
-configured vLLM model (P118 update, 2026-07-21). Role separation comes from
-bounded instructions and authority, not from deploying different models.
+agents. The Coordinator, Supervisor, and Worker roles share one configured vLLM
+model (P118 update, 2026-07-21). The **Advisor is the standing exception** and
+runs on a paid frontier model (`claude-opus-5`, 2026-08-01 update). Role
+separation otherwise comes from bounded instructions and authority, not from
+deploying different models.
 
 The GPU constraint means serial inference is mandatory: at most one intensive
 child agent may be actively reasoning at a time.

@@ -54,10 +54,17 @@ Routine lane:
 model: "Ornith 1.0 35B FP8 (copilotcustommodelsendpoint)"
 ```
 
+The Advisor is the one deliberate paid exception:
+
+```
+model: "Claude Opus 5 (copilot)"
+```
+
 See the Coordinator profile's Model Identity section for the full table and
 verified model strings.
 
-Delegate one child task at a time by default. The Supervisor — not you — holds
+Delegate one *mutating* child task at a time by default; independent read-only
+work may fan out per the concurrency guidance below. The Supervisor — not you — holds
 the heavy context and drives the Worker lane. You only ever see the packet.
 
 Good delegation candidates: repo-local research, code and notes inspection,
@@ -89,9 +96,47 @@ Invoke `agent-workbench-advisor` (read-only) for hard reasoning:
 Do **not** spend Advisor time on mechanical checks, ticket templating, status
 polling, evidence-existence checks, or checklist reconciliation — verify those
 yourself. Prefer one well-scoped question with all evidence attached over
-several vague ones. Default budget: at most one Advisor invocation per roadmap
-phase unless the developer says otherwise. When exhausted, escalate to the
-developer, not to the Advisor again.
+several vague ones.
+
+There is **no fixed cap** on Advisor invocations, and equally **no mandatory
+trigger** that forces one. Invoke it when asking for advice adds value — when
+the reasoning is genuinely hard and you can attach the evidence to make the
+question concrete. That is a judgment call, and it is yours.
+
+Advice has tended to pay off around workflow-critical milestones: reviewing
+planning before a phase launches, auditing a phase at closeout, a hard mid-phase
+design choice, or finding the clue that gets past a stubborn blocker. Treat that
+as signal about where to think harder, **not** as a checklist to satisfy.
+
+If repeated Advisor passes stop changing your decision, that is a signal you are
+asking the wrong question — reframe it or escalate to the developer, not a quota
+you have spent.
+
+Do not invent invocation rules in either direction. A workflow where agents
+perform ceremonies is worse than one where they think.
+
+The Advisor runs on `Claude Opus 5 (copilot)` — paid, and the one deliberate
+exception to the local-model default.
+
+### Advisor continuity is file-based
+
+Copilot subagents are **stateless across invocations**. There is no persistent
+Advisor session, no resume handle, and no way to send it a follow-up. Each call
+builds a fresh Advisor from your prompt.
+
+Continuity therefore lives in `planning/advisor_dossier.md`, not in session
+state. This matches the repo's "structured handoff, not memory trace" principle:
+the Advisor's standing positions must be auditable artifacts, not accumulated
+unlogged context.
+
+So, when you do consult the Advisor: point it at the dossier so it is not flying
+blind, and append what it returns — including advice you rejected, and why. A
+dossier that logs only accepted advice will make a future Advisor confidently
+re-recommend things you already turned down.
+
+This is bookkeeping, not ceremony. The only hard part: if a report claims the
+Advisor was consulted, there must be a dossier entry showing it. That is a rule
+against false reporting, not a requirement to consult.
 
 ## Topology and concurrency
 

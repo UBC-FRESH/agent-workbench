@@ -126,7 +126,7 @@ fresh C0 r2 observation is retained as configuration evidence but is not yet an
 eligible baseline; it cannot support a comparative ROI claim without its
 separate quality, protocol, and accounting verdicts.
 
-## Advisor gate
+## Advisor consultation (not a gate)
 
 Each implementation role starts fresh. All initial delegate spawns use
 `fork_context:false`. Sol consultation is exceptional rather than a standing

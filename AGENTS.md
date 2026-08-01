@@ -4,10 +4,21 @@ This file is the working contract for AI coding agents in this repository.
 
 ## Provider & Endpoint
 
-A single configured remote vLLM endpoint serves one custom Qwen 3.6 27B
-coding model. All roles (Coordinator, Supervisor, Worker, Advisor) share
-this model. Role separation comes from bounded instructions and authority,
-not architecture.
+A single configured vLLM endpoint serves the local coding model, currently
+Ornith 1.0 35B FP8 (`ornith-1.0-35b-fp8`). The Coordinator, Supervisor, and
+Worker roles share it by default. Role separation comes from bounded
+instructions and authority, not architecture. The Coordinator may escalate an
+individual task to a frontier paid-token model when the local model is not
+producing usable results.
+
+The **Advisor is a standing exception**: it runs on a paid frontier model
+(`Claude Opus 5`), because its role is precisely the hard, large-context
+reasoning the local model is weakest at, and it is read-only so a bad call
+costs advice rather than state. See the Coordinator profile's Model Identity
+section for verified model strings.
+
+The endpoint must advertise the model it is actually serving. Do not reuse
+another model's `--served-model-name` to avoid editing client config.
 
 Endpoint and provider credentials are stored locally in untracked files.
 Do not publish URLs or credentials in tracked content.
@@ -42,11 +53,11 @@ caps, quality thresholds) are informative signals, not enforcement cliffs.
 The thin Coordinator lays them down as tripwires — not rails that the
 workflow must bend to. Gating is a mirror, not a hammer.
 
-**Single model, bounded authority.** All roles (Coordinator, Supervisor,
-Worker, Advisor) share one configured remote vLLM model. Role separation
-comes from bounded instructions and authority, not from pretending the
-underlying model is deterministic. Concurrency is free; serialization is
-policy.
+**Single model, bounded authority.** The Coordinator, Supervisor, and Worker
+roles share one configured remote vLLM model; the Advisor runs on a paid
+frontier model by standing exception. Role separation comes from bounded
+instructions and authority, not from pretending the underlying model is
+deterministic. Concurrency is free; serialization is policy.
 
 **Gates that measure the right thing.** Design metrics to isolate what you
 care about. A yield gate on content-bearing records measures extraction
