@@ -1,0 +1,24 @@
+#!/bin/bash
+ 
+#SBATCH --job-name=jobname            
+#SBATCH --account=<alloc-code>-gpu    
+#SBATCH --nodes=1                  
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=12                           
+#SBATCH --mem=64G                  
+#SBATCH --time=72:00:00             
+#SBATCH --gpus=2
+#SBATCH --output=output.txt         
+#SBATCH --error=error.txt          
+#SBATCH --mail-user=<your-email>
+#SBATCH --mail-type=ALL                               
+ 
+module load gcc
+module load cuda
+module load <software_package_1>
+module load <software_package_2>
+ 
+cd /scratch/alloc-code/path/to/directory
+ 
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+<gpu_executable>

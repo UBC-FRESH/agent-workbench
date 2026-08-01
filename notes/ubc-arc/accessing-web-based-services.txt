@@ -1,0 +1,152 @@
+Skip to sidebar
+Skip to main content
+Skip to breadcrumbs
+Skip to search
+Log in
+Linked Applications
+UBC IT Confluence
+Spaces
+Create
+
+Search
+Help
+Log in
+
+
+UBC ARC Technical User Documentation
+About ARC
+What is HPC
+About Sockeye
+About Chinook
+About Globus
+ARC Access Management Portal
+Using Sockeye
+QuickStart Guide
+SSH Connection Sharing
+Introduction to Linux and Using the Command Line Interface
+Understanding Job Scheduling and Fairshare
+Data Transfer
+Using Visual Studio Code with Sockeye
+UBC ARC OnDemand
+File Transfer and Management
+Job Management
+Cluster Desktop
+Jupyter Notebook
+RStudio Server
+MATLAB
+Genomics Applications
+Bandage
+FASTQC
+IGV
+MEGA
+UGENE
+ALPHAFOLD3
+Running Jobs
+Array Jobs in Slurm
+GPU Jobs in Detail
+Using Local Scratch
+Accessing Web-Based Services in Your Jobs
+Software
+Using the Alliance CVMFS Software Stack
+Virtual Environments on Sockeye
+Using Apptainer or Singularity Containers
+RStudio with Apptainer
+Bioconductor Apptainer Container for Bioinformatics
+Jupyter Notebooks with Apptainer
+TensorFlow with Conda
+MATLAB Parallel Computing
+Build Conda environment in Apptainer Container
+AlphaFold
+Using Chinook
+Chinook Overview & Best Practices
+Chinook Setup Guide
+Chinook Sharing Guide
+Chinook User Guide
+Checking your Chinook allocation's storage
+Using Globus
+Data Transfer to or from Sockeye
+Transfer to or From Your Local Machine Using Globus Connect Personal
+Enable Globus Subscription Groups
+Common Globus Help Topics
+Connecting to Microsoft OneDrive with Globus Web
+Using REDCap
+ARC REDCap Access Management and Security Guidelines
+Defending Your REDCap Flex Project Against Fraudulent Responses and Bot Attacks
+How to: Separate/Split a REDCap Project
+Including the ARC REDCap Platform on a Research Ethics Board Application
+MyCap Mobile Application
+The nedCAPTCHA Module
+AI/ML Resources Hub
+Training
+System Maintenance
+Technical FAQ
+Grant Support Language
+Acknowledgment of UBC ARC in Research
+ConfigureSpace tools
+Accessing Web-Based Services in Your Jobs
+Pages… Running Jobs
+Created by Nesrallah, Michael, last updated by Fletcher, Chad on Jul 16, 2026  2 minute read
+Overview
+Loading the HTTP Proxy Module
+Available Web Services
+Prerequisites
+
+In this guide, it is assumed you know how to connect to Sockeye, navigate its filesystem, load modules, and write job scripts. If you are not familiar with Sockeye, you should review the Quickstart Guide and Running Jobs pages.
+Overview
+By policy, the compute nodes on Sockeye do not have internet access. However, we understand that there are web-based services that may be helpful to use during a job. For example, the Weights & Biases tool is useful in machine learning jobs to keep track of metrics and for model management and visualization. This guide will walk you through how to access ARC-approved web-based services in your jobs.
+
+Loading the HTTP Proxy Module
+In order to use a web-based service in your jobs, you'll need to load the module, http_proxy, which acts as an intermediary between the compute nodes and the Internet:
+
+
+
+module load http_proxy
+
+
+This command may be incorporated into your job script just like any other module, i.e.
+
+
+
+#!/bin/bash
+ 
+#SBATCH --time=xx:00:00          # Request xx hours of runtime
+#SBATCH --account=alloc-code     # Specify your allocation code
+#SBATCH --nodes=x                # Request x nodes
+#SBATCH --ntasks=x               # Request x tasks (~x cpus assuming cpus-per-task=1)
+#SBATCH --mem=xG                 # Request x GB of memory
+#SBATCH --job-name=job_name      # Specify the job name
+#SBATCH --output=output.txt      # Specify the output file
+#SBATCH --error=error.txt        # Specify the error file
+#SBATCH --mail-user=<your-email> # Email address for job notifications
+#SBATCH --mail-type=ALL          # Receive email notifications for all job events
+  
+# Load necessary software modules
+module load http_proxy 
+module load <other software packages...>
+
+cd $SLURM_SUBMIT_DIR 
+
+#<executing commands here>
+Available Web Services
+Outbound access is controlled by policy and the following is a list of what is currently permitted by the HTTP proxy:
+
+wandb.ai - Weights & Biases
+api.colabfold.com - Protein Folding
+www.comet.com - Comet
+huggingface.co - Hugging Face
+openai.com - OpenAI
+gbif.org - Global Biodiversity Information Facility
+googleapis.com - Google APIs Gateway
+accounts.google.com - Google Authentication
+cibersortx.stanford.edu - CIBERSORTx 
+If there is another web service that you would like to use in your Sockeye jobs, reach out to us at arc.support@ubc.ca and we will look into your request.
+
+
+
+
+
+
+
+No labels
+Powered by Atlassian Confluence 9.2.10 Report a bug Atlassian News
+Atlassian
