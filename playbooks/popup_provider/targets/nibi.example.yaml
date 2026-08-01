@@ -1,0 +1,95 @@
+# Nibi (Alliance Canada) — example target descriptor
+#
+# Copy to an untracked local path (e.g. targets/nibi.yaml), fill in real
+# values, and reference from bringup scripts. Do not commit real accounts,
+# keys, or paths to tracked content.
+#
+# Observed 2026-07-26. Verify before use — cluster config may change.
+#
+# This file is an EXAMPLE with placeholders/nulls for unverified values.
+# It describes what Nibi offers without pretending a live allocation exists.
+#
+# Default GRES, VRAM, and time-limit below are a PLANNING DEFAULT.
+# They have NOT been verified as a successful load. See
+# profiles/qwen36-27b-nvfp4-nibi.yaml for the values actually attempted
+# on 2026-07-26 (which also did not complete a successful load).
+
+name: nibi
+ssh_target: "<username>@nibi.alliancecan.ca"
+ssh_config_alias: null
+scheduler_kind: slurm
+
+# Alliances use CCDB accounts. Replace with your group account.
+account: "<ccdb-account>"
+partition: "gpubase_interac"
+
+# H100 MIG slice. Options:
+#   nvidia_h100_80gb_hbm3_1g.10gb   (1/8 compute, 10 GB VRAM)
+#   nvidia_h100_80gb_hbm3_2g.20gb   (2/8 compute, 20 GB VRAM)
+#   nvidia_h100_80gb_hbm3_3g.40gb   (3/8 compute, 40 GB VRAM)
+#   h100_80gb                         (full H100, 80 GB VRAM)
+#
+# Planning default: 3g.40gb gives comfortable headroom for Qwen3.6-27B-NVFP4.
+# This is a planning default, NOT a verified successful load.
+# Use 1g.10gb only for smaller models that fit in 10GB.
+gres: "nvidia_h100_80gb_hbm3_3g.40gb:1"
+
+nodes: 1
+ntasks: 1
+cpus_per_task: 4
+# vLLM keeps weights in VRAM; host RAM need is ~1-1.5 GB regardless of model
+# size. Right-size this to the smallest viable allocation.
+mem: "8G"
+time_limit: "08:00:00"
+constraint: null
+
+# One MIG slice per job — Nibi does not support multiple MIG instances in
+# a single job.
+gpus_per_job: 1
+vram_per_gpu_gb: 40
+
+# Duo MFA on first login; persistent sessions may skip subsequent prompts.
+auth_kind: duo_mfa
+requires_initial_mfa: true
+proxy_jump: null
+
+# Bind to loopback; expose via a future ingress mechanism.
+bind_host: "127.0.0.1"
+service_port: 18000
+
+# Nibi compute nodes have internet access — no firewall/proxy needed.
+# Access mode: exposed via the existing Cloudflare nginx tunnel.
+# Tunnel ID and hostname are placeholders — do not commit live values.
+access_mode: "cloudflare_tunnel"
+
+# Login node hostname (for bridge scripts that need to locate the node).
+login_node: null
+
+shared_cache: null            # ephemeral ($SLURM_TMPDIR)
+cuda_home: null               # auto-detect
+
+# Path to a submission script that exists on the cluster.
+# The script payload holds the allocation so autostart can attach via srun.
+submission_script: "<path-to-submission-script-on-cluster>"
+
+# Cloudflare fields (for future ingress, not yet configured).
+cloudflare_tunnel_id: null
+cloudflare_hostname: null
+
+# OpenStack fields not used for Nibi.
+os_flavor: null
+os_keypair: null
+os_network: null
+
+# Cluster topology notes (sanitized from tracked notes):
+# - Host: nibi.alliancecan.ca
+# - 288 H100 GPUs (80 GB each), ~half with MIG enabled
+# - MIG profiles: 1g.10gb, 2g.20gb, 3g.40gb
+# - Compute nodes have internet access (no proxy/firewall)
+# - Access: interactive SSH + Duo MFA (first login requires human approval)
+# - /scratch has 1 TB soft quota with 60-day grace period
+# - Access: interactive SSH + Duo MFA (first login requires human approval)
+# - Planning default (3g.40gb / 40GB / 08:00:00) has NOT been verified as a
+#   successful load. See profiles/qwen36-27b-nvfp4-nibi.yaml for the values
+#   actually attempted on 2026-07-26 (which also did not complete a successful
+#   load).

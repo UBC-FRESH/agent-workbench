@@ -15,9 +15,11 @@
       "max_model_len": 32768,
       "quantization": "gguf",
       "load_format": "gguf",
+      "num_attention_heads": 32,
+      "num_key_value_heads": 4,
       "measurement": "estimated from parameter count and quantization",
       "measured_on": null,
-      "notes": "Fits on a single V100 32GB with TP=1. Used as Sockeye provider model (P124)."
+      "notes": "Fits on a single V100 32GB with TP=1. Used as Sockeye provider model (P124). Valid TP degrees: 1, 2, 4 (divisors of both 32 attention heads and 4 KV heads)."
     },
     {
       "model_id": "bartowski/Qwen2.5-Coder-7B-Instruct-GGUF",
@@ -30,9 +32,11 @@
       "max_model_len": 32768,
       "quantization": "gguf",
       "load_format": "gguf",
+      "num_attention_heads": 32,
+      "num_key_value_heads": 4,
       "measurement": "estimated from parameter count and quantization",
       "measured_on": null,
-      "notes": "Fits on a single V100 32GB with TP=1."
+      "notes": "Fits on a single V100 32GB with TP=1. Valid TP degrees: 1, 2, 4 (divisors of both 32 attention heads and 4 KV heads)."
     },
     {
       "model_id": "bartowski/Qwen_Qwen3-8B-GGUF",
@@ -77,7 +81,7 @@
       "load_format": "",
       "measurement": "estimated from parameter count and ModelOpt NVFP4 quantization",
       "measured_on": null,
-      "notes": "Fits on one H100 80GB (MIG 3g.40gb slice) with TP=1. Used on Alliance and Arbutus."
+      "notes": "Fits on one H100 80GB (MIG 3g.40gb slice) with TP=1. Used on Alliance and Arbutus. Estimate is planning-default; not verified on 2g.20gb slice. Actual authenticated download was ~21GB across 3 safetensors shards."
     },
     {
       "model_id": "deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct",
@@ -93,7 +97,27 @@
       "load_format": "",
       "measurement": "estimated from published parameter counts",
       "measured_on": null,
+      "architecture": "DeepseekV2ForCausalLM",
+      "required_kernels": [],
       "notes": "MoE with 16B active params. Fits on one H100 80GB with TP=1."
+    },
+    {
+      "model_id": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "model_tag": "Qwen3-Coder-30B-A3B-Instruct",
+      "variant": "fp16-moe",
+      "runtime": "vllm-native",
+      "parameters_gb": 34.0,
+      "active_parameters_gb": 3.0,
+      "vram_required_gb": 36.0,
+      "vram_with_kv_headroom_gb": 42.0,
+      "max_model_len": 32768,
+      "quantization": "",
+      "load_format": "",
+      "measurement": "estimated from published parameter counts",
+      "measured_on": null,
+      "architecture": "Qwen3MoeForCausalLM",
+      "required_kernels": ["_moe_C.topk_softmax"],
+      "notes": "MoE with 34B total / 3B active params. Architecture recognized in vLLM 0.10.0 but sm70/Volta builds lack MoE kernels — engine startup fails with '_OpNamespace' '_moe_C' object has no attribute 'topk_softmax'. Requires a build with MoE kernel support (e.g. sm80+ or patched sm70)."
     }
   ]
 }

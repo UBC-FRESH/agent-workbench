@@ -17,6 +17,9 @@ synchronized with GitHub issues, planning notes, pull requests, and
   Pending child issue — P125.3 Sockeye 32B upgrade, planned in
   `planning/p125_sockeye_32b_upgrade.md`, not yet filed (GitHub write tools
   disabled).
+  Step 6 (Alliance/Nibi generalization) — planning initiated, no readiness
+  proven. Nibi investigation (2026-08-01) documented in
+  `notes/clusters/nibi.md`; Qwen3.6 readiness on Nibi remains unproven.
 
 - P121 CPU document scraper implementation (#758), child task #759.
 

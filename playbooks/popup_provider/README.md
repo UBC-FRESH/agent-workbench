@@ -29,6 +29,8 @@ playbooks/popup_provider/
 ├── README.md                  # this file
 ├── targets/                   # one YAML per cluster target
 │   ├── sockeye.example.yaml   # UBC ARC Sockeye (Slurm, V100 32GB)
+│   ├── arbutus.example.yaml   # Alliance Arbutus (OpenStack, H100 80GB)
+│   ├── nibi.example.yaml      # Alliance Nibi (Slurm, H100 MIG)
 │   └── _schema.yaml           # target descriptor schema
 ├── profiles/                  # one YAML per model/server config
 │   ├── qwen25-coder-7b.yaml   # Qwen2.5 Coder 7B Instruct
@@ -39,11 +41,38 @@ playbooks/popup_provider/
 │   └── check.py               # preflight checker
 └── bringup/                   # unattended bring-up scripts
     ├── submit.sh              # allocation submission wrapper
-    ├── autostart.sh           # wait-for-capacity + launch + bridge
+    ├── autostart.sh           # Sockeye/Arbutus: wait-for-capacity + launch + bridge
+    ├── autostart-alliance.sh  # Alliance dry-run planning (no scheduler commands)
     ├── bridge.py              # SSH/srun loopback bridge
     ├── wait-ready.sh          # readiness probe (reused from P119)
     └── verify.sh              # bounded client request + report
 ```
+
+## Alliance Clusters (Nibi, Arbutus)
+
+Alliance clusters require interactive SSH + Duo MFA for first login. Because
+of this, the Alliance bring-up path is **intentionally gated**:
+
+- `autostart-alliance.sh` is a **dry-run planning tool only**. It validates the
+  target descriptor and launch profile, runs the local fit preflight, and
+  renders a Slurm submission plan. It does **not** invoke `sbatch`, `srun`,
+  `ssh`, or any remote command.
+- `--apply` prints a clear refusal explaining why live submission requires
+  human action (Duo MFA, shared resource stewardship).
+- Nibi compute nodes have **internet access** — no proxy or firewall
+  permission is needed. The ingress boundary (tunnel, SSH-forward, etc.) is
+  a separate manual step.
+- Target descriptors use placeholders/nulls for account, tunnel ID, and paths.
+  No live allocation is assumed.
+
+To deploy on Alliance:
+
+1. Run `autostart-alliance.sh --target targets/nibi.yaml --profile profiles/...`
+   to validate and review the plan.
+2. SSH to the cluster with Duo MFA.
+3. Copy the rendered sbatch script and submit manually.
+4. Attach vLLM via `srun --overlap` inside the allocation.
+5. Set up ingress separately (tunnel/SSH-forward).
 
 ## Safety Boundary
 
@@ -132,6 +161,23 @@ must be measured.
     *recognized*, not that its kernels are *compiled*. Older GPUs on bespoke
     builds (sm70/Volta) are where this bites.
 
+#### Preflight guard (implemented)
+
+`preflight/check.py::check_capabilities` is the second gate. When the target
+declares `supported_architectures` and/or `supported_kernels`, and the catalog
+entry carries matching `architecture` / `required_kernels`, the preflight
+rejects the request with a structured failure:
+
+- `unsupported_architecture` — model's architecture class is not in the
+  target's declared list.
+- `missing_kernel` — a kernel in the model's `required_kernels` list is not
+  in the target's `supported_kernels` list.
+
+When either side carries no metadata the gate is inert (skipped), so the
+preflight never produces a false reject. The failure surfaces as a distinct
+`capabilities_failure` tag in the JSON result and a human-readable sentence
+in text mode.
+
 ### Observed instance of defect 10
 
 Sockeye, 2026-07-31. `qwen3-coder-30b-a3b-instruct` passes VRAM fit easily
@@ -172,16 +218,19 @@ weights in VRAM. Cutting 4 GPUs to 1 would have changed billing by zero.
 The job also held 4 GPUs while serving TP=1, leaving three V100s at 0% for its
 lifetime — real waste on a contended queue, but not a billing reduction.
 
-### Known gap: preflight does not model allocation cost
+### Known gap: preflight does not model allocation cost (partially addressed)
 
-`preflight/check.py` answers "does it fit?" It does not answer "is this
-request right-sized?" or "what will this bill?" It reads `gpus_per_job` and
-`vram_per_gpu_gb` and ignores `mem` entirely, so it would pass a request that
-is 130x oversized on the dimension that actually governs cost and queue
-priority.
+`preflight/check.py` answers "does it fit?" and, when the target exposes
+`tres_billing_weights` and `priority_flags`, also answers "is this request
+right-sized?" and "what will this bill?" It computes weighted TRES terms,
+identifies the cost driver, and flags memory requests materially above the
+model's estimated host-RAM need (default 1.5 GB, since vLLM keeps weights
+in VRAM).
 
-A complete preflight needs a third gate that reads the target's billing
-weights and flags dimensions requested far beyond measured need.
+Without those billing fields the analysis is skipped and the result is
+unchanged from before. A complete preflight still needs a second gate
+covering kernel/architecture support (defect 10) and a third covering
+per-model measured host-RAM values in the catalog.
 
 ## Acceptance (P125)
 

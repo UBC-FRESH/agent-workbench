@@ -1,0 +1,84 @@
+# Arbutus (Alliance Research Cloud, OpenStack) — example target descriptor
+#
+# Copy to an untracked local path, fill in real values, and reference from
+# bringup scripts. Do not commit real accounts, keys, or paths to tracked
+# content.
+#
+# Observed 2026-07-28/31. Verify before use — cluster config may change.
+
+name: arbutus
+ssh_target: "ubuntu@<arbutus-llm-node>"
+ssh_config_alias: <arbutus-llm-node>
+scheduler_kind: openstack
+
+# OpenStack project (not Slurm account). From notes/clusters/arbutus-openstack-cli.md.
+account: <openstack-project>
+
+# Partition/queue: for OpenStack this is the scheduler queue name.
+# Replace with the actual queue for the chosen flavor.
+partition: "<queue-name>"
+
+# OpenStack-specific fields.
+# os_flavor: the OpenStack flavor string for the VM.
+#   Observed recipe flavor: g1-12gb-c3-35gb-125 (H100L MIG 1g.12gb, 12 GB VRAM).
+#   For qwen36-27b-nvfp4 (NVFP4 ~14GB weights + KV headroom), a full H100 80GB
+#   flavor is required. Replace with the actual flavor name used.
+os_flavor: "<flavor-name-h100-80gb>"
+os_keypair: "<keypair-name>"
+os_network: "<network-name>"
+os_cloud: openstack
+
+# Auth: SSH keypair (not Slurm MFA). From notes/clusters/arbutus-openstack-cli.md.
+auth_kind: keypair
+requires_initial_mfa: false
+# Jump host: llm01 (<llm-jump-host-ip>) is the SSH pivot for all internal subnet nodes.
+# From notes/clusters/arbutus-llm-node-recipe.md.
+proxy_jump: "ubuntu@<arbutus-llm-jump-host>"
+
+# vLLM binding on the provisioned VM.
+bind_host: "127.0.0.1"
+service_port: 8000
+# Access mode: cloudflare_tunnel (the Arbutus recipe provisions cloudflared).
+access_mode: cloudflare_tunnel
+
+# Cloudflare tunnel fields (from the Arbutus recipe Step 6).
+cloudflare_tunnel_id: "<tunnel-uuid>"
+cloudflare_hostname: "<tunnel-hostname>"
+
+# Resource request for the OpenStack VM.
+# These are OpenStack flavor attributes, not Slurm TRES.
+# Replace with actual values for the chosen flavor.
+gpus_per_job: 1
+vram_per_gpu_gb: 80
+
+# Optional Slurm-style fields are not used for OpenStack scheduling,
+# but kept for schema completeness and documentation.
+nodes: 1
+ntasks: 1
+cpus_per_task: null
+mem: null
+time_limit: null
+gres: null
+constraint: null
+
+# Shared cache: ephemeral (no persistent storage assumed).
+shared_cache: null
+cuda_home: null
+
+# Submission script: not applicable for OpenStack VM provisioning.
+# The bringup sequence uses the OpenStack CLI (openstack server create) instead.
+submission_script: null
+
+# Capabilities: Arbutus H100L with modern vLLM build.
+# From notes/clusters/arbutus-llm-node-recipe.md and profile qwen36-27b-nvfp4.yaml.
+# supported_kernels is null: no direct runtime observation of kernel compilation
+# on this target. supported_architectures are retained because the recipe notes
+# confirm these architectures are recognized by the vLLM build.
+supported_architectures:
+  - LlamaForCausalLM
+  - MistralForCausalLM
+  - Qwen2ForCausalLM
+  - Qwen2_5_CoderForCausalLM
+  - Qwen3MoeForCausalLM
+  - DeepseekV2ForCausalLM
+supported_kernels: null

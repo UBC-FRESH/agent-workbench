@@ -40,11 +40,28 @@ apply), and is far more likely to emit correct tool-call format.
 
 ## Goal
 
-Serve `Qwen2.5-Coder-32B-Instruct` on Sockeye at TP=4, and determine by
+Serve `Qwen2.5-Coder-32B-Instruct-AWQ` (~19.3GB) on Sockeye and determine by
 measurement whether it emits valid `tool_calls`.
 
 Success is a *measurement*, not an outcome. "32B also fails tool calling" is a
 valid, recordable result that closes the question.
+
+## Model Selection
+
+**Selected:** `Qwen/Qwen2.5-Coder-32B-Instruct-AWQ` (official Qwen, ~19.3GB, AWQ 4-bit)
+
+**Rationale:**
+- Official Qwen release — highest fidelity, no third-party quantization artifacts
+- ~19.3GB fits comfortably in V100 32GB with headroom for KV cache
+- 1.78M downloads — most battle-tested option
+- Apache 2.0 — fully permissive
+- vLLM 0.10.0 has native AWQ support via `awq.py` + `awq_marlin.py` kernels
+
+**Rejected alternatives:**
+- `Qwen/Qwen2.5-Coder-32B-Instruct-GPTQ-Int4` — same official source but 180× fewer downloads
+- `unsloth/Qwen2.5-Coder-32B-Instruct-bnb-4bit` — reputable but unofficial
+- FP8 variants (~34GB) — exceed V100 32GB limit
+- fp16 (~64GB) — won't fit
 
 ## Non-goals
 

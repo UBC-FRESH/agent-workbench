@@ -195,4 +195,37 @@ Recorded because it qualifies the mitigation adopted above.
   defence-in-depth default, but the contract no longer claims it enforces
   anything. The real enforcement remains the "no entry, no claim" dossier rule.
 
+### 2026-08-01 — Review of staged P125 popup-provider and Nibi work
+
+- question: is the staged 15-path P125 popup-provider/Nibi change set
+  coherent, accurately documented, and safe to move toward review or commit?
+- recommendation: **repair before proceeding.** The design and most tests are
+  substantive, but the staged set contains a false-green Nibi preflight,
+  scheduler-command guard evasion with ineffective tests, an unqualified and
+  internally contradictory historical Nibi success claim, sanitization
+  contradictions, and missing CHANGE_LOG/ROADMAP synchronization.
+- key evidence: `playbooks/popup_provider/preflight/catalog.json` versus
+  `notes/clusters/nibi.md` (~21G downloaded weights versus a 20GB catalog
+  requirement and 19.625 GiB visible MIG); `playbooks/popup_provider/targets/nibi.example.yaml`;
+  `playbooks/popup_provider/profiles/qwen36-27b-nvfp4.yaml`;
+  `playbooks/popup_provider/preflight/check.py`;
+  `playbooks/popup_provider/bringup/autostart-alliance.sh`;
+  `tests/test_popup_provider_nibi.py`;
+  `notes/clusters/nibi.md`; `targets/arbutus.example.yaml`;
+  `planning/p125_sockeye_32b_upgrade.md`; `ROADMAP.md`; `CHANGE_LOG.md`.
+- confidence: high on the file-level contradictions, broken guard tests,
+  staging omissions, and protocol gaps; medium on the AWQ/sm70 compatibility
+  concern because that point was reasoned from runtime conventions rather than
+  measured in this session.
+- would change my mind: a measured Qwen3.6 readiness result within the stated
+  19.625 GiB MIG budget; a verified 2026-07-26 readiness log for the same
+  model; a planted-invocation test proving the scheduler guard works; and an
+  explicit public-safe policy for the identifiers currently rejected by the
+  sanitization tests.
+- coordinator disposition: **accepted — repair before proceeding.** The
+  staged lane remains intact; no commit or infrastructure action will occur
+  until the false-green preflight, guard/test integrity, historical claim,
+  sanitization, and roadmap/changelog issues are resolved or explicitly
+  deferred.
+
 

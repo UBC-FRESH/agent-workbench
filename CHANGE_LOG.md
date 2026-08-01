@@ -195,6 +195,53 @@ issues, pull requests, and closeout comments.
 - Economics: not measured. Advisor invocations this session were not
   token-accounted.
 
+## 2026-08-01 - P125 Nibi sanitization, readiness qualification, and planning
+
+- Qualified the 2026-07-26 "verified bring-up" in `notes/clusters/nibi.md` so
+  it no longer implies unqualified Qwen3.6 readiness. The earlier verification
+  covered SSH login only; the 2026-08-01 P125 investigation did not prove
+  readiness. Added a scope-of-verification note to the Verified outcome
+  section and a precise current conclusion in the P125 findings section.
+- Scrubbed real-world identifiers from allowed staged public artifacts:
+  `notes/clusters/nibi.md`,
+  `playbooks/popup_provider/targets/arbutus.example.yaml`,
+  `planning/session_cbebdef3_summary.md`,
+  `planning/p125_handoff_sockeye_blocked.md`, and
+  `CHANGE_LOG.md`. Replaced `def-gep`/`st-gep` allocation names, tunnel UUID
+  `51059526`, tunnel hostname `fresh02-vllm`, tunnel name `nginx`, jump-host
+  IP `134.87.8.128`, and local secrets path `/srv/shared-data/vllm/secrets.env`
+  with generic placeholders. Retained `nibi.alliancecan.ca` where useful.
+- Added a new test class `TestPublicArtifactMarkerScan` in
+  `tests/test_popup_provider_nibi.py` that scans the Nibi descriptor, Arbutus
+  descriptor, and `notes/clusters/nibi.md` for the scrubbed markers. Tests
+  enforce that no marker re-enters the public artifact surface.
+- Added a "Remote-state changes performed on Nibi" subsection to
+  `notes/clusters/nibi.md` documenting SSH alias repair, HF credential
+  provisioning, venv repair, scratch model/config/shim, and cleanup, with a
+  token scope/revocation caution.
+- Replaced intent claims ("lied", "gaslit") in
+  `planning/session_cbebdef3_summary.md` with auditable behavior descriptions
+  (post-hoc rationalization, post-hoc justification) and qualified stale
+  present-state claims with "as of 2026-08-01".
+- Economics: three Nibi allocations were consumed during the P125 investigation
+  with no readiness proven:
+  - Allocation `18923603` on `g30` (two-hour probe) — timed out during
+    environment installation.
+  - Allocation `18927835` on `g31` — canceled by Slurm with `ReqNodeNotAvail`
+    before vLLM started.
+  - Allocation `18939706` on `g30` (8-hour allocation) — ran for 1:11:09
+    before being canceled after the model-load investigation had no active
+    server. Did not leave a provider or listener running.
+  Total documented runtime: 1:11:09 of active compute (allocation `18939706`);
+  the other two allocations contributed wall-clock time but no productive
+  output. No readiness claim is made for Qwen3.6 on Nibi.
+- Quality: all changes are documentation-only; no infrastructure, SSH, Slurm,
+  Cloudflare, or GitHub state was touched. All 57 Nibi tests pass.
+- Protocol: the scrubbed markers are now detectable by test; any reintroduction
+  will fail the test suite. The qualification of the 2026-07-26 verification
+  is explicit and auditable.
+- Economics: no provider usage was incurred by this documentation pass.
+
 ## Older entries
 
 See `planning/archives/changelog_archive.md` for entries older than the

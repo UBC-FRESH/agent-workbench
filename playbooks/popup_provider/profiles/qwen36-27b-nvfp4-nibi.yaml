@@ -1,0 +1,49 @@
+# Qwen3.6 27B NVFP4 — Nibi-specific launch profile
+#
+# This is a CLUSTER-SPECIFIC variant of the shared profile
+# (profiles/qwen36-27b-nvfp4.yaml). It captures the values ACTUALLY
+# attempted during the 2026-07-26 bring-up on Nibi.
+#
+# These values did NOT complete a successful load. They are recorded here
+# so future attempts can reference the same configuration without guessing.
+#
+# Differences from the shared profile:
+#   - max_model_len: 32768 (shared profile uses 262144)
+#   - gpu_memory_utilization: 0.88 (shared profile uses 0.50)
+#   - tool_calling_verified: false (not verified on this target)
+
+model_id: "nvidia/Qwen3.6-27B-NVFP4"
+served_model_name: "qwen3.6-27b-nvfp4"
+tokenizer: ""
+quantization: ""
+load_format: ""
+dtype: ""
+kv_cache_dtype: "bfloat16"
+max_model_len: 32768
+gpu_memory_utilization: 0.88
+max_num_seqs: 16
+max_num_batched_tokens: 8192
+generation_config: "vllm"
+attention_backend: "FLASH_ATTN"
+linear_backend: "marlin"
+moe_backend: ""
+gdn_prefill_backend: "triton"
+mm_encoder_attn_backend: "FLASH_ATTN"
+speculative_config: '{"method":"mtp","num_speculative_tokens":1}'
+trust_remote_code: true
+enable_prefix_caching: true
+enable_chunked_prefill: true
+async_scheduling: true
+sleep_when_idle: true
+log_stats_interval: 1
+enable_auto_tool_choice: true
+tool_call_parser: "qwen3_xml"
+reasoning_parser: "qwen3"
+language_model_only: false
+default_chat_template_kwargs: ""
+hf_token_env: "HF_TOKEN"
+
+# Nibi-specific: not verified.
+# The shared profile does not set this field; this variant records the
+# unverified state for the Nibi target specifically.
+tool_calling_verified: false

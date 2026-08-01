@@ -43,6 +43,8 @@ cluster-dependent.
 | `os_flavor` | string\|null | OpenStack flavor string (OpenStack only) |
 | `os_keypair` | string\|null | OpenStack keypair name |
 | `os_network` | string\|null | OpenStack network name |
+| `supported_architectures` | list of string\|null | **Defect 10 guard.** Architecture class names the target's vLLM runtime recognizes (e.g. `["LlamaForCausalLM", "MistralForCausalLM"]`). When present, the preflight rejects models whose `architecture` field is not in this list. Null or absent = gate is skipped. |
+| `supported_kernels` | list of string\|null | **Defect 10 guard.** Kernel / op namespace prefixes the target's vLLM runtime has compiled (e.g. `["_moe_C.topk_softmax"]`). When present, the preflight rejects models whose `required_kernels` list contains an entry not in this list. Null or absent = gate is skipped. |
 
 ## Example: Sockeye
 
