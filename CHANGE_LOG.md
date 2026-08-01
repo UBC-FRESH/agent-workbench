@@ -38,6 +38,38 @@ Protocol: prompt is documentation-only and does not grant credentials,
 delegation, remote access, or GitHub mutation authority.
 Economics: not applicable (tracked prompt and test update only).
 
+## 2026-08-01 - Agent Hub cross-project profile installation
+
+- Added `scripts/install_agent_hub_profiles.py` to copy the tracked custom-agent
+  profiles into the Copilot user scope at `~/.copilot/agents`.
+- Documented the distinction between workspace-scoped `.github/agents` and
+  user-scoped profiles available across other projects.
+- Added conflict-safe installer tests covering first install, idempotency,
+  explicit replacement, and dry-run behavior.
+
+Quality: installer behavior is covered by focused tests; live Copilot picker
+discovery still requires an editor reload and clean target-workspace check.
+Protocol: installer writes only the user-specified profile destination and
+never edits target repositories or credential files.
+Economics: not applicable (local file copy and tests only).
+
+## 2026-08-01 - Agent Hub full-contract deployment
+
+- Extended `scripts/install_agent_hub_profiles.py` to install the complete
+  Agent Hub contract as `~/.copilot/instructions/agent-workbench.instructions.md`
+  in addition to the user-level custom-agent profiles.
+- Updated the canonical contract and seed prompt for target workspaces where
+  Agent Workbench is not the opened repository.
+- Added tests for global instruction frontmatter, idempotency, and conflict
+  protection.
+
+Quality: full-contract deployment is covered by focused installer tests and
+the generated user instruction contains the Coordinator hierarchy and evidence
+rules.
+Protocol: deployment writes only user-level Copilot customization paths; it
+does not modify target repositories or credentials.
+Economics: not applicable (local instruction/profile installation only).
+
 Quality: playbook structure, tiering, and link integrity verified by test.
 Protocol: one bounded docs task on `docs/agent-hub-setup` branch; no commits,
 pushes, PRs, SSH, or unrelated file mutations.

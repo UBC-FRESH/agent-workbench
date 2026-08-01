@@ -27,6 +27,34 @@ install. It does **not** cover:
 - Deployment environment operator posture (see
   `playbooks/deployment_environment_operator.md`).
 
+There are two profile scopes:
+
+- `.github/agents/*.agent.md` is workspace-scoped. It is discovered only when
+  `agent-workbench` itself is the opened workspace.
+- `~/.copilot/agents/*.agent.md` is user-scoped. It is discovered across other
+  Copilot workspaces on the same account and machine.
+
+To make the full Agent Hub contract available to other projects, run this from
+a checkout of Agent Workbench:
+
+```bash
+python scripts/install_agent_hub_profiles.py
+python scripts/install_agent_hub_profiles.py --check
+```
+
+On Windows, use `py` instead of `python` if that is the configured launcher.
+The default destinations are `~/.copilot/agents` for profiles and
+`~/.copilot/instructions/agent-workbench.instructions.md` for the full contract
+(`%USERPROFILE%\\.copilot\\...` on Windows). The installer copies profiles and
+the contract, leaves unrelated target projects untouched, and refuses to
+overwrite conflicting user files unless `--replace` is supplied explicitly.
+Reload the editor after installation and open the Copilot agent picker in the
+target project.
+
+This installs both the custom-agent definitions and the Agent Hub contract
+globally. Target-project instructions remain target-project-specific and can
+add constraints; they do not need a copy of Agent Workbench's files.
+
 ## Tiered Setup
 
 The Agent Hub supports four capability tiers. Each tier adds a provider layer
@@ -36,7 +64,8 @@ tier is working.
 ### Tier 0 -- Stock Copilot + Repo Profiles (Verified: Linux code-server)
 
 **What you get:** Built-in GitHub Copilot with the paid model lane and the
-Agent Workbench agent profiles installed.
+Agent Workbench agent profiles installed. Run the user-profile installer above
+if those profiles must be available outside the Agent Workbench workspace.
 
 **Verified platform:** Linux code-server 1.128.0 (VS Code commit
 `cb22f74650a539d6f82444ec34d9e74844f66`). Windows Desktop unverified.
@@ -49,8 +78,9 @@ Agent Workbench agent profiles installed.
    you want the paid model lane.
 4. Clone the Agent Workbench repo and open the workspace root.
 5. The repo ships `.github/agents/*.agent.md` profiles and
-   `.github/copilot-instructions.md`. Copilot picks these up automatically
-   from the workspace.
+  `.github/copilot-instructions.md`. Copilot picks these up automatically
+  from the workspace. For other projects, install the profiles and global
+  contract with `scripts/install_agent_hub_profiles.py`.
 6. Verify the active agent profile by asking Copilot to describe its role.
   This confirms profile discovery and instruction loading; it does not prove
   that the profile's custom provider model alias is available in stock
@@ -153,6 +183,10 @@ Run through this checklist after setup. Mark each item as pass or fail.
   examples).
 - [ ] Environment config files for providers are listed in `.gitignore` or
   live outside the workspace tree.
+- [ ] If testing from another project, the expected profiles exist under
+  `~/.copilot/agents`, the contract exists under
+  `~/.copilot/instructions/agent-workbench.instructions.md`, and the editor has
+  been reloaded.
 
 ## Verification Table
 
