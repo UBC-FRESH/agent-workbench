@@ -24,6 +24,20 @@ issues, pull requests, and closeout comments.
   link resolution, and agent profile resolution.
 - Clean-environment manual testing remains pending.
 
+## 2026-08-01 - Agent Hub clean-session seed prompt
+
+- Added `playbooks/agent_hub_seed_prompt.md` as the tracked copy-paste prompt
+  for Tier 0 instruction-loading and Coordinator-routing smoke tests.
+- Linked the seed prompt from the setup playbook, README, and always-on Copilot
+  instructions so new clean sessions can discover it locally.
+- Extended `tests/test_agent_hub_setup_playbook.py` to verify the seed prompt's
+  existence, expected sections, link, and public-safe content.
+
+Quality: seed prompt and setup links are covered by focused integrity tests.
+Protocol: prompt is documentation-only and does not grant credentials,
+delegation, remote access, or GitHub mutation authority.
+Economics: not applicable (tracked prompt and test update only).
+
 Quality: playbook structure, tiering, and link integrity verified by test.
 Protocol: one bounded docs task on `docs/agent-hub-setup` branch; no commits,
 pushes, PRs, SSH, or unrelated file mutations.
