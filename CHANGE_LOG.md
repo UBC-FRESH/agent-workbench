@@ -6,6 +6,29 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-08-01 - Interim Agent Hub setup playbook (docs PR)
+
+- Created `playbooks/agent_hub_setup.md`: tiered canonical setup guide
+  covering Tier 0 (stock Copilot + repo profiles), Tier 1 (GitHub MCP
+  reference playbook), Tier 2 (custom provider reference playbook), and Tier 3
+  (bridge/scripts). Includes credential boundary rules, pass/fail smoke
+  checklist, and verification table with Linux code-server measured facts
+  and Windows Desktop explicitly unverified.
+- Included the full reference playbooks:
+  `playbooks/github_mcp_setup.md` and
+  `notes/operations/keklick-copilot-extension-config.md`.
+- Linked playbook from `README.md`, `AGENTS.md`, and
+  `.github/copilot-instructions.md`.
+- Added `tests/test_agent_hub_setup_playbook.py`: referential-integrity and
+  sanitization test scanning for private paths, tokens, endpoint markers,
+  link resolution, and agent profile resolution.
+- Clean-environment manual testing remains pending.
+
+Quality: playbook structure, tiering, and link integrity verified by test.
+Protocol: one bounded docs task on `docs/agent-hub-setup` branch; no commits,
+pushes, PRs, SSH, or unrelated file mutations.
+Economics: not applicable (documentation-only task, no model inference).
+
 ## 2026-07-23 - P120.5 Roadmap/changelog architecture repair
 
 - Architecture proposal written: thin local index plus GitHub canonical

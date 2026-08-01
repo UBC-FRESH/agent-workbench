@@ -138,11 +138,22 @@ Never collapse these into one vague verdict.
 - `CHANGE_LOG.md` — append-only narrative
 - `planning/` — sanitized planning notes
 - `.github/agents/` — custom agent profiles
+- `.github/copilot-instructions.md` — generic agent start-here link
+- `playbooks/` — operational playbooks, including
+  `playbooks/agent_hub_setup.md` (canonical Agent Hub setup, tiered)
 - `scripts/` — local helpers (bridge, probe, delegate)
 - `tmp/`, `runtime/`, `local/`, `outputs/` — ignored local areas
 
 Do not claim the repo contains a package, CI, benchmark harness, or
 extension until a later phase records that evidence.
+
+## Agent Hub Setup
+
+New operators should follow the canonical setup playbook at
+`playbooks/agent_hub_setup.md` before attempting supervised multi-agent work.
+It covers stock Copilot (Tier 0) through custom providers (Tier 2) and bridge
+delegation (Tier 3), with credential boundary rules and a pass/fail smoke
+checklist.
 
 ## Planning Workflow
 
