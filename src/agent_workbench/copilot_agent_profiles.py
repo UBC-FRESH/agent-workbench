@@ -69,8 +69,13 @@ STANDARD_TASK_OVERLAYS = {
     / "notebook-example-authoring.md",
     "release-readiness-review": STANDARD_TASK_OVERLAY_DIR
     / "release-readiness-review.md",
+    "document-metadata-extraction-supervisor": STANDARD_TASK_OVERLAY_DIR
+    / "document-metadata-extraction-supervisor.md",
 }
 STANDARD_AGENT_PROFILE_DIR = Path(".github/agents")
+STANDARD_CORE_ROLE_NAMES = frozenset(
+    {"coordinator", "supervisor", "worker", "advisor"}
+)
 STANDARD_AGENT_PROFILES = {
     "agent-workbench-coordinator": (
         STANDARD_AGENT_PROFILE_DIR / "agent-workbench-coordinator.agent.md"
@@ -78,17 +83,11 @@ STANDARD_AGENT_PROFILES = {
     "agent-workbench-advisor": (
         STANDARD_AGENT_PROFILE_DIR / "agent-workbench-advisor.agent.md"
     ),
-    "agent-workbench-local-supervisor": (
-        STANDARD_AGENT_PROFILE_DIR / "agent-workbench-local-supervisor.agent.md"
+    "agent-workbench-supervisor": (
+        STANDARD_AGENT_PROFILE_DIR / "agent-workbench-supervisor.agent.md"
     ),
-    "agent-workbench-result-auditor": (
-        STANDARD_AGENT_PROFILE_DIR / "agent-workbench-result-auditor.agent.md"
-    ),
-    "qwen3-coder-strict-worker": (
-        STANDARD_AGENT_PROFILE_DIR / "qwen3-coder-strict-worker.agent.md"
-    ),
-    "qwen3-coder-next-strict-worker": (
-        STANDARD_AGENT_PROFILE_DIR / "qwen3-coder-next-strict-worker.agent.md"
+    "agent-workbench-worker": (
+        STANDARD_AGENT_PROFILE_DIR / "agent-workbench-worker.agent.md"
     ),
 }
 
@@ -398,6 +397,23 @@ def validate_standard_profile_catalog(
         overlays.append((name, path, exists))
         if not exists:
             errors.append(f"standard task overlay missing: {name} ({relative_path})")
+            continue
+        try:
+            overlay = load_agent_profile_document(path)
+        except ValueError as exc:
+            errors.append(f"{relative_path}: {exc}")
+            continue
+        target_roles = overlay.frontmatter.get("target_roles")
+        if not isinstance(target_roles, list) or not target_roles:
+            errors.append(f"{relative_path}: target_roles must be a non-empty list")
+            continue
+        invalid_roles = sorted(
+            str(role) for role in target_roles if str(role) not in STANDARD_CORE_ROLE_NAMES
+        )
+        if invalid_roles:
+            errors.append(
+                f"{relative_path}: unknown target role(s): {', '.join(invalid_roles)}"
+            )
     return ProfileCatalogValidation(
         profiles=tuple(entries),
         overlays=tuple(overlays),
@@ -661,11 +677,27 @@ def load_standard_task_overlay(
             f"(available: {available})"
         )
         return "", Path()
-    path = repo_root / STANDARD_TASK_OVERLAYS[name]
+    relative_path = STANDARD_TASK_OVERLAYS[name]
+    path = repo_root / relative_path
+    if not path.exists():
+        user_overlay = (
+            Path.home()
+            / ".copilot"
+            / "agents"
+            / "overlays"
+            / relative_path.name
+        )
+        if user_overlay.exists():
+            path = user_overlay
     if not path.exists():
         errors.append(f"standard task overlay does not exist: {name}")
         return "", path
-    return path.read_text(encoding="utf-8-sig").strip(), path
+    try:
+        document = load_agent_profile_document(path)
+    except ValueError as exc:
+        errors.append(f"standard task overlay is invalid: {name} ({exc})")
+        return "", path
+    return document.prompt, path
 
 
 def render_agent_profiles_markdown(resolved: ResolvedAgentProfiles) -> str:

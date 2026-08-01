@@ -1,3 +1,7 @@
+---
+target_roles: [worker]
+---
+
 # New Python Module Implementation Overlay
 
 Use this overlay when the task is to add a new Python module.

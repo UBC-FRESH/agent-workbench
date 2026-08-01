@@ -25,7 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--summary-output", type=Path, required=True)
     parser.add_argument("--summary-dir", type=Path, default=DEFAULT_SUMMARY_DIR)
     parser.add_argument("--token-record", type=Path)
-    parser.add_argument("--mode", default="agent-workbench-local-supervisor")
+    parser.add_argument("--mode", default="agent-workbench-supervisor")
     parser.add_argument("--code-command", default="code")
     parser.add_argument("--bridge-prompt", default=None)
     parser.add_argument("--expected-model", default="qwen3.6:35b-a3b-bf16")

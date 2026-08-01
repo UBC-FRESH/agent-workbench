@@ -10,7 +10,8 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 ## Active phase
 
-## Active phase
+- P126 Agent Hub core roles and overlays (#773), branch
+     `feature/p126-agent-hub-core-roles`.
 
 - P121 CPU document scraper implementation (#758), child task #759.
 
@@ -20,6 +21,7 @@ synchronized with GitHub issues, planning notes, pull requests, and
 
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
+| P126 Agent Hub core roles and overlays | #773 | `feature/p126-agent-hub-core-roles` | Active |
 | P120 SDK-authoritative agent-hub qualification | #755 | `feature/p120-sdk-authoritative-agent-hub` | Complete |
 | P121 CPU document scraper implementation | #758 | `feature/p121-cpu-document-scraper` | Active — P121.1 #759 |
 | P122 HPC GPU capacity and provider workflow | #760 | `feature/p122-hpc-gpu-capacity-provider` | Active — P122.1 #761 |

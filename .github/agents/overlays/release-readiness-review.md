@@ -1,3 +1,7 @@
+---
+target_roles: [coordinator, supervisor, advisor]
+---
+
 # Release Readiness Review Overlay
 
 Use this overlay when the task is to review release readiness.

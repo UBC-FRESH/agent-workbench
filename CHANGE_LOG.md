@@ -6,6 +6,29 @@
 Newest entries are last. Keep this file synchronized with `ROADMAP.md`, GitHub
 issues, pull requests, and closeout comments.
 
+## 2026-08-01 - P126 Agent Hub core roles and overlays
+
+- Reduced the default Agent Hub catalog to four model-neutral profiles:
+  Coordinator, Supervisor, Worker, and Advisor.
+- Removed the duplicate model-era Worker variant and migrated the default
+  Supervisor and Worker names to generic role identities.
+- Restricted cross-project installation to the four core profiles plus the
+  standard overlay catalog, so provider probes and specialized experiments are
+  not silently installed.
+- Added user-scope overlay transport and resolver fallback, with disposable
+  target-workspace coverage proving core-role and overlay composition outside
+  the Agent Workbench checkout.
+- Added explicit `target_roles` metadata to the standard overlays and validated
+  that overlays target only the four core roles.
+- Kept deployment model/provider selection outside core profile identity.
+
+Quality: focused installer, profile-catalog, setup, and cross-environment
+validation passes (`53 passed`); the optional Copilot SDK bridge remains
+separately dependent on the local SDK package.
+Protocol: P126 remains scoped to core roles, overlays, installer behavior, and
+documentation; no provider deployment or cluster work is included.
+Economics: no provider inference or remote deployment work was required.
+
 ## 2026-08-01 - Interim Agent Hub setup playbook (docs PR)
 
 - Created `playbooks/agent_hub_setup.md`: tiered canonical setup guide
@@ -69,6 +92,7 @@ rules.
 Protocol: deployment writes only user-level Copilot customization paths; it
 does not modify target repositories or credentials.
 Economics: not applicable (local instruction/profile installation only).
+
 
 Quality: playbook structure, tiering, and link integrity verified by test.
 Protocol: one bounded docs task on `docs/agent-hub-setup` branch; no commits,

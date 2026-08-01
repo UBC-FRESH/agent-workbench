@@ -149,7 +149,7 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
     exit_code = run_copilot_sdk_new_manifest(
         Namespace(
             ticket=ticket,
-            profile="agent-workbench-local-supervisor",
+            profile="agent-workbench-supervisor",
             run_id="p100-bootstrap",
             timeout_seconds=45,
             tool_mode="isolated",
@@ -179,13 +179,11 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
     assert manifest["control"]["stall_seconds"] == 45
     assert (
         manifest["sdk"]["agent_profiles"]["selected"]
-        == "agent-workbench-local-supervisor"
+        == "agent-workbench-supervisor"
     )
     assert manifest["sdk"]["agent_profiles"]["source_paths"] == [
-        ".github/agents/agent-workbench-local-supervisor.agent.md",
-        ".github/agents/qwen3-coder-strict-worker.agent.md",
-        ".github/agents/qwen3-coder-next-strict-worker.agent.md",
-        ".github/agents/agent-workbench-result-auditor.agent.md",
+        ".github/agents/agent-workbench-supervisor.agent.md",
+        ".github/agents/agent-workbench-worker.agent.md",
     ]
     assert manifest["sdk"]["agent_profiles"]["custom_tools"] == [
         "agent_workbench_run_context",
@@ -197,14 +195,10 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
     resolved = resolve_agent_profiles(manifest, manifest_path=manifest_path)
     assert resolved.ok, resolved.errors
     assert [agent["name"] for agent in resolved.custom_agents] == [
-        "agent-workbench-local-supervisor",
-        "qwen3-coder-strict-worker",
-        "qwen3-coder-next-strict-worker",
-        "agent-workbench-result-auditor",
+        "agent-workbench-supervisor",
+        "agent-workbench-worker",
     ]
     assert [agent["model"] for agent in resolved.custom_agents] == [
-        "qwen3.6:35b-a3b-bf16",
-        "qwen3.6:35b-a3b-bf16",
         "qwen3.6:35b-a3b-bf16",
         "qwen3.6:35b-a3b-bf16",
     ]
@@ -238,10 +232,11 @@ def test_new_manifest_cli_workspace_mode_enables_host_tools(
     exit_code = run_copilot_sdk_new_manifest(
         Namespace(
             ticket=ticket,
-            profile="agent-workbench-local-supervisor",
+            profile="agent-workbench-supervisor",
             run_id="workspace-tools",
             timeout_seconds=90,
             tool_mode="workspace",
+            model="qwen3.6:35b-a3b-bf16",
         )
     )
 
@@ -271,7 +266,7 @@ def test_new_manifest_cli_accepts_generic_openai_overrides(
     exit_code = run_copilot_sdk_new_manifest(
         Namespace(
             ticket=ticket,
-            profile="qwen3-coder-strict-worker",
+            profile="agent-workbench-worker",
             run_id="vllm-tools",
             timeout_seconds=60,
             tool_mode="workspace",

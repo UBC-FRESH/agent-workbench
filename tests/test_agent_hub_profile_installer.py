@@ -7,6 +7,8 @@ import pytest
 from scripts.install_agent_hub_profiles import (
     install_global_contract,
     install_profiles,
+    overlay_files,
+    profile_files,
     render_global_contract,
 )
 
@@ -23,11 +25,16 @@ def _write_profiles(source: Path, *names: str) -> None:
 def test_install_profiles_copies_all_profiles(tmp_path: Path) -> None:
     source = tmp_path / "source"
     destination = tmp_path / "home" / ".copilot" / "agents"
-    _write_profiles(source, "coordinator", "worker")
+    _write_profiles(
+        source, "agent-workbench-coordinator", "agent-workbench-worker"
+    )
 
     installed, unchanged, conflicts = install_profiles(source, destination)
 
-    assert installed == ["coordinator.agent.md", "worker.agent.md"]
+    assert installed == [
+        "agent-workbench-coordinator.agent.md",
+        "agent-workbench-worker.agent.md",
+    ]
     assert unchanged == []
     assert conflicts == []
     assert sorted(path.name for path in destination.iterdir()) == installed
@@ -36,64 +43,92 @@ def test_install_profiles_copies_all_profiles(tmp_path: Path) -> None:
 def test_install_profiles_is_idempotent(tmp_path: Path) -> None:
     source = tmp_path / "source"
     destination = tmp_path / "destination"
-    _write_profiles(source, "coordinator")
+    _write_profiles(source, "agent-workbench-coordinator")
 
     install_profiles(source, destination)
     installed, unchanged, conflicts = install_profiles(source, destination)
 
     assert installed == []
-    assert unchanged == ["coordinator.agent.md"]
+    assert unchanged == ["agent-workbench-coordinator.agent.md"]
     assert conflicts == []
 
 
 def test_install_profiles_does_not_overwrite_conflicts(tmp_path: Path) -> None:
     source = tmp_path / "source"
     destination = tmp_path / "destination"
-    _write_profiles(source, "coordinator")
+    _write_profiles(source, "agent-workbench-coordinator")
     destination.mkdir()
-    target = destination / "coordinator.agent.md"
+    target = destination / "agent-workbench-coordinator.agent.md"
     target.write_text("user copy\n", encoding="utf-8")
 
     installed, unchanged, conflicts = install_profiles(source, destination)
 
     assert installed == []
     assert unchanged == []
-    assert conflicts == ["coordinator.agent.md"]
+    assert conflicts == ["agent-workbench-coordinator.agent.md"]
     assert target.read_text(encoding="utf-8") == "user copy\n"
 
 
 def test_install_profiles_can_replace_explicitly(tmp_path: Path) -> None:
     source = tmp_path / "source"
     destination = tmp_path / "destination"
-    _write_profiles(source, "coordinator")
+    _write_profiles(source, "agent-workbench-coordinator")
     destination.mkdir()
-    (destination / "coordinator.agent.md").write_text("old\n", encoding="utf-8")
+    (destination / "agent-workbench-coordinator.agent.md").write_text(
+        "old\n", encoding="utf-8"
+    )
 
     installed, unchanged, conflicts = install_profiles(
         source, destination, replace=True
     )
 
-    assert installed == ["coordinator.agent.md"]
+    assert installed == ["agent-workbench-coordinator.agent.md"]
     assert unchanged == []
     assert conflicts == []
-    assert "Profile coordinator" in (
-        destination / "coordinator.agent.md"
+    assert "Profile agent-workbench-coordinator" in (
+        destination / "agent-workbench-coordinator.agent.md"
     ).read_text(encoding="utf-8")
 
 
 def test_install_profiles_check_does_not_create_destination(tmp_path: Path) -> None:
     source = tmp_path / "source"
     destination = tmp_path / "destination"
-    _write_profiles(source, "coordinator")
+    _write_profiles(source, "agent-workbench-coordinator")
 
     installed, unchanged, conflicts = install_profiles(
         source, destination, dry_run=True
     )
 
-    assert installed == ["coordinator.agent.md"]
+    assert installed == ["agent-workbench-coordinator.agent.md"]
     assert unchanged == []
     assert conflicts == []
     assert not destination.exists()
+
+
+def test_install_profiles_copies_overlays_to_user_scope(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    _write_profiles(source, "agent-workbench-coordinator")
+    overlay = source / "overlays" / "documentation-expansion.md"
+    overlay.parent.mkdir()
+    overlay.write_text(
+        "---\ntarget_roles: [coordinator]\n---\n\n# Documentation\n",
+        encoding="utf-8",
+    )
+    destination = tmp_path / "destination"
+
+    installed, unchanged, conflicts = install_profiles(source, destination)
+
+    assert installed == [
+        "agent-workbench-coordinator.agent.md",
+        "overlays/documentation-expansion.md",
+    ]
+    assert unchanged == []
+    assert conflicts == []
+    assert overlay_files(source) == [overlay]
+    assert profile_files(source) == [
+        source / "agent-workbench-coordinator.agent.md"
+    ]
+    assert (destination / "overlays/documentation-expansion.md").exists()
 
 
 def test_render_global_contract_has_user_instruction_frontmatter(tmp_path: Path) -> None:

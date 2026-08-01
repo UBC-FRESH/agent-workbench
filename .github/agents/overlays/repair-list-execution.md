@@ -1,3 +1,7 @@
+---
+target_roles: [worker, supervisor]
+---
+
 # Repair List Execution Overlay
 
 Use this overlay when the task is a bounded list of defects to repair.

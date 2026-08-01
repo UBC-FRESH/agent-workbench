@@ -1,3 +1,7 @@
+---
+target_roles: [worker]
+---
+
 # Notebook Example Authoring Overlay
 
 Use this overlay when the task is to create or expand a notebook or worked example.

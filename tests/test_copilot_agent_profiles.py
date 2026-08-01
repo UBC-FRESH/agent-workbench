@@ -19,6 +19,7 @@ from agent_workbench.copilot_agent_profiles import (
     resolve_agent_profiles,
     validate_standard_profile_catalog,
 )
+from scripts.install_agent_hub_profiles import DEFAULT_SOURCE, install_profiles
 from agent_workbench.copilot_sdk_tools import (
     AGENT_WORKBENCH_TOOL_NAMES,
     result_contract_payload,
@@ -223,7 +224,90 @@ def test_named_standard_task_overlay_appends_to_selected_profile_only(
     assert TASK_OVERLAY_HEADING not in first_agent["prompt"]
     assert TASK_OVERLAY_HEADING in second_agent["prompt"]
     assert "Documentation Expansion Overlay" in second_agent["prompt"]
+    assert "target_roles:" not in second_agent["prompt"]
     assert "Documentation Expansion Overlay" not in second.read_text(encoding="utf-8")
+
+
+def test_standard_task_overlay_falls_back_to_user_scope(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    profile_path = tmp_path / "worker.agent.md"
+    write_profile(profile_path, name="worker", body="Worker prompt.")
+    manifest = manifest_with_profile(tmp_path, profile_path)
+    manifest["sdk"]["agent_profiles"]["task_overlay"] = {
+        "name": "documentation-expansion"
+    }
+    user_overlay = (
+        tmp_path
+        / "user-home"
+        / ".copilot"
+        / "agents"
+        / "overlays"
+        / "documentation-expansion.md"
+    )
+    user_overlay.parent.mkdir(parents=True)
+    user_overlay.write_text(
+        "---\ntarget_roles: [worker]\n---\n\n# User Overlay\n\nApply this.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("HOME", str(tmp_path / "user-home"))
+
+    resolved = resolve_agent_profiles(
+        manifest,
+        manifest_path=tmp_path / "manifest.json",
+        repo_root=tmp_path / "unrelated-target",
+    )
+
+    assert resolved.ok, resolved.errors
+    assert resolved.task_overlay_paths == (user_overlay,)
+    assert "# User Overlay" in resolved.custom_agents[0]["prompt"]
+
+
+def test_installed_core_and_overlay_resolve_from_unrelated_target(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    user_home = tmp_path / "user-home"
+    user_agents = user_home / ".copilot" / "agents"
+    target_workspace = tmp_path / "unrelated-target"
+    target_workspace.mkdir()
+    monkeypatch.setenv("HOME", str(user_home))
+
+    installed, unchanged, conflicts = install_profiles(DEFAULT_SOURCE, user_agents)
+
+    assert not unchanged
+    assert not conflicts
+    assert {
+        name for name in installed if name.endswith(".agent.md")
+    } == {
+        "agent-workbench-advisor.agent.md",
+        "agent-workbench-coordinator.agent.md",
+        "agent-workbench-supervisor.agent.md",
+        "agent-workbench-worker.agent.md",
+    }
+    assert {
+        path.name for path in (user_agents / "overlays").glob("*.md")
+    } == {path.name for path in (DEFAULT_SOURCE / "overlays").glob("*.md")}
+
+    manifest = manifest_with_profile(
+        tmp_path, user_agents / "agent-workbench-worker.agent.md"
+    )
+    manifest["sdk"]["agent_profiles"]["selected"] = "agent-workbench-worker"
+    manifest["sdk"]["agent_profiles"]["task_overlay"] = {
+        "name": "documentation-expansion"
+    }
+    resolved = resolve_agent_profiles(
+        manifest,
+        manifest_path=tmp_path / "manifest.json",
+        repo_root=target_workspace,
+    )
+
+    assert resolved.ok, resolved.errors
+    assert resolved.task_overlay_paths == (
+        user_agents / "overlays" / "documentation-expansion.md",
+    )
+    assert resolved.custom_agents[0]["name"] == "agent-workbench-worker"
+    assert "Documentation Expansion Overlay" in resolved.custom_agents[0]["prompt"]
+    assert "target_roles:" not in resolved.custom_agents[0]["prompt"]
 
 
 def test_custom_tools_are_attached_to_selected_agent_only(tmp_path: Path) -> None:
@@ -508,12 +592,21 @@ def test_standard_profile_catalog_validation_is_public_safe() -> None:
     assert {name for name, _path, exists in validation.overlays if exists} == set(
         STANDARD_TASK_OVERLAYS
     )
+    for _name, path, exists in validation.overlays:
+        assert exists
+        overlay = load_agent_profile_document(path)
+        assert set(overlay.frontmatter["target_roles"]) <= {
+            "coordinator",
+            "supervisor",
+            "worker",
+            "advisor",
+        }
     supervisor = next(
         entry
         for entry in validation.profiles
-        if entry.name == "agent-workbench-local-supervisor"
+        if entry.name == "agent-workbench-supervisor"
     )
-    assert supervisor.model
+    assert not supervisor.model
     assert "agent" in supervisor.tools
     assert "# Agent Workbench Profile Catalog Preview" in preview
     assert "prompt_chars:" in preview
@@ -532,14 +625,16 @@ def test_profile_catalog_cli_validate_writes_preview(
 
     captured = capsys.readouterr()
     assert exit_code == 0
-    assert "profiles=6 overlays=7" in captured.out
+    assert "profiles=4 overlays=8" in captured.out
     assert output.exists()
-    assert "agent-workbench-result-auditor" in output.read_text(encoding="utf-8")
+    preview = output.read_text(encoding="utf-8")
+    assert "agent-workbench-supervisor" in preview
+    assert "agent-workbench-result-auditor" not in preview
 
 
 def test_result_auditor_profile_documents_primary_mode_contract() -> None:
     repo_root = Path(__file__).resolve().parents[1]
-    profile_path = repo_root / STANDARD_AGENT_PROFILES["agent-workbench-result-auditor"]
+    profile_path = repo_root / ".github/agents/agent-workbench-result-auditor.agent.md"
 
     document = load_agent_profile_document(profile_path)
 

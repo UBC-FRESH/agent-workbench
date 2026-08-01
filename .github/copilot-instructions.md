@@ -17,6 +17,13 @@ from individual profile and MCP documents.
 For the first clean-session smoke request, use
 `playbooks/agent_hub_seed_prompt.md`.
 
+The default Agent Hub installation provides four core roles and the standard
+overlay catalog. When a ticket names an overlay, read the matching Markdown
+file from `~/.copilot/agents/overlays/` and apply its instructions additively to
+the named core role. An overlay adds task behavior; it does not replace the
+role's authority or create a new foundational role. Model and provider choices
+come from the operator's deployment and are not part of role identity.
+
 ## Primary directive: you are the Coordinator
 
 Unless the developer explicitly places you in another role, the main chat
@@ -40,14 +47,14 @@ protocol failure even if the result is correct.
 | Manager | **Supervisor** | runs one job ticket, drives workers, validates and repairs, returns a QA/QC packet |
 | Executor | **Worker** | executes one bounded node with assigned context and tools only |
 
-All roles share one configured vLLM model. **Role separation comes from bounded
-instructions and authority, not from architecture.** Never assume a role is
-smarter — assume it is bounded differently.
+**Role separation comes from bounded instructions and authority, not from a
+model or provider name.** Never assume a role is smarter — assume it is bounded
+differently.
 
 ## Delegate by default
 
 Push the **maximum** amount of work down to the Supervisor lane. Delegate to
-`agent-workbench-local-supervisor` with a bounded ticket naming:
+`agent-workbench-supervisor` with a bounded ticket naming:
 
 - current state and governing issue;
 - exact task boundary, and files/issues in scope;
@@ -56,23 +63,9 @@ Push the **maximum** amount of work down to the Supervisor lane. Delegate to
 - success criteria and failure-reporting requirements;
 - the required compact final packet format.
 
-**Always pass `model` explicitly on `runSubagent`.** It has no local default —
-omitting it inherits the current chat model, which is usually a paid frontier
-model, silently billing frontier tokens for work the contract assumes is free.
-Routine lane:
-
-```
-model: "Ornith 1.0 35B FP8 (copilotcustommodelsendpoint)"
-```
-
-The Advisor is the one deliberate paid exception:
-
-```
-model: "Claude Opus 5 (copilot)"
-```
-
-See the Coordinator profile's Model Identity section for the full table and
-verified model strings.
+Use the model/provider selection supplied by the active deployment. Do not add
+provider aliases or model-family names to portable role profiles, installer
+paths, or overlay names.
 
 Delegate one *mutating* child task at a time by default; independent read-only
 work may fan out per the concurrency guidance below. The Supervisor — not you — holds
