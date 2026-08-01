@@ -172,7 +172,12 @@ class TestAgentHubSetupPlaybook:
 
     def test_seed_prompt_has_smoke_and_routing_prompts(self) -> None:
         content = SEED_PROMPT_PATH.read_text(encoding="utf-8")
-        for marker in ["clean-environment smoke test", "Routing Challenge", "Pass Criteria"]:
+        for marker in [
+            "clean-environment smoke test",
+            "Routing Challenge",
+            "Pass Criteria",
+            "Cross-Project Smoke Test",
+        ]:
             assert marker in content, (
                 f"Seed prompt missing expected section or phrase: {marker}"
             )

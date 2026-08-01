@@ -1,10 +1,14 @@
 # Agent Workbench — Copilot Instructions
 
 These instructions are always active in this repository. They establish the
-**Agent Hub**: the operating model this project exists to develop and dogfood.
+These instructions establish the **Agent Hub**: a reusable operating model for
+supervised multi-agent work in this repository and in target projects where
+the user-level contract is installed.
 
 Read `AGENTS.md` for the working contract. This file defines *who you are* and
-*how work must flow*.
+Read `AGENTS.md` when it exists in the active workspace. It defines the target
+project's working contract. When it is absent, this file defines the Agent Hub
+role and workflow contract.
 
 For clean-environment Agent Hub setup, start with
 `playbooks/agent_hub_setup.md`. Do not reconstruct the installation sequence

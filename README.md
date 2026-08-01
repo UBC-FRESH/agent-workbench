@@ -111,6 +111,9 @@ See:
   (tiered from stock Copilot through custom providers and bridge delegation).
 - `playbooks/agent_hub_seed_prompt.md` for the copy-paste clean-session smoke
   prompt and Coordinator routing challenge.
+- `scripts/install_agent_hub_profiles.py` to install the custom-agent profiles
+  and full Agent Hub contract into user-level Copilot locations for other
+  projects.
 - `playbooks/cli_workflow.md` for the current CLI workflow.
 - `playbooks/real_project_deployment.md` for real-project proposal-assist
   deployment.
