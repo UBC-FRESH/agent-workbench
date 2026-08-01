@@ -2,6 +2,10 @@
   "schema_version": 1,
   "catalog_id": "openai-model-pricing",
   "catalog_version": 1,
+  "pricing_domain": "openai-first-party-api",
+  "scope_note": "These are OpenAI FIRST-PARTY API list rates, sourced from developers.openai.com and dated per entry. They are NOT GitHub Copilot billing rates and must not be used to price Copilot-billed usage, including Copilot subagent invocations.",
+  "copilot_billing_warning": "GitHub Copilot bills its own rates, which differ materially. Measured 2026-08-01 from the Copilot chat extension per-session models.json snapshot: gpt-5.6-terra was $2.00/$12.00 per 1M vs $2.50/$15.00 here, and gpt-5.6-luna was $0.20/$1.20 per 1M vs $1.00/$6.00 here (5x difference). Only gpt-5.6-sol happened to match. Do not treat agreement on one model as validation of this catalog for Copilot purposes.",
+  "copilot_rates_reference": "notes/operations/copilot-model-catalog.md",
   "entries": [
     {
       "model_id": "gpt-5.6-sol",

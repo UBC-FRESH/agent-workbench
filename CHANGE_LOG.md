@@ -86,7 +86,11 @@ issues, pull requests, and closeout comments.
   `runSubagent`'s `model` parameter, so every delegation silently inherited
   the paid frontier chat model.
 - Corrected a fabricated issue reference (`#770`) in `ROADMAP.md`. No such
-  issue exists.
+  issue existed at the time. **Note (2026-08-01):** issue `#770` has since been
+  created for an unrelated purpose — a docs-sync ticket for the published
+  roadmap overview. The correction above was right when made; the number was
+  later assigned by GitHub to a genuine, different issue. Do not read the
+  present existence of `#770` as evidence the original reference was valid.
 - Planned the 32B dense upgrade in `planning/p125_sockeye_32b_upgrade.md`.
 - Quality: all cluster interaction was read-only; the provider was verified
   serving and undisturbed throughout.
@@ -139,6 +143,57 @@ issues, pull requests, and closeout comments.
 - Protocol: real targets, credentials, job records, and raw cluster material
   remain local.
 - Economics: not measured.
+
+## 2026-08-01 - Agent Hub Advisor lane: model binding, caps and floors removed
+
+- Removed the hard "at most one Advisor invocation per roadmap phase" cap, then
+  removed hard floors as well. Ceilings and floors are the same defect:
+  agent-planted rules that convert judgment into ritual. Deleted the
+  mandatory-invocation apparatus from
+  `planning/native_codex_remote_ollama_findings.md` — seven mandatory Advisor
+  triggers, a required consultation-packet schema, and a five-step enforcement
+  ladder ending in "make deterministic closeout validation fail when a mandatory
+  trigger is present but no Advisor evidence exists." Retained the underlying
+  signal (where advice has paid off), explicitly labelled as not a checklist.
+- Bound the Advisor to a paid frontier model, `claude-opus-5`
+  (`Claude Opus 5 (copilot)`). Supervisor and Worker lanes remain on the local
+  vLLM model. Chosen on catalog evidence: every Claude model bills long context
+  at the flat short-context rate, while every GPT-5.x, Gemini Pro, and Grok
+  model charges 2.0x input / 1.5x output past the threshold. The Advisor is a
+  large-context role by construction.
+- Made Advisor continuity file-based in `planning/advisor_dossier.md`. Copilot
+  subagents are stateless across invocations — no resume handle, no follow-up
+  channel — so standing positions must be auditable artifacts rather than an
+  unlogged memory trace.
+- Reconciled the superseded "all roles share one model" claim across `AGENTS.md`,
+  `.github/copilot-instructions.md`, both affected agent profiles,
+  `planning/delegation_policy.md`,
+  `planning/authority_hierarchy_and_subagent_direction.md`,
+  `playbooks/p118_single_model_operator_checklist.md`,
+  `planning/p120_sdk_authoritative_agent_hub_qualification.md`, and
+  `docs/roadmap_and_release/roadmap_overview.md`.
+- Scoped `model_profiles/pricing_catalog.json` explicitly to OpenAI
+  first-party API rates. It was correct for what it claimed but unlabelled, and
+  was nearly used to validate Copilot billing. Copilot rates differ materially
+  (`gpt-5.6-luna` by 5x). Entries and rates unchanged; tests pass.
+- Added `notes/operations/copilot-model-catalog.md`: how to enumerate the live
+  Copilot catalog from the chat extension's per-session `models.json`, the
+  25 picker-enabled models with rates and reasoning-effort ladders, selection
+  traps, and subagent routing behaviour.
+- Filed #770 for the stale published roadmap overview (see the disambiguation
+  note above — the number was previously used by a fabricated reference).
+- Quality: measured rather than assumed. `Claude Opus 5 (copilot)` probed and
+  self-identified. An explicit `model` argument on `runSubagent` was shown to
+  **override** profile `model:` frontmatter, so frontmatter is a fallback and
+  not a guardrail; the no-argument fallback path is recorded as **unverified**
+  because the test chat ran the same model, making the two cases
+  indistinguishable.
+- Protocol: the change set was reviewed by the Advisor before commit; its
+  findings and the Coordinator's dispositions, including deferrals, are in
+  `planning/advisor_dossier.md`. Commit `36eda1b` bundled pre-existing
+  uncommitted work from earlier sessions, disclosed in its message.
+- Economics: not measured. Advisor invocations this session were not
+  token-accounted.
 
 ## Older entries
 
