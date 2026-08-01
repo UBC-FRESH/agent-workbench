@@ -1,7 +1,6 @@
 ---
 name: document-metadata-extraction-supervisor
 description: Full-tool supervisor for whole-document metadata extraction pilots. Uses the same vLLM model as all other roles in the single-model Agent Hub.
-model: Fresh vLLM Agent (Qwen 3.6 27B) (copilotcustommodelsendpoint)
 tools: ['agent', 'read', 'search', 'edit', 'runCommands']
 agents: ['agent-workbench-result-auditor']
 target: vscode

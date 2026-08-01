@@ -1,7 +1,6 @@
 ---
 name: femic-rebuild-inspector
 description: Bounded read-only inspector for FEMIC instance rebuild artifact bundles. Inspects YAML configs, CSV data catalogs, and evidence report text. Uses native Copilot Chat tools only.
-model: Fresh vLLM Agent (Qwen 3.6 27B) (copilotcustommodelsendpoint)
 tools: ['read', 'search']
 target: vscode
 ---
