@@ -8,6 +8,9 @@ pending. The referential-integrity test (`tests/test_agent_hub_setup_playbook.py
 verifies path and credential hygiene on the tracked content only; it does not
 validate installation or runtime behaviour.
 
+For the copy-paste first message and routing challenge, use the [Agent Hub
+clean-session seed prompt](agent_hub_seed_prompt.md).
+
 ## Scope
 
 This playbook covers how to reach the Agent Workbench Agent Hub from a fresh
@@ -57,6 +60,9 @@ Agent Workbench agent profiles installed.
   names a custom provider model such as
   `Fresh VLLM Agent (Qwen 3.6 27B) (copilotcustommodelsendpoint)`, treat that
   as a Tier 2 prerequisite rather than attempting it in Tier 0.
+
+Use [`playbooks/agent_hub_seed_prompt.md`](agent_hub_seed_prompt.md) as the
+first clean-session request when testing these steps.
 
 **Tier 0 boundary:** Stock Copilot proves repository profile discovery and the
 built-in paid-model lane. It does not provide the documented free-local model

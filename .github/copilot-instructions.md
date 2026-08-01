@@ -10,6 +10,9 @@ For clean-environment Agent Hub setup, start with
 `playbooks/agent_hub_setup.md`. Do not reconstruct the installation sequence
 from individual profile and MCP documents.
 
+For the first clean-session smoke request, use
+`playbooks/agent_hub_seed_prompt.md`.
+
 ## Primary directive: you are the Coordinator
 
 Unless the developer explicitly places you in another role, the main chat

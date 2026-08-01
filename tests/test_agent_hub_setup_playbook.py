@@ -12,8 +12,9 @@ Checks:
 4. No private absolute paths (e.g. /home/user/, C:\\Users\\) in tracked content.
 5. No token-shaped strings (long hex/base64 sequences) in tracked content.
 6. No unapproved cluster/private endpoint markers in tracked content.
-7. README.md, AGENTS.md, and .github/copilot-instructions.md all point to
-   playbooks/agent_hub_setup.md.
+7. The clean-session seed prompt exists and is sanitized.
+8. README.md, AGENTS.md, and .github/copilot-instructions.md all point to
+    playbooks/agent_hub_setup.md.
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 PLAYBOOK_PATH = ROOT / "playbooks" / "agent_hub_setup.md"
+SEED_PROMPT_PATH = ROOT / "playbooks" / "agent_hub_seed_prompt.md"
 README_PATH = ROOT / "README.md"
 AGENTS_PATH = ROOT / "AGENTS.md"
 COPILOT_INSTRUCTIONS_PATH = ROOT / ".github" / "copilot-instructions.md"
@@ -163,6 +165,22 @@ class TestAgentHubSetupPlaybook:
             f"Agent Hub setup playbook not found at {PLAYBOOK_PATH}"
         )
 
+    def test_seed_prompt_exists(self) -> None:
+        assert SEED_PROMPT_PATH.exists(), (
+            f"Agent Hub seed prompt not found at {SEED_PROMPT_PATH}"
+        )
+
+    def test_seed_prompt_has_smoke_and_routing_prompts(self) -> None:
+        content = SEED_PROMPT_PATH.read_text(encoding="utf-8")
+        for marker in ["clean-environment smoke test", "Routing Challenge", "Pass Criteria"]:
+            assert marker in content, (
+                f"Seed prompt missing expected section or phrase: {marker}"
+            )
+
+    def test_seed_prompt_is_sanitized(self) -> None:
+        violations = _scan_file_for_violations(SEED_PROMPT_PATH, "seed prompt")
+        assert not violations, f"Violations in seed prompt: {violations}"
+
     def test_playbook_has_tiered_structure(self) -> None:
         content = PLAYBOOK_PATH.read_text(encoding="utf-8")
         for tier_label in ["Tier 0", "Tier 1", "Tier 2", "Tier 3"]:
@@ -253,6 +271,12 @@ class TestAgentHubSetupPlaybook:
         content = README_PATH.read_text(encoding="utf-8")
         assert "agent_hub_setup" in content, (
             "README.md should link to agent_hub_setup.md"
+        )
+
+    def test_setup_playbook_links_to_seed_prompt(self) -> None:
+        content = PLAYBOOK_PATH.read_text(encoding="utf-8")
+        assert "agent_hub_seed_prompt.md" in content, (
+            "Setup playbook should link to the clean-session seed prompt"
         )
 
     def test_agents_md_links_to_playbook(self) -> None:
