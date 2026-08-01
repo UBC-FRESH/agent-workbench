@@ -1251,7 +1251,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     supervisor_document_audit_parser.add_argument(
         "--mode",
-        default="agent-workbench-local-supervisor",
+        default="agent-workbench-supervisor",
     )
     supervisor_document_audit_parser.add_argument("--code-command", default="code")
     supervisor_document_audit_parser.add_argument(
@@ -1377,7 +1377,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     supervisor_document_audit_summary_parser.add_argument(
         "--mode",
-        default="agent-workbench-local-supervisor",
+        default="agent-workbench-supervisor",
     )
     supervisor_document_audit_summary_parser.add_argument(
         "--code-command", default="code"

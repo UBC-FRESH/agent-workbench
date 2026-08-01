@@ -1,3 +1,7 @@
+---
+target_roles: [coordinator, supervisor, worker, advisor]
+---
+
 # Documentation Expansion Overlay
 
 Use this overlay when the task is to expand user or developer documentation.

@@ -43,10 +43,11 @@ python scripts/install_agent_hub_profiles.py --check
 ```
 
 On Windows, use `py` instead of `python` if that is the configured launcher.
-The default destinations are `~/.copilot/agents` for profiles and
+The default destinations are `~/.copilot/agents` for profiles and overlays, and
 `~/.copilot/instructions/agent-workbench.instructions.md` for the full contract
-(`%USERPROFILE%\\.copilot\\...` on Windows). The installer copies profiles and
-the contract, leaves unrelated target projects untouched, and refuses to
+(`%USERPROFILE%\\.copilot\\...` on Windows). Overlays are placed under
+`~/.copilot/agents/overlays/`. The installer copies the four core profiles, the
+standard overlays, and the contract; it leaves unrelated target projects untouched and refuses to
 overwrite conflicting user files unless `--replace` is supplied explicitly.
 Reload the editor after installation and open the Copilot agent picker in the
 target project.
@@ -54,6 +55,15 @@ target project.
 This installs both the custom-agent definitions and the Agent Hub contract
 globally. Target-project instructions remain target-project-specific and can
 add constraints; they do not need a copy of Agent Workbench's files.
+
+The default install exposes four portable core roles:
+`agent-workbench-coordinator`, `agent-workbench-supervisor`,
+`agent-workbench-worker`, and `agent-workbench-advisor`. Specialized behavior
+is supplied through the Markdown overlays in `~/.copilot/agents/overlays/` and
+is not a fifth role. When a task names an overlay, apply that overlay's prompt
+additively to the selected core role. The active model and provider are selected
+by the operator's deployment; core profiles do not impose a model alias or
+provider.
 
 ## Tiered Setup
 
@@ -82,14 +92,10 @@ if those profiles must be available outside the Agent Workbench workspace.
   from the workspace. For other projects, install the profiles and global
   contract with `scripts/install_agent_hub_profiles.py`.
 6. Verify the active agent profile by asking Copilot to describe its role.
-  This confirms profile discovery and instruction loading; it does not prove
-  that the profile's custom provider model alias is available in stock
-  Copilot.
-7. Run one bounded smoke request using a built-in Copilot model. Record the
-  returned model/provider identity and the compact response. If the profile
-  names a custom provider model such as
-  `Fresh VLLM Agent (Qwen 3.6 27B) (copilotcustommodelsendpoint)`, treat that
-  as a Tier 2 prerequisite rather than attempting it in Tier 0.
+  This confirms profile discovery and instruction loading; it does not select
+  or validate a provider for the operator.
+7. Run one bounded smoke request using the operator-selected model/provider.
+  Record the returned model/provider identity separately from the role name.
 
 Use [`playbooks/agent_hub_seed_prompt.md`](agent_hub_seed_prompt.md) as the
 first clean-session request when testing these steps.

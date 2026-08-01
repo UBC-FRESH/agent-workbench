@@ -1,3 +1,7 @@
+---
+target_roles: [worker, supervisor]
+---
+
 # Systematic Refactor Sweep Overlay
 
 Use this overlay when the task is a bounded systematic sweep or refactor.

@@ -17,11 +17,25 @@ DEFAULT_CONTRACT_SOURCE = (
 DEFAULT_CONTRACT_DESTINATION = (
     Path.home() / ".copilot" / "instructions" / "agent-workbench.instructions.md"
 )
+CORE_PROFILE_FILES = (
+    "agent-workbench-advisor.agent.md",
+    "agent-workbench-coordinator.agent.md",
+    "agent-workbench-supervisor.agent.md",
+    "agent-workbench-worker.agent.md",
+)
 
 
 def profile_files(source: Path) -> list[Path]:
-    """Return the tracked custom-agent files in deterministic order."""
-    return sorted(source.glob("*.agent.md"))
+    """Return the four portable core role files in deterministic order."""
+    files = [source / name for name in CORE_PROFILE_FILES if (source / name).exists()]
+    if not files:
+        raise FileNotFoundError(f"No core *.agent.md files found in {source}")
+    return files
+
+
+def overlay_files(source: Path) -> list[Path]:
+    """Return portable overlay documents in deterministic order."""
+    return sorted((source / "overlays").glob("*.md"))
 
 
 def render_global_contract(source: Path) -> str:
@@ -46,15 +60,16 @@ def install_profiles(
     """Install profiles, returning installed, unchanged, and conflict names."""
     source = source.expanduser().resolve()
     destination = destination.expanduser().resolve()
-    files = profile_files(source)
-    if not files:
-        raise FileNotFoundError(f"No *.agent.md files found in {source}")
+    files = [(path, path.name) for path in profile_files(source)]
+    files.extend(
+        (path, f"overlays/{path.name}") for path in overlay_files(source)
+    )
 
     conflicts = [
-        path.name
-        for path in files
-        if (destination / path.name).exists()
-        and (destination / path.name).read_bytes() != path.read_bytes()
+        target_name
+        for path, target_name in files
+        if (destination / target_name).exists()
+        and (destination / target_name).read_bytes() != path.read_bytes()
         and not replace
     ]
     if conflicts:
@@ -64,13 +79,14 @@ def install_profiles(
     unchanged: list[str] = []
     if not dry_run:
         destination.mkdir(parents=True, exist_ok=True)
-    for path in files:
-        target = destination / path.name
+    for path, target_name in files:
+        target = destination / target_name
         if target.exists() and target.read_bytes() == path.read_bytes():
-            unchanged.append(path.name)
+            unchanged.append(target_name)
             continue
-        installed.append(path.name)
+        installed.append(target_name)
         if not dry_run:
+            target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, target)
     return installed, unchanged, []
 
@@ -172,7 +188,12 @@ def main() -> int:
         return 2
 
     action = "would install" if args.check else "installed"
-    print(f"{action} {len(installed)} profile(s) in {args.destination}")
+    profile_count = sum(name.endswith(".agent.md") for name in installed)
+    overlay_count = sum(name.startswith("overlays/") for name in installed)
+    print(
+        f"{action} {profile_count} core profile(s) and "
+        f"{overlay_count} overlay(s) in {args.destination}"
+    )
     if unchanged:
         print(f"already current: {len(unchanged)} profile(s)")
     if args.check and not installed:

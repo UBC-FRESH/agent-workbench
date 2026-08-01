@@ -1,3 +1,7 @@
+---
+target_roles: [supervisor]
+---
+
 # Document Metadata Extraction Supervisor Overlay
 
 Use this overlay when the assigned task is a whole-document metadata extraction

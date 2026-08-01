@@ -28,7 +28,7 @@ class DocumentAuditGraphRunConfig:
     output_dir: Path
     summary_output: Path
     token_dir: Path
-    mode: str = "agent-workbench-local-supervisor"
+    mode: str = "agent-workbench-supervisor"
     code_command: str = "code"
     expected_model: str | None = None
     bridge_prompt: str | None = None

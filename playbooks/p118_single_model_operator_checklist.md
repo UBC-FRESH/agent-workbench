@@ -3,13 +3,14 @@
 Use this checklist to launch a single-model session. Fan out 2-4 parallel children for independent work; keep coupled or mutating work serial.
 
 1. **Confirm custom-agent selection:** verify the active session uses the
-   `agent-workbench-coordinator` profile with `Fresh vLLM Agent (Qwen 3.6 27B)`.
+   `agent-workbench-coordinator` profile and record the deployment-selected
+   model separately.
 2. **Confirm concurrency mode:** 2-4 parallel agents for independent work, serial for coupled/mutating work. Burst to 6 for read-only/diagnostic.
 3. **Prepare the ticket:** write a bounded ticket to
    `runtime/agent_jobs/<task>_ticket.md` with explicit allowed files, commands,
    and result paths.
 4. **Delegate:** launch the appropriate worker subagent (e.g.,
-   `agent-workbench-local-supervisor` or a strict worker) with the ticket. For independent work, fan out 2-4 parallel agents. For coupled work, keep serial.
+   `agent-workbench-supervisor` or `agent-workbench-worker` with the ticket. For independent work, fan out 2-4 parallel agents. For coupled work, keep serial.
 5. **Inspect:** read the worker's compact evidence (result file, diff summary,
    validator output) — not raw transcripts or large files.
 6. **Verify:** independently validate the artifact (run checks, inspect diff).

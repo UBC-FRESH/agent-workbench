@@ -1,3 +1,7 @@
+---
+target_roles: [worker, supervisor]
+---
+
 # Existing Code Debugging Overlay
 
 Use this overlay when the task is to debug existing code.
