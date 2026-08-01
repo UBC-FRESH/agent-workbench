@@ -84,11 +84,11 @@ STANDARD_AGENT_PROFILES = {
     "agent-workbench-result-auditor": (
         STANDARD_AGENT_PROFILE_DIR / "agent-workbench-result-auditor.agent.md"
     ),
-    "qwen3-coder-strict-worker": (
-        STANDARD_AGENT_PROFILE_DIR / "qwen3-coder-strict-worker.agent.md"
+    "strict-worker": (
+        STANDARD_AGENT_PROFILE_DIR / "strict-worker.agent.md"
     ),
-    "qwen3-coder-next-strict-worker": (
-        STANDARD_AGENT_PROFILE_DIR / "qwen3-coder-next-strict-worker.agent.md"
+    "strict-worker-next": (
+        STANDARD_AGENT_PROFILE_DIR / "strict-worker-next.agent.md"
     ),
 }
 

@@ -105,6 +105,12 @@ id aligned with the served model alias:
 Replace the example URL with a local or authenticated route. Do not commit live
 provider URLs or access headers.
 
+When you swap in a different model, change `--served-model-name` and the client
+`id` together. Never keep a previous model's alias just to avoid editing the
+client config: the endpoint then advertises a name that is not what it is
+serving, and every downstream consumer — Copilot picker, agent profiles, bench
+scripts, logs — silently reports the wrong model.
+
 ## Smoke Checks
 
 After launch:

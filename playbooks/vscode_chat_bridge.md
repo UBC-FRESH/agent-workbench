@@ -152,7 +152,7 @@ custom mode identifier:
 
 ```powershell
 python scripts\copilot_chat_bridge.py `
-  --mode qwen3-coder-next-strict-worker `
+  --mode strict-worker-next `
   --ticket runtime\agent_jobs\<task>.ticket.md `
   --marker <unique-marker> `
   --workspace-root . `

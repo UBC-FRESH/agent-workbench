@@ -15,8 +15,8 @@ The target question was:
 
 Phase 5 added two workspace custom agents:
 
-- `.github/agents/qwen3-coder-strict-worker.agent.md`
-- `.github/agents/qwen3-coder-next-strict-worker.agent.md`
+- `.github/agents/strict-worker.agent.md`
+- `.github/agents/strict-worker-next.agent.md`
 
 Both agents use narrow worker instructions and `tools: []` for no-tool probes.
 The bridge script also gained a `--mode` option so it can call:
@@ -29,12 +29,12 @@ python scripts\copilot_chat_bridge.py --mode <custom-agent-id> ...
 
 The custom agent mode was loaded successfully. Persisted session state for the
 qwen3-coder-next probe showed a custom mode backed by the workspace
-`qwen3-coder-next-strict-worker.agent.md` file.
+`strict-worker-next.agent.md` file.
 
 The model pin was not honored for the Ollama provider in this setup. The
 decisive post-restart probe used:
 
-- requested custom agent: `qwen3-coder-next-strict-worker`;
+- requested custom agent: `strict-worker-next`;
 - requested model frontmatter: `qwen3-coder-next:latest`;
 - active VS Code panel model state set to `ollama-models/Ollama/qwen3-coder-next:latest`;
 - no-tool ticket;

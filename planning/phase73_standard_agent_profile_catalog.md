@@ -6,8 +6,8 @@ Phase 73 will turn the first custom-agent bridge into a reusable catalog of stan
 
 - `agent-workbench-local-supervisor`: qwen3.6 supervisor/orchestrator profile for bounded workflow graph and SDK delegation runs.
 - `agent-workbench-result-auditor`: read-only auditor profile for checking worker outputs against contracts.
-- `qwen3-coder-strict-worker`: bounded implementation worker.
-- `qwen3-coder-next-strict-worker`: bounded implementation worker variant for model comparison.
+- `strict-worker`: bounded implementation worker.
+- `strict-worker-next`: bounded implementation worker variant for model comparison.
 
 ## Planned Task Overlays
 

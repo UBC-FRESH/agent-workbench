@@ -183,8 +183,8 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
     )
     assert manifest["sdk"]["agent_profiles"]["source_paths"] == [
         ".github/agents/agent-workbench-local-supervisor.agent.md",
-        ".github/agents/qwen3-coder-strict-worker.agent.md",
-        ".github/agents/qwen3-coder-next-strict-worker.agent.md",
+        ".github/agents/strict-worker.agent.md",
+        ".github/agents/strict-worker-next.agent.md",
         ".github/agents/agent-workbench-result-auditor.agent.md",
     ]
     assert manifest["sdk"]["agent_profiles"]["custom_tools"] == [
@@ -198,8 +198,8 @@ def test_new_manifest_cli_generates_validator_accepted_manifest(
     assert resolved.ok, resolved.errors
     assert [agent["name"] for agent in resolved.custom_agents] == [
         "agent-workbench-local-supervisor",
-        "qwen3-coder-strict-worker",
-        "qwen3-coder-next-strict-worker",
+        "strict-worker",
+        "strict-worker-next",
         "agent-workbench-result-auditor",
     ]
     assert [agent["model"] for agent in resolved.custom_agents] == [
@@ -271,7 +271,7 @@ def test_new_manifest_cli_accepts_generic_openai_overrides(
     exit_code = run_copilot_sdk_new_manifest(
         Namespace(
             ticket=ticket,
-            profile="qwen3-coder-strict-worker",
+            profile="strict-worker",
             run_id="vllm-tools",
             timeout_seconds=60,
             tool_mode="workspace",
