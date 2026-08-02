@@ -55,7 +55,8 @@ AGENT_WORKBENCH_PROFILE_TOOLS = {
 }
 AGENT_PROFILES_BLOCK = "agent_profiles"
 TASK_OVERLAY_HEADING = "## Agent Workbench Task Overlay"
-STANDARD_TASK_OVERLAY_DIR = Path(".github/agents/overlays")
+STANDARD_AGENT_PROFILE_DIR = Path("src/agent_workbench/agent_hub/profiles")
+STANDARD_TASK_OVERLAY_DIR = STANDARD_AGENT_PROFILE_DIR / "overlays"
 STANDARD_TASK_OVERLAYS = {
     "repair-list-execution": STANDARD_TASK_OVERLAY_DIR / "repair-list-execution.md",
     "new-python-module-implementation": (
@@ -72,7 +73,6 @@ STANDARD_TASK_OVERLAYS = {
     "document-metadata-extraction-supervisor": STANDARD_TASK_OVERLAY_DIR
     / "document-metadata-extraction-supervisor.md",
 }
-STANDARD_AGENT_PROFILE_DIR = Path(".github/agents")
 STANDARD_CORE_ROLE_NAMES = frozenset(
     {"coordinator", "supervisor", "worker", "advisor"}
 )

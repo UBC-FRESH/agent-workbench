@@ -255,7 +255,7 @@ Keep context small and turns few. Non-negotiable rules:
 ## Supervisor Delegation
 
 Push the **maximum** amount of work down to the Supervisor lane. Delegate
-bounded execution to `agent-workbench-local-supervisor` with a bounded ticket
+bounded execution to `agent-workbench-supervisor` with a bounded ticket
 that names:
 current state, governing issue, exact task boundary, files/issues in scope,
 allowed and forbidden commands, result/blocker/evidence paths, success criteria,
@@ -268,40 +268,12 @@ code, not your context): it reads the full ticket and source, spawns workers,
 ingests raw worker output, runs local validators and repair loops, and returns
 only a compact QA/QC packet upward. You only ever see the packet.
 
-**FORBIDDEN — never do these instead:**
-- Do NOT run provider-specific evaluation probes — those are P6 evaluation
-  probe, not the delegation path.
-- Do NOT try to write your own Python/HTTP bridge.
-- Do NOT invoke `agent-workbench-local-supervisor` with the native `agent` tool
-  or `runSubagent` for productive work; use the Supervisor delegation protocol.
-- Do NOT ask the developer to restate these mechanics in a job ticket.
+Invoke the Supervisor with `runSubagent`, naming `agent-workbench-supervisor`
+exactly. That is the delegation mechanism; there is no separate bridge to
+build, and no need to ask the developer to restate these mechanics in a ticket.
 
 Use the native `agent` tool for the direct read-only Advisor invocation. The
-Advisor shares the same model but with read-only, advisory-only constraints.
-
-## Delegating To Supervisors
-
-Push the **maximum** amount of work down to the Supervisor lane. Delegate
-bounded execution to `agent-workbench-local-supervisor` with a bounded ticket
-that names:
-current state, governing issue, exact task boundary, files/issues in scope,
-allowed and forbidden commands, result/blocker/evidence paths, success criteria,
-failure reporting requirements, and required compact final packet format. Delegate one
-child task at a time by default.
-
-The Supervisor — not you — holds the heavy context and drives the Worker
-lane. The Supervisor orchestrates Worker sessions (deterministic bridge
-code, not your context): it reads the full ticket and source, spawns workers,
-ingests raw worker output, runs local validators and repair loops, and returns
-only a compact QA/QC packet upward. You only ever see the packet.
-
-**FORBIDDEN — never do these instead:**
-- Do NOT run provider-specific evaluation probes — those are P6 evaluation
-  probe, not the delegation path.
-- Do NOT try to write your own Python/HTTP bridge.
-- Do NOT invoke `agent-workbench-local-supervisor` with the native `agent` tool
-  or `runSubagent` for productive work; use the Supervisor delegation protocol.
-- Do NOT ask the developer to restate these mechanics in a job ticket.
+Advisor is read-only and advisory; it never decides.
 
 ## Output Format
 

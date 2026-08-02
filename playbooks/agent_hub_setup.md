@@ -27,12 +27,17 @@ install. It does **not** cover:
 - Deployment environment operator posture (see
   `playbooks/deployment_environment_operator.md`).
 
-There are two profile scopes:
+The profile templates ship inside the package at
+`src/agent_workbench/agent_hub/profiles/`. They are templates, not live
+agents: the installer renders them into a Copilot profile scope.
 
-- `.github/agents/*.agent.md` is workspace-scoped. It is discovered only when
-  `agent-workbench` itself is the opened workspace.
-- `~/.copilot/agents/*.agent.md` is user-scoped. It is discovered across other
+There is one profile scope that matters:
+
+- `~/.copilot/agents/*.agent.md` is user-scoped. It is discovered across all
   Copilot workspaces on the same account and machine.
+
+Profile templates carry no `model:` line. Model and provider are deployment
+configuration, chosen when you install, not part of role identity.
 
 To make the full Agent Hub contract available to other projects, run this from
 a checkout of Agent Workbench:
@@ -87,10 +92,11 @@ if those profiles must be available outside the Agent Workbench workspace.
 3. Install the `github.copilot` extension and accept the paid plan prompt if
    you want the paid model lane.
 4. Clone the Agent Workbench repo and open the workspace root.
-5. The repo ships `.github/agents/*.agent.md` profiles and
-  `.github/copilot-instructions.md`. Copilot picks these up automatically
-  from the workspace. For other projects, install the profiles and global
-  contract with `scripts/install_agent_hub_profiles.py`.
+5. Install the four core role profiles, the overlays, and the global contract
+  with `scripts/install_agent_hub_profiles.py`. The templates ship in the
+  package at `src/agent_workbench/agent_hub/profiles/`, so this works from an
+  installed package as well as from a checkout. Re-running it also prunes
+  profiles the package no longer provides.
 6. Verify the active agent profile by asking Copilot to describe its role.
   This confirms profile discovery and instruction loading; it does not select
   or validate a provider for the operator.

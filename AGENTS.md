@@ -137,7 +137,7 @@ Never collapse these into one vague verdict.
 - `ROADMAP.md` — phase/task plan and issue map
 - `CHANGE_LOG.md` — append-only narrative
 - `planning/` — sanitized planning notes
-- `.github/agents/` — custom agent profiles
+- `src/agent_workbench/agent_hub/profiles/` — packaged agent profile templates
 - `.github/copilot-instructions.md` — generic agent start-here link
 - `playbooks/` — operational playbooks, including
   `playbooks/agent_hub_setup.md` (canonical Agent Hub setup, tiered)
