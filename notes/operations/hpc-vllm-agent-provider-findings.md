@@ -30,7 +30,7 @@ that the option is unsupported in principle.**
 `env-native.sh` hard-codes `python3.12` in its CUDA fallback path; the venv
 built on the cluster used 3.11. Prefer discovering the version at runtime.
 
-## Two process-management traps
+## Three process-management traps
 
 **Slurm kills detached children.** Using `setsid`/`nohup` *inside* an `srun`
 step does not survive: Slurm tears down the step cgroup when the step ends, so
@@ -52,6 +52,18 @@ cluster or job problem and is neither.
 - Status checks should be short, login-node-only commands with a hard
   `timeout`. Do not route routine status through `srun`; step creation blocks
   when the node is busy.
+
+**A pattern kill can match the shell that issued it.** Running
+`pkill -9 -f "vllm serve"` inside `bash -c "..."` puts that same string in the
+wrapper's own command line, so `pkill` matches itself and dies before reaching
+the server. The command produces no output and appears to have worked, while
+the old server keeps running and holding its port. The failure only surfaces at
+the next launch, as `OSError: [Errno 98] Address already in use`.
+
+- Resolve the target with `pgrep -af` first, then kill by explicit PID.
+- Confirm the port is actually released before relaunching, rather than
+  trusting the stop command's silence.
+- A silent kill command is not evidence of a stopped process.
 
 ## Benchmark methodology — three ways to get fake numbers
 
@@ -109,12 +121,246 @@ queueing rather than compute.
 Check the startup line `Maximum concurrency for N tokens per request: X` before
 raising it; that value reflects available KV cache.
 
+**It also silently caps your benchmark.** Measured "peak" throughput tends to
+land at whatever this value is set to, because aggregate throughput keeps
+climbing right up to the ceiling. A peak figure is only a device characteristic
+if you confirmed the slot limit was not the binding constraint. Raising the
+limit from 16 to 256 raised measured aggregate throughput about fivefold on the
+same hardware and the same checkpoint.
+
+Raising it sixteenfold cost about 2% of KV cache, so it does not meaningfully
+trade against context capacity.
+
+## Capacity is a per-stream latency policy, not a number
+
+Sweeping concurrency from 1 to 256 at short prompts, aggregate throughput never
+stopped climbing and TTFT stayed under a second throughout. There was no
+saturation knee to find.
+
+What degrades instead is per-stream speed, smoothly and monotonically: roughly
+154 tok/s for a lone request, 59 at 64 concurrent, 32 at 256. Aggregate rose
+from 126 to 7,850 tok/s across the same range.
+
+So "how many agents fit on one device" has no hardware answer. It is set by the
+per-stream speed you are willing to accept. State that floor first, then read
+off the session count. Reporting aggregate alone hides the latency being paid to
+obtain it.
+
+## Short-prompt benchmarks flatter latency by an order of magnitude
+
+Holding concurrency fixed and varying only input size:
+
+| Prompt tokens | Aggregate tok/s | Per-stream tok/s | TTFT mean | TTFT p95 |
+| --- | --- | --- | --- | --- |
+| 1,031 | 836 | 110 | 0.33 s | 0.33 s |
+| 16,410 | 448 | 57 | 1.48 s | 2.15 s |
+| 32,887 | 322 | 41 | 2.48 s | 3.61 s |
+| 65,857 | 162 | 21 | 5.82 s | 8.88 s |
+
+TTFT grows about eighteenfold and aggregate throughput falls about fivefold,
+with output length pinned and concurrency constant.
+
+Agent turns carry large prompts, so benchmark at the prompt sizes you will
+actually serve. Sub-second latency measured on toy prompts becomes multi-second
+latency in production, and it is the p95 that users notice.
+
+## Prefix caching is worth measuring as a feature
+
+Suppressing prefix caching with unique prompts is correct when benchmarking the
+engine, but agent traffic resends a large shared prompt prefix every turn.
+Measured at 8 concurrent streams with ~16k-token prompts, a shared prefix versus
+unique prompts gave **+46% aggregate throughput (448 → 656 tok/s)** and **~2x
+faster TTFT (1.48 s → 0.77 s)**.
+
+Benchmark both ways: unique prompts to characterize the engine, shared prefixes
+to predict production.
+
+## Reproducing the capacity measurements
+
+Harness: `scripts/bench_capacity.py`. It enforces the method requirements
+described above — unique prompt content per request, server-reported token
+counts, pinned output length, and repeats with variance reported.
+
+### Engine and serving configuration
+
+Engine version 0.26.0. Serving flags held constant across every measurement
+except `--max-num-seqs`, which was the swept variable:
+
+```
+--max-model-len 131072
+--gpu-memory-utilization 0.85
+--max-num-batched-tokens 8192
+--max-num-seqs <16 | 64 | 256>
+--kv-cache-dtype fp8_e4m3
+--enable-prefix-caching
+--enable-chunked-prefill
+--async-scheduling
+--language-model-only
+--generation-config vllm
+--enable-auto-tool-choice
+--tool-call-parser <family-xml>
+--reasoning-parser <family>
+```
+
+Reported KV cache at startup, showing that slot count barely affects it:
+
+| `--max-num-seqs` | GPU KV cache tokens | Max concurrency at full context |
+| --- | --- | --- |
+| 16 | 2,948,170 | 22.49x |
+| 64 | 2,948,170 | 22.49x |
+| 256 | 2,875,985 | 21.94x |
+
+### Request parameters
+
+Every request used `temperature 0.8`, `top_p 0.95`, `max_tokens 256`,
+`ignore_eos true` (so decode length is identical across requests), streaming
+with `stream_options.include_usage true`, and thinking disabled via
+`chat_template_kwargs`. Token counts come from `usage.completion_tokens` and
+`usage.prompt_tokens`, never from counting stream chunks.
+
+### Invocations
+
+```bash
+# Concurrency sweep (short prompts)
+python3 scripts/bench_capacity.py --mode conc \
+    --conc 1 8 16 24 32 48 64 --ctx 64 --max-tokens 256 --repeats 2
+python3 scripts/bench_capacity.py --mode conc \
+    --conc 64 96 128 192 256 --ctx 64 --max-tokens 256 --repeats 2
+
+# Low-concurrency re-measurement, and slot-ceiling comparison
+python3 scripts/bench_capacity.py --mode conc \
+    --conc 1 4 8 --ctx 64 --max-tokens 256 --repeats 3
+
+# Long-context sweep at fixed concurrency
+python3 scripts/bench_capacity.py --mode conc --conc 8 \
+    --ctx 1024 4096 16384 32768 65536 --max-tokens 256 --repeats 2
+
+# Prefix-cache benefit at one operating point
+python3 scripts/bench_capacity.py --mode prefix --conc 8 \
+    --ctx 16384 --max-tokens 256 --repeats 3
+```
+
+### Prompt-length calibration
+
+Prompts are random lowercase words, which get no vocabulary compression and
+tokenize at roughly **3.36 tokens per word** on this tokenizer. The harness
+divides by that constant, so `--ctx` is approximate; the `ctx_in` column reports
+the actual server-measured prompt length and is the figure to cite.
+
+Synthetic random tokens are correct for prefill cost, which depends on token
+count rather than content, and they reliably defeat caching. They are *not*
+representative of how real prompts compress, and results may differ on natural
+text or code.
+
+### Full concurrency results
+
+Short prompts (~76 server-measured tokens), 256 output tokens per request:
+
+| Concurrency | Aggregate tok/s | Decode tok/s | Prefill tok/s | Per-stream tok/s | TTFT mean | TTFT p95 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | 163 | 182 | 509 | 165 | 0.15 s | 0.15 s |
+| 4 | 525 | 581 | 1,671 | 132 | 0.18 s | 0.18 s |
+| 8 | 926 | 1,029 | 2,829 | 117 | 0.21 s | 0.21 s |
+| 16 | 1,113 | 1,567 | 3,772 | 88 | 0.32 s | 0.32 s |
+| 24 | 1,916 | 2,133 | 5,615 | 80 | 0.32 s | 0.33 s |
+| 32 | 2,345 | 2,590 | 8,072 | 74 | 0.30 s | 0.31 s |
+| 48 | 3,032 | 3,388 | 10,131 | 65 | 0.36 s | 0.38 s |
+| 64 | 3,726 | 4,097 | 13,128 | 59 | 0.37 s | 0.38 s |
+| 96 | 4,916 | 5,345 | 19,382 | 52 | 0.38 s | 0.41 s |
+| 128 | 5,343 | 6,367 | 21,439 | 46 | 0.45 s | 0.50 s |
+| 192 | 6,963 | 7,564 | 28,552 | 37 | 0.52 s | 0.57 s |
+| 256 | 7,850 | 8,683 | 33,489 | 32 | 0.58 s | 0.68 s |
+
+Rows 1-8 were re-measured with three repeats at spread under 3%. Rows 16-64
+come from a two-repeat pass at a 64-slot ceiling and rows 96-256 from a
+two-repeat pass at a 256-slot ceiling; of these, rows from 24 upward held spread
+under ~5%, while 16 was noisier and should be treated as indicative.
+
+The first attempt at rows 1-8 produced markedly worse figures with 44-121%
+spread. That was warmup on the first repeat, not a real effect; the corrected
+values above are higher. Always discard or repeat the first measurement at a
+given configuration.
+
+## `max_num_seqs` is a ceiling, not a reservation
+
+Raising the slot limit does not slow down low-concurrency work. Measured at a
+256-slot ceiling, concurrency 1, 4 and 8 matched or beat the same points
+measured at a 64-slot ceiling.
+
+The setting only binds once in-flight requests exceed it. Below that the
+scheduler behaves identically, so for an interactive agent lane running a few
+requests at a time the value is invisible.
+
+Consequences for choosing it:
+
+- A high limit is never worse for a lightly loaded endpoint, and is better if
+  the client ever fans out many parallel subagents.
+- A low limit acts as crude admission control: excess requests queue instead of
+  being admitted, so the admitted ones finish sooner. Same total work, different
+  latency shape.
+- The cost of a high limit is a small KV cache reduction, about 2.4% going from
+  16 slots to 256.
+
+So pick it from the fan-out you expect, not from a belief that a low value keeps
+single requests fast. It does not.
+
+### Full long-context results
+
+Concurrency fixed at 8, 256 output tokens per request:
+
+| Prompt tokens | Aggregate tok/s | Decode tok/s | Prefill tok/s | Per-stream tok/s | TTFT mean | TTFT p95 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1,031 | 836 | 1,023 | 24,968 | 110 | 0.33 s | 0.33 s |
+| 4,106 | 618 | 953 | 55,490 | 94 | 0.59 s | 0.69 s |
+| 16,410 | 448 | 671 | 88,649 | 57 | 1.48 s | 2.15 s |
+| 32,887 | 322 | 534 | 106,234 | 41 | 2.48 s | 3.61 s |
+| 65,857 | 162 | 303 | 90,494 | 21 | 5.82 s | 8.88 s |
+
+Prefill rate rises with input size, peaks near the 32k point, then falls back at
+65k — consistent with attention cost growing faster than linearly.
+
+### Prefix-cache comparison
+
+Both rows at concurrency 8 with ~16.4k-token prompts:
+
+| Variant | Aggregate tok/s | Prefill tok/s | Per-stream tok/s | TTFT mean |
+| --- | --- | --- | --- | --- |
+| Unique prompts | 448 | 88,649 | 57 | 1.48 s |
+| Shared prefix | 656 | 170,313 | 85 | 0.77 s |
+
+### Cross-session reconciliation
+
+Before any new claim was made, the harness was run against the operating point
+recorded in the previous session. It returned 1,412 aggregate tok/s at
+concurrency 16 versus 1,320 recorded previously, and 144 versus 151 at
+concurrency 1 — agreement within normal run-to-run spread, so figures from the
+two sessions are comparable.
+
+### Definitions
+
+- **Aggregate tok/s** — total completion tokens divided by wall time for the
+  whole batch, including prefill. This is the user-visible rate.
+- **Decode tok/s** — completion tokens divided by wall time minus mean TTFT.
+  Excludes prefill, so it is comparable across prompt lengths.
+- **Prefill tok/s** — total prompt tokens divided by mean TTFT.
+- **Per-stream tok/s** — mean across requests of that request's own completion
+  tokens divided by its own duration.
+
+Report aggregate and per-stream together. Aggregate alone hides the per-stream
+latency being paid to achieve it.
+
 ## Hypotheses that were tested and falsified
 
 - **`--max-num-batched-tokens` is throttling prefill.** Raising it 8192 → 65536
   made TTFT *worse* at every concurrency (26 s → 39 s at 4) while aggregate
-  stayed flat. Prefill was already compute-saturated; the knob only trades TTFT
-  against decode rate. Common tuning advice that does not apply here.
+  stayed flat. The knob traded TTFT against decode rate without helping. Common
+  tuning advice that did not apply here.
+
+  The reason originally given — that prefill was already compute-saturated at
+  ~6,100 tok/s — was itself wrong. Later measurement at higher concurrency and
+  larger inputs reached well above 100,000 prefill tok/s. Prefill scales much
+  further than that figure implies, so the observed behaviour needs another
+  explanation. Recorded here as an unexplained result rather than a solved one.
 - **`--async-scheduling` will raise throughput.** No measurable effect.
 - **Setting `--kv-cache-dtype fp8_e4m3` will help.** No-op: the NVFP4 checkpoint
   already selected FP8 KV, visible as `Using KV cache scaling factor 1.0 for

@@ -393,3 +393,204 @@ exact arguments and a rollback path before stopping anything.
 file in the local lab pointed at a different model from the one actually
 serving. Launching from it would have silently replaced a working endpoint with
 a differently-configured model on the same port.
+
+## Planned Next Task: Concurrency Knee and Long-Context Behaviour
+
+Two gaps remain in the single-GPU capacity picture, and both can only be closed
+while an allocation is live.
+
+### Gap 1: the concurrency knee was never found
+
+The MoE sweep stopped at sixteen concurrent streams because that was the
+server's configured sequence-slot ceiling, not because the device saturated. At
+that point aggregate throughput was still climbing steeply and time-to-first-
+token had barely moved. The correct reading of the recorded result is therefore
+a **lower bound**, not a capacity figure.
+
+For a phase whose purpose is capacity planning, the number of concurrent agent
+sessions one device supports is the central question, and it is still open.
+
+Method: raise the sequence-slot limit well above the previous ceiling, then
+sweep concurrency upward, holding the harness fixed. Identify the knee as the
+point where per-stream throughput degrades materially or time-to-first-token
+crosses a usability threshold. Report both aggregate and per-stream figures;
+aggregate alone hides the latency cost paid to obtain it.
+
+### Gap 2: every published number came from short prompts
+
+All recorded throughput and latency figures were produced with small inputs,
+while the server advertises a very large context window and real agent turns
+carry substantial prompt context.
+
+Prefill was measured as compute-saturated. At that rate, a realistic
+agent-sized prompt implies seconds of prefill before the first token — roughly
+an order of magnitude worse than the sub-second figures already recorded. If
+that holds, the existing latency numbers do not transfer to agent workloads,
+and anyone planning capacity from this note would be misled.
+
+This is the test most likely to change a conclusion already written down, which
+is why it is worth spending allocation time on.
+
+Method: hold concurrency fixed and sweep prompt length across roughly an order
+of magnitude, up to a substantial fraction of the advertised window. Record
+time-to-first-token and decode throughput separately, since prefill and decode
+scale differently.
+
+### Gap 3 (cheap add-on): prefix caching as a feature
+
+Prefix caching was previously treated as a measurement contaminant and
+suppressed with unique prompts. That was correct for benchmarking, but agent
+workloads resend a large shared prompt prefix every turn, so in production it is
+a genuine speedup that has never been quantified. Measure it at one operating
+point by repeating a shared-prefix request with caching effective and defeated.
+
+### Not planned
+
+- Soak or stability testing: the remaining window is too short to support a
+  meaningful stability claim.
+- Further quality comparison: the existing single-sample check already showed
+  both checkpoints fabricating specifics with equal confidence. More samples
+  through inconsistent retrieval paths would not fix that design flaw.
+
+### Method requirements carried forward
+
+These follow from failures recorded earlier in this note and are binding on the
+sweep:
+
+- Unique prompt content per request unless prefix caching is the variable under
+  test.
+- Token counts taken from server-reported usage, never from streamed chunk
+  counts.
+- Repeat every operating point; report variance, and treat a single measurement
+  as provisional.
+- Capture the exact serving arguments and a rollback path before restarting the
+  server.
+
+### Risks
+
+- Restarting the server interrupts the live agent lane. The launcher is
+  known-good and only the sequence-slot value changes, so exposure is small,
+  but the endpoint is briefly unavailable.
+- If the restart fails, debugging consumes the remaining allocation. Mitigation:
+  keep the prior launcher intact so the previous configuration can be restored
+  with one command.
+- A large sequence-slot value may reduce the KV cache below what long-context
+  testing needs. If the two gaps conflict, they must be measured at different
+  server configurations rather than silently compromised.
+
+## Result: Concurrency Knee and Long-Context Behaviour (2026-08-02)
+
+All figures below come from one harness on one device against the MoE
+checkpoint. Output length was pinned so every request decodes an identical
+number of tokens, prompt content was unique per request except where prefix
+caching is the variable, and token counts came from server-reported usage.
+
+The harness is `scripts/bench_capacity.py`. Exact serving flags, request
+parameters, invocations, prompt-length calibration, per-configuration KV cache
+figures, and the complete result tables (including concurrency rows omitted from
+the summary below) are recorded under "Reproducing the capacity measurements" in
+`notes/operations/hpc-vllm-agent-provider-findings.md`.
+
+The harness was first reconciled against the previously recorded operating
+point and reproduced it within normal run-to-run spread, so the two sessions'
+numbers are comparable.
+
+### The previously reported peak was an artifact of a configuration ceiling
+
+Sequence slots were raised in two steps. At short prompts, aggregate throughput
+kept climbing at every setting, and the observed "peak" tracked whichever slot
+ceiling was configured:
+
+| Concurrency | Aggregate tok/s | Per-stream tok/s | TTFT mean |
+| --- | --- | --- | --- |
+| 1 | 126 | 154 | 0.15 s |
+| 8 | 534 | 108 | 0.27 s |
+| 16 | 1,113 | 88 | 0.32 s |
+| 32 | 2,345 | 74 | 0.30 s |
+| 64 | 3,726 | 59 | 0.37 s |
+| 128 | 5,343 | 46 | 0.45 s |
+| 192 | 6,963 | 37 | 0.52 s |
+| 256 | 7,850 | 32 | 0.58 s |
+
+The figure recorded in the previous session as a peak is roughly a fifth of what
+the same device sustains once the ceiling is lifted. It measured the
+configuration, not the hardware.
+
+**No aggregate knee exists within the tested range.** Throughput was still
+climbing at the highest concurrency tested, and time-to-first-token remained
+below a second throughout.
+
+The real constraint is per-stream degradation, which is smooth and monotonic:
+roughly 154 tok/s alone, 59 at sixty-four concurrent, 32 at two hundred
+fifty-six. Single-device capacity is therefore set by **the per-stream speed the
+operator is willing to accept**, not by a saturation cliff. Capacity planning
+must state a per-stream floor before it can state a session count.
+
+Increasing sequence slots sixteenfold cost about two percent of KV cache, so the
+risk that a high slot count would crowd out long-context work did not
+materialise.
+
+### Short-prompt latency figures do not transfer to agent workloads
+
+Holding concurrency at eight and sweeping prompt length:
+
+| Prompt tokens | Aggregate tok/s | Per-stream tok/s | TTFT mean | TTFT p95 |
+| --- | --- | --- | --- | --- |
+| 1,031 | 836 | 110 | 0.33 s | 0.33 s |
+| 4,106 | 618 | 94 | 0.59 s | 0.69 s |
+| 16,410 | 448 | 57 | 1.48 s | 2.15 s |
+| 32,887 | 322 | 41 | 2.48 s | 3.61 s |
+| 65,857 | 162 | 21 | 5.82 s | 8.88 s |
+
+Across the range, time-to-first-token grows about eighteenfold and aggregate
+throughput falls roughly fivefold, at constant concurrency and constant output
+length. The only variable is input size.
+
+This revises the previous session's headline latency figures. Those were
+measured with negligible prompts; at prompt sizes typical of an agent turn,
+first-token latency is measured in seconds. Any capacity estimate drawn from the
+short-prompt numbers overstates responsiveness for real agent use.
+
+Prefill rate rose with input size up to roughly the mid range and then fell
+back at the largest size tested, consistent with attention cost growing faster
+than linearly. An earlier claim that prefill was compute-saturated was also too
+low by several times; prefill scales considerably further than that claim
+assumed.
+
+### Prefix caching is a large, previously unmeasured win
+
+At eight concurrent streams with a large shared prefix, compared with unique
+prompts of the same size:
+
+| Metric | Unique prompts | Shared prefix | Change |
+| --- | --- | --- | --- |
+| Aggregate tok/s | 448 | 656 | +46% |
+| TTFT mean | 1.48 s | 0.77 s | ~2x faster |
+
+Agent workloads resend a large common prompt prefix every turn, so this is the
+production case rather than the benchmark case. Suppressing prefix caching was
+correct for measuring the engine; it understates what agent traffic will see.
+
+### What this changes
+
+- Single-device session capacity is a per-stream-latency policy decision, not a
+  fixed number. Publish the floor alongside the count.
+- Sizing must be done at the prompt lengths actually in use. Short-prompt
+  benchmarks flatter the system by roughly an order of magnitude on latency.
+- Any measured "peak" throughput should be checked against the configured
+  sequence-slot limit before being reported as a device characteristic.
+
+### Method faults found in this round
+
+- Early low-concurrency points disagreed between repeats by up to 121%, caused
+  by warmup contaminating the first run. High-concurrency points were stable
+  within a few percent. Discard or repeat the first measurement at each
+  configuration.
+- A pattern-based process kill matched the wrapper shell that was issuing it, so
+  the kill terminated itself before reaching the server. The stop appeared to
+  succeed silently while the old server kept holding its port, and the next
+  launch failed with an address conflict. Kill by explicit process id, and
+  confirm the port is released rather than trusting the stop command.
+- A local copy of the launch script had drifted from the authoritative remote
+  copy, disagreeing on both context length and served alias. The running
+  server's own reported configuration is the only reliable source.
