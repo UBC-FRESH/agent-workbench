@@ -506,6 +506,38 @@ across them. Capacity adds nearly linearly, failures are isolated, and each
 server keeps its own prefix cache. Reserve tensor parallelism for checkpoints
 that genuinely do not fit on one device.
 
+### Measured: two independent servers scale nearly linearly
+
+Two GPUs on one node, one independent server each, same checkpoint and settings,
+driven simultaneously by two clients at 32 concurrent streams apiece:
+
+| Configuration | Aggregate tok/s | Per-stream tok/s | TTFT mean |
+| --- | --- | --- | --- |
+| One server alone, 32 streams | 2,345 | 74.3 | 0.30 s |
+| Server A, both loaded, 32 streams | 2,247 | 75.8 | 0.33 s |
+| Server B, both loaded, 32 streams | 2,145 | 73.6 | 0.29 s |
+| **Both combined, 64 streams total** | **4,392** | ~74.7 | ~0.31 s |
+
+Each server retained roughly 92-96% of its solo throughput while the other was
+fully loaded, and per-stream speed and latency were essentially unchanged. There
+is no meaningful interference between instances — they share only the host and
+the PCIe root, neither of which binds for this workload.
+
+Compared against putting the same 64 streams on a *single* GPU (3,726 tok/s at
+59.1 per-stream, 0.37 s TTFT), splitting across two servers gives **+18%
+aggregate throughput and +26% per-stream speed at lower latency**. Both the
+throughput and the experienced responsiveness improve, because neither device is
+pushed as far down its per-stream degradation curve.
+
+This is the configuration to use for agent fan-out. It also degrades better: if
+one server dies, half the fleet keeps working, whereas a tensor-parallel group
+fails as a unit.
+
+Caveat: repeat spread was 22-25% even after warming, so treat these as accurate
+to roughly the nearest few percent rather than exact. The qualitative
+conclusion — near-linear scaling, no cross-server interference — is well clear
+of that noise.
+
 ### Prefix-cache comparison
 
 Both rows at concurrency 8 with ~16.4k-token prompts:
