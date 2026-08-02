@@ -446,6 +446,66 @@ Together with the loop probe, this covers the agent path end to end: streamed
 incremental tool calls, several calls per turn, dependent multi-turn sequencing,
 and schema-constrained output.
 
+## Tensor parallelism blocked by a JIT-compiled fusion pass
+
+On a two-GPU node with a full NVLink mesh (`nvidia-smi topo -m` reporting an
+`NV18` link between the devices), `--tensor-parallel-size 2` failed to start.
+The interconnect was never the problem and was never reached.
+
+The failure chain:
+
+1. tensor parallelism > 1 enables a torch.compile collective-fusion pass;
+2. that pass, in `vllm/compilation/passes/fusion/allreduce_rms_fusion.py`, is
+   gated only on `find_spec("flashinfer")` — it activates because FlashInfer is
+   *installed*, not because it was requested;
+3. importing `flashinfer.comm` JIT-compiles `trtllm_mnnvl_allreduce.cu`;
+4. that compile fails with *"CUDA compiler and CUDA toolkit headers are
+   incompatible"*.
+
+This is the same class of failure as the single-GPU FlashInfer sampler problem
+recorded above, in a code path only reachable when TP > 1, so the sampler
+workaround does not cover it.
+
+**No environment variable disables it in this build.** Verified, rather than
+assumed:
+
+| Setting | Why it does not help |
+| --- | --- |
+| `--disable-custom-all-reduce` | Affects the communicator, not the compile pass |
+| `VLLM_ALLREDUCE_USE_FLASHINFER` | Already defaults to `0`; not the trigger |
+| `VLLM_ALLREDUCE_USE_SYMM_MEM=0` | Set, and the MNNVL compile still ran |
+| `VLLM_FLASHINFER_ALLREDUCE_BACKEND` | Only selects *among* FlashInfer backends: `auto`, `trtllm`, `mnnvl`. There is no NCCL escape value. |
+
+Remaining options, in order of preference:
+
+- **Do not use tensor parallelism for throughput.** For concurrency, run one
+  independent server per GPU. That avoids an all-reduce on every forward pass,
+  removes a shared failure mode, and sidesteps this bug completely.
+- **`--enforce-eager`** skips torch.compile, so the fusion pass never runs. This
+  makes TP start, but eager-mode numbers are not comparable to compiled ones —
+  use it to prove a large model *loads and serves*, not to measure it.
+- Rebuilding the FlashInfer JIT cache against a matching toolkit would be the
+  real fix; not attempted here.
+
+**Wasted-time warning for the next operator:** two of the environment variables
+tried during diagnosis were plausible-sounding but do not exist —
+`VLLM_USE_FLASHINFER_ALLREDUCE` (the real name reverses the last two words) and
+`VLLM_USE_FLASHINFER_ALLREDUCE=0` set in a launcher had no effect whatsoever.
+Setting a misspelled vLLM environment variable fails **silently**. Confirm any
+variable exists in `vllm/envs.py` before concluding that setting it changed
+anything.
+
+### Prefer data parallel over tensor parallel for agent concurrency
+
+Tensor parallelism splits one model across devices to make a *larger* model fit.
+It is the wrong tool for serving more concurrent sessions of a model that
+already fits: every forward pass then pays a collective communication cost.
+
+For agent fan-out, run N independent single-GPU servers and distribute clients
+across them. Capacity adds nearly linearly, failures are isolated, and each
+server keeps its own prefix cache. Reserve tensor parallelism for checkpoints
+that genuinely do not fit on one device.
+
 ### Prefix-cache comparison
 
 Both rows at concurrency 8 with ~16.4k-token prompts:
