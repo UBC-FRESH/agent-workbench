@@ -238,6 +238,10 @@ python3 scripts/bench_capacity.py --mode conc --conc 8 \
 # Prefix-cache benefit at one operating point
 python3 scripts/bench_capacity.py --mode prefix --conc 8 \
     --ctx 16384 --max-tokens 256 --repeats 3
+
+# Crossed grid: agent-sized context at increasing concurrency
+python3 scripts/bench_capacity.py --mode conc \
+    --conc 16 32 64 96 --ctx 32768 --max-tokens 256 --repeats 2
 ```
 
 ### Prompt-length calibration
@@ -318,6 +322,69 @@ Concurrency fixed at 8, 256 output tokens per request:
 
 Prefill rate rises with input size, peaks near the 32k point, then falls back at
 65k — consistent with attention cost growing faster than linearly.
+
+## Capacity is context-dependent, and the two axes must be crossed
+
+Sweeping concurrency at short prompts and context length at low concurrency
+measures two edges of a grid. The production case is the interior: many agents
+each carrying a large prompt. Behaviour there is not predictable from either
+edge.
+
+At ~32.9k-token prompts, 256 output tokens, unique prompts:
+
+| Concurrency | Aggregate tok/s | Per-stream tok/s | TTFT mean | TTFT p95 |
+| --- | --- | --- | --- | --- |
+| 16 | 271 | 17.7 | 6.38 s | 11.05 s |
+| 32 | **481** | 15.7 | 4.05 s | 11.39 s |
+| 64 | 309 | 5.3 | 24.23 s | 45.30 s |
+| 96 | 316 | 4.1 | 36.46 s | 68.97 s |
+
+**Here a real knee exists.** Aggregate throughput peaks near 32 concurrent
+streams and then *declines*. Past the peak, additional load buys no extra output
+at all — it only adds latency, and p95 TTFT reaches over a minute.
+
+Compare the short-prompt sweep, where throughput was still climbing at 256
+streams and TTFT stayed under a second. Single-device capacity therefore differs
+by roughly an order of magnitude depending on prompt size. A capacity figure
+quoted without the context length it was measured at is meaningless.
+
+For planning at agent-sized context, the usable operating point on this device
+is around 32 concurrent streams, delivering roughly 16 tok/s per stream with
+about 4 s mean and 11 s p95 first-token latency.
+
+### The failure mode is queueing, not preemption or errors
+
+At the collapse points the server logged **no preemption events**, reported KV
+cache usage reaching 100%, and showed a waiting queue as deep as 87 requests.
+Excess load is admitted to a queue rather than preempting running sequences or
+returning errors.
+
+Operationally this is good news: the endpoint degrades in latency, not in
+correctness, and does not thrash. It also means overload is invisible to clients
+except as slowness — there is no error to alert on, so watch queue depth and p95
+TTFT rather than waiting for failures.
+
+### The collapse arrives earlier than KV arithmetic predicts
+
+Predicted before running: with a 2,875,985-token cache, 32k-context streams
+should fit comfortably to 64 (~73% utilisation) and only break near 96 (~110%).
+
+That prediction was wrong. Throughput had already collapsed at 64 streams, at
+roughly three-quarters of nominal cache. KV capacity alone does not predict the
+usable operating point.
+
+The likely mechanism at 64 streams is prefill scheduling rather than cache
+exhaustion: with a batched-token budget of 8192, admitting 64 streams of ~33k
+tokens requires on the order of 250 scheduler iterations of prefill before those
+streams can decode, which shows up directly as multi-second TTFT. At 96 streams
+the cache genuinely does saturate and the queue absorbs the excess.
+
+This attribution is not fully isolated — the log evidence confirms queueing and
+100% cache usage but does not cleanly separate which run produced which. Treat
+the prefill explanation as the leading hypothesis, not a settled result.
+
+The practical rule stands regardless: size from measurement at your real prompt
+length, not from dividing cache size by context length.
 
 ### Prefix-cache comparison
 

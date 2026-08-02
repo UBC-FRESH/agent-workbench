@@ -580,6 +580,45 @@ correct for measuring the engine; it understates what agent traffic will see.
 - Any measured "peak" throughput should be checked against the configured
   sequence-slot limit before being reported as a device characteristic.
 
+### Crossed grid: the capacity answer at agent-sized context
+
+The two sweeps above measure the edges of a grid. The production case is the
+interior — many sessions each carrying a large prompt — and it does not follow
+from either edge.
+
+At ~32.9k-token prompts:
+
+| Concurrency | Aggregate tok/s | Per-stream tok/s | TTFT mean | TTFT p95 |
+| --- | --- | --- | --- | --- |
+| 16 | 271 | 17.7 | 6.38 s | 11.05 s |
+| 32 | **481** | 15.7 | 4.05 s | 11.39 s |
+| 64 | 309 | 5.3 | 24.23 s | 45.30 s |
+| 96 | 316 | 4.1 | 36.46 s | 68.97 s |
+
+**A real knee exists here**, unlike at short prompts. Aggregate throughput peaks
+around 32 concurrent streams and then declines; past the peak, additional load
+buys no extra output and only adds latency, with p95 first-token latency
+exceeding a minute.
+
+So the capacity answer this phase was seeking is: **roughly 32 concurrent
+sessions at agent-sized context**, at about 16 tok/s per stream and 4 s mean /
+11 s p95 first-token latency. That is an order of magnitude below what the
+short-prompt sweep implied, and it is the number that should be used for
+planning.
+
+A pre-registered prediction was falsified. Dividing cache size by context length
+suggested comfort to 64 streams and breakage near 96; throughput had in fact
+already collapsed at 64, at about three-quarters of nominal cache. Cache
+arithmetic does not predict the usable operating point. The leading explanation
+is prefill scheduling bandwidth rather than cache exhaustion, but the log
+evidence does not isolate it cleanly, so it is recorded as a hypothesis.
+
+The failure mode is benign in kind: no preemption events were logged and no
+requests errored. Excess load is queued, with observed queue depth up to 87
+requests. Overload is therefore invisible to clients except as slowness, which
+means monitoring should watch queue depth and p95 latency rather than waiting
+for errors.
+
 ### Method faults found in this round
 
 - Early low-concurrency points disagreed between repeats by up to 121%, caused
