@@ -1,0 +1,250 @@
+ 
+
+
+
+Both Apptainer and Singularity software are available on Sockeye, but we recommend using Apptainer as it is the updated version with some improved features that will be discussed more throughout the guide. More information on the change can be found here: https://apptainer.org/news/community-announcement-20211130/
+
+In this guide, it is assumed you know how to connect to Sockeye, navigate its filesystem, load modules, and write job scripts. If you are not familiar with Sockeye, you should review the Quickstart Guide and Running Jobs pages.
+Overview
+There are typically pain points associated with installing software on an HPC system, including:
+
+Missing dependencies and version mismatches
+Root access or administrative privileges required on the HPC system
+Sharing tools and workflows with others
+Reproducibility not guaranteed (e.g. with system-wide software updates)
+A solution to all these common software issues is found by using containers. In this guide we are focused on Apptainer, formerly known as Singularity. Designed for HPC systems, using Apptainer does not require root access when building or executing the software. Containers are easy to copy and share, and they are independent of the host environment.
+
+What is a container?
+A container is package of code, dependencies, and libraries necessary to run software in essentially any computing environment. Containers provide virtualization at the operating system level. The two main types of containers you have likely heard of are Apptainer (Singularity) and Docker. The main differences between Apptainer (Singularity) and Docker are summarized in the following table:
+
+Using Apptainer (Singularity)	Using Docker
+Assumes no root access to run (Singularity does for editing)
+
+Assumes root access to run
+
+Can auto-mount other directories, e.g. $HOME
+
+Isolates file system
+
+Stores image as a regular file
+
+Stores image in cache
+
+Only works in Linux
+
+Compatible with Linux, MacOS, or Windows
+
+Apptainer is more suitable for HPC systems. As a result, the rest of this guide will be focused specifically on how to install and configure Apptainer containers to use on Sockeye.
+
+Apptainer is the latest version on Sockeye, does not require root access to build in Sockeye, and has some speedups over Singularity. Therefore, we will focus on Apptainer for the remainder of the documentation, though the workflow applies just as well to Singularity (except for building your containers in Sockeye), which may still be used on Sockeye if part of your existing workflow. I.e., everywhere that there are commands to use "apptainer ..", it may be replaced by "singularity .." to achieve the same effect, assuming no root priveleges are needed. If intsalling software within a container or building one from scratch using Singularity, you'll need root priveleges, and you will therefore need to build it on your local machine and transfer over your image file. This is explained further below.
+
+Using pre-built containers
+There are many pre-built container images available online that can be readily used. Most container images are found on Docker Hub and can be pulled using Apptainer. Singularity Hub may also be used, but this repository is no longer being maintained due to the rebranding to Apptainer, so it is in archival, read-only mode. There is also the NVIDIA GPU Cloud (NGC) Catalog for AI, HPC, and visualization.
+
+Example: Pulling a pre-built container from Docker Hub (Bioconductor)
+Consider a common example of pulling down a docker image of the R software, Bioconductor, in Sockeye. First, navigate to where you want to save the container, it is recommended to use your project space. You can also create a blank directory to store the container and then navigate into it, i.e.
+
+cd /arc/project/<alloc-code>/<CWL>
+mkdir bioconductor; cd bioconductor
+Next, you should load gcc and apptainer on Sockeye and then use Apptainer to pull the Bioconductor container from Docker Hub:
+
+module load gcc apptainer
+apptainer pull --name bioconductor.sif docker://bioconductor/bioconductor_docker
+The optional –name flag allows you to explicitly name your .sif file. Remember that each time you log in to Sockeye to use your container, you will need to load the gcc and apptainer modules and navigate to the folder that contains the .sif file. To see a list of available commands in apptainer, type “apptainer help”.
+
+You may specify the version of the image explicitly using a colon after the image name and the version number; otherwise, it will default to the latest available version. E.g. for version 7 of CentOS Linux you could use the command:
+
+apptainer pull –-name centos7.sif docker://centos:7
+Using Apptainer interactively
+Once the build is finished, you can start an Apptainer shell in order to access the container interactively:
+
+apptainer shell bioconductor.sif
+Now you should see the Apptainer shell started up instead of “<CWL>@login0x”. From the Singularity shell of the Bioconductor container we can do things interactively. Note that the directory where you start the shell will autmoatically be mounted on the Apptainer shell. In order to get to the root directory of the shell, use "cd /" and navigate from there.
+
+As an example, let’s launch R and check what R packages this container has included:
+
+R
+ip = as.data.frame(installed.packages()[,c(1,3:4)])
+ip = ip[is.na(ip$Priority),1:2,drop=FALSE]
+ip
+This will display the many R packages that are included in this container, as well as their specific versions. To exit R, use
+
+quit()
+And exit the Apptainer shell using
+
+exit
+Executing commands in Apptainer non-interactively
+When looking to run commands within a container, the “apptainer exec …” command is used with the following format
+
+apptainer exec [exec options…] <container> <command>
+For instance, say one wants to use the Bioconductor container in order to execute the same R commands as in the interactive case, and they have been saved as an R script called test.r. That is:
+
+ip = as.data.frame(installed.packages()[,c(1,3:4)])
+ip = ip[is.na(ip$Priority),1:2,drop=FALSE]
+ip
+Then, the exec command can be used as follows, assuming test.r and boconductor.sif are in the same directory,
+
+apptainer exec -B <full_path> bioconductor.sif Rscript test.r
+Where the -B flag is used for bind mounting and <full_path> specifies the path where bioconductor.sif and test.r are located. Note that this should probably not be necessary on Sockeye, but may be necessary on a different HPC system, such as in using the national platform.
+
+Install packages outside a container
+What if the pre-built image one pulls using Apptainer does not have all the software packages that are required? One approach is to install packages outside a container. This approach is quick and does not require root access, but may not always work for every package.
+
+Example: Installing the R package ggplot2 outside the Bioconductor container
+Navigate to the relevant directory which contains the bioconductor.sif file, create a directory for your R libraries, Rlibs, and then launch an interactive Apptainer session:
+
+cd /arc/project/<alloc-code>/<CWL>/bioconductor
+mkdir Rlibs
+module load gcc apptainer
+apptainer shell bioconductor.sif
+Within the Apptainer shell, run R and set the library paths in R to include the newly created Rlibs directory:
+
+R
+.libPaths(‘/arc/project/<alloc-code>/<CWL>/Bioconductor/Rlibs’)
+Now that the R library path is updated, install the ggplot2 package in R, and then quit R and exit out of Apptainer when finished:
+
+install.packages(‘ggplot2’)
+quit()
+exit
+Every time you start a new session of R within your container, whether interactively or not, you need to set .libPaths(‘/arc/project/<alloc-code>/<CWL>/Bioconductor/Rlibs’) manually. For using Apptainer non-interactively, one may make an R script to set the .libPaths and load ggplot2:  
+
+.libPaths(‘/arc/project/<alloc-code>/<CWL>/bioconductor/Rlibs’)
+library(‘ggplot2’)
+Then you can execute the R script non-interactively:
+
+apptainer exec bioconductor.sif Rscript load_ggplot2.libPaths.r
+There may be missing dependencies that are not easy to install without sudo access.
+Sharing with others is also difficult, especially across different computing platforms.
+Installing packages inside a container
+An alternative is to install extra packages inside your container. This allows for more control and makes it easier to transfer and share containers.
+
+If using Singularity instead of Apptainer, you'll need to do this on your local machine with root access and replace "apptainer ..." with "sudo singularity ...". Furthermore, the following are required on your local machine to install packages inside a container:
+
+a Linux OS,
+internet access,
+Singularity installed, and
+root user permissions.
+Trying to install packages inside a container directly on Sockeye using Singularity instead of Apptainer will not work.
+
+You will need to configure the container on your local machine and then transfer your container over to Sockeye. If using Singularity, see the following guide to install Singularity on your local machine: Singularity User Guide.
+
+Example: Installing packages inside a Bioconductor container
+In Apptainer containers may be built directly on Sockeye. Consider the example of installing the ggplot2 package inside a Bioconductor container. 
+
+apptainer build --sandbox bioconductor_ggplot2.sandbox docker://bioconductor/bioconductor_docker
+Then, shell into the container sandbox in writing mode:
+
+apptainer shell --writable bioconductor_ggplot2.sandbox
+If you need root priveleges to install certain software in your container, then you may instead use the --fakeroot flag as well, i.e.,
+
+apptainer shell --writable --fakeroot bioconductor_ggplot2.sandbox
+Next, start up R and install the extra package, ggplot2. Then, quit R and exit the apptainer shell:
+
+R
+install.packages(‘ggplot2’)
+quit()
+exit
+You can test that the library was installed correctly by running a simple R test script, test_install.r,
+
+apptainer exec bioconductor_ggplot2.sandbox/ Rscript test_install.r
+Where test_install.r is simply given by:
+
+library(ggplot2)
+Create a .sif file from the sandbox file:
+
+apptainer build bioconductor_ggplot2.sif bioconductor_ggplot2.sandbox
+Remember that if using Singularity instead of Apptainer, the sandbox file requires will root access so you'll have to convert to a .sif file on your local machine and then transfer to a different Linux platform, such as Sockeye.
+
+
+Building an Apptainer from scratch
+If using Singularity instead of Apptainer, you'll need to do this on your local machine with root access and replace "apptainer ..." with "sudo singularity ...".
+
+You may also build your own container from scratch using different Linux distributions, e.g. Ubuntu or Centos:
+
+apptainer build --sandbox ubuntu.sandbox docker://ubuntu
+or
+
+apptainer build --sandbox centos.sandbox docker://centos
+You may specify exact versions (otherwise it will pull the default), e.g.,
+
+apptainer build --sandbox centos7.sandbox docker://centos:7
+Often, programs need to generate something in $HOME, which is automatically set to /root in the image. This will create issues on a shared system like Sockeye since there is already a /root directory, and is not suitable for this purpose. Therefore, you’ll need to set $HOME to a different directory within your singularity shell to get around this issue:
+
+apptainer shell --writable <sandbox_name>.sandbox/
+mkdir /<home_name>
+HOME=/<home_name>
+Where <sandbox_name> is for e.g. “ubuntu” “centos”, “centos7” as above, or something else; and <home_name> is what you have chosen (make it unique and identifiable) as the path of the HOME variable.
+
+The Linux images pulled from Docker Hub are lite versions. Some essential libraries may be missing and they will need to be installed in order to install your software packages of interest. For example wget, vim, etc.., you can enter the commands:
+
+apt-get update && apt-get -y upgrade
+apt-get -y install build-essential wget bzip2 ca-certificates vim
+apt-get -y install software-properties-common
+For specific examples, i.e. using Singularity / Apptainer with MPI (message passing interface) or to install Conda in Singularity / Apptainer, you can see recipes in the ARC Sockeye Workshop Video from 01:12:00—01:35:45.
+
+Using GPU resources
+This section outlines how one could use Apptainer in GPU jobs.
+
+Example: TensorFlow
+TensorFlow is a library used in machine learning research and is software that commonly uses GPU resources. As before, load the Apptainer module and pull the relevant docker image to your working directory, e.g. a directory named tensorflow in your project space:
+
+cd /arc/project/<alloc-code>/<cwl>/tensorflow
+module load gcc apptainer
+apptainer pull --name tensorflow-gpu.sif docker://tensorflow/tensorflow:latest-gpu
+The ‘latest-gpu’ flag after ‘:’ is necessary for the latest GPU-compatible version of TensorFlow.
+
+Interactive GPU Jobs
+Consider now using this container in an interactive GPU job. To proceed, create a directory in your scratch space to run your jobs:
+
+mkdir -p /scratch/<st-alloc-1>/<cwl>/tensorflow
+Within /scratch/<st-alloc-1>/<cwl>/tensorflow you can create an interactive GPU job script, tensorflow_interactive_gpu.sh (for more details see our technical user documentation page on Running Jobs):
+
+#!/bin/bash 
+salloc --time=1:0:0 --mem=2G --nodes=1 --gpus=1 --account=your_allocation_code-gpu 
+Now you can launch an interactive GPU job from your directory in /scratch by running the tensorflow_interactive_gpu.sh script (first, you'll change permissions to make the script executable):
+
+cd /scratch/<st-alloc-1>/<cwl>/tensorflow
+chmod u+rwx tensorflow_interactive_gpu.sh
+./tensorflow_interactive_gpu.sh
+This will connect you to the interactive GPU node. You may enter
+
+nvidia-smi
+to see the usage of each of the four GPUs in the interactive node. Now that you are connected to the interactive GPU node, the TensorFlow Apptainer can be used together with whatever commands you would like to execute, e.g. run a Python script. The procedure would be the following:
+
+module load gcc apptainer
+apptainer exec --nv /arc/project/<alloc-code>/<cwl>/tensorflow/tensorflow-gpu.sif <command>
+Note the  '--nv' flag is required to enable GPU usage when using 'apptainer exec'.
+
+Batch GPU Jobs
+A similar procedure as above would be taken for a non-interactive (batch) GPU job. In this case, though your job script would be modified so as to not connect to the interactive node, but to the other GPU nodes, and execute the 'apptainer' command and other commands within the script itself. To this end, from your working directory, e.g. /scratch/<st-alloc-1>/<cwl>/tensorflow, you can enter:
+
+sbatch tensorflow_gpu.sh
+Where the batch job script can be to the effect of:
+
+#!/bin/bash
+ 
+#SBATCH --time=xx:00:00          # Request xx hours of runtime
+#SBATCH --account=alloc-code-gpu # Specify your allocation code (with -gpu appended!)
+#SBATCH --nodes=x			     # Request x nodes
+#SBATCH --gpus-per-node=x        # Request x GPUs per node
+#SBATCH --mem=xG                 # Request x GB of memory
+#SBATCH --job-name=job_name      # Specify the job name
+#SBATCH --output=output.txt      # Specify the output file
+#SBATCH --error=error.txt        # Specify the error file
+#SBATCH --mail-user=<your-email> # Email address for job notifications
+#SBATCH --mail-type=ALL          # Receive email notifications for all job events   
+
+# Load necessary modules
+module load gcc
+module load cuda
+module load apptainer
+
+# Change to working directory
+cd $SLURM_SUBMIT_DIR 
+
+#Execute the apptainer .sif file
+apptainer exec --nv /arc/project/<alloc-code>/<cwl>/tensorflow/tensorflow-gpu.sif <command>
+
+Note that the CUDA module is loaded for NVIDIA GPU support, and all your commands are executed directly within the script.
+
+ 

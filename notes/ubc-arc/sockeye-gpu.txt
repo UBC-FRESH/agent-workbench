@@ -1,0 +1,411 @@
+Skip to sidebar
+Skip to main content
+Skip to breadcrumbs
+Skip to search
+Log in
+Linked Applications
+UBC IT Confluence
+Spaces
+Create
+
+Search
+Help
+Log in
+
+
+UBC ARC Technical User Documentation
+About ARC
+What is HPC
+About Sockeye
+About Chinook
+About Globus
+ARC Access Management Portal
+Using Sockeye
+QuickStart Guide
+SSH Connection Sharing
+Introduction to Linux and Using the Command Line Interface
+Understanding Job Scheduling and Fairshare
+Data Transfer
+Using Visual Studio Code with Sockeye
+UBC ARC OnDemand
+File Transfer and Management
+Job Management
+Cluster Desktop
+Jupyter Notebook
+RStudio Server
+MATLAB
+Genomics Applications
+Bandage
+FASTQC
+IGV
+MEGA
+UGENE
+ALPHAFOLD3
+Running Jobs
+Array Jobs in Slurm
+GPU Jobs in Detail
+Using Local Scratch
+Accessing Web-Based Services in Your Jobs
+Software
+Using the Alliance CVMFS Software Stack
+Virtual Environments on Sockeye
+Using Apptainer or Singularity Containers
+RStudio with Apptainer
+Bioconductor Apptainer Container for Bioinformatics
+Jupyter Notebooks with Apptainer
+TensorFlow with Conda
+MATLAB Parallel Computing
+Build Conda environment in Apptainer Container
+AlphaFold
+Using Chinook
+Chinook Overview & Best Practices
+Chinook Setup Guide
+Chinook Sharing Guide
+Chinook User Guide
+Checking your Chinook allocation's storage
+Using Globus
+Data Transfer to or from Sockeye
+Transfer to or From Your Local Machine Using Globus Connect Personal
+Enable Globus Subscription Groups
+Common Globus Help Topics
+Connecting to Microsoft OneDrive with Globus Web
+Using REDCap
+ARC REDCap Access Management and Security Guidelines
+Defending Your REDCap Flex Project Against Fraudulent Responses and Bot Attacks
+How to: Separate/Split a REDCap Project
+Including the ARC REDCap Platform on a Research Ethics Board Application
+MyCap Mobile Application
+The nedCAPTCHA Module
+AI/ML Resources Hub
+Training
+System Maintenance
+Technical FAQ
+Grant Support Language
+Acknowledgment of UBC ARC in Research
+ConfigureSpace tools
+GPU Jobs in Detail
+Pages… Running Jobs
+Created by Fletcher, Chad, last updated on Aug 12, 2025  7 minute read
+Available GPUs
+Submitting GPU Jobs
+GPU Jobs
+MPI GPU Jobs
+Interactive GPU
+Using srun
+Using salloc
+Graphical Interactive
+Using nvidia-smi
+Identifying the assigned GPUs for your job
+Available GPUs
+These are the GPUs currently available:
+
+6	
+4 x NVIDIA Tesla V100 16GB NVLink
+
+24	GPU16	2 x Intel Xeon Silver 4116 (2.1GHz)	Skylake	192GB DDR4-2666 ECC	8GB	1.9TB NVMe SSD
+44	4 x NVIDIA Tesla V100 32GB NVLink	24	GPU32	2 x Intel Xeon Silver 4216 (2.1GHz)	Cascade Lake	192GB DDR4-2666 ECC	8GB	1.9TB NVMe SSD
+Submitting GPU Jobs
+Submitting jobs from directories residing in /arc/home is not allowed. Transfer your job script to a directory in /scratch FS and submit the job from there.
+
+GPU Jobs
+This GPU Slurm script begins with setting up job-specific parameters, such as the job name, queue or partition selection, and the desired resources. These resources include a single compute node, 12 CPU cores, 2 GPUs, 64GB memory, and a maximum runtime of 72 hours. The script also configures email notifications for job start, end, or errors, sending notifications to an email address. In the following example, the --gpus=2 directive requests 2 GPUs for the job.
+
+
+
+#!/bin/bash
+
+#SBATCH --job-name=jobname            
+#SBATCH --account=<alloc-code>-gpu    
+#SBATCH --nodes=1                   
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=12                            
+#SBATCH --mem=64G                   
+#SBATCH --time=72:00:00              
+#SBATCH --gpus=2
+#SBATCH --output=output.txt          
+#SBATCH --error=error.txt           
+#SBATCH --mail-user=<your-email>
+#SBATCH --mail-type=ALL                                
+
+module load gcc
+module load cuda
+module load <software_package_1>
+module load <software_package_2>
+
+cd $SLURM_SUBMIT_DIR
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+<gpu_executable>
+To specifically request a 32GB VRAM GPU node, use the following feature flag: --constraint=gpu_mem_32
+
+MPI GPU Jobs
+The Slurm directives requests resources for an MPI GPU job, including 2 nodes, 24 CPU cores per node, 24 MPI processes, 4 GPUs, 186GB of RAM per node, and a maximum runtime of 96 hours. It executes the MPI GPU program using mpiexec.
+
+
+
+#!/bin/bash
+
+#SBATCH --job-name=jobname        
+#SBATCH --account=<alloc-code>-gpu
+#SBATCH --nodes=2                                
+#SBATCH --ntasks-per-node=1
+#SBATCH --ncpus-per-task=24
+#SBATCH --mem=186G                  
+#SBATCH --time=96:00:00              
+#SBATCH --gpus-per-node=4
+#SBATCH --output=output.txt          
+#SBATCH --error=error.txt            
+#SBATCH --mail-user=<your-email> 
+#SBATCH --mail-type=ALL                
+
+module load gcc                
+module load openmpi         
+module load cuda              
+module load <software_package_1> 
+
+cd $SLURM_SUBMIT_DIR  
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+mpiexec --np 2 <mpi_gpu_executable>  
+In this example, the --gpus-per-node=4 directive explicitly requests 4 GPUs for the MPI GPU job
+
+Interactive GPU
+While batch submissions are generally the most efficient method for fully utilizing computational resources, Sockeye also supports interactive job submissions, making it a valuable option for tasks such as
+
+RAM intensive graphical applications like MATLAB
+Interactive "console tools" like R
+Significant software development and compiling efforts
+A Slurm interactive session reserves resources on compute nodes allowing you to use them interactively as you would the login node. There are two main commands that can be used to make a session, srun and salloc.
+
+Once an interactive session starts, it will use the entire requested block of CPU time and other resources even if they remain unused, until explicitly terminated. So don't forget to exit the interactive session once finished. Additionally, if the session exceeds the maximum walltime of 24 hours, it will be automatically terminated. The --constraint=gpu_mem_32 flag is not supported for interactive jobs.
+
+Using srun
+srun will add your resource request to the queue. When the allocation starts, a new bash session will start up on one of the granted nodes.
+
+
+
+$ srun --account=<st-alloc-1>-gpu --partition=interactive_gpu --time=1:0:0 -N 1 -n 2 --mem=8G --gpus=1 --pty /bin/bash
+
+When the job starts, the hostname in the prompt will change in compute node (ie. se060).
+
+Using salloc
+salloc functions similarly srun --pty bash in that it will add your resource request to the queue. 
+
+
+
+salloc  --account=<st-alloc-1>-gpu --partition=interactive_gpu --time=1:0:0 -N 1 -n 2 --mem=8G --gpus=1 
+And when the job starts, you will a message similar below and the hostname in the prompt will change in compute node (ie. se060).
+
+
+
+salloc: Granted job allocation 570
+salloc: Waiting for resource configuration
+salloc: Nodes se064 are ready for job
+You can run a simple script that simplifies the process of initiating an interactive GPU job. It allows you to create and execute the script, eliminating the need to recall or manually type the command each time you want to start an interactive GPU job.
+
+
+
+# To create a script for easier GPU job initiation, follow these steps:
+
+# 1. Navigate to your scratch directory
+
+# 2. Create the script file using preferred text editor.
+$ vi interactive_gpu.sh
+
+# 3. Add the following lines to the script:
+#!/bin/bash
+srun --account=<st-alloc-1>-gpu --partition=interactive_gpu --time=1:0:0 -N 1 -n 2 --mem=8G --gpus=1 --pty /bin/bash
+# If you prefer, you can use 'salloc' instead of 'srun'.
+
+# 4. Save and exit the text editor.
+
+# 5. Make the script executable
+$ chmod u+x interactive_gpu.sh
+
+# 6. Run the script to start an interactive GPU job
+$ ./interactive_gpu.sh
+
+
+Graphical Interactive
+To use X11 in an interactive shell, first ssh into the login node from your local machine with the -X or -Y flag:
+
+
+
+ssh -Y cwl@sockeye.arc.ubc.ca
+Submit an interactive job with X11 forwarding enabled using --x11 option.
+
+
+
+$ srun --x11 --account=<st-alloc-1>-gpu --partition=interactive_gpu --time=1:0:0 -N 1 -n 2 --mem=8G --gpus=1 --pty /bin/bash
+Using nvidia-smi
+You can obtain basic information on the NVIDIA GPU and its current usage such as GPU and memory utilization, power consumption, running processes, etc. using the command nvidia-smi.  Check out its man page for more details: man nvidia-smi.
+
+You must be logged into the GPU node where your job is running.
+1. Submit job
+
+
+
+$ sbatch gpu-jobs.sh    # You can find the example of "gpu-jobs.sh" in the next section of this page.
+2. Query which node your job is running on
+
+
+
+$ squeue -n $JOBID -u $USER
+3. SSH into that gpu node
+
+
+
+$ ssh <node>   # Example: ssh se066
+4. Run nvidia-smi. The output should look similar to the following
+
+
+
+$ nvidia-smi 
+
+Mon Oct 17 10:50:52 2022
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 510.85.02    Driver Version: 510.85.02    CUDA Version: 11.6     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  Tesla V100-SXM2...  On   | 00000000:1A:00.0 Off |                    0 |
+| N/A   61C    P0   163W / 300W |    510MiB / 16384MiB |     83%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+|   1  Tesla V100-SXM2...  On   | 00000000:1C:00.0 Off |                    0 |
+| N/A   32C    P0    38W / 300W |      3MiB / 16384MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+|   2  Tesla V100-SXM2...  On   | 00000000:1D:00.0 Off |                    0 |
+| N/A   31C    P0    39W / 300W |      0MiB / 16384MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+|   3  Tesla V100-SXM2...  On   | 00000000:1E:00.0 Off |                    0 |
+| N/A   36C    P0    41W / 300W |      0MiB / 16384MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+  
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|    0   N/A  N/A     26741      C   python3                          5051MiB |
++-----------------------------------------------------------------------------+
+The output above shows all 4 Tesla V100 GPUs installed on the GPU node. Note that when using nvidia-smi, it queries all GPUs, even the ones not assigned to your job.
+
+To get the list of the 4 GPUs and UUIDs:
+
+
+
+$ nvidia-smi --list-gpus 
+GPU 0: Tesla V100-SXM2-16GB (UUID: GPU-a78947f1-ef8e-f541-bee4-7ffd0361594f)
+GPU 1: Tesla V100-SXM2-16GB (UUID: GPU-ab4aa702-9a02-79b8-703b-4edbfdbf7c7a)
+GPU 2: Tesla V100-SXM2-16GB (UUID: GPU-4ee01f37-e451-7b7b-96f5-2d067c1a8148)
+GPU 3: Tesla V100-SXM2-16GB (UUID: GPU-14a6165e-57fc-2849-8449-fd7be9c2700a)
+Identifying the assigned GPUs for your job
+Your running GPU job should be getting exclusive access to the number of requested GPUs. You can only use GPUs assigned to your job. Attempting to use GPUs not assigned to your job will fail.
+
+If you need to identify the GPUs available to your job, you can do so by using the command below:
+
+1. For Interactive GPU job:
+
+1) Identify the UUID of the GPU assigned to your job.
+
+
+
+$ nvidia-smi --query-gpu=uuid --format=csv,noheader
+GPU-c892056f-9710-192e-1b4f-73a1da8263e7 
+ 
+$ nvidia-smi -L | grep "GPU-c892056f-9710-192e-1b4f-73a1da8263e7"
+GPU 2: Tesla V100-SXM2-16GB (UUID: GPU-c892056f-9710-192e-1b4f-73a1da8263e7)
+ 
+2) Display the status of the specific GPU by providing the UUID
+
+
+
+$ nvidia-smi -i <UUID>
+
+
+2. For batch GPU job:
+
+The environment variable CUDA_VISIBLE_DEVICES will not work in your shell if you SSH to the node separately from the job. The SSH connection has no knowledge of your job or its environment. However you can access the environment variable from a job script. See the example below:
+
+Sample GPU Job script
+
+
+#!/bin/bash
+ 
+#SBATCH --time=3:00:00                  # Requested walltime
+#SBATCH --nodes=1                       # Number of nodes
+#SBATCH --ntasks=1                      # Number of tasks (MPI processes)
+#SBATCH --cpus-per-task=8               # Number of CPU cores per task
+#SBATCH --gpus-per-node=1               # Number of GPUs per node
+#SBATCH --mem=16GB                      # Requested memory
+#SBATCH --job-name=my_job               # Job name
+#SBATCH --account=alloc-code-gpu        # Account allocation code 
+#SBATCH --mail-user=<your-email>    # Your email address for notifications
+#SBATCH --mail-type=ALL                 #
+#SBATCH --output=/path/to/output.txt    # Output file
+#SBATCH --error=/path/to/error.txt      # Error file
+ 
+################################################################################
+
+cd $SLURM_SUBMIT_DIR
+module load <package>
+
+nvidia-smi nvidia-smi --query-gpu=uuid --format=csv,noheader > my_current_GPU_UUID.txt > /scratch/path/to/my_current_GPU_UUID.txt
+ 
+export OMP_NUM_THREADS=8
+
+<gpu_executable>
+After submitting your job via sbatch, the "my_current_GPU_UUID.txt"  file contains the GPU information and UUID as shown by the output of nvidia-smi, and nvidia-smi --query-gpu=uuid --format=csv,noheader > my_current_GPU_UUID.txt above.
+
+
+
+output.txt
+
+
+Mon Oct 17 11:15:31 2022
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 510.85.02    Driver Version: 510.85.02    CUDA Version: 11.6     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  Tesla V100-SXM2...  On   | 00000000:1A:00.0 Off |                    0 |
+| N/A   62C    P0   191W / 300W |    510MiB / 16384MiB |     83%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+|   1  Tesla V100-SXM2...  On   | 00000000:1C:00.0 Off |                    0 |
+| N/A   32C    P0    38W / 300W |      3MiB / 16384MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+|   2  Tesla V100-SXM2...  On   | 00000000:1D:00.0 Off |                    0 |
+| N/A   31C    P0    39W / 300W |      0MiB / 16384MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+|   3  Tesla V100-SXM2...  On   | 00000000:1E:00.0 Off |                    0 |
+| N/A   36C    P0    41W / 300W |      0MiB / 16384MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+ 
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|    0   N/A  N/A     26751      C   python3                          5051MiB |
++-----------------------------------------------------------------------------+
+
+GPU-4ee01f37-e451-7b7b-96f5-2d067c1a8148
+
+Once you get the UUID, you can specify what information you would like to see by using the nvidia-smi command with  '-q' (query) and '-d' (display) flags when the job is running to monitor how your job is utilizing the GPU resources.
+
+
+
+$ nvidia-smi -q -d MEMORY,UTILIZATION -i GPU-c892056f-9710-192e-1b4f-73a1da8263e7
+l
+Powered by Atlassian Confluence 9.2.10 Report a bug Atlassian News
+Atlassian

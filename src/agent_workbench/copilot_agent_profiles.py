@@ -45,6 +45,15 @@ KNOWN_BUILTIN_PROFILE_TOOLS = {
     "web",
     "browser",
     "todo",
+    # Editor tool groups exposed by the host.
+    "vscodeGeneral/rename",
+    "vscodeGeneral/usages",
+    "vscodeNotebooks/createJupyterNotebook",
+    "vscodeNotebooks/editNotebook",
+    # Extension-provided tools. A trailing "/*" grants a whole server's tools;
+    # a specific name grants one tool from that server.
+    "github/*",
+    "azure-mcp/search",
 }
 AGENT_WORKBENCH_PROFILE_TOOLS = {
     "agent_workbench_run_context",

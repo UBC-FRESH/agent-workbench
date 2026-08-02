@@ -1,0 +1,390 @@
+Skip to sidebar
+Skip to main content
+Skip to breadcrumbs
+Skip to search
+Log in
+Linked Applications
+UBC IT Confluence
+Spaces
+Create
+
+Search
+Help
+Log in
+
+
+UBC ARC Technical User Documentation
+About ARC
+What is HPC
+About Sockeye
+About Chinook
+About Globus
+ARC Access Management Portal
+Using Sockeye
+QuickStart Guide
+SSH Connection Sharing
+Introduction to Linux and Using the Command Line Interface
+Understanding Job Scheduling and Fairshare
+Data Transfer
+Using Visual Studio Code with Sockeye
+UBC ARC OnDemand
+File Transfer and Management
+Job Management
+Cluster Desktop
+Jupyter Notebook
+RStudio Server
+MATLAB
+Genomics Applications
+Bandage
+FASTQC
+IGV
+MEGA
+UGENE
+ALPHAFOLD3
+Running Jobs
+Array Jobs in Slurm
+GPU Jobs in Detail
+Using Local Scratch
+Accessing Web-Based Services in Your Jobs
+Software
+Using the Alliance CVMFS Software Stack
+Virtual Environments on Sockeye
+Using Apptainer or Singularity Containers
+RStudio with Apptainer
+Bioconductor Apptainer Container for Bioinformatics
+Jupyter Notebooks with Apptainer
+TensorFlow with Conda
+MATLAB Parallel Computing
+Build Conda environment in Apptainer Container
+AlphaFold
+Using Chinook
+Chinook Overview & Best Practices
+Chinook Setup Guide
+Chinook Sharing Guide
+Chinook User Guide
+Checking your Chinook allocation's storage
+Using Globus
+Data Transfer to or from Sockeye
+Transfer to or From Your Local Machine Using Globus Connect Personal
+Enable Globus Subscription Groups
+Common Globus Help Topics
+Connecting to Microsoft OneDrive with Globus Web
+Using REDCap
+ARC REDCap Access Management and Security Guidelines
+Defending Your REDCap Flex Project Against Fraudulent Responses and Bot Attacks
+How to: Separate/Split a REDCap Project
+Including the ARC REDCap Platform on a Research Ethics Board Application
+MyCap Mobile Application
+The nedCAPTCHA Module
+AI/ML Resources Hub
+Training
+System Maintenance
+Technical FAQ
+Grant Support Language
+Acknowledgment of UBC ARC in Research
+ConfigureSpace tools
+About Sockeye
+Pages UBC ARC Technical User Documentation
+Created by Fletcher, Chad, last updated by Thomson, Ryan on Mar 03, 2026  7 minute read
+[ System Specifications ] [ Node Specifications ] [ Data Storage ] [ Data Protection ] [ Storage Volumes ] [ Networking ] [ Scheduling ] [ System Partitions ] [ Job Limits ] [ Fairshare Scheduling ]
+UBC ARC Sockeye is a heterogeneous High-Performance computational cluster, suitable for a variety of workloads. It is named after the Sockeye salmon (Oncorhyncus nerka), native to the Northern Pacific Ocean and the rivers discharging into it.
+
+Website	https://arc.ubc.ca/sockeye
+Availability
+
+October 28, 2019
+Login	sockeye.arc.ubc.ca
+Data Transfer	dtn.sockeye.arc.ubc.ca 
+Globus	
+ubcarc#sockeye
+
+System Specifications
+15,872 CPU cores
+101 TB system memory
+200 general purpose GPUs
+EDR (100Gbps) Infiniband
+1.3 PB Dell EMC Isilon w/ 192TB all-flash burst buffer
+1.5 PB DDN Lustre
+824 TB Local HDD
+95 TB Local NVMe SSD
+Node Specifications
+210	Base	2 x Intel Xeon Gold 6130 (2.1GHz)	32	Skylake	192GB DDR4-2666 ECC	6GB	2TB SATA HDD	N/A
+8	Medium	2 x Intel Xeon Gold 6130 (2.1GHz)	32	Skylake	384GB DDR4-2666 ECC	12GB	2TB SATA HDD	N/A
+8	Large	2 x Intel Xeon Gold 6130 (2.1GHz)	32	Skylake	768GB DDR4-2666 ECC	24GB	2TB SATA HDD	N/A
+6	GPU16	2 x Intel Xeon Silver 4116 (2.1GHz)	24	Skylake	192GB DDR4-2666 ECC	8GB	1.9TB NVMe SSD	
+4 x NVIDIA Tesla V100 16GB NVLink
+
+170	Base	2 x Intel Xeon Gold 6230 (2.1GHz)	40	Cascade Lake	192GB DDR4-2666 ECC	4.8GB	2TB SATA HDD	N/A
+8	Medium	2 x Intel Xeon Gold 6230 (2.1GHz)	40	Cascade Lake	384GB DDR4-2666 ECC	9.6GB	2TB SATA HDD	N/A
+8	Large	2 x Intel Xeon Gold 6230 (2.1GHz)	40	Cascade Lake	768GB DDR4-2666 ECC	19.2GB	2TB SATA HDD	N/A
+44	GPU32	2 x Intel Xeon Silver 4216 (2.1GHz)	24	Cascade Lake	192GB DDR4-2666 ECC	8GB	1.9TB NVMe SSD	4 x NVIDIA Tesla V100 32GB NVLink
+3	Login	2 x Intel Xeon Silver 4110 (2.1GHz)	16	Skylake	192GB DDR4-2666 ECC	12GB	2TB SATA HDD	N/A
+2	Data Transfer	2 x Intel Xeon Silver 4110 (2.1GHz)	32	Skylake	192GB DDR4-2666 ECC	6GB	2TB SATA HDD	N/A
+Sockeye nodes reserve a small portion of total memory for system requirements, and not all physical memory is available for the running jobs
+
+Examples:
+
+To allow your job(s) to run on any Sockeye node, limit requested memory to 186GB per node.
+To allow your job(s) to run on Medium or Large nodes, limit requested memory to 376GB per node.
+To allow your job(s) to run on Large nodes, limit requested memory to 754GB per node.
+To allow your job(s) to run on GPU nodes, limit requested memory to 180GB per node.
+Data Storage
+Sockeye provides several data storage platforms to accommodate a variety of workloads:
+
+Dell EMC Isilon for Home, Project storage and Burst buffer
+DDN Lustre for Scratch space
+Local SATA HDD scratch on CPU nodes
+Local PCIe NVMe scratch on GPU nodes
+Data Protection
+Sockeye provides varying degrees of data protection, depending on storage volume:
+
+RAID or Error correction coding offer protection from limited storage node and storage device failure.
+Snapshots offer limited protection from accidental file deletion or overwrite.
+Replication offers protection from physical site failure, including natural disaster.
+See the "Data Protection" column of the "Storage Volumes" table below to determine data protection mechanisms for a particular volume.
+
+Non-current file versions and deleted files from snapshots are periodically purged and become permanently inaccessible/non-recoverable over time.
+
+To request the retrieval of a previous version or deleted file, please contact ARC Support at arc.support@ubc.ca. We will work with you to identify and attempt restore of requested files but in some cases, may be unable to do so.
+
+Storage Volumes
+Name
+
+Approx. Capacity
+Mount (Path)
+
+Quota	
+Descriptions
+
+Data Protection	
+Suitable For
+
+Avoid / Not Allowed
+
+Home storage
+
+1.3PB
+
+/arc/home/<cwl> 
+
+aliased to:
+
+/home/<cwl> 
+
+50GB
+
+Unlimited files
+
+Per user
+
+Home directories. One per user. Private. Not intended for batch oriented computational I/O. Private to each user.
+
+Home directories are mounted read-only on compute nodes (read-write on the login, data transfer and interactive nodes).
+
+Error correction coding
+
+Daily snapshots
+
+Replicated to UBC Okanagan
+
+Software
+Configuration files
+Interactive analysis
+Batch jobs
+Project storage
+
+/arc/project/<alloc-code> 
+
+1TB+
+
+Unlimited files
+
+Per allocation
+
+Project directories accessible to all nodes. One directory per allocation. Private to each allocation. Not intended for batch oriented computational I/O.
+
+Project directories are mounted read-only on the compute nodes (read-write on the login, data transfer and interactive nodes).
+
+Project data
+Input data
+Persistent data
+Valuable intermediate data
+Software
+Interactive analysis
+Batch jobs
+Scratch space
+
+1.5PB	
+/scratch/<alloc-code> 
+
+5TB+
+
+10M files
+
+Per allocation
+
+Shared scratch filesystem accessible to all nodes. One directory per allocation. Private to each allocation.
+
+Most batch jobs will use scratch for computational I/O.
+
+RAID
+
+Batch jobs
+Sequential I/O
+Many small files (>10M)
+Massive directory hierarchies
+Long-term storage
+Non-reproducible data
+Interactive analysis
+Burst buffer	< 192TB	/arc/burst/<alloc-code>	
+1TB+
+
+Unlimited files
+
+Per allocation
+
+High-performance all flash storage accessible to all nodes. One directory per allocation. Private to each allocation.
+
+Capable of sustaining large number of random I/O operations per second (IOPS).
+
+Please contact arc.support@ubc.ca if you are interested in using the burst buffer to accelerate your I/O bound workloads!
+
+Error correction coding
+
+Batch jobs
+Random I/O
+High IOPS
+High throughput
+Many files / inodes
+Interactive analysis
+Long-term storage
+Non-reproducible data
+Local scratch
+
+~2TB per node	
+/tmp
+~2TB
+
+120M files (CPU)
+
+97M files (GPU)
+
+Per job
+
+Node local scratch filesystem(s) for batch job I/O. Accessible only by the node to which it is attached.
+
+CPU nodes have 1 x 2TB SATA HDD local scratch.
+
+GPU nodes have 1 x 1.9TB NVMe SSD local scratch
+
+Node local scratch space is regularly purged.
+
+A unique per-job /tmp directory is created on each compute node where a job is running to serve as local scratch. Access this directory via the $SLURM_TMPDIR environment variable within the job.
+
+None
+
+Temporary storage
+Batch jobs
+A-typical I/O
+Disruptive I/O
+Sensitive I/O
+Long-term storage
+Non-reproducible data
+Allocation quotas and their usage may be checked on the system utilizing the print_quota command on Sockeye.
+
+Networking
+All Sockeye nodes are interconnected with high-bandwidth, low-latency Mellanox Infiniband EDR interconnect (100Gbps).
+
+Nodes are grouped into "islands":
+
+Seven (7) islands of 30 x CPU compute (32c) nodes at 5:1 blocking ratio
+Seven (7) islands of 25 x CPU compute (40c) + 5 x GPU (32GB) nodes at 5:1 blocking ratio
+One (1) island of 11 x CPU compute (40c) + 9 x GPU (32GB) nodes at < 5:1 blocking ratio
+One (1) island of 16 x CPU compute and 6 x GPU (16GB) nodes at 2:1 blocking ratio
+All nodes within an island are fully non-blocking.
+
+Sockeye has redundant 100Gbps Ethernet upstream network connectivity to the UBC network and shared 100Gbps access to the BCNET and CANARIE.
+
+Scheduling
+Sockeye now utilizes Slurm for job scheduling and resource management, replacing the previous PBS Professional Community Edition.
+
+Seeking Help with Slurm?
+
+If you have questions or need assistance with Slurm, we recommend referring to the Official Slurm Documentation. It contains comprehensive information, tutorials, and examples to help you use Slurm on Sockeye.
+
+
+
+System Partitions
+Sockeye is "partitioned" into several distinct job queues with each queue being assigned a subset of resources. The parallel_l, serial_l, and mixed_s queues share the same pool of nodes while gpu and interactive_* queues are assigned dedicated nodes.
+
+Batch jobs are automatically routed to the appropriate queue based on requested resources while interactive jobs require that the appropriate queue be specified at job submission.
+
+skylake
+
+Batch	N/A	<= 32 cores	None	168h	Base, Med, Large
+cascade
+
+Batch	N/A	<= 40 cores	None	168h	Base, Med, Large
+big_mem
+
+Batch	32	>186	<24hrs	168h	Base, Med, Large
+gpu
+
+Batch	44	>= 1 gpu	None	168h	GPU16 / GPU32
+interactive_cpu
+
+Interactive	11	
+<= 40 cores
+
+None	24h	Base
+interactive_gpu
+
+Interactive	6	<= 4 gpus	None	24h	GPU16
+Job Limits
+Job limits are subject to periodic change based on system performance and user feedback.
+
+Job duration (maximum "walltime")	7 days (168 hours)
+Queued jobs awaiting execution	
+10000 for all partitions (queues)
+
+Job array size	
+10000
+
+Running job	
+All the current running or queueing jobs in an allocation cannot exceed:
+
+192000 core hours per allocation for skylake and cascade
+
+, or
+
+2400 GPU hours per allocation for GPU queue
+
+(e.g. your job should not request more than 6 GPU nodes with 100 hour wall time)
+
+Interactive GPU queue	
+1 running + 1 queued job; memory/cores/GPUs subject to availability. No fixed GPU limit, but please request only what is needed for your session.
+
+Jobs are automatically terminated by the scheduler when running out the requested walltime .
+
+Job submission will be rejected if it request more nodes, cores or memory than is available within a single partition (queue), or walltime longer than 168 hours. 
+
+If the number of queued jobs would exceed the queue limit, new jobs can still be submitted but will not be considered to start until the number of other waiting jobs from the allocation in the queue are reduced. Jobs will remain in the 'sockeye' queue during this period.
+
+If the running jobs within the allocation exceed "The Running job core hours limit"  all other jobs  within that allocation and given queue will remain queued and not eligible to run.
+
+Fairshare Scheduling
+Sockeye allocation priority is managed using the SLURM Professional implementation of the fairshare scheduling algorithm. All Standard allocations are granted equal shares, thus equal priority (assuming equal usage). To meet the researchers' urgent need such as the deadline of paper submission or conference meeting, the allocation owner could apply for a reservation allocation, which may be temporarily granted multiple shares, with each share equivalent to a Standard allocation, thus additional priority (assuming equal usage). Usage accrued under an allocation will decrease job priority for that allocation relative to allocations accruing less usage (assuming equal shares).
+
+Sockeye fairshare is configured to decay usage accrued under an allocation by 50% every 60 hours.
+
+Simplified example:
+
+A job requests 32 cores and runs for 48 hours. The total usage accrued is 32 * 48 * 60 * 60 = 5529600  CPU time (seconds).
+
+Within 60 hours, the job's usage will be accounted as 5529600 * 0.50 = 2764800
+Within 120 hours, the job's usage will be accounted as 2764800 * 0.50 = 1382400
+... and so on
+Hua, Simon likes this
+No labels
+Powered by Atlassian Confluence 9.2.10 Report a bug Atlassian News
+Atlassian

@@ -188,3 +188,50 @@ Economics: not applicable (documentation-only task, no model inference).
 
 See `planning/archives/changelog_archive.md` for entries older than the
 last 10 entries.
+
+## 2026-08-02 - P122 HPC GPU capacity and provider workflow (continued)
+
+- Deployed and accepted a live single-GPU provider on an HPC allocation, after
+  diagnosing four distinct startup failures: unwritable cache paths, an engine
+  too old to parse the checkpoint quantization metadata, wheel-provided CUDA
+  libraries missing from the library path, and a JIT sampler incompatible with
+  the device.
+- Established that serving capacity is a surface rather than a number. At short
+  prompts throughput was still climbing at 256 concurrent streams; at
+  agent-sized prompts it peaks near 32 streams and then declines. The two edges
+  of that grid differ by roughly an order of magnitude, so a throughput figure
+  quoted without its context length is meaningless.
+- Recorded the planning answer for agent-sized context: about 32 concurrent
+  sessions per device at roughly 16 tok/s per stream, with 4 s mean and 11 s p95
+  first-token latency.
+- Found that `max_num_seqs` is a ceiling rather than a reservation: raising it
+  does not slow low-concurrency work and costs about 2.4% of KV cache. Any
+  measured peak equal to the configured slot limit is measuring configuration.
+- Measured prefix caching at +46% throughput and roughly 2x faster first-token
+  latency at 16k prompts, which is the production case for agents.
+- Measured two independent single-device servers retaining 92-96% of solo
+  throughput under simultaneous load, and established that this is preferable to
+  tensor parallelism for agent fan-out.
+- Diagnosed and fixed a FlashInfer JIT failure that blocked tensor parallelism,
+  caused by internally inconsistent CUDA wheels. Fixing it did not change the
+  recommendation: tensor parallelism still cost about 4.4x on this checkpoint.
+- Confirmed by positive test that the high-concurrency collapse at long context
+  is not KV exhaustion; tripling the cache moved it not at all.
+- Verified the agent path end to end: streamed incremental tool calls, several
+  calls per turn, dependent multi-turn loops, and schema-constrained output.
+- Tracked three reproduction harnesses that had originally been written into an
+  ignored directory and would have been lost.
+- Recorded that this live-measurement work extends beyond P122's original
+  written scope, which covered tooling rather than recorded acceptance runs.
+  The phase parent remains #760; the scope note is kept here rather than
+  splitting the phase.
+
+Quality: focused documentation and installer validation passes (`29 passed`);
+all serving measurements repeated with variance reported.
+Protocol: five claims made during the phase were falsified by later measurement
+and are recorded as explicit retractions rather than quiet edits — prefill
+saturation, low-concurrency throughput rows, a cross-machine hardware
+comparison, the cause of the tensor-parallel slowdown, and an assumed attention
+design in a candidate model.
+Economics: two short interactive GPU allocations on an opportunistic HPC
+account; no paid provider inference was required.
