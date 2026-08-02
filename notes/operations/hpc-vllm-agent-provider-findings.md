@@ -386,6 +386,34 @@ the prefill explanation as the leading hypothesis, not a settled result.
 The practical rule stands regardless: size from measurement at your real prompt
 length, not from dividing cache size by context length.
 
+## Verify the tool *loop*, not just a single tool call
+
+A request that returns `finish_reason=tool_calls` proves the parser can emit one
+call. It does not prove an agent can run. The loop — feeding a tool result back
+and getting a second, dependent call — is a separate capability and can fail
+independently.
+
+Probe: `scripts/tool_loop_probe.py`. It defines two tools where the second
+requires an identifier that appears only in the first tool's result, so a model
+that fabricates instead of reading the result fails visibly rather than
+plausibly.
+
+```bash
+python3 scripts/tool_loop_probe.py --url <endpoint>/v1/chat/completions \
+    --model <served-alias>
+```
+
+Result on the MoE checkpoint with the family XML tool parser: **pass**. Round one
+called the lookup tool, round two called the second tool with the exact
+identifier returned by round one, and round three stopped with a final answer
+containing an order id that exists nowhere but in a tool result. Arguments
+parsed as valid JSON at every round and the loop terminated on its own.
+
+Worth checking on any new checkpoint or parser change. Failure modes this
+catches that a single-call check does not: arguments that stop parsing on the
+second round, a model that ignores the tool result and invents an identifier,
+and loops that never emit a final answer.
+
 ### Prefix-cache comparison
 
 Both rows at concurrency 8 with ~16.4k-token prompts:
