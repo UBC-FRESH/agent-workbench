@@ -189,7 +189,7 @@ Economics: not applicable (documentation-only task, no model inference).
 See `planning/archives/changelog_archive.md` for entries older than the
 last 10 entries.
 
-## 2026-08-02 - P127 HPC GPU capacity characterization and provider operation
+## 2026-08-02 - P122 HPC GPU capacity and provider workflow (continued)
 
 - Deployed and accepted a live single-GPU provider on an HPC allocation, after
   diagnosing four distinct startup failures: unwritable cache paths, an engine
@@ -221,9 +221,10 @@ last 10 entries.
   calls per turn, dependent multi-turn loops, and schema-constrained output.
 - Tracked three reproduction harnesses that had originally been written into an
   ignored directory and would have been lost.
-- Corrected the phase attribution: this work was initially filed as P122.x under
-  a closed parent whose scope explicitly excluded live submissions and
-  performance claims. It is now P127 (#777) with children #775 and #776.
+- Recorded that this live-measurement work extends beyond P122's original
+  written scope, which covered tooling rather than recorded acceptance runs.
+  The phase parent remains #760; the scope note is kept here rather than
+  splitting the phase.
 
 Quality: focused documentation and installer validation passes (`29 passed`);
 all serving measurements repeated with variance reported.
