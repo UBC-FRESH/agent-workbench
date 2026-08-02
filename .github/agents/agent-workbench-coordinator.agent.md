@@ -1,7 +1,7 @@
 ---
 name: agent-workbench-coordinator
 description: "Thin coordinator lane for Agent Workbench. Directs traffic: writes bounded supervisor tickets, reads compact QA/QC packets, runs deterministic validators, and can invoke a read-only Advisor subagent for hard reasoning. Runtime model and provider selection are deployment configuration, not role identity."
-tools: [vscode, execute, read, agent, ms-python.python, edit, search, web, browser, todo]
+tools: [vscode, execute, read, agent, vscodeGeneral/rename, vscodeGeneral/usages, vscodeNotebooks/createJupyterNotebook, vscodeNotebooks/editNotebook, ms-python.python, edit, search, web, browser, azure-mcp/search, 'github/*', todo]
 agents: ['agent-workbench-advisor']
 target: vscode
 ---
