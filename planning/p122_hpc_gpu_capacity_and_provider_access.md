@@ -196,10 +196,13 @@ Full operational detail, including exact error strings and fixes, is in
   error while requests were queueing.
 - **Three plausible tuning hypotheses were falsified** by measurement: raising
   the prefill batch size, enabling asynchronous scheduling, and forcing an FP8
-  KV dtype. One actively degraded latency. Prefill was already compute-bound.
-- **Model architecture dominated hardware.** A sparse MoE checkpoint with a
+  KV dtype. One actively degraded latency. The accompanying claim that prefill
+  was already compute-bound was itself later falsified; see the correction in
+  the operations note.
+- **Model architecture beat parameter count.** A sparse MoE checkpoint with a
   small active-parameter count decoded about twice as fast as a dense
-  checkpoint on a GPU with higher memory bandwidth.
+  checkpoint on the same device. The version of this finding that also claimed
+  something about the relative hardware has been withdrawn.
 - **Benchmark method matters more than expected.** Shared prompt prefixes,
   counting stream chunks instead of tokens, and single-run measurements each
   produced badly wrong numbers.
@@ -290,23 +293,46 @@ checkpoint is now the active HPC provider.
 
 Three repeats per level agreed within 0.6%.
 
-### Hardware confound resolved
+### Hardware confound: attempted, and later retracted
 
-Running the **same** MoE checkpoint on both GPU classes isolates hardware for
-the first time:
+Running the **same** MoE checkpoint on both GPU classes was intended to isolate
+hardware for the first time:
 
 | Same checkpoint, concurrency 16 | Aggregate | Per-stream | TTFT |
 | --- | --- | --- | --- |
 | HPC datacentre GPU | 1320 tok/s | 99.4 tok/s | 0.48 s |
 | Workstation GPU | 986 tok/s | 81.5 tok/s | 0.94 s |
 
-The datacentre GPU is roughly **34% faster on identical software**. The earlier
-cross-provider comparison had suggested the opposite; that impression was
-entirely an artifact of the workstation running a sparse model while the HPC
-node ran a dense one. Architecture was masking a hardware deficit.
+This was recorded as showing the datacentre GPU to be roughly 34% faster on
+identical software, and as resolving the earlier confound. **That conclusion is
+withdrawn.**
 
-**Durable lesson:** never attribute a cross-provider performance gap to hardware
-until the same checkpoint has run on both.
+The software was not identical and the hardware was not comparable. Later
+inspection found three differences travelling together: the workstation was
+running a vendored driver compatibility shim after a driver upgrade without a
+reboot; it was pinned to a fallback attention backend, most likely forced by
+that same driver situation, while the HPC node used the engine default; and the
+workstation card is a firmware-capped 300 W part, with `power.limit` equal to
+`power.max_limit` and no throttle reasons active, being compared against a
+datacentre accelerator in a far higher power class. Any one of these could
+account for the gap alone.
+
+What the measurement supports is that the datacentre *configuration*
+outperformed the workstation *configuration*. No statement about the silicon is
+justified. A valid comparison needs matched drivers and attention backends, and
+even then the power cap makes it a comparison of deployments rather than
+architectures. The datacentre figure was also capped by a sequence-slot ceiling
+of 16 and is itself a lower bound.
+
+**Durable lesson, restated:** controlling the obvious variable — here the model
+checkpoint — is not enough. Before attributing a gap to hardware, enumerate
+every difference between the two stacks, including driver, backend, power limit
+and scheduler settings, and confirm each is matched or irrelevant. Removing one
+confound while three remain produces a conclusion that feels rigorous and is
+not.
+
+The same-device architecture comparison (sparse MoE versus dense, one GPU, one
+harness) does not depend on this and still stands.
 
 ### Quality spot-check
 

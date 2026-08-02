@@ -493,37 +493,85 @@ latency being paid to achieve it.
   already selected FP8 KV, visible as `Using KV cache scaling factor 1.0 for
   fp8_e4m3` at startup.
 
-## Architecture dominates hardware
+## Architecture matters more than parameter count
 
-A ~35B **MoE** model with ~8 of 256 experts active (~3B active parameters)
-decoded roughly **twice as fast** as a dense ~27B model — despite running on a
-GPU with *lower* memory bandwidth. Decode is bandwidth-bound on *active*
-weights, so total parameter count is a poor predictor of speed.
+On **one device, same software, same harness**, a ~35B **MoE** checkpoint with
+~8 of 256 experts active (~3B active parameters) decoded roughly **twice as
+fast** as a dense ~27B checkpoint at every concurrency level tested. Decode is
+bandwidth-bound on *active* weights, so total parameter count is a poor
+predictor of speed.
+
+This claim rests on the same-device comparison only. An earlier cross-machine
+version of it was withdrawn — see the retraction below.
 
 Practical consequence: for agent fan-out, a large sparse MoE gives capability
-without proportional decode cost. Do not assume newer silicon explains a
-performance gap; check `architectures` and expert counts in `config.json`
-first.
+without proportional decode cost. Check `architectures` and expert counts in
+`config.json` before assuming a size difference explains a speed difference.
 
-### Confound resolved: the hardware conclusion was backwards
+### Retracted: the "hardware conclusion" could not be drawn at all
 
-The comparison above was confounded — different models on different GPUs. The
-confound was later removed by serving the **same** MoE checkpoint on both
-classes of GPU:
+An earlier comparison was confounded — different models on different GPUs. An
+attempt was made to remove the confound by serving the **same** MoE checkpoint
+on both machines:
 
 | Same checkpoint, 16 concurrent | Aggregate | Per-stream | TTFT |
 | --- | --- | --- | --- |
-| Datacentre GPU (higher HBM bandwidth) | 1320 tok/s | 99.4 tok/s | 0.48 s |
+| Datacentre GPU | 1320 tok/s | 99.4 tok/s | 0.48 s |
 | Workstation GPU | 986 tok/s | 81.5 tok/s | 0.94 s |
 
-The datacentre GPU is about **34% faster on identical software**. The earlier
-impression that the workstation was faster was entirely an artifact of it
-running a sparse model while the datacentre node ran a dense one — the model
-architecture was *masking a hardware deficit*.
+This was recorded as "the datacentre GPU is about 34% faster on identical
+software", and as resolving the earlier confound. **Both claims were wrong.**
 
-**Rule: never attribute a cross-provider performance gap to hardware until the
-same checkpoint has run on both.** Two variables changing at once will produce
-a confident and wrong conclusion.
+The software was not identical, and the hardware was not comparable. Inspection
+afterwards found three separate differences travelling together:
+
+1. **Driver stack.** The workstation was running a vendored user-space
+   compatibility shim after a driver upgrade without a reboot; the datacentre
+   node ran native drivers.
+2. **Attention backend.** The workstation was pinned to a Triton attention
+   backend — most likely a compatibility fallback forced by that driver
+   situation — while the datacentre node used the engine default.
+3. **Power class.** The workstation card is a Max-Q part with
+   `power.limit == power.max_limit == 300 W`, i.e. capped in firmware, against
+   a datacentre accelerator in a far higher power class.
+
+Any one of these could produce a 34% gap on its own. A 300 W workstation part
+losing to a datacentre accelerator is an expected outcome, not a finding.
+
+**The correct statement is that the datacentre *configuration* outperformed the
+workstation *configuration* by ~34%, and that no conclusion about the silicon
+can be drawn from it.** The comparison should be re-run only after the driver
+situation is resolved and the attention backends match, and even then the power
+cap makes it a comparison of deployments rather than architectures.
+
+**Rule, restated more strongly:** controlling the *obvious* variable is not
+enough. Before attributing a gap to hardware, enumerate every difference between
+the two stacks — driver, backend, power limit, scheduler settings — and confirm
+each is either matched or irrelevant. Removing one confound while three remain
+produces a conclusion that feels rigorous and is not.
+
+Note also that the datacentre figure above was itself capped by a sequence-slot
+ceiling of 16 (see the section on `max_num_seqs`), so it is a lower bound rather
+than that machine's throughput.
+
+### What a host upgrade can and cannot fix
+
+Related, since it follows from the same measurements: a faster chassis does not
+raise a firmware power cap. On the workstation part above, `power.limit` already
+equals `power.max_limit`, and no throttle reasons were active, so cooling and
+power delivery are not the constraint.
+
+Nor does PCIe generation matter much here. For single-GPU inference the weights
+are resident in device memory and only tokens cross the bus, so a Gen3 → Gen5
+move mainly speeds up model *loading*, not generation. It matters for multi-GPU
+tensor parallelism, which is a different deployment.
+
+What can matter on a busy server is the **host CPU** and NUMA topology: vLLM's
+scheduling, tokenization and sampling are host work, and at high concurrency a
+scheduler loop on an older core can bind before the GPU does. Test before
+buying: run a concurrency sweep and watch whether a CPU core saturates while GPU
+utilisation sits below full. If so, the host is the limit; if GPU utilisation is
+pinned, it is not.
 
 ### MoE also wins on KV cache, not just decode
 
