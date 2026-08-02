@@ -414,6 +414,38 @@ catches that a single-call check does not: arguments that stop parsing on the
 second round, a model that ignores the tool result and invents an identifier,
 and loops that never emit a final answer.
 
+## Also verify streaming *with* tools, which is what editors actually do
+
+Testing tool calls non-streaming and streaming without tools leaves the real
+client path unexercised. Editor clients stream *and* use tools, and that
+combination is a separate code path: tool calls arrive as incremental deltas
+that must be reassembled across chunks. A parser that is correct on complete
+responses can still emit split arguments or truncated names when streamed.
+
+Probe: `scripts/agent_path_probe.py`, covering three checks in one run.
+
+```bash
+python3 scripts/agent_path_probe.py --url <endpoint>/v1/chat/completions \
+    --model <served-alias>
+```
+
+Results on the MoE checkpoint with the family XML tool parser:
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Streaming + tools | pass | `finish_reason=tool_calls`; arguments arrived across four deltas and reassembled into valid JSON |
+| Parallel tool calls | pass | two calls in one assistant turn, distinct valid arguments |
+| Structured output (`json_schema`) | pass | response parsed, all required keys present, no extra keys |
+
+The streaming case genuinely exercised the incremental path rather than
+arriving in a single chunk, so reassembly is confirmed rather than assumed. If a
+probe reports only one argument delta, the test did not actually exercise the
+risk and should be re-run with a longer argument payload.
+
+Together with the loop probe, this covers the agent path end to end: streamed
+incremental tool calls, several calls per turn, dependent multi-turn sequencing,
+and schema-constrained output.
+
 ### Prefix-cache comparison
 
 Both rows at concurrency 8 with ~16.4k-token prompts:
