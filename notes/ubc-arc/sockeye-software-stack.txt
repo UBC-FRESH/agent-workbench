@@ -1,0 +1,1113 @@
+ 
+
+A complete catalogue of the software available on Sockeye
+In Sockeye, use the 'module spider' command to navigate the software collection currently loaded. There are three modes:
+
+0: "module spider":                                   Reports all modules, similar to module avail.
+1: "module spider <name>":                    Reports all versions for the modules that match <name>.
+2: "module spider <name/version>":  Reports information on a particular module <name/version> including the packages it depends on.
+
+Software Collections
+The following tables provide complete, alphabetical lists of the software packages available on Sockeye for each main collection. The Default collection is already loaded when you are logged into Sockeye, but any other collection(s) must be loaded manually. 
+
+ai: artificial intelligence
+bio: bioinformatic libraries & apps
+chem: chemistry libraries & apps
+geo: geography libraries & apps 
+io: input/output software
+m: MPI implementations
+math: mathematical libraries
+ phys: physics libraries & apps
+t: tools for development 
+  vis: visualization software 
+        
+                                         
+
+
+
+
+
+Default Software Collection
+<name>
+<version>
+Description	Software Group
+ant
+1.10.7
+Apache Ant is a Java library and command-line tool whose mission is to drive processes described in build files as targets and extension points dependent upon each other.
+
+Homepage: http://ant.apache.org/
+
+phys
+ants
+2.3.5
+ANTs extracts information from complex datasets that include imaging. Paired with ANTsR (answer), ANTs is useful for managing, interpreting and visualizing multidimensional data. ANTs is popularly considered a state-of-the-art medical image registration and segmentation toolkit. ANTs depends on the Insight ToolKit (ITK), a widely used medical image processing library to which ANTs developers contribute.
+
+Homepage: http://stnava.github.io/ANTs/
+
+
+beast1
+1.10.4
+BEAST is a cross-platform program for Bayesian analysis of molecular sequences using MCMC.
+
+Homepage: http://beast.community/
+
+bio
+beast2
+2.6.4
+BEAST is a cross-platform program for Bayesian inference using MCMC of molecular sequences. It is entirely orientated towards rooted, time-measured phylogenies inferred using strict or relaxed molecular clock models. It can be used as a method of reconstructing phylogenies but is also a framework for testing evolutionary hypotheses without conditioning on a single tree topology.
+
+Homepage: http://beast2.org/
+
+bio
+bedtools2
+2.30.0
+Collectively, the bedtools utilities are a swiss-army knife of tools for a wide-range of genomics analysis tasks. The most widely-used tools enable genome arithmetic: that is, set theory on the genome.
+
+Homepage: https://github.com/arq5x/bedtools2
+
+
+berkeley-db
+6.2.32
+Oracle Berkeley DB
+
+Homepage: https://www.oracle.com/database/technologies/related/berkeleydb.html
+
+
+blast-plus
+2.11.0
+Basic Local Alignment Search Tool.
+
+Homepage: http://blast.ncbi.nlm.nih.gov/
+
+
+clustalw 
+2.1
+(clustal-omega) Clustal Omega: the last alignment program you'll ever need.
+
+Homepage: http://www.clustal.org/omega/
+
+
+cmake
+3.9.6
+3.20.3
+3.21.4
+A cross-platform, open-source build system. CMake is a family of tools
+designed to build, test and package software.
+
+Homepage: https://www.cmake.org
+
+t
+cuda
+10.2.89
+11.1.1
+11.3.1
+CUDA is a parallel computing platform and programming model invented by NVIDIA. It enables dramatic increases in computing performance by harnessing the power of the graphics processing unit (GPU).
+
+Homepage: https://developer.nvidia.com/cuda-zone
+
+t
+cudnn
+7.6.5.32-10.2
+8.0.5.39-11.1
+8.2.0.53-11.3
+NVIDIA cuDNN is a GPU-accelerated library of primitives for deep neural networks.
+
+Homepage: https://developer.nvidia.com/cudnn
+
+t
+curl
+7.63.0
+7.76.1
+cURL is an open source command line tool and library for transferring
+data with URL syntax
+
+Homepage: http://curl.haxx.se
+
+t
+eigen	3.3.9	
+Eigen is a C++ template library for linear algebra matrices, vectors, numerical solvers, and related algorithms.
+
+Homepage: http://eigen.tuxfamily.org/
+
+math
+ffmpeg
+4.3.2
+FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video.
+
+Homepage: https://ffmpeg.org/
+
+io
+fftw
+
+3.3.9
+FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data (as well as of even/odd data, i.e. the discrete cosine/sine transforms or DCT/DST). We believe that FFTW, which is free software, should become the FFT library of choice for most applications.
+
+Homepage: http://fftw.org/
+
+math
+fio
+3.26
+Flexible I/O Tester. Fio spawns a number of threads or processes doing a particular type of I/O action as specified by the user. fio takes a number of global parameters, each inherited by the thread unless otherwise parameters given to them overriding that setting is given.
+
+Homepage: https://github.com/axboe/fio
+
+
+flac
+1.3.3
+Encoder/decoder for the Free Lossless Audio Codec
+
+Homepage: https://xiph.org/flac/index.html
+
+
+fontconfig
+2.13.93
+Fontconfig is a library for configuring/customizing font access
+
+Homepage: http://www.freedesktop.org/wiki/Software/fontconfig/
+
+
+freeipmi
+1.6.4
+FreeIPMI provides in-band and out-of-band IPMI software based on the IPMI v1.5/2.0 specification. The IPMI specification defines a set of interfaces for platform management and is implemented by a number vendors for system management. The features of IPMI that most users will be interested in are sensor monitoring, system event monitoring, power control, and serial-over-LAN (SOL). The FreeIPMI tools and libraries listed below should provide users with the ability to access and utilize these and many other features. A number of useful features for large HPC or cluster environments have also been implemented into FreeIPMI. See the README or FAQ for more info.
+
+Homepage: https://www.gnu.org/software/freeipmi/
+
+
+freetype
+2.10.2
+2.10.4
+FreeType is a freely available software library to render fonts. It is written in C, designed to be small, efficient, highly customizable, and portable while capable of producing high-quality output (glyph images) of most vector and bitmap font formats.
+
+Homepage: https://www.freetype.org/index.html
+
+
+gcc
+
+5.5.0
+7.5.0
+9.4.0
+The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Ada, and Go, as well as libraries for these languages.
+
+Homepage: https://gcc.gnu.org
+
+t
+gdal
+3.3.0
+GDAL (Geospatial Data Abstraction Library) is a translator library for raster and vector geospatial data formats that is released under an X/MIT style Open Source license by the Open Source Geospatial Foundation. As a library, it presents a single raster abstract data model and vector abstract data model to the calling application for all supported formats. It also comes with a variety of useful command line utilities for data translation and processing.
+
+Homepage: https://www.gdal.org/
+
+geo
+geos
+3.8.1
+GEOS (Geometry Engine - Open Source) is a C++ port of the Java Topology Suite (JTS). As such, it aims to contain the complete functionality of JTS in C++. This includes all the OpenGIS Simple Features for SQL spatial predicate functions and spatial operators, as well as specific JTS enhanced topology functions.
+
+Homepage: http://trac.osgeo.org/geos/
+
+geo
+git
+2.31.1
+Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
+
+Homepage: http://git-scm.com
+
+t
+gmp
+6.2.1
+GMP is a free library for arbitrary precision arithmetic, operating on signed integers, rational numbers, and floating-point numbers.
+
+Homepage: https://gmplib.org
+
+
+gnuplot
+5.2.8
+Gnuplot is a portable command-line driven graphing utility for Linux, OS/2, MS Windows, OSX, VMS, and many other platforms. The source code is copyrighted but freely distributed (i.e., you don't have to pay for it). It was originally created to allow scientists and students to visualize mathematical functions and data interactively, but has grown to support many non-interactive uses such as web scripting. It is also used as a plotting engine by third-party applications like Octave. Gnuplot has been supported and under active development since 1986.
+
+Homepage: http://www.gnuplot.info
+
+vis
+graphviz
+2.47.2
+GraphicsMagick is the swiss army knife of image processing. Provides a robust and efficient collection of tools and libraries which support reading, writing, and manipulating an image in over 88 major formats including important formats like DPX, GIF, JPEG, JPEG-2000, PNG, PDF, PNM, and TIFF.
+
+Homepage: http://www.graphicsmagick.org/
+
+
+gromacs
+4.5.5-cuda11-3
+4.5.5-double-cuda11-3
+4.5.5-double
+4.5.5
+4.6.7-cuda11-3
+4.6.7-double
+4.6.7
+2019.2
+2020.5-cuda11-3
+2020.5-double
+2021.1-cuda11-3
+2021.1-double
+GROMACS (GROningen MAchine for Chemical Simulations) is a molecular dynamics package primarily designed for simulations of proteins, lipids and nucleic acids. It was originally developed in the Biophysical Chemistry department of University of Groningen, and is now maintained by contributors in universities and research centers across the world. GROMACS is one of the fastest and most popular software packages available and can run on CPUs as well as GPUs. It is free, open source released under the GNU General Public License. Starting from version 4.6, GROMACS is released under the GNU Lesser General Public License.
+
+Homepage: http://www.gromacs.org
+
+chem
+gsl
+2.6
+The GNU Scientific Library (GSL) is a numerical library for C and C++ programmers. It is free software under the GNU General Public License. The library provides a wide range of mathematical routines such as random number generators, special functions and least-squares fitting. There are over 1000 functions in total with an extensive test suite.
+
+Homepage: https://www.gnu.org/software/gsl/
+
+math
+gurobi	9.5.0	
+The Gurobi Optimizer was designed from the ground up to be the fastest, most powerful solver available for your LP, QP, QCP, and MIP (MILP, MIQP, and MIQCP) problems. Note: Gurobi is licensed software. You will need to create an account on the Gurobi homepage and download Gurobi Optimizer yourself. Spack will search your current directory for the download file. Alternatively, add this file to a mirror so that Spack can find it. For instructions on how to set up a mirror, see http://spack.readthedocs.io/en/latest/mirrors.html Please set the path to licence file with the following command (for bash) export GRB_LICENSE_FILE=/path/to/gurobi/license/. See section 4 in $GUROBI_HOME/docs/quickstart_linux.pdf for more details.
+
+Homepage: http://www.gurobi.com/index
+
+
+hdf5
+1.10.7
+1.10.7-cuda11-1
+1.10.7-additional-bindings
+HDF5 is a data model, library, and file format for storing and managing data. It supports an unlimited variety of datatypes, and is designed for flexible and efficient I/O and for high volume and complex data.
+
+Homepage: https://support.hdfgroup.org/HDF5/
+
+io
+intel-mkl
+2020.4.304
+Intel Math Kernel Library.
+
+Homepage: https://software.intel.com/en-us/intel-mkl
+
+t
+math
+intel-oneapi-compilers
+2021.4.0
+Intel oneAPI compilers. Contains icc, icpc, icx, icpx, dpcpp, ifort, ifx.
+
+Homepage: https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/dpc-compiler.html
+
+
+ior
+3.3.0
+The IOR software is used for benchmarking parallel file systems using POSIX, MPI-IO, or HDF5 interfaces.
+
+Homepage: https://github.com/hpc/ior
+
+
+lammps
+20201029
+20210310
+20210310-cuda11-3
+
+LAMMPS stands for Large-scale Atomic/Molecular Massively Parallel Simulator. This package uses patch releases, not stable release. See https://github.com/spack/spack/pull/5342 for a detailed discussion.
+
+Homepage: https://lammps.sandia.gov/
+
+chem
+libpng
+1.6.37
+libpng is the official PNG reference library.
+
+Homepage: http://www.libpng.org/pub/png/libpng.html
+
+
+libsandfile
+1.0.28
+Libsndfile is a C library for reading and writing files containing sampled sound (such as MS Windows WAV and the Apple/SGI AIFF format) through one standard library interface. It is released in source code format under the Gnu Lesser General Public License.
+
+Homepage: http://www.mega-nerd.com/libsndfile/
+
+
+libszip
+2.1.1
+Szip is an implementation of the extended-Rice lossless compression algorithm. It provides lossless compression of scientific data, and is provided with HDF software products.
+
+Homepage: http://www.hdfgroup.org/doc_resource/SZIP/
+
+t
+libx11
+1.7.0
+libX11 - Core X11 protocol client library.
+
+Homepage: https://www.x.org/
+
+t
+libxml2
+2.9.10
+Libxml2 is the XML C parser and toolkit developed for the Gnome project (but usable outside of the Gnome platform), it is free software available under the MIT License.
+
+Homepage: http://xmlsoft.org
+
+
+libxmu
+1.1.2
+This library contains miscellaneous utilities and is not part of the Xlib standard. It contains routines which only use public interfaces so that it may be layered on top of any proprietary implementation of Xlib or Xt.
+
+t
+libxt
+1.1.5
+libXt - X Toolkit Intrinsics library.
+
+Homepage: http://cgit.freedesktop.org/xorg/lib/libXt
+
+t
+liggghts	3.8.0	
+Discrete element method particle simulation.
+
+Homepage: https://www.cfdem.com/media/DEM/docu/Manual.html
+
+phys
+lucene
+8.3.1
+Apache Lucene is a high-performance, full featured text search engine library written in Java.
+
+Homepage: https://lucene.apache.org/
+
+
+makedepend
+1.0.5
+makedepend - create dependencies in makefiles.
+
+Homepage: http://cgit.freedesktop.org/xorg/util/makedepend
+
+
+matlab
+2019b
+2021a
+MATLAB (MATrix LABoratory) is a multi-paradigm numerical computing environment and fourth-generation programming language. A proprietary programming language developed by MathWorks, MATLAB allows matrix manipulations, plotting of functions and data, implementation of algorithms, creation of user interfaces, and interfacing with programs written in other languages, including C, C++, C#, Java, Fortran and Python.
+
+Homepage: https://www.mathworks.com/products/matlab.html
+
+t
+mercurial
+5.8
+Mercurial is a free, distributed source control management tool.
+
+Homepage: https://www.mercurial-scm.org
+
+t
+mesa
+21.0.3
+Mesa is an open-source implementation of the OpenGL specification - a system for rendering interactive 3D graphics.
+
+Homepage: http://www.mesa3d.org
+
+vis
+mesa-glu
+9.0.1
+This package provides the Mesa OpenGL Utility library.
+
+Homepage: https://www.mesa3d.org
+
+vis
+metis
+5.1.0
+METIS is a set of serial programs for partitioning graphs, partitioning finite element meshes, and producing fill reducing orderings for sparse matrices. The algorithms implemented in METIS are based on the multilevel recursive-bisection, multilevel k-way, and multi-constraint partitioning schemes.
+
+Homepage: http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
+
+math
+miniconda3
+4.9.2
+The minimalist bootstrap toolset for conda and Python3.
+
+Homepage: https://conda.io/miniconda.html
+
+t
+mono
+6.8.0.123
+Mono is a software platform designed to allow developers to easily create cross platform applications. It is an open source implementation of Microsoft's .NET Framework based on the ECMA standards for C# and the Common Language Runtime.
+
+Homepage: http://www.mono-project.com/
+
+t
+nccl
+2.9.9-1-cuda10
+2.9.9-1-cuda11-1
+2.9.9-1-cuda11-3
+Optimized primitives for collective multi-GPU communication.
+
+Homepage: https://github.com/NVIDIA/nccl
+
+t
+netcdf-c
+4.8.0
+4.8.0-hdf4-support
+NetCDF (network Common Data Form) is a set of software libraries and machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. This is the C distribution.
+
+Homepage: http://www.unidata.ucar.edu/software/netcdf
+
+io
+netcdf-cxx
+4.2
+4.2-hdf4-support
+
+Deprecated C++ compatibility bindings for NetCDF. These do NOT read or
+write NetCDF-4 files, and are no longer maintained by Unidata.
+Developers should migrate to current NetCDF C++ bindings, in Spack
+package netcdf-cxx4.
+
+Homepage: http://www.unidata.ucar.edu/software/netcdf
+
+io
+netcdf-fortran
+4.5.3-hdf4-support
+Fortran interface for NetCDF4
+
+Homepage: http://www.unidata.ucar.edu/software/netcdf
+
+io
+netlib-lapack
+3.9.1
+LAPACK version 3.X is a comprehensive FORTRAN library that does linear algebra operations including matrix inversions, least squared solutions to linear sets of equations, eigenvector analysis, singular value decomposition, etc. It is a very comprehensive and reputable package that has found extensive use in the scientific community.
+
+Homepage: http://www.netlib.org/lapack/
+
+math
+netlib-xblas
+1.0.248
+XBLAS is a reference implementation for extra precision BLAS. XBLAS is a reference implementation for the dense and banded BLAS routines, along with extended and mixed precision version. Extended precision is only used internally; input and output arguments remain the same as in the existing BLAS. Extra precisions is implemented as double-double (i.e.,
+128-bit total, 106-bit significand). Mixed precision permits some input/output arguments of different types (mixing real and complex) or precisions (mixing single and double). This implementation is proof of concept, and no attempt was made to optimize performance; performance should be as good as straightforward but careful code written by hand.
+
+Homepage: http://www.netlib.org/xblas
+
+math
+ninja
+1.10.2
+Ninja is a small build system with a focus on speed. It differs from other build systems in two major respects: it is designed to have its input files generated by a higher-level build system, and it is designed to run builds as fast as possible.
+
+Homepage: https://ninja-build.org/
+
+
+node-js
+14.15.1
+Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine.
+
+Homepage: https://nodejs.org/
+
+
+numactl
+2.0.14
+NUMA support for Linux
+
+Homepage: http://oss.sgi.com/projects/libnuma/
+
+t
+octave
+6.2.0
+GNU Octave is a high-level language, primarily intended for numerical computations. It provides a convenient command line interface for solving linear and nonlinear problems numerically, and for performing other numerical experiments using a language that is mostly compatible with Matlab. It may also be used as a batch-oriented language.
+
+Homepage: https://www.gnu.org/software/octave/
+
+t
+openblas
+0.3.10
+0.3.15
+OpenBLAS: An optimized BLAS library
+
+Homepage: http://www.openblas.net
+
+math
+openfst
+1.7.9
+OpenFst is a library for constructing, combining, optimizing, and searching weighted finite-state transducers (FSTs). Weighted finite- state transducers are automata where each transition has an input label, an output label, and a weight.
+
+Homepage: http://www.openfst.org
+
+
+openjdk
+1.8.0_202-b08
+1.8.0_265-b01
+11.0.8_10
+The free and opensource java implementation
+
+Homepage: https://jdk.java.net
+
+
+openmpi
+2.1.6
+4.1.1
+4.0.5-cuda10
+4.1.1-cuda11-1
+4.1.1-cuda11-3
+
+An open source Message Passing Interface implementation. The Open MPI Project is an open source Message Passing Interface implementation that is developed and maintained by a consortium of academic, research, and industry partners. Open MPI is therefore able to combine the expertise, technologies, and resources from all across the High Performance
+Computing community in order to build the best MPI library available. Open MPI offers advantages for system and software vendors, application developers and computer science researchers.
+
+Homepage: http://www.open-mpi.org
+
+m
+openpbs
+20.0.1
+PBS Professional software optimizes job scheduling and workload management in high-performance computing (HPC) environments - clusters, clouds, and supercomputers - improving system efficiency and people's productivity.
+
+Homepage: https://www.pbspro.org
+
+
+parallel
+20200822
+GNU parallel is a shell tool for executing jobs in parallel using one or more computers. A job can be a single command or a small script that has to be run for each of the lines in the input.
+
+Homepage: http://www.gnu.org/software/parallel/
+
+t
+parallel-netcdf
+1.12.2-additional-bindings
+PnetCDF (Parallel netCDF) is a high-performance parallel I/O library for accessing files in format compatibility with Unidata's NetCDF, specifically the formats of CDF-1, 2, and 5.
+
+Homepage: https://parallel-netcdf.github.io/
+
+io
+parmetis
+4.0.3
+ParMETIS is an MPI-based parallel library that implements a variety of algorithms for partitioning unstructured graphs, meshes, and for computing fill-reducing orderings of sparse matrices.
+
+Homepage: http://glaros.dtc.umn.edu/gkhome/metis/parmetis/overview
+
+math
+perl
+5.32.0
+5.34.0
+Perl 5 is a highly capable, feature-rich programming language with over 27 years of development.
+
+Homepage: http://www.perl.org
+
+t
+perl-bioperl
+1.7.6
+BioPerl is the product of a community effort to produce Perl code which is useful in biology. Examples include Sequence objects, Alignment objects and database searching objects. These objects not only do what they are advertised to do in the documentation, but they also interact - Alignment objects are made from the Sequence objects, Sequence objects have access to Annotation and SeqFeature objects and databases, Blast objects can be converted to Alignment objects, and so on. This means that the objects provide a coordinated and extensible framework to do computational biology. BioPerl development focuses on Perl classes, or code that is used to create objects representing biological entities. There are scripts provided in the scripts/ and examples/ directories but scripts are not the main focus of the BioPerl developers. Of course, as the objects do most of the hard work for you, all you have to do is combine a number of objects together sensibly to make useful scripts. The intent of the BioPerl development effort is to make reusable tools that aid people in creating their own sites or job-specific applications. The BioPerl website at http://bioperl.org also attempts to maintain links and archives of standalone bio-related Perl tools that are not affiliated or related to the core BioPerl effort. Check the site for useful code ideas and contribute your own if possible.
+
+Homepage: https://metacpan.org/pod/BioPerl
+
+
+perl-libxml-perl
+0.08
+libxml-perl is a collection of smaller Perl modules, scripts, and documents for working with XML in Perl. libxml-perl software works in combination with XML::Parser, PerlSAX, XML::DOM, XML::Grove and others.
+
+Homepage: https://metacpan.org/release/libxml-perl
+
+
+perl-uri
+1.72
+Uniform Resource Identifiers (absolute and relative)
+
+Homepage: http://search.cpan.org/~ether/URI-1.72/lib/URI.pm
+
+t
+perl-xml-libxml
+2.0201
+This module is an interface to libxml2, providing XML and HTML parsers with DOM, SAX and XMLReader interfaces, a large subset of DOM Layer 3 interface and a XML::XPath-like interface to XPath API of libxml2. The module is split into several packages which are not described in this section; unless stated otherwise, you only need to use XML::LibXML; in your programs.
+
+Homepage: https://metacpan.org/pod/XML::LibXML
+
+
+pgi
+20.4
+PGI optimizing multi-core x64 compilers for Linux, MacOS & Windows with support for debugging and profiling of local MPI processes. Note: The PGI compilers are licensed software. You will need to create an account on the PGI homepage and download PGI yourself. Spack will search your current directory for the download tarball. Alternatively, add this file to a mirror so that Spack can find it. For instructions on how to set up a mirror, see http://spack.readthedocs.io/en/latest/mirrors.html
+
+Homepage: http://www.pgroup.com/
+
+
+picard
+2.24.0
+Picard is a set of command line tools for manipulating high-throughput sequencing (HTS) data and formats such as SAM/BAM/CRAM and VCF.
+
+Homepage: http://broadinstitute.github.io/picard/
+
+bio
+proj	7.2.1	
+PROJ is a generic coordinate transformation software, that transforms geospatial coordinates from one coordinate reference system (CRS) to another. This includes cartographic projections as well as geodetic transformations.
+
+Homepage: https://proj.org/
+
+geo
+protobuf
+3.5.0
+3.12.2
+Google's data interchange format.
+
+Homepage: https://developers.google.com/protocol-buffers
+
+t
+py-argparse
+1.4.0
+Python command-line parsing library.
+
+Homepage: https://github.com/ThomasWaldmann/argparse/
+
+t
+py-backcall
+0.1.0
+Specifications for callback functions passed in to an API
+
+Homepage: https://github.com/takluyver/backcall
+
+
+py-bitarray
+0.8.1
+Efficient array of booleans - C extension
+
+Homepage: https://pypi.python.org/pypi/bitarray
+
+t
+py-cycler
+0.10.0
+Composable style cycles.
+
+Homepage: http://matplotlib.org/cycler/
+
+t
+py-decorator
+4.4.2
+The aim of the decorator module it to simplify the usage of decorators for the average programmer, and to popularize decorators by showing various non-trivial examples.
+
+Homepage: https://github.com/micheles/decorator
+
+
+py-flake8
+3.8.2
+Flake8 is a wrapper around PyFlakes, pep8 and Ned Batchelder's McCabe script.
+
+Homepage: https://github.com/PyCQA/flake8
+
+
+py-graphviz
+0.13.2
+Simple Python interface for Graphviz
+
+Homepage: https://github.com/xflr6/graphviz
+
+
+py-ipython
+7.21.0
+IPython provides a rich toolkit to help you make the most out of using Python interactively.
+
+Homepage: https://pypi.python.org/pypi/ipython
+
+
+py-ipython-genutils
+0.2.0
+Vestigial utilities from IPython
+
+Homepage: https://pypi.python.org/pypi/ipython_genutils
+
+
+py-joblib
+1.0.1
+Python function as pipeline jobs
+
+Homepage: http://packages.python.org/joblib/
+
+
+py-jupyter-client
+6.1.7
+Jupyter protocol client APIs. Project Jupyter is a non-profit, open-source project, born out of the IPython Project in 2014 as it evolved to support interactive data science and scientific computing across all programming languages.
+
+Homepage: https://jupyter.org/
+
+t
+py-jupyter-console
+6.1.0
+Jupyter Terminal Console. Project Jupyter is a non-profit, open-source project, born out of the IPython Project in 2014 as it evolved to support interactive data science and scientific computing across all programming languages.
+
+Homepage: https://jupyter.org/
+
+t
+py-jupyter-core
+4.6.3
+Core Python Jupyter functionality. Project Jupyter is a non-profit, open-source project, born out of the IPython Project in 2014 as it evolved to support interactive data science and scientific computing across all programming languages.
+
+Homepage: https://jupyter.org/
+
+t
+py-keras-applications
+1.0.8
+Sample Deep Learning application in Keras. Keras depends on this package
+to run properly.
+
+Homepage: http://keras.io
+
+ai
+py-keras-preprocessing
+1.1.2
+Utilities for working with image data, text data, and sequence data.
+
+Homepage: http://keras.io
+
+t
+py-kiwisolver
+1.1.0
+A fast implementation of the Cassowary constraint solver
+
+Homepage: https://github.com/nucleic/kiwi
+
+
+py-pexpect
+4.7.0
+Pexpect allows easy control of interactive console applications.
+
+Homepage: https://pypi.python.org/pypi/pexpect
+
+
+py-pickleshare
+0.7.5
+Tiny 'shelve'-like database with concurrency support
+
+Homepage: https://pypi.python.org/pypi/pickleshare
+
+
+py-pillow
+7.2.0
+Pillow is a fork of the Python Imaging Library (PIL). It adds image processing capabilities to your Python interpreter. This library supports many file formats, and provides powerful image processing and graphics capabilities.
+
+Homepage: https://python-pillow.org/
+
+
+py-pip
+21.1.2
+The PyPA recommended tool for installing Python packages.
+
+Homepage: https://pypi.python.org/pypi/pip
+
+t
+py-prompt-toolkit
+3.0.17
+Library for building powerful interactive command lines in Python
+
+Homepage: https://pypi.python.org/pypi/prompt_toolkit
+
+
+py-protobuf
+3.12.2
+Protocol buffers are Google's language-neutral, platform-neutral, extensible mechanism for serializing structured data - think XML, but smaller, faster, and simpler. You define how you want your data to be structured once, then you can use special generated source code to easily write and read your structured data to and from a variety of data streams and using a variety of languages.
+
+Homepage: https://developers.google.com/protocol-buffers/
+
+
+py-ptyprocess
+0.6.0
+Run a subprocess in a pseudo terminal
+
+Homepage: https://pypi.python.org/pypi/ptyprocess
+
+
+py-pybind11
+2.5.0
+2.6.2
+pybind11 -- Seamless operability between C++11 and Python. pybind11 is a lightweight header-only library that exposes C++ types in Python and vice versa, mainly to create Python bindings of existing C++ code. Its goals and syntax are similar to the excellent Boost.Python library by David Abrahams: to minimize boilerplate code in traditional extension modules by inferring type information using compile-time introspection.
+
+Homepage: https://pybind11.readthedocs.io
+
+
+py-pygments
+2.6.1
+The pyface project contains a toolkit-independent GUI abstraction layer, which is used to support the "visualization" features of the Traits package. Thus, you can write code in terms of the Traits API (views, items, editors, etc.), and let pyface and your selected toolkit and back-end take care of the details of displaying them.
+
+Homepage: https://docs.enthought.com/pyface
+
+
+py-pyparsing
+2.4.7
+A Python Parsing Module.
+
+Homepage: http://pyparsing.wikispaces.com/
+
+
+py-python-dateutil
+2.8.1
+2.8.2
+Extensions to the standard Python datetime module.
+
+Homepage: https://dateutil.readthedocs.io/
+
+
+py-pytz
+2020.1
+World timezone definitions, modern and historical.
+
+Homepage: https://pypi.org/project/pytz/
+
+t
+py-pyyaml
+5.3.1
+PyYAML is a YAML parser and emitter for Python.
+
+Homepage: https://pyyaml.org/wiki/PyYAML
+
+
+py-pyzmq
+18.1.0
+PyZMQ: Python bindings for zeromq.
+
+Homepage: https://github.com/zeromq/pyzmq
+
+
+py-setuptools
+50.3.2
+A Python utility that aids in the process of downloading, building, upgrading, installing, and uninstalling Python packages.
+
+Homepage: https://github.com/pypa/setuptools
+
+t
+py-six
+1.15.1
+Python 2 and 3 compatibility utilities.
+
+Homepage: https://pypi.org/project/six/
+
+t
+py-tornado
+6.0.3
+Tornado is a Python web framework and asynchronous networking library.
+
+Homepage: https://github.com/tornadoweb/tornado
+
+
+py-tqdm
+4.59.0
+A Fast, Extensible Progress Meter
+
+Homepage: https://github.com/tqdm/tqdm
+
+
+py-traitlets
+5.0.4
+Traitlets Python config system
+
+Homepage: https://pypi.python.org/pypi/traitlets
+
+
+py-virtualenv
+16.7.6
+virtualenv is a tool to create isolated Python environments.
+
+Homepage: https://virtualenv.pypa.io/
+
+t
+py-virtualenv-clone
+0.2.6
+A script for cloning a non-relocatable virtualenv.
+
+Homepage: https://github.com/edwardgeorge/virtualenv-clone
+
+t
+py-wcwidth	0.1.7	
+Measures number of Terminal column cells of wide-character codes
+
+Homepage: https://pypi.python.org/pypi/wcwidth
+
+
+py-wheel	0.36.2	
+llvm openmp compiler from AMD.
+
+Homepage: https://github.com/ROCm-Developer-Tools/aomp
+
+
+python
+3.7.10
+3.8.10
+The Python programming language.
+
+Homepage: https://www.python.org/
+
+t
+r
+3.6.0
+4.1.0
+R is 'GNU S', a freely available language and environment for statistical computing and graphics which provides a wide variety of statistical and graphical techniques: linear and nonlinear modelling, statistical tests, time series analysis, classification, clustering, etc. Please consult the R project homepage for further information.
+
+Homepage: https://www.r-project.org
+
+t
+r-data-table
+1.13.6
+Fast aggregation of large data (e.g. 100GB in RAM), fast ordered joins, fast add/modify/delete of columns by group using no copies at all, list columns and a fast file reader (fread). Offers a natural and flexible syntax, for faster development.
+
+Homepage: https://github.com/Rdatatable/data.table/wiki
+
+t
+r-devtools
+2.3.2
+Collection of package development tools.
+
+Homepage: https://github.com/hadley/devtools
+
+
+r-dplyr
+1.0.3
+A fast, consistent tool for working with data frame like objects, both in memory and out of memory.
+
+Homepage: https://cran.r-project.org/package=dplyr
+
+t
+r-e1071
+1.7-4
+Functions for latent class analysis, short time Fourier transform, fuzzy clustering, support vector machines, shortest path computation, bagged clustering, naïve Bayes classifier, etc.
+
+Homepage: https://cran.r-project.org/package=e1071
+
+t
+r-ggplot2
+3.3.3
+An implementation of the grammar of graphics in R. It combines the advantages of both base and lattice graphics: conditioning and shared axes are handled automatically, and you can still build up a plot step by step from multiple data sources. It also implements a sophisticated multidimensional conditioning system and a consistent interface to map data to aesthetic attributes. See http://ggplot2.org for more information, documentation and examples.
+
+Homepage: http://ggplot2.org/
+
+t
+r-nnet
+7.3-14
+Software for feed-forward neural networks with a single hidden layer, and for multinomial log-linear models.
+
+Homepage: http://www.stats.ox.ac.uk/pub/MASS4/
+
+t
+r-plyr
+1.8.6
+A set of tools that solves a common set of problems: you need to break a big problem down into manageable pieces, operate on each piece and then put all the pieces back together. For example, you might want to fit a model to each spatial location or time point in your study, summarize data by panels or collapse high-dimensional arrays to simpler summary statistics. The development of 'plyr' has been generously supported by 'Becton Dickinson'.
+
+Homepage: http://had.co.nz/plyr
+
+t
+r-randomforest
+4.6-14
+Classification and regression based on a forest of trees using random
+inputs.
+
+Homepage: https://www.stat.berkeley.edu/~breiman/RandomForests/
+
+t
+r-reshape
+0.8.8
+Flexibly restructure and aggregate data using just two functions: melt and cast.
+
+Homepage: https://cran.r-project.org/package=reshape
+
+t
+r-reshape2
+1.4.4
+Flexibly restructure and aggregate data using just two functions: melt and dcast (or acast).
+
+Homepage: https://github.com/hadley/reshape
+
+t
+r-shiny
+1.5.0
+Makes it incredibly easy to build interactive web applications with R. Automatic "reactive" binding between inputs and outputs and extensive pre-built widgets make it possible to build beautiful, responsive, and powerful applications with minimal effort.
+
+Homepage: http://shiny.rstudio.com/
+
+t
+r-shinydashboard
+0.7.1
+Create Dashboards with 'Shiny'
+
+Homepage: https://cran.r-project.org/package=shinydashboard
+
+t
+r-tensora
+0.36.2
+The package provides convenience functions for advance linear algebra with tensors and computation with datasets of tensors on a higher level abstraction.
+
+Homepage: https://cran.r-project.org/web/packages/tensorA/index.html
+
+t
+r-udunits2
+0.13
+Provides simple bindings to Unidata's udunits library.
+
+Homepage: https://github.com/pacificclimate/Rudunits2
+
+
+r-units
+0.6-7
+Support for measurement units in R vectors, matrices and arrays: automatic propagation, conversion, derivation and simplification of units; raising errors in case of unit incompatibility. Compatible with the POSIXct, Date and difftime classes. Uses the UNIDATA udunits library and unit database for unit compatibility checking and conversion.
+
+Homepage: https://github.com/edzer/units/
+
+
+r-usethis
+2.0.0
+Automate package and project setup tasks that are otherwise performed manually. This includes setting up unit testing, test coverage, continuous integration, Git, 'GitHub', licenses, 'Rcpp', 'RStudio' projects, and more.
+
+Homepage: https://usethis.r-lib.org/
+
+
+singularity
+3.2.1
+Singularity is a container technology focused on building portable encapsulated environments to support "Mobility of Compute" For older versions of Singularity (pre 3.0) you should use singularity-legacy, which has a different install base (Autotools). Needs post-install chmod/chown steps to enable full functionality. See package definition for details.
+
+Homepage: https://www.sylabs.io/singularity/
+
+t
+singularity-legacy
+2.6.1
+Singularity is a container platform focused on supporting 'Mobility of Compute'. The software changed the installation method from AutoTools to GoLang, so we have two separate package names to support that. The legacy package is pre-version 3.0.0
+
+Homepage: https://www.sylabs.io/singularity/
+
+t
+sox
+14.4.2
+SoX, the Swiss Army knife of sound processing programs.
+
+Homepage: http://sox.sourceforge.net/Main/HomePage
+
+
+spark
+2.3.0
+Apache Spark is a fast and general engine for large-scale data processing.
+
+Homepage: http://spark.apache.org
+
+t
+sparsehash
+2.0.3
+Sparse and dense hash-tables for C++ by Google
+
+Homepage: https://github.com/sparsehash/sparsehash
+
+
+spm
+12_r7771
+Statistical Parametric Mapping refers to the construction and assessment of spatially extended statistical processes used to test hypotheses about functional imaging data. These ideas have been instantiated in software that is called SPM.
+
+
+stacks
+2.3b
+Stacks is a software pipeline for building loci from short-read sequences, such as those generated on the Illumina platform.
+
+Homepage: http://catchenlab.life.illinois.edu/stacks/
+
+bio
+subversion
+1.9.7
+Apache Subversion - an open source version control system.
+
+Homepage: https://subversion.apache.org/
+
+
+udunits
+2.2.28
+Automated units conversion
+
+Homepage: http://www.unidata.ucar.edu/software/udunits
+
+t
+vtk
+8.2.0
+VisIt is an Open Source, interactive, scalable, visualization, animation and analysis tool. See comments in VisIt's package.py for tips about building VisIt with spack. Building VisIt with Spack is still experimental and many standard features are likely disabled LINUX------------------------------------------------------------------- spack install visit ^python+shared ^glib@2.56.3 ^py-setuptools@44.1.0 LINUX-W/O-OPENGL-------------------------------------------------------- spack install visit ^python+shared ^glib@2.56.3 ^py-setuptools@44.1.0 \ ^mesa+opengl MACOS------------------------------------------------------------------- spack install visit ^python+shared ^glib@2.56.3 ^py-setuptools@44.1.0 \ ^qt~framework
+
+Homepage: https://wci.llnl.gov/simulation/computer-codes/visit/
+
+vis
+xtensor
+0.20.7
+Multi-dimensional arrays with broadcasting and lazy computing
+
+Homepage: http://quantstack.net/xtensor
+
+t
+
+
+ 

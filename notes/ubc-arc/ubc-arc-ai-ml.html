@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<!-- saved from url=(0083)https://confluence.it.ubc.ca/plugins/viewsource/viewpagesrc.action?pageId=423963628 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>View Source</title>
+        <link rel="canonical" href="https://confluence.it.ubc.ca/pages/viewpage.action?pageId=$action.page.id">
+        <script>
+window.WRM=window.WRM||{};window.WRM._unparsedData=window.WRM._unparsedData||{};window.WRM._unparsedErrors=window.WRM._unparsedErrors||{};
+WRM._unparsedData["com.atlassian.plugins.atlassian-plugins-webresource-plugin:context-path.context-path"]="\u0022\u0022";
+if(window.WRM._dataArrived)window.WRM._dataArrived();</script>
+<link rel="stylesheet" href="./ubc-arc-ai-ml_files/batch.css" data-wrm-key="_super" data-wrm-batch-type="context" media="all">
+<link rel="stylesheet" href="./ubc-arc-ai-ml_files/batch(1).css" data-wrm-key="plugin.viewsource,-_super" data-wrm-batch-type="context" media="all">
+<link rel="stylesheet" href="./ubc-arc-ai-ml_files/batch(2).css" data-wrm-key="page,-_super" data-wrm-batch-type="context" media="all">
+<link rel="stylesheet" href="./ubc-arc-ai-ml_files/batch(3).css" data-wrm-key="editor-content,-_super" data-wrm-batch-type="context" media="all">
+
+    </head>
+
+    <body class="mceContentBody aui-theme-default wiki-content fullsize">
+        <p>&nbsp;</p>         <h3><img class="editor-inline-macro" src="./ubc-arc-ai-ml_files/macro" data-macro-name="toc" data-macro-id="5392e87a-0ca5-406b-8e54-bcedc951765c" role="button" tabindex="0" aria-haspopup="true" aria-label="toc macro" data-macro-schema-version="1"></h3><h3>Overview</h3><p>This page introduces common ways to run large language model (LLM) workloads on Sockeye. It focuses on practical workflows for inference, model serving, and related setup considerations, including GPU selection, Slurm job configuration, interactive versus batch usage, and container-based runtimes. It also points to external guides and references that can be adapted for use on Sockeye.</p><h3>Sockeye GPU Nodes</h3><table class="wrapped confluenceTable"><colgroup class=""><col class=""><col class=""><col class=""><col><col class=""><col class=""><col class=""><col></colgroup><tbody class=""><tr class=""><th style="text-align: left;" class="confluenceTh">Node Type</th><th style="text-align: left;" class="confluenceTh">Nodes</th><th style="text-align: left;" class="confluenceTh">GPUs per Node</th><th style="text-align: left;" class="confluenceTh">Partition</th><th style="text-align: left;" class="confluenceTh">CPU</th><th style="text-align: left;" class="confluenceTh">RAM per Node</th><th style="text-align: left;" class="confluenceTh">Local Scratch</th><th style="text-align: left;" class="confluenceTh">Notes</th></tr><tr class=""><td style="text-align: left;" class="confluenceTd">GPU16</td><td style="text-align: left;" class="confluenceTd"><div class="content-wrapper"><p>6</p></div></td><td style="text-align: left;" class="confluenceTd">4</td><td style="text-align: left;" class="confluenceTd">Interactive</td><td style="text-align: left;" class="confluenceTd">2 x Intel Xeon Silver 4116 (2.1GHz)</td><td style="text-align: left;" class="confluenceTd">192GB DDR4-2666 ECC</td><td style="text-align: left;" class="confluenceTd">1.9TB NVMe SSD</td><td style="text-align: left;" class="confluenceTd">Smaller models, smaller context, lighter workloads</td></tr><tr class=""><td style="text-align: left;" class="confluenceTd">GPU32</td><td style="text-align: left;" class="confluenceTd">44</td><td style="text-align: left;" class="confluenceTd">4</td><td style="text-align: left;" class="confluenceTd">Compute</td><td style="text-align: left;" class="confluenceTd">2 x Intel Xeon Silver 4216 (2.1GHz)</td><td style="text-align: left;" class="confluenceTd">192GB DDR4-2666 ECC</td><td style="text-align: left;" class="confluenceTd">1.9TB NVMe SSD</td><td style="text-align: left;" class="confluenceTd">Larger models, larger context, more headroom</td></tr></tbody></table><h3>GPU Ollama and OpenWebUI (LLM Inference)</h3><table class="wysiwyg-macro" data-macro-name="info" data-macro-id="0aafdc0a-ba6e-4eb5-9a67-efe1d34503c9" aria-label="info macro" data-macro-parameters="icon=false" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2luZm86aWNvbj1mYWxzZX0&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="RICH_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><p>Use Ollama when you want a simple way to run a model locally for interactive testing and lightweight deployments (pull/manage models, run a local inference endpoint). Use OpenWebUI when you want a user-friendly chat interface for demos, internal use, or quick evaluation without building a front end. This setup is ideal for single-node inference, rapid iteration, and sharing a basic chat UI; for high-throughput, multi-GPU serving, or production-scale APIs, a dedicated serving stack (e.g., vLLM/TGI) is usually a better fit.</p></td></tr></tbody></table><p>Use Apptainer to pull the&nbsp;<a href="https://hub.docker.com/search?q=openwebui">OpenWebUI with Ollama</a> image from Docker Hub. Choose the tag/version you want and save it as a .sif file.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="e784bb7d-d2c3-4edd-9600-03d43605a569" aria-label="code macro" data-macro-parameters="collapse=true|title=Container preparation" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9Q29udGFpbmVyIHByZXBhcmF0aW9ufGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>module load gcc apptainer
+
+mkdir -p /arc/project/&lt;alloc-code&gt;/containers
+
+cd /arc/project/&lt;alloc-code&gt;/containers
+apptainer pull openwebui.sif docker://ghcr.io/open-webui/open-webui:ollama</pre></td></tr></tbody></table><p>Prepare your workspace: create the directories we’ll use for this workflow</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="9f742a55-6eda-4472-8fc4-c3585357bf4d" aria-label="code macro" data-macro-parameters="collapse=true|title=Workspace preparation" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9V29ya3NwYWNlIHByZXBhcmF0aW9ufGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre># Writable workspace
+export WEBUI_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/openwebui-data"
+
+# Container image location
+export WEBUI_IMG="/arc/project/&lt;alloc-code&gt;/containers/openwebui.sif"
+
+# Create required directories
+mkdir -p "$WEBUI_DATA"                 # workflow root
+mkdir -p "$WEBUI_DATA/models"          # Ollama models (bind -&gt; /root/.ollama)
+mkdir -p "$WEBUI_DATA/static"          # REQUIRED: writable static override for OpenWebUI
+mkdir -p "$WEBUI_DATA/hf/hub"          # HF cache (if used by the container)
+mkdir -p "$WEBUI_DATA/logs"            # optional: keep logs organized
+
+# Initialize the WebUI secret key (first run only)
+if [ ! -f "$WEBUI_DATA/.webui_key" ]; then
+  umask 077
+  openssl rand -hex 32 &gt; "$WEBUI_DATA/.webui_key"
+fi</pre></td></tr></tbody></table><p>Because compute nodes don’t have internet access, you must download models from a login node (or use a pre-downloaded model). A simple approach is to use the Ollama client included in&nbsp;openwebui.sif to pull models directly into your model directory.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b04a2418-88a5-4add-bfa1-3d613fd8e804" aria-label="code macro" data-macro-parameters="collapse=true|title=Download models with Ollama" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9RG93bmxvYWQgbW9kZWxzIHdpdGggT2xsYW1hfGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>export OLLAMA_MODELS="$WEBUI_DATA/models"
+
+# Start Ollama (background)
+apptainer exec \
+  -B "$OLLAMA_MODELS:/root/.ollama" \
+  --env OLLAMA_MODELS=/root/.ollama \
+  --env OLLAMA_HOST=127.0.0.1:11434 \
+  "$WEBUI_IMG" \
+  ollama serve &gt; "$WEBUI_DATA/logs/ollama.log" 2&gt;&amp;1 &amp;
+
+# Monitor the log to verify Ollama started
+tail -f $WEBUI_DATA/logs/ollama.log
+
+# Pull a test model (example)
+apptainer exec \
+  -B "$OLLAMA_MODELS:/root/.ollama" \
+  --env OLLAMA_MODELS=/root/.ollama \
+  --env OLLAMA_HOST=http://127.0.0.1:11434 \
+  "$WEBUI_IMG" \
+  ollama pull tinyllama:latest</pre></td></tr></tbody></table><p>Once your models have been downloaded, create the ollama-webui.sh batch script below (update the SBATCH directives, paths, and port as needed). When the job starts, it will write a connection guide to connect-$SLURM_JOB_ID.txt in your submission directory ($SLURM_SUBMIT_DIR). Open that .txt file and follow the SSH port-forwarding steps to access the WebUI in your browser.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="57500e22-c602-4b03-ac00-3e6e3d538f72" aria-label="code macro" data-macro-parameters="collapse=true|title=ollama-webui.sh" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9b2xsYW1hLXdlYnVpLnNofGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>#!/bin/bash
+#SBATCH --job-name=ollama
+#SBATCH --account=&lt;alloc-code&gt;-gpu      # Add your GPU account
+#SBATCH --time=02:00:00
+#SBATCH --nodes=1
+#SBATCH --gpus=1                        # Single GPU inferance
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4               # Enough for web server + tokenization
+#SBATCH --mem=16G                       # Fit for UI + sqlite + cache; models live in GPU VRAM
+#SBATCH --output=%x-%j.out
+#SBATCH --error=%x-%j.err
+#SBATCH --mail-user=&lt;your-email&gt;
+#SBATCH --mail-type=ALL
+
+source ~/.bashrc
+
+module load gcc apptainer
+
+WEBUI_PORT=18080   # Local browser port
+WEBUI_DATA="/scratch/&lt;alloc-code&gt;/$USER/openwebui-data"
+WEBUI_IMG="/arc/project/&lt;alloc-code&gt;/containers/openwebui.sif"
+NODE="$(hostname -s)"
+
+pick_port() {
+  local start="$1"
+  local end="$2"
+  local port
+  for port in $(shuf -i "${start}-${end}"); do
+    if ! ss -lnt | awk '{print $4}' | grep -q ":${port}$"; then
+      echo "$port"
+      return 0
+    fi
+  done
+  return 1
+}
+
+WEBUI_NODE_PORT="$(pick_port 8080 8999)"   # free OpenWebUI port on compute node
+OLLAMA_PORT="$(pick_port 11434 11999)"     # free Ollama port on compute node
+
+# UI Connection
+cat &gt; "${SLURM_SUBMIT_DIR}/connect-${SLURM_JOB_ID}.txt" &lt;&lt;EOF
+============================================================
+
+1) From your PC
+ssh $USER@sockeye.arc.ubc.ca -L ${WEBUI_PORT}:127.0.0.1:${WEBUI_PORT}
+
+2) Then from the login node in Step 1:
+ssh $USER@$NODE -L ${WEBUI_PORT}:127.0.0.1:${WEBUI_NODE_PORT}
+
+Then use a browser to open:
+  http://127.0.0.1:${WEBUI_PORT}
+EOF
+
+# Start Open WebUI and Ollama
+apptainer exec --nv --writable-tmpfs --pwd /app/backend \
+  --env PORT="${WEBUI_NODE_PORT}" \
+  --env OLLAMA_HOST="127.0.0.1:${OLLAMA_PORT}" \
+  --env WEBUI_SECRET_KEY="$(cat "$WEBUI_DATA/.webui_key")" \
+  --env OLLAMA_BASE_URL="http://127.0.0.1:${OLLAMA_PORT}" \
+  --env OLLAMA_MODELS="/root/.ollama" \
+  --env HF_HOME="/app/backend/data/hf" \
+  --env HF_HUB_CACHE="/app/backend/data/hf/hub" \
+  -B "$WEBUI_DATA:/app/backend/data" \
+  -B "$WEBUI_DATA/.webui_key:/app/backend/.webui_key" \
+  -B "$WEBUI_DATA/static:/app/backend/open_webui/static" \
+  -B "$WEBUI_DATA/models:/root/.ollama" \
+  "$WEBUI_IMG" \
+  bash -c './start.sh'
+</pre></td></tr></tbody></table><p><br>OpenWebUI + Ollama container flags</p><table class="wrapped confluenceTable"><thead class=""><tr class=""><th class="confluenceTh">Flag</th><th class="confluenceTh">Description</th></tr></thead><tbody class=""><tr class=""><td class="confluenceTd"><code>WEBUI_SECRET_KEY=...</code></td><td class="confluenceTd">Stable secret for consistent OpenWebUI sessions and config across runs.</td></tr><tr class=""><td class="confluenceTd"><code>PORT="$WEBUI_NODE_PORT"</code></td><td class="confluenceTd">Run OpenWebUI on a dynamically selected free port on the compute node.</td></tr><tr class=""><td class="confluenceTd"><code>OLLAMA_HOST="127.0.0.1:${OLLAMA_PORT}"</code></td><td class="confluenceTd">Bind Ollama to a dynamically selected free local port on the compute node.</td></tr><tr class=""><td class="confluenceTd"><code>OLLAMA_BASE_URL="<a href="http://127.0.0.1${ollama_port/">http://127.0.0.1:${OLLAMA_PORT</a>}"</code></td><td class="confluenceTd">Point OpenWebUI to the local Ollama API on the selected port.</td></tr><tr class=""><td class="confluenceTd"><code>OLLAMA_MODELS="/root/.ollama"</code></td><td class="confluenceTd">Model location inside the container.</td></tr><tr class=""><td class="confluenceTd"><code>HF_HOME=... / HF_HUB_CACHE=...</code></td><td class="confluenceTd">Keep Hugging Face cache in the persisted data location if needed.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$<a href="http://webui_data/app/backend/data">WEBUI_DATA:/app/backend/data</a>"</code></td><td class="confluenceTd">Persist WebUI state such as the database, config, and uploads.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$WEBUI_DATA/<a href="http://static/app/backend/open_webui/static">static:/app/backend/open_webui/static</a>"</code></td><td class="confluenceTd">Mount writable static assets outside the container if needed.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$WEBUI_DATA/<a href="http://models/root/.ollama">models:/root/.ollama</a>"</code></td><td class="confluenceTd">Persist Ollama models outside the container.</td></tr></tbody></table><h3>vLLM with Multi GPU&nbsp;</h3><table class="wysiwyg-macro" data-macro-name="info" data-macro-id="c70d7b1d-ce99-4939-9993-cde0cea8fa23" aria-label="info macro" data-macro-parameters="icon=false" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2luZm86aWNvbj1mYWxzZX0&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="RICH_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><p>Use vLLM when you need fast, scalable LLM serving - especially for many concurrent users, high token throughput, and production-style APIs. It’s a strong fit for hosting a model behind an OpenAI-compatible endpoint, running multi-GPU inference, and keeping latency reasonable under load (e.g., a team chatbot, an app backend, or a service that handles lots of requests). If you’re only doing occasional interactive testing or a lightweight demo, Ollama/OpenWebUI is usually simpler; if you need reliability, throughput, and scale, vLLM is the better choice.</p></td></tr></tbody></table><p>Prepare your workspace: Pick a persistent directory in your allocation for this workflow. We’ll store the Hugging Face cache, downloaded models, and logs under this path so the compute job can run offline.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="06bdbde6-f7d9-4a3e-a08b-2c2d889c69fd" aria-label="code macro" data-macro-parameters="collapse=true|title=Workspace preparation" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9V29ya3NwYWNlIHByZXBhcmF0aW9ufGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre># Writable workspace
+export VLLM_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/vllm-data"
+
+# Create required directories
+mkdir -p "$VLLM_DATA"                 # workflow root
+mkdir -p "$VLLM_DATA/home"            # container HOME for vLLM/OpenWebUI
+mkdir -p "$VLLM_DATA/models"          # downloaded models (MODEL_DIR will point here)
+mkdir -p "$VLLM_DATA/hf/hub"          # Hugging Face hub cache
+mkdir -p "$VLLM_DATA/hf/assets"       # Hugging Face assets cache
+mkdir -p "$VLLM_DATA/logs"            # vLLM/OpenWebUI logs
+mkdir -p "$VLLM_DATA/tmp"             # temporary runtime files (optional)</pre></td></tr></tbody></table><p>Download the model into "$VLLM_DATA/models" and point your batch script to the same MODEL_DIR. Example, this downloads Qwen2.5-7B-Instruct.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="052f0f2b-9c60-4cd5-8f72-3200779b0bc5" aria-label="code macro" data-macro-parameters="collapse=true|title=Download models from Hugging Face" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9RG93bmxvYWQgbW9kZWxzIGZyb20gSHVnZ2luZyBGYWNlfGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre># Download from a login node (recommended) or interactive GPU node with the http_proxy module loaded
+
+export HF_HOME="$VLLM_DATA/hf"
+
+export MODEL_REPO="Qwen/Qwen2.5-7B-Instruct"
+export MODEL_DIR="$VLLM_DATA/models/Qwen/Qwen2.5-7B-Instruct"
+
+huggingface-cli download "$MODEL_REPO" --local-dir "$MODEL_DIR" </pre></td></tr></tbody></table><p>Use Apptainer to pull the&nbsp;<a href="https://hub.docker.com/r/vllm/vllm-openai">OpenAI vLLM</a> image from Docker Hub. Choose the tag/version you want and save it as a <em>.sif</em> file.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="396b8b3e-8ea0-4823-ac4d-05df8b8a3f4f" aria-label="code macro" data-macro-parameters="collapse=true|title=Container preparation" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9Q29udGFpbmVyIHByZXBhcmF0aW9ufGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>module load gcc apptainer
+
+cd /arc/project/&lt;alloc-code&gt;/containers
+apptainer pull vllm.sif docker://vllm/vllm-openai</pre></td></tr></tbody></table><p>Create vllm-webui.sh and update the paths for VLLM_DATA, MODEL_DIR, and the container images. This job starts vLLM on the allocated node (multi-GPU tensor parallel), waits for the API health check, then starts OpenWebUI configured to use the local vLLM OpenAI-compatible endpoint. When the job starts, it writes a connection guide to connect-$SLURM_JOB_ID.txt in $SLURM_SUBMIT_DIR.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="639f482c-d013-40ce-8dda-d72045093298" aria-label="code macro" data-macro-parameters="collapse=true|title=vllm-webui.sh" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9dmxsbS13ZWJ1aS5zaHxjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>#!/bin/bash
+#SBATCH --job-name=vllm-webui
+#SBATCH --account=&lt;alloc-code&gt;-gpu
+#SBATCH --time=02:00:00
+#SBATCH --nodes=1
+#SBATCH --gpus=2                      # 2 GPUs for tensor parallel
+#SBATCH --ntasks=1                    
+#SBATCH --cpus-per-task=8             # Allow CPU headroom for tokenization + request handling + WebUI
+#SBATCH --mem=32G                     # Provide extra RAM buffer for vLLM + WebUI + caches/logs
+#SBATCH --output=%x-%j.out
+#SBATCH --error=%x-%j.err
+
+source ~/.bashrc
+module load gcc apptainer
+
+# Paths (must match your workspace setup)
+export VLLM_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/vllm-data"
+export MODEL_DIR="$VLLM_DATA/models/Qwen/Qwen2.5-7B-Instruct"
+export VLLM_IMG="/arc/project/&lt;alloc-code&gt;/containers/vllm.sif"
+
+# Reuse your existing OpenWebUI paths from the earlier section
+export WEBUI_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/openwebui-data"
+export WEBUI_IMG="/arc/project/&lt;alloc-code&gt;/containers/openwebui.sif"
+
+NODE="$(hostname -s)"
+
+pick_port() {
+  local start="$1"
+  local end="$2"
+  local port
+  for port in $(shuf -i "${start}-${end}"); do
+    if ! ss -lnt | awk '{print $4}' | grep -q ":${port}$"; then
+      echo "$port"
+      return 0
+    fi
+  done
+  return 1
+}
+
+WEBUI_PORT="$(pick_port 3000 3999)"   # pick a free WebUI port
+VLLM_PORT="$(pick_port 18000 18999)"  # pick a free vLLM port
+
+# Two-step SSH tunnel to connect-$SLURM_JOB_ID.txt
+cat &gt; "$SLURM_SUBMIT_DIR/connect-${SLURM_JOB_ID}.txt" &lt;&lt;EOF
+1. From your PC:
+ssh -L ${WEBUI_PORT}:127.0.0.1:${WEBUI_PORT} -L ${VLLM_PORT}:127.0.0.1:${VLLM_PORT} $USER@sockeye.arc.ubc.ca
+
+2. Then from the login node in Step 1:
+ssh -L ${WEBUI_PORT}:127.0.0.1:${WEBUI_PORT} -L ${VLLM_PORT}:127.0.0.1:${VLLM_PORT} $NODE
+
+Then use a browser to open:
+http://127.0.0.1:${WEBUI_PORT}
+EOF
+
+# Start vLLM using 2 GPUs (tensor parallel)
+nohup apptainer exec --nv --home "$VLLM_DATA/home" \
+  --env HF_HUB_OFFLINE=1 \
+  --env TRANSFORMERS_OFFLINE=1 \
+  --env TORCH_COMPILE_DISABLE=1 \
+  --env TORCHINDUCTOR_DISABLE=1 \
+  --env TRITON_CACHE_DIR="$SLURM_TMPDIR/triton" \
+  --env XDG_CACHE_HOME="$SLURM_TMPDIR/xdg" \
+  -B "$VLLM_DATA/hf:/root/.cache/huggingface" \
+  -B "$VLLM_DATA/tmp:/tmp" \
+  -B "$MODEL_DIR:$MODEL_DIR" \
+  "$VLLM_IMG" \
+  vllm serve "$MODEL_DIR" \
+    --host 127.0.0.1 --port "$VLLM_PORT" \
+    --tensor-parallel-size 2 \
+    --max-model-len 4096 \
+    --max-num-seqs 8 \
+    --enforce-eager \
+    --served-model-name "Qwen2.5-7B-Instruct" \
+  &gt; "$VLLM_DATA/logs/vllm.log" 2&gt;&amp;1 &amp;
+
+# Wait for vLLM to become healthy before starting OpenWebUI
+for i in $(seq 1 120); do
+&nbsp; curl -s "http://127.0.0.1:${VLLM_PORT}/health" &gt;/dev/null &amp;&amp; break
+  sleep 1
+done
+
+# Start OpenWebUI and point it at the local vLLM endpoint
+apptainer exec --nv --pwd /app/backend \
+  --env PORT="$WEBUI_PORT" \
+  --env HOST=127.0.0.1 \
+  --env WEBUI_SECRET_KEY="$(cat "$WEBUI_DATA/.webui_key")" \
+  --env USE_OLLAMA=0 \
+  --env ENABLE_OLLAMA=0 \
+  --env OPENAI_API_BASE_URL="http://127.0.0.1:${VLLM_PORT}/v1" \
+  --env OPENAI_API_KEY="EMPTY" \
+  --env HF_HOME="/app/backend/data/hf" \
+  --env HF_HUB_CACHE="/app/backend/data/hf/hub" \
+  --env TRANSFORMERS_CACHE="/app/backend/data/hf/transformers" \
+  -B "$WEBUI_DATA:/app/backend/data" \
+  -B "$WEBUI_DATA/static:/app/backend/open_webui/static" \
+  -B "$VLLM_DATA/hf:/app/backend/data/hf" \
+  -B "$VLLM_DATA/tmp:/tmp" \
+  "$WEBUI_IMG" \
+  bash -lc "/app/backend/start.sh" \
+ &gt; "$VLLM_DATA/logs/openwebui.log" 2&gt;&amp;1 &amp;
+
+wait</pre></td></tr></tbody></table><p>vLLM container flags</p><table class="wrapped confluenceTable"><thead class=""><tr class=""><th class="confluenceTh">Flag</th><th class="confluenceTh">Description</th></tr></thead><tbody class=""><tr class=""><td class="confluenceTd"><code>--host 127.0.0.1</code></td><td class="confluenceTd">Bind vLLM to localhost only so it is accessed through SSH tunneling.</td></tr><tr class=""><td class="confluenceTd"><code>--port "$VLLM_PORT"</code></td><td class="confluenceTd">Run vLLM on a free selected port on the compute node.</td></tr><tr class=""><td class="confluenceTd"><code>HF_HUB_OFFLINE=1</code></td><td class="confluenceTd">Use pre-downloaded model. Change to 0 and load http_proxy module to access <a href="http://huggingface.co/">huggingface.co</a></td></tr><tr class=""><td class="confluenceTd"><code>TRANSFORMERS_OFFLINE=1</code></td><td class="confluenceTd">Use pre-downloaded model. Change to 0 and load http_proxy module to access <a href="http://huggingface.co/">huggingface.co</a></td></tr><tr class=""><td class="confluenceTd"><code>TRITON_CACHE_DIR="$SLURM_TMPDIR/triton"</code></td><td class="confluenceTd">Store Triton cache on node-local temporary storage.</td></tr><tr class=""><td class="confluenceTd"><code>XDG_CACHE_HOME="$SLURM_TMPDIR/xdg"</code></td><td class="confluenceTd">Store miscellaneous cache files on node-local temporary storage.</td></tr><tr class=""><td class="confluenceTd"><code>--home "$VLLM_DATA/home"</code></td><td class="confluenceTd">Use a writable HOME in your workspace instead of writing inside the container filesystem.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$VLLM_DATA/<a href="http://hf/root/.cache/huggingface">hf:/root/.cache/huggingface</a>"</code></td><td class="confluenceTd">Reuse Hugging Face cache across jobs and keep writes out of the container filesystem.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$VLLM_DATA/<a href="http://tmp/tmp">tmp:/tmp</a>"</code></td><td class="confluenceTd">Use your workspace temp directory inside the container.</td></tr><tr class=""><td class="confluenceTd"><code>--tensor-parallel-size 2</code></td><td class="confluenceTd">Split the model across 2 GPUs and match <code>#SBATCH --gpus=2</code>.</td></tr><tr class=""><td class="confluenceTd"><code>--max-model-len 4096</code></td><td class="confluenceTd">Limit context length to help control VRAM use.</td></tr><tr class=""><td class="confluenceTd"><code>--max-num-seqs 8</code></td><td class="confluenceTd">Limit concurrent sequences to balance throughput and memory use.</td></tr><tr class=""><td class="confluenceTd"><code>--enforce-eager</code></td><td class="confluenceTd">Disables CUDA graph capture to reduce VRAM use. Remove for better throughput.</td></tr><tr class=""><td class="confluenceTd"><code>--served-model-name "Qwen2.5-7B-Instruct"</code></td><td class="confluenceTd">Set the model name exposed to clients and the UI.</td></tr><tr class=""><td class="confluenceTd"><code>&gt; "$VLLM_DATA/logs/vllm.log" 2&gt;&amp;1 &amp;</code></td><td class="confluenceTd">Write logs to file and run vLLM in the background.</td></tr></tbody></table><p>OpenWebUI container flags</p><table class="wrapped confluenceTable"><thead class=""><tr class=""><th class="confluenceTh">Flag</th><th class="confluenceTh">Description</th></tr></thead><tbody class=""><tr class=""><td class="confluenceTd"><code>HOST=127.0.0.1</code></td><td class="confluenceTd">Bind WebUI to localhost only so it is accessed through SSH tunneling.</td></tr><tr class=""><td class="confluenceTd"><code>PORT="$WEBUI_PORT"</code></td><td class="confluenceTd">Run OpenWebUI on a free selected port on the compute node.</td></tr><tr class=""><td class="confluenceTd"><code>OPENAI_API_BASE_URL="<a href="http://127.0.0.1${vllm_port}/">http://127.0.0.1:${VLLM_PORT}/v1</a>"</code></td><td class="confluenceTd">Point OpenWebUI to the local vLLM endpoint.</td></tr><tr class=""><td class="confluenceTd"><code>OPENAI_API_KEY="EMPTY"</code></td><td class="confluenceTd">Placeholder value for the local vLLM backend.</td></tr><tr class=""><td class="confluenceTd"><code>USE_OLLAMA=0</code></td><td class="confluenceTd">Disable Ollama integration because this setup uses vLLM.</td></tr><tr class=""><td class="confluenceTd"><code>ENABLE_OLLAMA=0</code></td><td class="confluenceTd">Explicitly keep Ollama disabled.</td></tr><tr class=""><td class="confluenceTd"><code>WEBUI_SECRET_KEY="$(cat "$WEBUI_DATA/.webui_key")"</code></td><td class="confluenceTd">Use a stable secret key for consistent WebUI sessions.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$<a href="http://webui_data/app/backend/data">WEBUI_DATA:/app/backend/data</a>"</code></td><td class="confluenceTd">Persist the WebUI database, configuration, and uploads outside the container.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$WEBUI_DATA/<a href="http://static/app/backend/open_webui/static">static:/app/backend/open_webui/static</a>"</code></td><td class="confluenceTd">Mount optional static assets outside the container.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$VLLM_DATA/<a href="http://hf/app/backend/data/hf">hf:/app/backend/data/hf</a>"</code></td><td class="confluenceTd">Reuse the same Hugging Face cache location inside WebUI.</td></tr><tr class=""><td class="confluenceTd"><code>-B "$VLLM_DATA/<a href="http://tmp/tmp">tmp:/tmp</a>"</code></td><td class="confluenceTd">Use your workspace temp directory inside the container.</td></tr><tr class=""><td class="confluenceTd"><code>&gt; "$VLLM_DATA/logs/openwebui.log" 2&gt;&amp;1 &amp;</code></td><td class="confluenceTd">Write logs to file and run OpenWebUI in the background.</td></tr></tbody></table><p><br></p><table class="wysiwyg-macro" data-macro-name="info" data-macro-id="afdce65c-d283-4887-a8e7-53189e335f3f" aria-label="info macro" data-macro-parameters="title=Other UI Options" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2luZm86dGl0bGU9T3RoZXIgVUkgT3B0aW9uc30&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="RICH_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><p>OpenWebUI is one option for a lightweight chat front-end. Two common alternatives are AnythingLLM (often used for chat + document/RAG workflows) and LibreChat (multi-provider chat UI with strong OpenAI-style support). If you choose an alternative UI, the key requirement is support for connecting to an OpenAI-compatible API base URL (such as a local vLLM endpoint).</p></td></tr></tbody></table><h3>Interactive vLLM with Python</h3><p>Start an interactive GPU session. Adjust the account, time, memory, and GPU count as needed for your model and workload. (a single GPU on an interactive node has 16GB VRAM)</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="4035827e-f974-4947-92d9-4cda37a27136" aria-label="code macro" data-macro-parameters="collapse=true|title=Request interactive_gpu" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9UmVxdWVzdCBpbnRlcmFjdGl2ZV9ncHV8Y29sbGFwc2U9dHJ1ZX0&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>salloc --account=&lt;alloc-code&gt;-gpu -N 1 -n 8 --mem=32G --gpus=4 --time=02:00:00 -p interactive_gpu</pre></td></tr></tbody></table><p>Update VLLM_DATA and MODEL_DIR to match where your model is stored.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1363dc46-e6f2-4cee-bc2f-7b3ce765310b" aria-label="code macro" data-macro-parameters="collapse=true|title=$VLLM_DATA &amp; $MODEL_DIR" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9JFZMTE1fREFUQSAmICRNT0RFTF9ESVJ8Y29sbGFwc2U9dHJ1ZX0&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>module load gcc apptainer python
+
+export VLLM_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/vllm-data"
+export MODEL_DIR="$VLLM_DATA/models/Qwen/Qwen2.5-7B-Instruct"</pre></td></tr></tbody></table><p>Launch the vLLM server inside the container</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="df1177c7-a3f3-4ef3-8072-3f9d334f7b61" aria-label="code macro" data-macro-parameters="collapse=true|title=Start vLLM" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9U3RhcnQgdkxMTXxjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>nohup apptainer exec --nv --cleanenv --home "$VLLM_DATA/home" \
+  --env HF_HUB_OFFLINE=1 \
+  --env TRANSFORMERS_OFFLINE=1 \
+  --env TORCH_COMPILE_DISABLE=1 \
+  --env TORCHINDUCTOR_DISABLE=1 \
+  --env TRITON_CACHE_DIR="$SLURM_TMPDIR/triton" \
+  --env XDG_CACHE_HOME="$SLURM_TMPDIR/xdg" \
+  -B "$VLLM_DATA/hf:/root/.cache/huggingface" \
+  -B "$VLLM_DATA/tmp:/tmp" \
+  -B "$MODEL_DIR:$MODEL_DIR" \
+  /arc/project/&lt;alloc-code&gt;/containers/vllm.sif \
+  vllm serve "$MODEL_DIR" \
+    --host 127.0.0.1 --port 18000 \
+    --tensor-parallel-size 4 \
+    --max-model-len 4096 \
+    --max-num-seqs 8 \
+    --enforce-eager \
+  &gt; "$VLLM_DATA/logs/vllm.log" 2&gt;&amp;1 &amp;</pre></td></tr></tbody></table><p>Use this snippet to send a test chat request directly to the running vLLM server</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="1001f59e-3cc4-4311-a18c-d4b0bedfe7ac" aria-label="code macro" data-macro-parameters="collapse=true|title=Python test request script" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9UHl0aG9uIHRlc3QgcmVxdWVzdCBzY3JpcHR8Y29sbGFwc2U9dHJ1ZX0&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>python3 - &lt;&lt;'PY'
+import requests
+BASE="http://127.0.0.1:18000/v1"
+MODEL="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/vllm-data/models/Qwen/Qwen2.5-7B-Instruct"
+
+docs=["Write a 120+ word paragraph about UBC in Vancouver, mentioning research computing."]
+
+for i,text in enumerate(docs,1):
+    payload={"model":MODEL,"messages":[{"role":"user","content":text}],"temperature":0.2,"max_tokens":250}
+    r=requests.post(f"{BASE}/chat/completions",json=payload,timeout=120)
+    r.raise_for_status()
+    j=r.json()
+    out=j["choices"][0]["message"]["content"]
+    print(f"\n--- DOC {i} ---\n{out}\n")
+PY</pre></td></tr></tbody></table><p>Common methods for monitoring and cleanup while testing</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="51f79866-9ebb-472c-b975-30218b5fc32b" aria-label="code macro" data-macro-parameters="collapse=true|title=Monitoring" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9TW9uaXRvcmluZ3xjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre># Monitor log(s)
+tail -f "$VLLM_DATA/logs/vllm.log"
+
+# Clean PID/environment - instances where you need to restart
+pkill -u "$USER" -f 'vllm serve' || true</pre></td></tr></tbody></table><h3>Model Fine Tuning Basics</h3><table class="wysiwyg-macro" data-macro-name="info" data-macro-id="17b28df3-8684-4477-aabc-37184e4ec6d5" aria-label="info macro" data-macro-parameters="icon=false|title=RAG vs. Fine-Tuning" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2luZm86aWNvbj1mYWxzZXx0aXRsZT1SQUcgdnMuIEZpbmUtVHVuaW5nfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="RICH_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><p>Fine-tuning “teaches” a model by training it on your own data so it reliably answers in a specific style or follows a consistent workflow, while retrieval-augmented generation (RAG) leaves the model unchanged and instead pulls relevant info from your knowledge sources at question time (PDFs, web pages, wikis, docs, databases, etc.) to ground the response. RAG is usually better when information changes or must stay up to date - for example, a customer-support bot that answers from the latest help center articles, or an internal assistant that references current company policies and procedures. Fine-tuning is usually better when the facts are relatively stable and you want the model to respond more consistently-for example, generating replies in a brand voice, producing structured outputs like “problem &gt; diagnosis &gt; next steps,” or handling a repeating set of Q&amp;A with the same wording and tone. This guide focuses on fine-tuning a small open-source model using Q&amp;A pairs derived from a HTML, covering dataset prep, cleaning, LoRA/QLoRA training, and basic evaluation.</p></td></tr></tbody></table><p>In this example, we’ll fine-tune a small instruct model using QLoRA (4-bit base model + LoRA adapters) and produce an adapter directory you can load at inference time</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="eb8298fc-a8aa-48f8-b5d2-56bc3603cefd" aria-label="code macro" data-macro-parameters="collapse=true|title=Workspace preparation" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9V29ya3NwYWNlIHByZXBhcmF0aW9ufGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>export VLLM_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/vllm-data"
+export HF_HOME="$VLLM_DATA/hf"
+
+export FT_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/finetune-data"
+mkdir -p "$FT_DATA"/{data,output,logs,tmp}
+</pre></td></tr></tbody></table><p>Download a model from HuggingFace</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bc56f9ed-2fb9-4a1c-a6b3-05c4158c1c6f" aria-label="code macro" data-macro-parameters="collapse=true|title=Download models from Hugging Face" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9RG93bmxvYWQgbW9kZWxzIGZyb20gSHVnZ2luZyBGYWNlfGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre># Run from a login node (recommended) or interactive GPU node with the http_proxy module loaded
+
+export MODEL_DIR="$VLLM_DATA/models/Qwen/Qwen2.5-1.5B-Instruct"
+huggingface-cli download "Qwen/Qwen2.5-1.5B-Instruct" --local-dir "$MODEL_DIR"
+</pre></td></tr></tbody></table><p>Use Apptainer to download a <a href="https://hub.docker.com/search?q=pytorch">PyTorch container</a> for training</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="2d16f582-b372-40cd-b633-da5184c21bef" aria-label="code macro" data-macro-parameters="collapse=true|title=$FT_IMG" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9JEZUX0lNR3xjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>module load gcc apptainer
+
+cd /arc/project/&lt;alloc-code&gt;/containers
+apptainer pull pytorch.sif docker://nvcr.io/nvidia/pytorch:24.01-py3
+export FT_IMG="/arc/project/&lt;alloc-code&gt;/containers/pytorch.sif"</pre></td></tr></tbody></table><p>Create a python virtual environment and install prerequisits</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ab919aef-a2f2-4a73-baa8-b5cc6df24a6e" aria-label="code macro" data-macro-parameters="collapse=true|title=$FT_DATA/venv" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6dGl0bGU9JEZUX0RBVEEvdmVudnxjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>module load python 
+export VENV_DIR="$FT_DATA/venv" 
+python3 -m venv "$VENV_DIR" 
+source "$VENV_DIR/bin/activate" 
+
+pip install --upgrade pip 
+pip install "transformers&gt;=4.45" datasets accelerate "peft&gt;=0.10" "trl&gt;=0.8,&lt;0.12" "bitsandbytes&gt;=0.43" safetensors sentencepiece rich</pre></td></tr></tbody></table><p>Prepare a training script. This example will be based on some content from this AI/ML Resorces Hub page</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="04dbdaf4-be70-472e-95df-13fa8bbc2b30" aria-label="code macro" data-macro-parameters="collapse=true|language=json|title=$FT_DATA/data/train.jsonl" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9anNvbnx0aXRsZT0kRlRfREFUQS9kYXRhL3RyYWluLmpzb25sfGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>{"messages":[{"role":"system","content":"You are an ARC support assistant. Be concise and accurate."},{"role":"user","content":"How do I check GPU usage on my job?"},{"role":"assistant","content":"SSH to the compute node listed in your connect file, then run nvidia-smi for a snapshot or nvtop for a live view."}]}
+{"messages":[{"role":"system","content":"You are an ARC support assistant. Be concise and accurate."},{"role":"user","content":"Where should I store container images?"},{"role":"assistant","content":"Store container images under /arc/project/&lt;alloc-code&gt;/containers. Store runtime data such as models and logs under /scratch/&lt;alloc-code&gt;/$USER."}]}
+{"messages":[{"role":"system","content":"You are an ARC support assistant. Be concise and accurate."},{"role":"user","content":"When should I use vLLM instead of Ollama?"},{"role":"assistant","content":"Use Ollama for quick single-user testing. Use vLLM when you need multi-GPU inference, higher throughput, or an OpenAI-compatible API endpoint."}]}
+{"messages":[{"role":"system","content":"You are an ARC support assistant. Be concise and accurate."},{"role":"user","content":"Can I download a HuggingFace model from a compute node?"},{"role":"assistant","content":"Yes. Load the http_proxy module first — huggingface.co is in the proxy allowlist. For batch jobs, pre-download before submitting to avoid using GPU time on network transfers."}]}
+{"messages":[{"role":"system","content":"You are an ARC support assistant. Be concise and accurate."},{"role":"user","content":"How do I connect to the WebUI after my job starts?"},{"role":"assistant","content":"Open the connect-$SLURM_JOB_ID.txt file in your submission directory. It contains the SSH tunnel commands and the localhost URL to open in your browser."}]}</pre></td></tr></tbody></table><p>Additionally create a small validation set so training can run evaluation steps</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="24251ffd-739d-4f1c-9502-4bac28fc31de" aria-label="code macro" data-macro-parameters="collapse=true|language=json|title=$FT_DATA/data/val.jsonl" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9anNvbnx0aXRsZT0kRlRfREFUQS9kYXRhL3ZhbC5qc29ubHxjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>{"messages":[{"role":"system","content":"You are an ARC support assistant. Be concise and accurate."},{"role":"user","content":"What is the difference between GPU16 and GPU32 nodes?"},{"role":"assistant","content":"GPU16 nodes have 16GB VRAM per GPU and are suitable for smaller models and lighter workloads. GPU32 nodes have 32GB VRAM and are better for larger models or longer context lengths."}]}
+{"messages":[{"role":"system","content":"You are an ARC support assistant. Be concise and accurate."},{"role":"user","content":"Can I pull a container image from a compute node?"},{"role":"assistant","content":"No. Docker Hub and other container registries are not in the proxy allowlist. Run apptainer pull on a login node and save the .sif file to /arc/project/&lt;alloc-code&gt;/containers."}]}</pre></td></tr></tbody></table><p>Prepare a training script</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ccddf24d-b4e0-480e-b6e6-49f464693266" aria-label="code macro" data-macro-parameters="collapse=true|language=json|title=$FT_DATA/train_qlora.py" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9anNvbnx0aXRsZT0kRlRfREFUQS90cmFpbl9xbG9yYS5weXxjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>import os
+import torch
+from datasets import load_dataset
+from transformers import (
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    TrainingArguments,
+    BitsAndBytesConfig,
+)
+from trl import SFTTrainer
+from peft import LoraConfig
+
+MODEL_DIR  = os.environ["MODEL_DIR"]
+TRAIN_FILE = os.environ["TRAIN_FILE"]
+VAL_FILE   = os.environ["VAL_FILE"]
+OUT_DIR    = os.environ["OUT_DIR"]
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=True)
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
+
+# Load JSONL with chat-style messages
+ds = load_dataset("json", data_files={"train": TRAIN_FILE, "validation": VAL_FILE})
+
+# Convert messages -&gt; plain text 
+def render_chat(example):
+    text = tokenizer.apply_chat_template(
+        example["messages"],
+        tokenize=False,
+        add_generation_prompt=False,
+    )
+    return {"text": text}
+
+ds = ds.map(render_chat)
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True,
+)
+
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_DIR,
+    torch_dtype=torch.float16,
+    quantization_config=bnb_config,
+    device_map="auto",
+)
+
+lora = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM",
+    target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+)
+
+args = TrainingArguments(
+    output_dir=OUT_DIR,
+    per_device_train_batch_size=1,
+    per_device_eval_batch_size=1,
+    gradient_accumulation_steps=16,
+    learning_rate=2e-4,
+    num_train_epochs=3,
+    logging_steps=5,
+    save_steps=20,
+    eval_steps=20,
+    eval_strategy="steps",
+    save_total_limit=2,
+    fp16=True,
+# W&amp;B logging available — set to "wandb" and load http_proxy module to enable
+&nbsp; &nbsp; report_to="none",
+)
+
+trainer = SFTTrainer(
+    model=model,
+    tokenizer=tokenizer,
+    train_dataset=ds["train"],
+    eval_dataset=ds["validation"],
+    peft_config=lora,
+    args=args,
+    dataset_text_field="text",
+    max_seq_length=1024,
+)
+
+trainer.train()
+trainer.save_model(OUT_DIR)
+print("Saved adapter to:", OUT_DIR)</pre></td></tr></tbody></table><p>Prepare a slurm job script</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="bea7f550-f9d5-4529-828b-28718e9ef672" aria-label="code macro" data-macro-parameters="collapse=true|language=json|title=$FT_DATA/finetune-qlora.sh" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9anNvbnx0aXRsZT0kRlRfREFUQS9maW5ldHVuZS1xbG9yYS5zaHxjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>#!/bin/bash
+#SBATCH --job-name=qlora
+#SBATCH --account=&lt;alloc-code&gt;-gpu
+#SBATCH --time=02:00:00
+#SBATCH --nodes=1
+#SBATCH --gpus=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --output=%x-%j.out
+#SBATCH --error=%x-%j.err
+
+# The http_proxy module enables huggingface.co access for tokenizer/config fetches if needed
+
+module load gcc apptainer python http_proxy
+
+export VLLM_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/vllm-data"
+export FT_DATA="/scratch/&lt;alloc-code&gt;/&lt;user&gt;/finetune-data"
+export HF_HOME="$VLLM_DATA/hf"
+
+export MODEL_DIR="$VLLM_DATA/models/Qwen/Qwen2.5-1.5B-Instruct"
+export TRAIN_FILE="$FT_DATA/data/train.jsonl"
+export VAL_FILE="$FT_DATA/data/val.jsonl"
+export OUT_DIR="$FT_DATA/output/adapter-${SLURM_JOB_ID}"
+
+export VENV_DIR="$FT_DATA/venv"
+export FT_IMG="/arc/project/&lt;alloc-code&gt;/containers/pytorch.sif"
+
+# Node-local caches
+export XDG_CACHE_HOME="$SLURM_TMPDIR/xdg"
+export TRITON_CACHE_DIR="$SLURM_TMPDIR/triton"
+mkdir -p "$XDG_CACHE_HOME" "$TRITON_CACHE_DIR"
+
+
+apptainer exec --nv \
+  -B "$VLLM_DATA:$VLLM_DATA" \
+  -B "$FT_DATA:$FT_DATA" \
+  -B "$SLURM_TMPDIR:/tmp" \
+  "$FT_IMG" \
+  bash -lc "
+    source '$VENV_DIR/bin/activate'
+    python3 '$FT_DATA/train_qlora.py' 2&gt;&amp;1 | tee '$FT_DATA/logs/train-${SLURM_JOB_ID}.log'
+  " </pre></td></tr></tbody></table><p><br></p><p>After the training has successfully completed, use an Interactive GPU session to test inference against the trained adapter and base model separately to observe the difference if output. The fine-tuned adapter should return a Sockeye-specific answer. The base model will likely respond more generically or verbosely</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="09a2dbd9-27ea-4956-a22e-ca4531c5817d" aria-label="code macro" data-macro-parameters="collapse=true|language=json|title=Request interactive_gpu" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9anNvbnx0aXRsZT1SZXF1ZXN0IGludGVyYWN0aXZlX2dwdXxjb2xsYXBzZT10cnVlfQ&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>salloc --account=&lt;alloc-code&gt;-gpu -N 1 -n 8 --mem=32G --gpus=1 -p interactive_gpu</pre></td></tr></tbody></table><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="510a4264-92d5-4b98-b150-e98e48f13ba0" aria-label="code macro" data-macro-parameters="collapse=true|language=json|title=$ADAPTER_DIR" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9anNvbnx0aXRsZT0kQURBUFRFUl9ESVJ8Y29sbGFwc2U9dHJ1ZX0&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre># In this case replace ${SLURM_JOB_ID} with the applicable JobID
+export ADAPTER_DIR="$FT_DATA/output/adapter-${SLURM_JOB_ID}"
+source "$FT_DATA/venv/bin/activate"</pre></td></tr></tbody></table><p>Use Python to test adapter inferencing interactively</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="6baef2d9-0548-4ff1-9967-c4910b686c51" aria-label="code macro" data-macro-parameters="collapse=true|language=json|title=Python adapter test" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9anNvbnx0aXRsZT1QeXRob24gYWRhcHRlciB0ZXN0fGNvbGxhcHNlPXRydWV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>python3 - &lt;&lt;'PY'
+import os
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel
+
+MODEL_DIR = os.environ["MODEL_DIR"]
+ADAPTER_DIR = os.environ["ADAPTER_DIR"]
+
+tok = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=True)
+base = AutoModelForCausalLM.from_pretrained(
+    MODEL_DIR,
+    torch_dtype=torch.float16,
+    device_map="auto",
+)
+model = PeftModel.from_pretrained(base, ADAPTER_DIR)
+model.eval()
+
+prompt = "How do I check GPU usage on my Sockeye job?"
+inputs = tok(prompt, return_tensors="pt").to(model.device)
+with torch.no_grad():
+    out = model.generate(
+        **inputs,
+        max_new_tokens=200,
+        do_sample=False,
+        pad_token_id=tok.eos_token_id,
+    )
+print(out)
+PY</pre></td></tr></tbody></table><p>For the base-model comparison, use the same test script and prompt, but omit ADAPTER_DIR and the PeftModel.from_pretrained(...) step so generation runs directly from the base model.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="61da5c3e-1781-4c49-be4f-55e5345f3f8b" aria-label="code macro" data-macro-parameters="collapse=true|language=json|title=Base model test" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6bGFuZ3VhZ2U9anNvbnx0aXRsZT1CYXNlIG1vZGVsIHRlc3R8Y29sbGFwc2U9dHJ1ZX0&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>python3 - &lt;&lt;'PY'
+# Same as adapter test but without PEFT
+import os
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+MODEL_DIR = os.environ["MODEL_DIR"]
+
+tok = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=True)
+base = AutoModelForCausalLM.from_pretrained(
+    MODEL_DIR,
+    torch_dtype=torch.float16,
+    device_map="auto",
+)
+base.eval()
+
+prompt = "How do I check GPU usage on my Sockeye job?"
+inputs = tok(prompt, return_tensors="pt").to(base.device)
+with torch.no_grad():
+    out = base.generate(
+        **inputs,
+        max_new_tokens=200,
+        do_sample=False,
+        pad_token_id=tok.eos_token_id,
+    )
+print(out)
+PY</pre></td></tr></tbody></table><h3>Monitoring</h3><p>When your job starts, the script writes a connection helper file named <code>connect-$SLURM_JOB_ID.txt </code>in your submission directory <code>($SLURM_SUBMIT_DIR)`</code>. Open this file to see the compute node hostname (e.g., se267) and the SSH tunnel steps for your running job.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="ac7053c3-4f5c-4f43-bed1-16e4ac06da29" aria-label="code macro" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>ssh $USER@${NODE}</pre></td></tr></tbody></table><p>Once on the compute node, you can monitor GPU usage with tools such as <a href="https://docs.nvidia.com/deploy/nvidia-smi/index.html">nvidia-smi</a> and/or <a href="https://github.com/Syllo/nvtop">nvtop</a>.</p><h4>NVTOP</h4><p>nvtop provides a live, top-like view of GPU utilization and per-process GPU memory usage. You can install it in a Conda virtual environment and run it from within your job session.</p><p><img class="confluence-embedded-image confluence-content-image-border" draggable="false" height="250" width="565" src="./ubc-arc-ai-ml_files/image-2026-2-4_11-16-26.png" data-image-src="/download/attachments/423963628/image-2026-2-4_11-16-26.png?version=1&amp;modificationDate=1770232587000&amp;api=v2" data-unresolved-comment-count="0" data-linked-resource-id="429081804" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image-2026-2-4_11-16-26.png" data-base-url="https://confluence.it.ubc.ca" data-linked-resource-content-type="image/png" data-linked-resource-container-id="423963628" data-linked-resource-container-version="345" title="UBC ARC Technical User Documentation &gt; AI/ML Resources Hub &gt; image-2026-2-4_11-16-26.png" data-location="UBC ARC Technical User Documentation &gt; AI/ML Resources Hub &gt; image-2026-2-4_11-16-26.png" data-image-height="1506" data-image-width="3406"></p><h4>NVIDIA-SMI</h4><p>nvidia-smi is available on the GPU nodes by default and is the quickest way to confirm your job is using the GPU and to check GPU memory usage, utilization, and running processes.</p><table class="wysiwyg-macro" data-macro-name="code" data-macro-id="b5d8ab74-f893-4545-92d3-254de1bd0fa9" aria-label="code macro" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGV9&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre>nvidia-smi</pre></td></tr></tbody></table><h3>External Guides and References</h3><p>These links point to related documentation from other universities and research computing centers. They are meant to complement our notes above and show common patterns - requesting GPUs in Slurm, structuring job scripts, setting up PyTorch/TensorFlow environments, using containers, and scaling to multi-GPU/multi-node that you can adapt to Sockeye.</p><p><a href="https://docs.alliancecan.ca/wiki/AI_and_Machine_Learning/en">Alliance Canada</a> - AI and Machine Learning: Practical guidance for running AI/ML workloads on Alliance clusters, including environment best practices.</p><p><a href="https://rcpedia.stanford.edu/_user_guide/using_gpu/">Stanford Research Computing</a> - PyTorch and Keras: Walkthrough of a complete GPU Slurm job, including a short training example in both PyTorch and TensorFlow/Keras.</p><p><a href="https://docs.hpc.shef.ac.uk/en/latest/parallel/GPUComputing.html">University of Sheffield</a> - GPUs and basic monitoring.</p><p><a href="https://ithelp.stats.ox.ac.uk/userguides/hpc/intro.html">Oxford (Stats HPC)</a> - PyTorch/TensorFlow conda and Slurm: Intro guide showing how to use PyTorch/TensorFlow Conda environments with an example Slurm workflow.</p><p><a href="https://docs.vllm.ai/en/stable/">vLLM Documentation</a> - Reference for serve flags, supported models, quantization options, and performance tuning.</p><p><a href="https://ollama.com/library">Ollama Model Library</a> - Search available models. Check VRAM requirements before pulling.</p><p><a href="https://docs.openwebui.com/">OpenWebUI Documentation</a> - Configuration, environment variables, RAG setup, and pipeline options.</p><p><a href="https://huggingface.co/docs/peft/index">HuggingFace PEFT Documentation</a> - Reference for LoRA, QLoRA, and other fine-tuning methods.</p><p><br></p><table class="wysiwyg-macro" data-macro-name="info" data-macro-id="e7de2e14-73f5-46c7-b6c7-493162c266d9" aria-label="info macro" data-macro-parameters="icon=false" data-macro-schema-version="1" style="background-image: url(https://confluence.it.ubc.ca/plugins/servlet/confluence/placeholder/macro-heading?definition=e2luZm86aWNvbj1mYWxzZX0&amp;locale=en_US&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="RICH_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><p>Is there something you’d like to see added to this page? Please email <a href="mailto:arc.support@ubc.ca">arc.support@ubc.ca</a></p></td></tr></tbody></table><p><br></p><p><br></p>
+        <p>&nbsp;</p>
+    
+
+</body></html>

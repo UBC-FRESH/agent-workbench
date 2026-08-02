@@ -1,0 +1,470 @@
+Skip to sidebar
+Skip to main content
+Skip to breadcrumbs
+Skip to search
+Log in
+Linked Applications
+UBC IT Confluence
+Spaces
+Create
+
+Search
+Help
+Log in
+
+
+UBC ARC Technical User Documentation
+About ARC
+What is HPC
+About Sockeye
+About Chinook
+About Globus
+ARC Access Management Portal
+Using Sockeye
+QuickStart Guide
+SSH Connection Sharing
+Introduction to Linux and Using the Command Line Interface
+Understanding Job Scheduling and Fairshare
+Data Transfer
+Using Visual Studio Code with Sockeye
+UBC ARC OnDemand
+File Transfer and Management
+Job Management
+Cluster Desktop
+Jupyter Notebook
+RStudio Server
+MATLAB
+Genomics Applications
+Bandage
+FASTQC
+IGV
+MEGA
+UGENE
+ALPHAFOLD3
+Running Jobs
+Array Jobs in Slurm
+GPU Jobs in Detail
+Using Local Scratch
+Accessing Web-Based Services in Your Jobs
+Software
+Using the Alliance CVMFS Software Stack
+Virtual Environments on Sockeye
+Using Apptainer or Singularity Containers
+RStudio with Apptainer
+Bioconductor Apptainer Container for Bioinformatics
+Jupyter Notebooks with Apptainer
+TensorFlow with Conda
+MATLAB Parallel Computing
+Build Conda environment in Apptainer Container
+AlphaFold
+Using Chinook
+Chinook Overview & Best Practices
+Chinook Setup Guide
+Chinook Sharing Guide
+Chinook User Guide
+Checking your Chinook allocation's storage
+Using Globus
+Data Transfer to or from Sockeye
+Transfer to or From Your Local Machine Using Globus Connect Personal
+Enable Globus Subscription Groups
+Common Globus Help Topics
+Connecting to Microsoft OneDrive with Globus Web
+Using REDCap
+ARC REDCap Access Management and Security Guidelines
+Defending Your REDCap Flex Project Against Fraudulent Responses and Bot Attacks
+How to: Separate/Split a REDCap Project
+Including the ARC REDCap Platform on a Research Ethics Board Application
+MyCap Mobile Application
+The nedCAPTCHA Module
+AI/ML Resources Hub
+Training
+System Maintenance
+Technical FAQ
+Grant Support Language
+Acknowledgment of UBC ARC in Research
+ConfigureSpace tools
+Pages… Software
+Virtual Environments on Sockeye
+Created by Nesrallah, Michael, last updated by Fletcher, Chad on Jun 02, 2026  6 minute read
+Overview
+Creating and Using a Python Environment
+Installing Packages
+Installing dependent packages
+Managing Packages
+Exporting and Recreating a Virtual Environment
+Using a Virtual Environment in a Job Script
+Creating and Using a Conda Environment
+Installing Conda on Sockeye
+Creating a Conda Environment
+Activating an Existing Environment
+Installing Packages
+Managing Your Conda Environment
+Exporting and Recreating Environments
+Using a Conda Environment in a Job Script
+Quick Reference: Conda vs Virtualenv
+Prerequisites
+
+In this guide, it is assumed you know how to connect to Sockeye, navigate its filesystem, load modules, and write job scripts. If you are not familiar with Sockeye, you should review the Quickstart Guide and Running Jobs pages.
+Overview
+Virtual environments (e.g. virtualenv and conda) are powerful tools that are used to install software packages that may be required for your HPC jobs which aren’t already included on Sockeye. Virtualenv is an environment manager and uses pip, a package manager. Conda acts as both environment manager and package manager. Virtualenv came first as an environment manager for Python and is used to install only Python packages, whereas conda may be used to install many other open-source packages or dependencies, including R, C/C++, or Java software.
+
+Which should I use?
+
+Use virtualenv (venv) if you are working mainly in Python and want a lightweight per-project environment. Use conda if your work involves non-Python dependencies such as R, C/C++ libraries, or bioinformatics tools, or if you need to manage Python versions across different projects. If you are unsure, virtualenv is the simpler starting point for most Python-based research workflows.
+
+Creating and Using a Python Environment
+We recommend creating Python virtual environments in your project space (/arc/project/<alloc-code>/) whenever possible.
+
+
+
+# Use 'module avail python' to see available versions - 3.11 or 3.12 recommended
+module load gcc python  
+
+# Create the virtual environment (myenv is the name of the virtual env)
+python3 -m venv /arc/project/<alloc-code>/myenv 
+
+# Activate the virtual environment
+source /arc/project/<alloc-code>/myenv/bin/activate
+
+# Optional: upgrade pip to its latest version
+pip install --upgrade pip
+
+# Deactivate the virtual environment
+deactivate
+You can reuse the same virtual environment for future sessions. Each time, load the same modules used during creation and then activate the environment.
+
+
+
+module load gcc python
+source /arc/project/<alloc-code>/myenv/bin/activate
+Installing Packages
+With your virtual environment is activated, you can use pip to install Python packages and their dependencies. Most Python packages are available from the Python Package Index (PyPI).
+
+pip installs must be run on a login node. PyPI is not accessible from compute nodes. Install all required packages before submitting your job.
+
+While the official pip documentation covers all available commands, the examples below demonstrate the most common workflow using the numpy package.
+
+
+
+module load gcc python
+source /arc/project/<alloc-code>/myenv/bin/activate
+pip install numpy
+When installing multiple packages, it is generally recommended to install them in a single command, as this allows pip to resolve dependencies more effectively:
+
+
+
+pip install numpy scipy pandas matplotlib
+pip can install packages from a variety of sources, including PyPI and pre-built Python wheel files.
+
+If you need to troubleshoot an installation or see additional details about where packages are being downloaded from, increase the verbosity level:
+
+
+
+pip install -vvv numpy
+Installing dependent packages
+Some Python packages have dependencies that differ between CPU and GPU environments or require a specific version of a dependency that is not automatically selected by pip.
+
+In these cases, you may need to install the required dependency manually before installing the package itself. For example:
+
+
+
+pip install tensorflow 
+pip install my_package --no-deps
+The --no-deps option tells pip not to automatically install any dependencies. This can be useful when you have already installed the required dependencies manually or need to use a specific version provided by your environment. Use --no-deps with caution, as missing dependencies can cause packages to fail at runtime.
+
+Managing Packages
+Common virtual environment management commands:
+
+
+
+# List installed packages 
+pip list 
+
+# Uninstall a package 
+pip uninstall <package>
+
+# Deactivate the virtual environment 
+deactivate
+Exporting and Recreating a Virtual Environment
+You can export a list of installed packages from a virtual environment and use it to recreate the environment elsewhere.
+
+First, activate the source environment and generate a requirements file:
+
+
+
+# Activate the environment 
+source /arc/project/<alloc-code>/myenv/bin/activate
+
+# Export installed packages 
+pip freeze > requirements.txt
+To recreate the environment on another system or in a new location:
+
+
+
+# Create and activate a new environment 
+python3 -m venv /arc/project/<alloc-code>/myenv_copy
+source /arc/project/<alloc-code>/myenv_copy/bin/activate 
+
+# Install packages from the requirements file 
+pip install -r requirements.txt
+The requirements.txt file can be shared with collaborators, included in job workflows, or used to recreate the same software environment in the future.
+
+Using a Virtual Environment in a Job Script
+The following single node and cpu job script demonstrates how to include your ready-made virtual environment inside your jobs:
+
+
+
+#!/bin/bash
+#SBATCH --time=01:00:00          # Request 1 hour runtime
+#SBATCH --account=alloc-code     # Specify your allocation code
+#SBATCH --nodes=1                # Request 1 node
+#SBATCH --ntasks=1               # Request 1 task
+#SBATCH --mem=2G                 # Request 2 GB of memory
+#SBATCH --job-name=job_name      # Specify the job name
+#SBATCH --output=output.txt      # Specify the output file
+#SBATCH --error=error.txt        # Specify the error file 
+
+# Load the same modules used to create the environment
+module load gcc python  
+
+# Activate the virtual environment 
+source /arc/project/<allocation-code>/myenv/bin/activate 
+
+# Run your application 
+python my_script.py
+The virtual environment will be automatically deactivated when the job ends.
+
+Creating and Using a Conda Environment
+Important notes on conda environments
+
+Create Conda environments in your project space, not in scratch. Project space is better suited for longer-term software environments.
+Remove old Conda environments that are no longer needed to avoid version conflicts and reduce storage use.
+Do not create or install Conda environments inside batch jobs. Install software ahead of time on a login node.
+Avoid mixing Conda environments with unrelated Sockeye software modules unless required.
+Use pip inside Conda only when a package is not available through Conda.
+The other type of virtual environment discussed in this page is conda. As mentioned above, the process of using it is similar to virtualenv, but there are differences, the major one being that conda is language agnostic—it can be used to install packages for languages beyond just Python, such as R, Ruby, C, Java, etc.
+
+Installing Conda on Sockeye
+There are two ways to use Conda on Sockeye:
+
+Option 1 (Recommended): Install your own Miniconda. This provides the most flexibility and gives you full control over package versions and environment management.
+
+Follow this Miniconda installation guide
+
+Option 2: Use the Sockeye Miniconda module
+
+For quick testing or temporary environments, you can use the Miniconda module provided on Sockeye:
+
+
+
+module load miniconda3
+Once Conda is available, proceed to create and activate an environment.
+
+Creating a Conda Environment
+Create and activate a Conda environment:
+
+
+
+# Create a new environment
+conda create -n myenv python=3.11
+
+# Activate the environment
+conda activate myenv
+Alternatively, create the environment in a specific project directory:
+
+
+
+conda create -p /arc/project/<alloc-code>/conda/myenv python=3.11
+
+conda activate /arc/project/<alloc-code>/conda/myenv
+Activating an Existing Environment
+
+
+# Named environment
+conda activate myenv
+
+# Environment created with -p
+conda activate /arc/project/<alloc-code>/conda/myenv
+Installing Packages
+Install a package from the default Conda channels:
+
+
+
+# Install a package
+conda install numpy
+
+# Install multiple packages
+conda install numpy scipy pandas matplotlib
+Many scientific packages are available through the conda-forge channel:
+
+
+
+conda install -c conda-forge numpy
+To search for available packages:
+
+
+
+conda search <package>
+Researchers in bioinformatics may find additional software in the Bioconda repository, which is built on top of conda-forge.
+
+Managing Your Conda Environment
+Common Conda management commands:
+
+
+
+# List installed packages
+conda list
+
+# List available environments
+conda env list
+
+# Remove a package
+conda uninstall <package>
+
+# Deactivate the current environment
+conda deactivate
+
+# Remove an environment
+conda env remove -n <env_name>
+Remove Conda environments that are no longer needed to free storage and avoid confusion between software versions.
+
+Exporting and Recreating Environments
+Export an environment definition to a YAML file:
+
+
+
+conda env export > environment.yml
+Recreate the environment from the exported file:
+
+
+
+conda env create -n myenv -f environment.yml
+Using a Conda Environment in a Job Script
+Once you have installed and set up your conda environment with your needed software, the virtual environment can be added to your job script. An example script for a single node and cpu job is given as follows:
+
+
+
+#!/bin/bash
+#SBATCH --time=01:00:00          # Request 1 hours of runtime
+#SBATCH --account=alloc-code     # Specify your allocation code
+#SBATCH --nodes=1                # Request 1 node
+#SBATCH --ntasks=1               # Request 1 task
+#SBATCH --mem=2G                 # Request 2 GB of memory
+#SBATCH --job-name=job_name      # Specify the job name
+#SBATCH --output=output.txt      # Specify the output file
+#SBATCH --error=error.txt        # Specify the error file
+#SBATCH --mail-user=<your-email> # Email address for job notifications
+#SBATCH --mail-type=ALL          # Receive email notifications for all job events
+
+# Navigate to the job's working directory
+cd $SLURM_SUBMIT_DIR
+
+# Load conda environment
+source ~/.bashrc
+
+# Activate conda environment
+conda activate <env_name>
+
+# Add your commands here
+
+# Deactivate environment
+conda deactivate
+
+
+Quick Reference: Conda vs Virtualenv
+
+
+
+
+Install a package
+
+conda install <Package>
+X
+pip install <Package>
+Update a package
+
+conda update --name <Env_Name> <Package>
+X
+pip install --upgrade <Package>
+Update package manager
+
+conda update conda
+X
+pip install -U pip
+Uninstall a package
+
+conda remove --name <Env_Name> <Package>
+X
+pip uninstall <Package>
+Create an environment
+
+conda create --name <Env_Name> python
+cd <Env_Dir>
+virtualenv <Env_Name>
+X
+Activate an environment
+
+conda activate <Env_Name>
+source <Env_Dir>/<Env_Name>/bin/activate
+X
+Deactivate an environment
+
+conda deactivate
+deactivate
+X
+Search available packages
+
+conda search <search_term>
+X
+pip search <search_term>
+Install package from specific source
+
+conda install --channel <URL> <Package>
+X
+pip install --index-url <URL> <Package>
+List installed packages
+
+conda list --name <Env_Name>
+X
+pip list
+Create requirements file
+
+conda list --export
+X
+pip freeze
+List all environments
+
+conda info --envs
+Install virtualenvwrapper, 
+ls virtualenv
+X
+Install other package manager
+
+conda install pip
+X
+pip install conda
+Install Python
+
+conda install python=x.x
+X
+X
+Update Python
+
+conda update python*
+X
+X
+
+
+
+
+
+
+
+
+
+
+
+
+No labels
+Powered by Atlassian Confluence 9.2.10 Report a bug Atlassian News
+Atlassian
