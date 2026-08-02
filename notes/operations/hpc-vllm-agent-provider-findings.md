@@ -383,6 +383,11 @@ This attribution is not fully isolated — the log evidence confirms queueing an
 100% cache usage but does not cleanly separate which run produced which. Treat
 the prefill explanation as the leading hypothesis, not a settled result.
 
+**Update: since confirmed.** A later tensor-parallel run tripled the KV cache
+while leaving the prefill batch budget unchanged, and the collapse did not move
+at all. See "Confirmed: the high-concurrency collapse is not KV exhaustion"
+below. Cache capacity is not the binding constraint here.
+
 The practical rule stands regardless: size from measurement at your real prompt
 length, not from dividing cache size by context length.
 
@@ -537,6 +542,56 @@ Caveat: repeat spread was 22-25% even after warming, so treat these as accurate
 to roughly the nearest few percent rather than exact. The qualitative
 conclusion — near-linear scaling, no cross-server interference — is well clear
 of that noise.
+
+### Tensor parallelism does start under `--enforce-eager`, and is not worth it
+
+`--enforce-eager` skips torch.compile, so the FlashInfer fusion pass never runs
+and TP>1 starts cleanly. It is a working escape hatch for a checkpoint that does
+not fit on one device. It is not a performance option.
+
+Measured on two GPUs, same checkpoint, short prompts, 32 concurrent streams:
+
+| Configuration | Aggregate tok/s | Per-stream tok/s |
+| --- | --- | --- |
+| One GPU, compiled | 2,345 | 74.3 |
+| Two independent servers, compiled | 4,392 (64 streams) | ~74.7 |
+| Two GPUs, tensor parallel, eager | 424 | 16.1 |
+
+Eager mode costs roughly **5.5x throughput** — far more than tensor parallelism
+recovers. Use TP only when the weights genuinely do not fit, and expect to pay
+this until the JIT problem is fixed and compilation can be re-enabled.
+
+Tensor parallelism does triple the KV cache, because sharding weights frees
+device memory: 9,237,726 tokens against 2,948,170 on one GPU, raising reported
+maximum concurrency at full context from about 22x to about 70x.
+
+**That extra cache bought nothing**, which is the useful part.
+
+### Confirmed: the high-concurrency collapse is not KV exhaustion
+
+Earlier in this work, throughput at agent-sized context collapsed at 64
+concurrent streams, at roughly 73% of nominal KV cache. Prefill scheduling was
+proposed as the cause and explicitly recorded as an unproven hypothesis, because
+the log evidence could not separate it from cache pressure.
+
+Tensor parallelism provides a clean test, since it triples the cache while
+leaving the prefill batch budget unchanged. At 64 streams and ~32.8k-token
+prompts:
+
+| Configuration | KV cache | Aggregate tok/s | Per-stream | TTFT mean |
+| --- | --- | --- | --- | --- |
+| One GPU, compiled | 2,948,170 | 309 | 5.3 | 24.2 s |
+| Two GPUs, TP, eager | 9,237,726 | 274 | 5.4 | 21.9 s |
+
+**Three times the cache moved the collapse not at all.** Per-stream throughput
+is identical to within noise. Cache capacity is therefore not the binding
+constraint at this operating point, and the prefill-scheduling explanation is
+now supported by a positive test rather than merely being the surviving guess.
+
+Practical consequence: do not try to buy high-concurrency long-context capacity
+with more KV cache. It is the prefill batch budget and scheduler behaviour that
+must change. Adding devices to enlarge the cache is spending hardware on the
+wrong bottleneck.
 
 ### Prefix-cache comparison
 
