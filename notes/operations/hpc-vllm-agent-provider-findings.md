@@ -543,23 +543,57 @@ to roughly the nearest few percent rather than exact. The qualitative
 conclusion — near-linear scaling, no cross-server interference — is well clear
 of that noise.
 
-### Tensor parallelism does start under `--enforce-eager`, and is not worth it
+### The JIT failure is fixable, and tensor parallelism is still the wrong tool
 
-`--enforce-eager` skips torch.compile, so the FlashInfer fusion pass never runs
-and TP>1 starts cleanly. It is a working escape hatch for a checkpoint that does
-not fit on one device. It is not a performance option.
+The header incompatibility has a real root cause and a real fix. The pip CUDA
+wheels are **internally inconsistent**: `nvcc` reports 13.3 while the bundled
+CUDA runtime headers define `CUDART_VERSION 13000` (13.0). CCCL's
+`cuda_toolkit.h` refuses to compile when compiler and toolkit minor versions
+disagree, and it documents an opt-out for exactly this case.
 
-Measured on two GPUs, same checkpoint, short prompts, 32 concurrent streams:
+Two environment hooks make it build:
 
-| Configuration | Aggregate tok/s | Per-stream tok/s |
-| --- | --- | --- |
-| One GPU, compiled | 2,345 | 74.3 |
-| Two independent servers, compiled | 4,392 (64 streams) | ~74.7 |
-| Two GPUs, tensor parallel, eager | 424 | 16.1 |
+```bash
+# 1. accept the CUDA 13.3 compiler against 13.0 runtime headers
+export FLASHINFER_EXTRA_CUDAFLAGS="-DCCCL_DISABLE_CTK_COMPATIBILITY_CHECK"
+# 2. the wheels ship lib/, not lib64/, and have no libcudart.so symlink
+export FLASHINFER_EXTRA_LDFLAGS="-L<venv>/nvidia/cu13/lib -L/usr/lib64"
+```
 
-Eager mode costs roughly **5.5x throughput** — far more than tensor parallelism
-recovers. Use TP only when the weights genuinely do not fit, and expect to pay
-this until the JIT problem is fixed and compilation can be re-enabled.
+plus a one-time `ln -sf libcudart.so.13 libcudart.so` in the wheel's `lib`
+directory, since `-lcudart` needs the unversioned name. Clear the poisoned JIT
+cache (`.../cached_ops/trtllm_mnnvl_comm`) between attempts or the failure is
+replayed from cache.
+
+With those, **tensor parallelism starts fully compiled** — no `--enforce-eager`.
+
+**And it is still not worth using for this model.** Measured at 32 concurrent
+streams, short prompts:
+
+| Configuration | Aggregate tok/s | Per-stream tok/s | Relative |
+| --- | --- | --- | --- |
+| One GPU, compiled | 2,345 | 74.3 | baseline |
+| Two GPUs, TP, eager | 424 | 16.1 | 5.5x slower |
+| Two GPUs, TP, compiled | 534 | 19.8 | **4.4x slower** |
+| Two independent servers | 4,392 (64 streams) | ~74.7 | ~1.9x faster |
+
+**This corrects an earlier reading in these notes.** The eager-mode penalty was
+blamed for the tensor-parallel slowdown. It is not: enabling compilation
+recovered only about 1.26x, while tensor parallelism itself costs about 4.4x
+against a single device. Fixing the JIT bug removed the blocker without moving
+the conclusion.
+
+The likely reason is architectural. This checkpoint is a sparse MoE with hidden
+size 2048 and 2 key/value heads — deliberately small tensors. Splitting already-
+small tensors across devices leaves each GPU with too little work to hide the
+all-reduce on every layer, so communication dominates. Tensor parallelism pays
+off on large dense tensors, which is the opposite of this design.
+
+Practical rule: **choose the parallelism strategy from the model's tensor
+shapes, not from the device count.** For a sparse MoE that fits on one device,
+run independent replicas. Tensor parallelism is a last resort for weights that
+genuinely do not fit, and even then expect to pay several times the single-device
+rate on a model shaped like this one.
 
 Tensor parallelism does triple the KV cache, because sharding weights frees
 device memory: 9,237,726 tokens against 2,948,170 on one GPU, raising reported
