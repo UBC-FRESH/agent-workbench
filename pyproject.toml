@@ -50,6 +50,9 @@ agent-workbench-tunnel-provider = "agent_workbench.cloudflared_provider:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"agent_workbench.agent_hub" = ["profiles/*.agent.md", "profiles/overlays/*.md"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [

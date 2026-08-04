@@ -632,14 +632,25 @@ def test_profile_catalog_cli_validate_writes_preview(
     assert "agent-workbench-result-auditor" not in preview
 
 
-def test_result_auditor_profile_documents_primary_mode_contract() -> None:
+def test_agent_hub_ships_only_the_four_core_roles() -> None:
+    """The packaged Agent Hub is four core roles plus overlays, nothing else.
+
+    Role separation comes from bounded instructions, not from extra personas
+    or model-named profiles.
+    """
     repo_root = Path(__file__).resolve().parents[1]
-    profile_path = repo_root / ".github/agents/agent-workbench-result-auditor.agent.md"
+    profile_dir = repo_root / "src/agent_workbench/agent_hub/profiles"
 
-    document = load_agent_profile_document(profile_path)
+    shipped = sorted(path.name for path in profile_dir.glob("*.agent.md"))
 
-    assert "When you are the selected primary profile" in document.prompt
-    assert "agent_workbench_result_contract" in document.prompt
-    assert "agent_workbench_write_result" in document.prompt
-    assert "profile-evidence-review" in document.prompt
-    assert "do not spawn subagents" in document.prompt
+    assert shipped == [
+        "agent-workbench-advisor.agent.md",
+        "agent-workbench-coordinator.agent.md",
+        "agent-workbench-supervisor.agent.md",
+        "agent-workbench-worker.agent.md",
+    ]
+
+    # Portable templates must not pin a model: that is deployment
+    # configuration, not role identity.
+    for path in profile_dir.glob("*.agent.md"):
+        assert "\nmodel:" not in path.read_text(encoding="utf-8")

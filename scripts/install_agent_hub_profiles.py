@@ -6,10 +6,29 @@ from __future__ import annotations
 import argparse
 import shutil
 import sys
+from importlib import resources
 from pathlib import Path
 
 
-DEFAULT_SOURCE = Path(__file__).resolve().parents[1] / ".github" / "agents"
+def _packaged_profiles() -> Path:
+    """Locate the packaged profile templates.
+
+    Works both from a source checkout and from an installed wheel, so the
+    Agent Hub can be installed without cloning this repository.
+    """
+    try:
+        return Path(str(resources.files("agent_workbench.agent_hub") / "profiles"))
+    except (ModuleNotFoundError, AttributeError):
+        return (
+            Path(__file__).resolve().parents[1]
+            / "src"
+            / "agent_workbench"
+            / "agent_hub"
+            / "profiles"
+        )
+
+
+DEFAULT_SOURCE = _packaged_profiles()
 DEFAULT_DESTINATION = Path.home() / ".copilot" / "agents"
 DEFAULT_CONTRACT_SOURCE = (
     Path(__file__).resolve().parents[1] / ".github" / "copilot-instructions.md"
@@ -89,6 +108,42 @@ def install_profiles(
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, target)
     return installed, unchanged, []
+
+
+def prune_destination(
+    source: Path,
+    destination: Path,
+    *,
+    dry_run: bool = False,
+) -> list[str]:
+    """Remove installed profiles and overlays no longer provided by the package.
+
+    Without this, deleting a profile from the package never reaches an
+    existing installation: the stale file lives in the user profile forever
+    and keeps appearing in the agent picker.
+    """
+    source = source.expanduser().resolve()
+    destination = destination.expanduser().resolve()
+    if not destination.is_dir():
+        return []
+
+    expected = {path.name for path in profile_files(source)}
+    expected |= {f"overlays/{path.name}" for path in overlay_files(source)}
+
+    stale: list[str] = []
+    for path in sorted(destination.glob("*.agent.md")):
+        if path.name not in expected:
+            stale.append(path.name)
+    overlay_dir = destination / "overlays"
+    if overlay_dir.is_dir():
+        for path in sorted(overlay_dir.glob("*.md")):
+            if f"overlays/{path.name}" not in expected:
+                stale.append(f"overlays/{path.name}")
+
+    if not dry_run:
+        for name in stale:
+            (destination / name).unlink()
+    return stale
 
 
 def install_global_contract(
@@ -194,6 +249,14 @@ def main() -> int:
         f"{action} {profile_count} core profile(s) and "
         f"{overlay_count} overlay(s) in {args.destination}"
     )
+    stale = prune_destination(
+        args.source, args.destination, dry_run=args.check
+    )
+    if stale:
+        removed = "would remove" if args.check else "removed"
+        print(f"{removed} {len(stale)} stale profile(s)/overlay(s):")
+        for name in stale:
+            print(f"  {name}")
     if unchanged:
         print(f"already current: {len(unchanged)} profile(s)")
     if args.check and not installed:
